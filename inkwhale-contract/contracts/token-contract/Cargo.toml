@@ -1,7 +1,7 @@
 [package]
-name = "inkwhale_project"
-version = "1.0.0"
-authors = ["Support <contact@inkwhale.net>"]
+name = "my_psp22"
+version = "2.3.0"
+authors = ["Support <contact@artzero.io>"]
 edition = "2021"
 
 [dependencies]
@@ -17,13 +17,16 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22", "psp34", "ownable", "access_control"] }
+inkwhale_project = { path = "../..", default-features = false }
+openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"] }
 
 [lib]
-name = "inkwhale_project"
+name = "my_psp22"
 path = "lib.rs"
 crate-type = [
-    "rlib",
+    # Used for normal contract Wasm blobs.
+    "cdylib",
+    "rlib"
 ]
 
 [features]
@@ -38,14 +41,12 @@ std = [
     "scale/std",
     "scale-info",
     "scale-info/std",
+
     # These dependencies
+    "inkwhale_project/std",
     "openbrush/std",
 ]
 ink-as-dependency = []
 
 [profile.dev]
 codegen-units = 16
-overflow-checks = false
-
-[profile.release]
-overflow-checks = false
