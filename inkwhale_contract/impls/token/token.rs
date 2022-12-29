@@ -34,7 +34,7 @@ where
     }
 
     default fn token_name(&self) -> String {
-        self.data::<data::Data>()
+        self.data::<Data>()
             .name.clone()
     }
 
