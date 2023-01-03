@@ -13,7 +13,8 @@ use openbrush::traits::String;
 pub enum Error {
     Custom(String),
     PSP22Error(PSP22Error),
-    PSP34Error(PSP34Error)
+    PSP34Error(PSP34Error),
+    CannotTransfer
 }
 
 impl From<OwnableError> for Error {
