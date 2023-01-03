@@ -9,11 +9,16 @@ pub use crate::{
     }
 };
 
+use ink_prelude::{
+    vec::Vec,
+};
+
 use openbrush::{
     traits::{
         Storage,
         Balance,
-        AccountId
+        AccountId,
+        Hash
     }
 };
 
@@ -28,14 +33,14 @@ impl<T> GenericPoolGeneratorTrait for T
     ) -> u64 {
         self.data::<Data>()
             .pool_ids
-            .get_value(&Some(contract_owner), &index)
+            .get_value(contract_owner, &(index as u128))
             .unwrap()
     }
 
     default fn get_pool_count_by_owner(&self, contract_owner: AccountId) -> u64 {
         return self.data::<Data>()
             .pool_ids_last_index
-            .get(Some(contract_owner)).unwrap_or(0);
+            .get(&Some(contract_owner)).unwrap_or(0);
     }
 
     default fn get_pool(&self, index: u64) -> Option<AccountId> {

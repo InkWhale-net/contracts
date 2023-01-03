@@ -7,6 +7,7 @@ pub mod pool_generator {
         vec::Vec,
     };
     use ink_env::CallFlags;
+    use ink_lang::ToAccountId;
     use ink_storage::{
         traits::{
             SpreadAllocate,
@@ -110,22 +111,22 @@ pub mod pool_generator {
             if self
                 .manager
                 .pool_ids_last_index
-                .get(Some(contract_owner))
+                .get(&Some(contract_owner))
                 .is_some()
             {
                 last_index = self
                     .manager
                     .pool_ids_last_index
-                    .get(Some(contract_owner))
+                    .get(&Some(contract_owner))
                     .unwrap();
             }
             self.manager.pool_ids.insert(
-                &Some(contract_owner),
+                contract_owner,
                 &self.manager.pool_count
             );
             self.manager
                 .pool_ids_last_index
-                .insert(Some(contract_owner), &(last_index + 1));
+                .insert(&Some(contract_owner), &(last_index + 1));
 
             Ok(())
         }

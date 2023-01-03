@@ -3,7 +3,12 @@ use openbrush::{
     traits::{
         Balance,
         AccountId
-    }
+    },
+    contracts::{
+        traits::psp22::{
+            *,
+        },
+    },
 };
 
 use crate::traits::error::Error;
@@ -18,13 +23,7 @@ pub type GenericPoolContractRef = dyn GenericPoolContractTrait;
 #[openbrush::trait_definition]
 pub trait GenericPoolContractTrait {
     #[ink(message)]
-    fn is_my_pool<T: Any>() -> bool;
-
-    #[ink(message)]
     fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;    
-
-    #[ink(message)]
-    fn claim_reward(&mut self) -> Result<(), Error>;
 
     #[ink(message)]
     fn multiplier(&self) -> Balance;

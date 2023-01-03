@@ -47,7 +47,7 @@ pub mod my_pool {
 
     impl Ownable for MyPool {}
 
-    impl GenericPoolContractTrait for PoolGenerator {}
+    impl GenericPoolContractTrait for MyPool {}
 
     impl MyPool {
         #[ink(constructor)]
@@ -57,7 +57,7 @@ pub mod my_pool {
                 instance._init_with_owner(contract_owner);
                 instance.data.staking_contract_address = psp22_contract_address;
                 instance.data.psp22_contract_address = psp22_contract_address;
-                instance.data.multiplier = apy;
+                instance.data.multiplier = apy as u128;
                 instance.data.duration = duration;
                 instance.data.start_time = start_time;
                 instance.data.unstake_fee = unstake_fee;
@@ -83,10 +83,9 @@ pub mod my_pool {
             );
             assert!(balance >= amount,"not enough balance");
 
-            let staker = self.data.stakers.get(caller);
+            let staker = self.data.stakers.get(&caller);
             if staker.is_none() {
                 let stake_info = StakeInformation{
-                    staker: caller,
                     last_reward_update: self.env().block_timestamp(),
                     staked_value: amount,
                     unclaimed_reward: 0
@@ -157,7 +156,7 @@ pub mod my_pool {
                 return Err(Error::CannotTransfer)
             }
 
-            let staker = self.data.stakers.get(caller);
+            let staker = self.data.stakers.get(&caller);
             assert!(staker.is_some(),"no staker found");
             let mut stake_info = staker.unwrap();
 
@@ -182,6 +181,40 @@ pub mod my_pool {
                 &self.data.psp22_contract_address,
                 caller,
                 amount,
+                Vec::<u8>::new()
+            )
+            .is_ok());
+
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn claim_reward(&mut self) -> Result<(), Error>  {
+            let caller = self.env().caller();
+
+            let staker = self.data.stakers.get(&caller);
+            assert!(staker.is_some(),"no staker found");
+            let mut stake_info = staker.unwrap();
+            let mut reward_time = self.env().block_timestamp();
+            if reward_time > self.data.start_time + self.data.duration{
+                reward_time = self.data.start_time + self.data.duration;
+            }
+            let time_length = reward_time - stake_info.last_reward_update; //second
+            let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier as u128).unwrap();
+            let unclaimed_reward = (unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).unwrap() ) as u128;
+            let to_claim = stake_info.unclaimed_reward.checked_add(unclaimed_reward).unwrap();
+
+            stake_info.last_reward_update = self.env().block_timestamp();
+            stake_info.unclaimed_reward = 0;
+
+            self.data.stakers.insert(&caller, &stake_info);
+            assert!(to_claim <= self.data.reward_pool, "not enough reward balance");
+            self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim as u128).unwrap();
+
+            assert!(Psp22Ref::transfer(
+                &self.data.psp22_contract_address,
+                caller,
+                to_claim,
                 Vec::<u8>::new()
             )
             .is_ok());

@@ -2,8 +2,14 @@ use openbrush::{
     modifiers,
     traits::{
         Balance,
-        AccountId
-    }
+        AccountId,
+        Hash
+    },
+    contracts::{
+        traits::psp22::{
+            *,
+        },
+    },
 };
 
 use crate::traits::error::Error;

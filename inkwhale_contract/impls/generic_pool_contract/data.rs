@@ -8,6 +8,14 @@ use openbrush::{
     }
 };
 
+use ink_storage::{
+    traits::{
+        PackedLayout,
+        SpreadAllocate,
+        SpreadLayout,
+    }
+};
+
 #[derive(
     Clone, Debug, Ord, PartialOrd, Eq, PartialEq, PackedLayout, SpreadLayout, scale::Encode, scale::Decode,
 )]
@@ -26,7 +34,7 @@ pub struct Data {
     pub staking_contract_address: AccountId, // lp_contract_address/psp34_contract_address 
     pub psp22_contract_address: AccountId,
     pub wal_contract: AccountId,
-    pub multiplier: u64,
+    pub multiplier: Balance,
     pub stakers: Mapping<AccountId, StakeInformation>,
     pub reward_pool: Balance,
     pub total_staked: Balance,
