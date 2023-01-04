@@ -5,9 +5,8 @@ use openbrush::{
         AccountId
     },
     contracts::{
-        traits::psp22::{
-            *,
-        },
+        traits::psp22::*,
+        traits::psp34::*,
     },
 };
 
@@ -16,6 +15,9 @@ use crate::impls::generic_pool_contract::data::StakeInformation;
 
 #[openbrush::wrapper]
 pub type Psp22Ref = dyn PSP22;
+
+#[openbrush::wrapper]
+pub type Psp34Ref = dyn PSP34;
 
 #[openbrush::wrapper]
 pub type GenericPoolContractRef = dyn GenericPoolContractTrait;
