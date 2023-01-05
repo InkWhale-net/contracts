@@ -1,5 +1,4 @@
 use openbrush::{
-    modifiers,
     traits::{
         Balance,
         AccountId
@@ -40,7 +39,6 @@ pub trait GenericPoolContractTrait {
     fn reward_pool(&self) -> Balance;
 
     #[ink(message)]
-    #[modifiers(only_owner)]
     fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]

@@ -11,12 +11,14 @@ pub use crate::{
 };
 
 use openbrush::{
+    modifiers,
     contracts::{
         psp22,
         psp22::*,
         traits::{
             psp22::PSP22Error
-        }
+        },
+        ownable::*
     },
     traits::{
         Storage,
@@ -27,9 +29,10 @@ use openbrush::{
 
 impl<T> TokenMintCapTrait for T 
 where 
-    T: psp22::Internal +
-       Storage<Data> + 
-       Storage<psp22::Data>
+    T:  psp22::Internal +
+        Storage<Data> + 
+        Storage<psp22::Data> +
+        Storage<ownable::Data>
 {
     default fn public_mint(&mut self, amount: Balance)-> Result<(), PSP22Error> {
         let caller = Self::env().caller();
@@ -46,16 +49,19 @@ where
         self._mint_to(caller, amount)
     }
 
+    #[modifiers(only_owner)]
     default fn owner_mint(&mut self, mint_to: AccountId, amount: Balance) -> Result<(), PSP22Error>{
         assert!(self.data::<psp22::Data>().total_supply().checked_add(amount).unwrap() <= self.data::<Data>().cap, "minting cap reached");
         self._mint_to(mint_to, amount)
     }
 
+    #[modifiers(only_owner)]
     default fn set_cap(&mut self, cap: Balance) -> Result<(), PSP22Error> {
         self.data::<Data>().cap = cap;
         Ok(())
     }
 
+    #[modifiers(only_owner)]
     default fn set_minting_fee(&mut self, minting_fee: Balance) -> Result<(), PSP22Error> {
         self.data::<Data>().minting_fee = minting_fee;
         Ok(())
@@ -76,7 +82,8 @@ where
     default fn minting_fee(&self) -> Balance {
         self.data::<Data>().minting_fee.clone()
     }
-        
+    
+    #[modifiers(only_owner)]
     default fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error> {
         assert!(value <= Self::env().balance(), "not enough balance");
         assert!(

@@ -1,5 +1,4 @@
 use openbrush::{
-    modifiers,
     traits::{
         Balance,
         AccountId,
@@ -50,28 +49,22 @@ pub trait GenericPoolGeneratorTrait {
     #[ink(message)]
     fn get_pool_hash(&self) -> Hash;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_pool_hash(&mut self, pool_hash: Hash) -> Result<(), Error>;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error>;
     
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error>;
       
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_unstake_fee(&mut self, unstake_fee: Balance) -> Result<(), Error>;
 
     /// Withdraw Fees - only Owner
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error>;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>;
 }

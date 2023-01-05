@@ -1,5 +1,4 @@
 use openbrush::{
-    modifiers,
     traits::{
         Balance,
         AccountId,
@@ -39,20 +38,16 @@ pub trait TokenManagerTrait {
     #[ink(message)]
     fn get_wal_contract(&self) -> AccountId;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_contract_hash(&mut self, psp22_hash: Hash) -> Result<(), Error>;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error>;
 
     /// Withdraw Fees - only Owner
     #[ink(message)]
-    #[modifiers(only_owner)]
     fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error>;
 
     #[ink(message)]
-    #[modifiers(only_owner)]
     fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>;
 }

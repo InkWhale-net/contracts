@@ -1,5 +1,4 @@
 use openbrush::{
-    modifiers,
     traits::{
         Balance,
         AccountId
@@ -22,15 +21,12 @@ pub trait TokenMintCapTrait {
     fn public_mint(&mut self, amount: Balance)-> Result<(), PSP22Error>;
 
     #[ink(message)]
-    #[modifiers(only_owner)]
     fn owner_mint(&mut self, mint_to: AccountId, amount: Balance) -> Result<(), PSP22Error>;
 
     #[ink(message)]
-    #[modifiers(only_owner)]
     fn set_cap(&mut self, cap: Balance) -> Result<(), PSP22Error>;
 
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn set_minting_fee(&mut self, minting_fee: Balance) -> Result<(), PSP22Error>;
 
     #[ink(message)]
@@ -46,7 +42,6 @@ pub trait TokenMintCapTrait {
     fn minting_fee(&self) -> Balance;
         
     /// Withdraw Fees - only Owner
-    #[ink(message)]
-    #[modifiers(only_owner)]
+    #[ink(message)]    
     fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error>;
 }

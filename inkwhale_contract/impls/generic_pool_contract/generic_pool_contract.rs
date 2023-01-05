@@ -1,6 +1,7 @@
 pub use crate::{
     impls::generic_pool_contract::{
         data,
+        data::Data,
         data::*,
     },
     traits::{
@@ -16,6 +17,8 @@ use ink_prelude::{
 use ink_env::CallFlags;
 
 use openbrush::{
+    modifiers,
+    contracts::ownable::*,
     traits::{
         Storage,
         Balance,
@@ -24,8 +27,9 @@ use openbrush::{
 };
 
 impl<T> GenericPoolContractTrait for T 
-    where 
-        T: Storage<Data> 
+where 
+    T:  Storage<Data> + 
+        Storage<ownable::Data>
 {
     default fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
         let caller = Self::env().caller();
@@ -76,6 +80,7 @@ impl<T> GenericPoolContractTrait for T
         self.data::<Data>().reward_pool.clone()
     }
 
+    #[modifiers(only_owner)]
     default fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
         assert!(self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).unwrap() <= Self::env().block_timestamp(),"not time to withdraw");
         assert!(amount <= self.data::<Data>().reward_pool, "not enough balance to withdraw");

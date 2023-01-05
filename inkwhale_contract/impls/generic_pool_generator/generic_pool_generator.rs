@@ -1,6 +1,7 @@
 pub use crate::{
     impls::generic_pool_generator::{
         data,
+        data::Data,
         data::*,
     },
     traits::{
@@ -14,6 +15,8 @@ use ink_prelude::{
 };
 
 use openbrush::{
+    modifiers,
+    contracts::ownable::*,
     traits::{
         Storage,
         Balance,
@@ -23,8 +26,9 @@ use openbrush::{
 };
 
 impl<T> GenericPoolGeneratorTrait for T 
-    where 
-        T: Storage<Data> 
+where 
+    T:  Storage<Data> + 
+        Storage<ownable::Data>
 {
     default fn get_pool_by_owner(
         &self,
@@ -67,27 +71,32 @@ impl<T> GenericPoolGeneratorTrait for T
         self.data::<Data>().pool_hash
     }
 
+    #[modifiers(only_owner)]
     default fn set_pool_hash(&mut self, pool_hash: Hash) -> Result<(), Error> {
         self.data::<Data>().pool_hash = pool_hash;
         Ok(())
     }
 
+    #[modifiers(only_owner)]
     default fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error> {
         self.data::<Data>().wal_contract = wal_contract;
         Ok(())
     }
     
+    #[modifiers(only_owner)]
     default fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error> {
         self.data::<Data>().creation_fee = creation_fee;
         Ok(()) 
     }
-      
+    
+    #[modifiers(only_owner)]
     default fn set_unstake_fee(&mut self, unstake_fee: Balance) -> Result<(), Error> {
         self.data::<Data>().unstake_fee = unstake_fee;
         Ok(())
     }
 
     /// Withdraw Fees - only Owner
+    #[modifiers(only_owner)]
     default fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error> {
         assert!(value <= Self::env().balance(), "not enough balance");
         assert!(
@@ -97,6 +106,7 @@ impl<T> GenericPoolGeneratorTrait for T
         Ok(()) 
     }
 
+    #[modifiers(only_owner)]
     default fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error> {
         assert!(Psp22Ref::transfer(
             &self.data::<Data>().wal_contract,
