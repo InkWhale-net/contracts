@@ -9,7 +9,13 @@ pub use self::my_psp22::{
 pub mod my_psp22 {
     use ink_storage::traits::SpreadAllocate;
     use openbrush::{
-        contracts::psp22::*,
+        contracts::psp22::{
+            *,
+            extensions::{
+                burnable::*,
+                metadata::*,
+            }
+        },
         traits::{
             Storage,
             String,
@@ -23,23 +29,26 @@ pub mod my_psp22 {
         #[storage_field]
         psp22: psp22::Data,
         #[storage_field]
-        token: token::data::Data,
+        metadata: metadata::Data,
     }
 
     impl PSP22 for MyPsp22 {}
 
-    impl TokenTrait for MyPsp22 {}
+    //impl TokenTrait for MyPsp22 {}
+    impl PSP22Metadata for MyPsp22 {}
+    // Don't override anything so just use the trait directly
+    impl PSP22Burnable for MyPsp22 {}
 
     impl MyPsp22 {
         #[ink(constructor)]
-        pub fn new(mint_to: AccountId, total_supply: Balance, name: String, symbol: String, decimal: u8) -> Self {
+        pub fn new(mint_to: AccountId, total_supply: Balance, name: Option<String>, symbol: Option<String>, decimal: u8) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
                 instance
                     ._mint_to(mint_to, total_supply)
                     .expect("Should mint");
-                instance.token.name = name;
-                instance.token.symbol = symbol;
-                instance.token.decimals = decimal;
+                instance.metadata.name = name;
+                instance.metadata.symbol = symbol;
+                instance.metadata.decimals = decimal;
             })
         }
 
