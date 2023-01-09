@@ -10,7 +10,6 @@ pub mod my_psp22 {
     use ink_storage::traits::SpreadAllocate;
     use openbrush::{
         contracts::psp22::{
-            *,
             extensions::{
                 burnable::*,
                 metadata::*,
@@ -41,13 +40,13 @@ pub mod my_psp22 {
 
     impl MyPsp22 {
         #[ink(constructor)]
-        pub fn new(mint_to: AccountId, total_supply: Balance, name: Option<String>, symbol: Option<String>, decimal: u8) -> Self {
+        pub fn new(mint_to: AccountId, total_supply: Balance, name: String, symbol: String, decimal: u8) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
                 instance
                     ._mint_to(mint_to, total_supply)
                     .expect("Should mint");
-                instance.metadata.name = name;
-                instance.metadata.symbol = symbol;
+                instance.metadata.name = Some(name);
+                instance.metadata.symbol = Some(symbol);
                 instance.metadata.decimals = decimal;
             })
         }
@@ -55,7 +54,7 @@ pub mod my_psp22 {
         #[ink(message)]
         pub fn faucet(&mut self) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
-            self._mint_to(caller, 1000 * ((10 as u64).pow(self.token.decimals as u32) as u128)).expect("Should mint");
+            self._mint_to(caller, 1000 * ((10 as u64).pow(self.metadata.decimals as u32) as u128)).expect("Should mint");
             Ok(())
         }
     }

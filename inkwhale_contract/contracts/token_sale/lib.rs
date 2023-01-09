@@ -6,7 +6,6 @@ pub mod my_psp22_sale {
     use openbrush::{
         contracts::ownable::*,
         contracts::psp22::{
-            *,
             extensions::{
                 burnable::*,
                 metadata::*,
@@ -54,13 +53,13 @@ pub mod my_psp22_sale {
 
     impl MyPsp22 {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, cap: Balance, minting_fee: Balance, minting_cap: Balance, name: Option<String>, symbol: Option<String>, decimal: u8) -> Self {
+        pub fn new(contract_owner: AccountId, cap: Balance, minting_fee: Balance, minting_cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
             assert!(cap >= minting_cap,"invalid input cap");
 
             ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
                 instance._init_with_owner(contract_owner);
-                instance.metadata.name = name;
-                instance.metadata.symbol = symbol;
+                instance.metadata.name = Some(name);
+                instance.metadata.symbol = Some(symbol);
                 instance.metadata.decimals = decimal;
                 instance.token_mint_cap.cap = cap;
                 instance.token_mint_cap.minting_fee = minting_fee;
