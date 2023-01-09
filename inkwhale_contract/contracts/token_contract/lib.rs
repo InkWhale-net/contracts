@@ -20,7 +20,6 @@ pub mod my_psp22 {
             String,
         },
     };
-    use inkwhale_project::impls::token::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]    
@@ -33,9 +32,7 @@ pub mod my_psp22 {
 
     impl PSP22 for MyPsp22 {}
 
-    //impl TokenTrait for MyPsp22 {}
     impl PSP22Metadata for MyPsp22 {}
-    // Don't override anything so just use the trait directly
     impl PSP22Burnable for MyPsp22 {}
 
     impl MyPsp22 {
