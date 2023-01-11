@@ -1,6 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod pool_generator {
     use ink_prelude::{
@@ -31,7 +34,10 @@ pub mod pool_generator {
     use my_pool::my_pool::MyPoolRef;
 
     use inkwhale_project::impls::generic_pool_generator::*;
-    use inkwhale_project::traits::generic_pool_generator::*;
+    use inkwhale_project::traits::{
+        admin::*,
+        generic_pool_generator::*
+    };
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
@@ -39,25 +45,42 @@ pub mod pool_generator {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        manager: generic_pool_generator::data::Data
+        manager: generic_pool_generator::data::Data.
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl Ownable for PoolGenerator {}
-
     impl GenericPoolGeneratorTrait for PoolGenerator {}
+    impl AdminTrait for PoolGenerator {}
 
     impl PoolGenerator {
         #[ink(constructor)]
         pub fn new(pool_hash: Hash, wal_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId,) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Self| {
                 instance._init_with_owner(owner_address);
-                instance.manager.pool_hash = pool_hash;
-                instance.manager.creation_fee = creation_fee;
-                instance.manager.wal_contract = wal_contract;
-                instance.manager.unstake_fee = unstake_fee;
+                instance.initialize(
+                    pool_hash,
+                    wal_contract,
+                    creation_fee,
+                    unstake_fee
+                )
+                .ok()
+                .unwrap();
             })
         }
 
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        pub fn initialize(&mut self, pool_hash: Hash, wal_contract: AccountId, creation_fee: Balance, unstake_fee: Balance
+        ) -> Result<(), Error> {
+            self.manager.pool_hash = pool_hash;
+            self.manager.creation_fee = creation_fee;
+            self.manager.wal_contract = wal_contract;
+            self.manager.unstake_fee = unstake_fee;
+
+            Ok(())
+        }
         #[ink(message)]
         pub fn new_pool(
             &mut self,

@@ -1,6 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod my_psp22_sale {
     use openbrush::{
@@ -23,9 +26,8 @@ pub mod my_psp22_sale {
         },
     };
 
-    use inkwhale_project::impls::{
-        token_mint_cap::*
-    };
+    use inkwhale_project::impls::token_mint_cap::*;
+    use inkwhale_project::traits::admin::*;
 
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, Storage)]
@@ -37,16 +39,34 @@ pub mod my_psp22_sale {
         #[storage_field]
         metadata: metadata::Data,
         #[storage_field]
-        token_mint_cap: token_mint_cap::data::Data
+        token_mint_cap: token_mint_cap::data::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
     impl Ownable for MyPsp22 {}
 
     impl PSP22Metadata for MyPsp22 {}
-    impl PSP22Burnable for MyPsp22 {}
+    impl PSP22Burnable for MyPsp22 {
+        #[ink(message)]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            let caller = Self::env().caller();
+
+            let allowance = self.allowance(caller, account);
+
+            if caller == account || allowance >= amount {
+                self._burn_from(account, amount)
+            }
+            else{
+                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved").into_bytes()))
+            }
+        }
+    }
 
     impl TokenMintCapTrait for MyPsp22 {}
+
+    impl AdminTrait for MyPsp22 {}
 
     impl MyPsp22 {
         #[ink(constructor)]
@@ -55,13 +75,29 @@ pub mod my_psp22_sale {
 
             ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
                 instance._init_with_owner(contract_owner);
-                instance.metadata.name = Some(name);
-                instance.metadata.symbol = Some(symbol);
-                instance.metadata.decimals = decimal;
-                instance.token_mint_cap.cap = cap;
-                instance.token_mint_cap.minting_fee = minting_fee;
-                instance.token_mint_cap.minting_cap = minting_cap;
+                instance.initialize(
+                    cap,
+                    minting_fee,
+                    minting_cap,
+                    name,
+                    symbol,
+                    decimal
+                )
+                .ok()
+                .unwrap();
             })
+        }
+
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        pub fn initialize(&mut self, cap: Balance, minting_fee: Balance, minting_cap: Balance, name: String, symbol: String, decimal: u8
+        ) -> Result<(), Error> {
+            self.metadata.name = Some(name);
+            self.metadata.symbol = Some(symbol);
+            self.metadata.decimals = decimal;
+            self.token_mint_cap.cap = cap;
+            self.token_mint_cap.minting_fee = minting_fee;
+            self.token_mint_cap.minting_cap = minting_cap;
         }
     }
 }

@@ -5,6 +5,9 @@ pub use self::my_pool::{
     MyPoolRef,
 };
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod my_pool {
     use ink_prelude::{
@@ -34,7 +37,10 @@ pub mod my_pool {
     };
 
     use inkwhale_project::impls::generic_pool_contract::*;
-    use inkwhale_project::traits::generic_pool_contract::*;
+    use inkwhale_project::traits::{
+        admin::*,
+        generic_pool_contract::*
+    };
 
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, Storage)]
@@ -42,12 +48,14 @@ pub mod my_pool {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        data: generic_pool_contract::data::Data
+        data: generic_pool_contract::data::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl Ownable for MyPool {}
-
     impl GenericPoolContractTrait for MyPool {}
+    impl AdminTrait for MyPool {}
 
     impl MyPool {
         #[ink(constructor)]
@@ -55,15 +63,33 @@ pub mod my_pool {
             assert!(duration > 0,"duration must > 0");
             ink_lang::codegen::initialize_contract(|instance: &mut MyPool| {
                 instance._init_with_owner(contract_owner);
-                instance.data.staking_contract_address = psp22_contract_address;
-                instance.data.psp22_contract_address = psp22_contract_address;
-                instance.data.multiplier = apy as u128;
-                instance.data.duration = duration;
-                instance.data.start_time = start_time;
-                instance.data.unstake_fee = unstake_fee;
-                instance.data.wal_contract = wal_contract;
+                instance.initialize(
+                    wal_contract,
+                    psp22_contract_address,
+                    apy,
+                    duration,
+                    start_time, 
+                    unstake_fee
+                )
+                .ok()
+                .unwrap();
             })
         }
+
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        pub fn initialize(&mut self, wal_contract: AccountId, psp22_contract_address: AccountId, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
+        ) -> Result<(), Error> {
+            self.data.staking_contract_address = psp22_contract_address;
+            self.data.psp22_contract_address = psp22_contract_address;
+            self.data.multiplier = apy as u128;
+            self.data.duration = duration;
+            self.data.start_time = start_time;
+            self.data.unstake_fee = unstake_fee;
+            self.data.wal_contract = wal_contract;
+        
+            Ok(())
+        }   
 
         #[ink(message)]
         pub fn stake(&mut self, amount: Balance) -> Result<(), Error>  {

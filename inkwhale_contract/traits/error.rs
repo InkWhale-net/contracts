@@ -14,15 +14,17 @@ pub enum Error {
     Custom(String),
     PSP22Error(PSP22Error),
     PSP34Error(PSP34Error),
-    CannotTransfer
+    OwnableError(OwnableError),
+    CannotTransfer,
+    NotEnoughBalance,
+    WithdrawFeeError,
+    WithdrawNFTError,
+    WithdrawPSP22Error
 }
 
 impl From<OwnableError> for Error {
     fn from(ownable: OwnableError) -> Self {
-        match ownable {
-            OwnableError::CallerIsNotOwner => Error::Custom(String::from("O::CallerIsNotOwner")),
-            OwnableError::NewOwnerIsZero => Error::Custom(String::from("O::NewOwnerIsZero")),
-        }
+        Error::OwnableError(ownable)
     }
 }
 

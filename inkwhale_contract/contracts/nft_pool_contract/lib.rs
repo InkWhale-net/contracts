@@ -5,6 +5,9 @@ pub use self::my_nft_pool::{
     MyNFTPoolRef,
 };
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod my_nft_pool {
     use ink_prelude::{
@@ -32,7 +35,10 @@ pub mod my_nft_pool {
     };
 
     use inkwhale_project::impls::generic_pool_contract::*;
-    use inkwhale_project::traits::generic_pool_contract::*;
+    use inkwhale_project::traits::{
+        admin::*,
+        generic_pool_contract::*
+    };
 
     use inkwhale_project::impls::nft_staking_list::*;
 
@@ -44,12 +50,15 @@ pub mod my_nft_pool {
         #[storage_field]
         data: generic_pool_contract::data::Data,
         #[storage_field]
-        staking_list_data: nft_staking_list::data::Data
+        staking_list_data: nft_staking_list::data::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl Ownable for MyNFTPool {}
     impl GenericPoolContractTrait for MyNFTPool {}
     impl NftStakingListTrait for MyNFTPool {}
+    impl AdminTrait for MyNFTPool {}
 
     impl MyNFTPool {
         #[ink(constructor)]
@@ -58,14 +67,31 @@ pub mod my_nft_pool {
             assert!(duration > 0,"duration must > 0");
             ink_lang::codegen::initialize_contract(|instance: &mut MyNFTPool| {
                 instance._init_with_owner(contract_owner);
-                instance.data.staking_contract_address = psp34_contract_address;
-                instance.data.psp22_contract_address = psp22_contract_address;
-                instance.data.multiplier = multiplier;
-                instance.data.duration = duration;
-                instance.data.start_time = start_time;
-                instance.data.unstake_fee = unstake_fee;
-                instance.data.wal_contract = wal_contract;
+                instance.initialize(
+                    wal_contract,
+                    psp34_contract_address,
+                    psp22_contract_address,
+                    multiplier,
+                    duration,
+                    start_time, 
+                    unstake_fee
+                )
+                .ok()
+                .unwrap();
             })
+        }
+
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        pub fn initialize(&mut self, wal_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
+        ) -> Result<(), Error> {
+            self.data.staking_contract_address = psp34_contract_address;
+            self.data.psp22_contract_address = psp22_contract_address;
+            self.data.multiplier = multiplier;
+            self.data.duration = duration;
+            self.data.start_time = start_time;
+            self.data.unstake_fee = unstake_fee;
+            self.data.wal_contract = wal_contract;
         }
 
         #[ink(message)]

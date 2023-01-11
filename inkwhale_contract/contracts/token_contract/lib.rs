@@ -5,6 +5,9 @@ pub use self::my_psp22::{
     MyPsp22Ref,
 };
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod my_psp22 {
     use ink_storage::traits::SpreadAllocate;
@@ -21,6 +24,8 @@ pub mod my_psp22 {
         },
     };
 
+    use inkwhale_project::traits::admin::*;
+
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]    
     pub struct MyPsp22 {
@@ -28,12 +33,30 @@ pub mod my_psp22 {
         psp22: psp22::Data,
         #[storage_field]
         metadata: metadata::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
 
     impl PSP22Metadata for MyPsp22 {}
-    impl PSP22Burnable for MyPsp22 {}
+    impl PSP22Burnable for MyPsp22 {
+        #[ink(message)]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            let caller = Self::env().caller();
+
+            let allowance = self.allowance(caller, account);
+
+            if caller == account || allowance >= amount {
+                self._burn_from(account, amount)
+            }
+            else{
+                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved").into_bytes()))
+            }
+        }
+    }
+
+    impl AdminTrait for MyLPPool {}
 
     impl MyPsp22 {
         #[ink(constructor)]

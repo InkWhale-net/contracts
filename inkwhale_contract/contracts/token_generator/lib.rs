@@ -1,6 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+#![allow(clippy::let_unit_value)]
+#![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod token_generator {
     use ink_prelude::{
@@ -32,6 +35,7 @@ pub mod token_generator {
     use my_psp22::my_psp22::MyPsp22Ref;
 
     use inkwhale_project::impls::token_manager::*;
+    use inkwhale_project::traits::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
@@ -39,22 +43,41 @@ pub mod token_generator {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        manager: token_manager::data::Data
+        manager: token_manager::data::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }   
 
     impl Ownable for TokenGenerator {}
 
     impl TokenManagerTrait for TokenGenerator {}
 
+    impl AdminTrait for TokenGenerator {}
+
     impl TokenGenerator {
         #[ink(constructor)]
         pub fn new(psp22_hash: Hash, wal_contract: AccountId, creation_fee: Balance, owner_address: AccountId) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Self| {
                 instance._init_with_owner(owner_address);
-                instance.manager.standard_psp22_hash = psp22_hash;
-                instance.manager.creation_fee = creation_fee;
-                instance.manager.wal_contract = wal_contract;
+                instance.initialize(
+                    psp22_hash,
+                    wal_contract,
+                    creation_fee
+                )
+                .ok()
+                .unwrap();
             })
+        }
+
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        pub fn initialize(&mut self, psp22_hash: Hash, wal_contract: AccountId, creation_fee: Balance
+        ) -> Result<(), Error> {
+            self.manager.standard_psp22_hash = psp22_hash;
+            self.manager.creation_fee = creation_fee;
+            self.manager.wal_contract = wal_contract;
+
+            Ok(())
         }
 
         #[ink(message)]
