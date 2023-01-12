@@ -22,10 +22,11 @@ pub mod my_psp22 {
         },
     };
 
-    //use inkwhale_project::traits::error::Error;
+    use inkwhale_project::impls::admin::data::Data as AdminData;
+    //use inkwhale_project::traits::admin::*;
     //use inkwhale_project::traits::admin::AdminTrait;
-    //use inkwhale_project::impls::admin::data::Data as AdminData;
-    //use inkwhale_project::impls::admin::*;
+    use inkwhale_project::traits::error::Error;   
+    use inkwhale_project::impls::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]    
@@ -34,8 +35,8 @@ pub mod my_psp22 {
         psp22: psp22::Data,
         #[storage_field]
         metadata: metadata::Data,
-        //#[storage_field]
-        //admin_data: AdminData,
+        #[storage_field]
+        admin_data: AdminData
     }
 
     impl PSP22 for MyPsp22 {}
@@ -57,7 +58,7 @@ pub mod my_psp22 {
         }
     }
 
-    //impl AdminTrait for MyPsp22 {}
+    impl AdminTrait for MyPsp22 {}
 
     impl MyPsp22 {
         #[ink(constructor)]
