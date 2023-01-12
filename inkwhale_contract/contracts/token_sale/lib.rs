@@ -1,9 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-#![allow(clippy::let_unit_value)]
-#![allow(clippy::inline_fn_without_body)]
-#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod my_psp22_sale {
     use openbrush::{
@@ -17,7 +14,8 @@ pub mod my_psp22_sale {
         modifiers,
         traits::{
             Storage,
-            String
+            String,
+            DefaultEnv
         },
     };
     use ink_storage::{
@@ -26,9 +24,14 @@ pub mod my_psp22_sale {
         },
     };
 
+    use inkwhale_project::traits::error::Error;
+    //use inkwhale_project::traits::admin::AdminTrait;
+    use inkwhale_project::traits::token_mint_cap::TokenMintCapTrait;
+    //use inkwhale_project::impls::admin::data::Data as AdminData;
+    //use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::token_mint_cap::data::Data as TokenMintCapData;
     use inkwhale_project::impls::token_mint_cap::*;
-    use inkwhale_project::traits::admin::*;
-
+    
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, Storage)]
     pub struct MyPsp22 {
@@ -39,9 +42,9 @@ pub mod my_psp22_sale {
         #[storage_field]
         metadata: metadata::Data,
         #[storage_field]
-        token_mint_cap: token_mint_cap::data::Data,
-        #[storage_field]
-        admin_data: admin::data::Data
+        token_mint_cap: TokenMintCapData,
+        //#[storage_field]
+        //admin_data: AdminData
     }
 
     impl PSP22 for MyPsp22 {}
@@ -59,14 +62,13 @@ pub mod my_psp22_sale {
                 self._burn_from(account, amount)
             }
             else{
-                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved").into_bytes()))
+                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved")))
             }
         }
     }
 
-    impl TokenMintCapTrait for MyPsp22 {}
-
-    impl AdminTrait for MyPsp22 {}
+    //impl AdminTrait for MyPsp22 {}
+    impl TokenMintCapTrait for MyPsp22 {}  
 
     impl MyPsp22 {
         #[ink(constructor)]
@@ -98,6 +100,8 @@ pub mod my_psp22_sale {
             self.token_mint_cap.cap = cap;
             self.token_mint_cap.minting_fee = minting_fee;
             self.token_mint_cap.minting_cap = minting_cap;
+
+            Ok(())
         }
     }
 }

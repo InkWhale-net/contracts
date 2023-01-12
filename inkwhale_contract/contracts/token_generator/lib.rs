@@ -1,9 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-#![allow(clippy::let_unit_value)]
-#![allow(clippy::inline_fn_without_body)]
-#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod token_generator {
     use ink_prelude::{
@@ -35,7 +32,7 @@ pub mod token_generator {
     use my_psp22::my_psp22::MyPsp22Ref;
 
     use inkwhale_project::impls::token_manager::*;
-    use inkwhale_project::traits::admin::*;
+    //use inkwhale_project::impls::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
@@ -44,15 +41,15 @@ pub mod token_generator {
         ownable: ownable::Data,
         #[storage_field]
         manager: token_manager::data::Data,
-        #[storage_field]
-        admin_data: admin::data::Data
+        //#[storage_field]
+        //admin_data: admin::data::Data
     }   
 
     impl Ownable for TokenGenerator {}
 
     impl TokenManagerTrait for TokenGenerator {}
 
-    impl AdminTrait for TokenGenerator {}
+    //impl AdminTrait for TokenGenerator {}
 
     impl TokenGenerator {
         #[ink(constructor)]

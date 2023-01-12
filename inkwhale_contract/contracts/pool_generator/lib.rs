@@ -1,9 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-#![allow(clippy::let_unit_value)]
-#![allow(clippy::inline_fn_without_body)]
-#![allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod pool_generator {
     use ink_prelude::{
@@ -34,10 +31,8 @@ pub mod pool_generator {
     use my_pool::my_pool::MyPoolRef;
 
     use inkwhale_project::impls::generic_pool_generator::*;
-    use inkwhale_project::traits::{
-        admin::*,
-        generic_pool_generator::*
-    };
+    use inkwhale_project::traits::generic_pool_generator::*;
+    //use inkwhale_project::impls::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
@@ -46,13 +41,13 @@ pub mod pool_generator {
         ownable: ownable::Data,
         #[storage_field]
         manager: generic_pool_generator::data::Data.
-        #[storage_field]
-        admin_data: admin::data::Data
+        //#[storage_field]
+        //admin_data: admin::data::Data
     }
 
     impl Ownable for PoolGenerator {}
     impl GenericPoolGeneratorTrait for PoolGenerator {}
-    impl AdminTrait for PoolGenerator {}
+    //impl AdminTrait for PoolGenerator {}
 
     impl PoolGenerator {
         #[ink(constructor)]
