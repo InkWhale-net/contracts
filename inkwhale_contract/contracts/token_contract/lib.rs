@@ -9,6 +9,7 @@ pub use self::my_psp22::{
 pub mod my_psp22 {
     use ink_storage::traits::SpreadAllocate;
     use openbrush::{
+        contracts::ownable::*,
         contracts::psp22::{
             extensions::{
                 burnable::*,
@@ -22,21 +23,19 @@ pub mod my_psp22 {
         },
     };
 
-    use inkwhale_project::impls::admin::data::Data as AdminData;
-    //use inkwhale_project::traits::admin::*;
-    //use inkwhale_project::traits::admin::AdminTrait;
-    use inkwhale_project::traits::error::Error;   
     use inkwhale_project::impls::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]    
     pub struct MyPsp22 {
         #[storage_field]
+        ownable: ownable::Data,
+        #[storage_field]
         psp22: psp22::Data,
         #[storage_field]
         metadata: metadata::Data,
         #[storage_field]
-        admin_data: AdminData
+        admin_data: admin::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
@@ -57,6 +56,8 @@ pub mod my_psp22 {
             }
         }
     }
+
+    impl Ownable for MyPsp22 {}
 
     impl AdminTrait for MyPsp22 {}
 

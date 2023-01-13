@@ -24,13 +24,8 @@ pub mod my_psp22_sale {
         },
     };
 
-    use inkwhale_project::traits::error::Error;
-    //use inkwhale_project::traits::admin::AdminTrait;
-    //use inkwhale_project::traits::token_mint_cap::TokenMintCapTrait;
-    //use inkwhale_project::impls::admin::data::Data as AdminData;
-    //use inkwhale_project::impls::admin::*;
-    //use inkwhale_project::impls::token_mint_cap::data::Data as TokenMintCapData;
-    //use inkwhale_project::impls::token_mint_cap::*;
+    use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::token_mint_cap::*;
     
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, Storage)]
@@ -41,10 +36,10 @@ pub mod my_psp22_sale {
         ownable: ownable::Data,
         #[storage_field]
         metadata: metadata::Data,
-        //#[storage_field]
-        //token_mint_cap: TokenMintCapData,
-        //#[storage_field]
-        //admin_data: AdminData
+        #[storage_field]
+        token_mint_cap: token_mint_cap::data::Data,
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
@@ -67,9 +62,9 @@ pub mod my_psp22_sale {
         }
     }
 
-    //impl AdminTrait for MyPsp22 {}
-    //impl TokenMintCapTrait for MyPsp22 {}  
-
+    impl TokenMintCapTrait for MyPsp22 {}  
+    impl AdminTrait for MyPsp22 {}
+    
     impl MyPsp22 {
         #[ink(constructor)]
         pub fn new(contract_owner: AccountId, cap: Balance, minting_fee: Balance, minting_cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
@@ -97,9 +92,9 @@ pub mod my_psp22_sale {
             self.metadata.name = Some(name);
             self.metadata.symbol = Some(symbol);
             self.metadata.decimals = decimal;
-            //self.token_mint_cap.cap = cap;
-            //self.token_mint_cap.minting_fee = minting_fee;
-            //self.token_mint_cap.minting_cap = minting_cap;
+            self.token_mint_cap.cap = cap;
+            self.token_mint_cap.minting_fee = minting_fee;
+            self.token_mint_cap.minting_cap = minting_cap;
 
             Ok(())
         }

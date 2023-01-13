@@ -12,10 +12,10 @@ use openbrush::{
         traits::psp34::*
     },
 };
-pub use crate::traits::error::Error;
+use crate::traits::error::Error;
 
 #[openbrush::wrapper]
-pub type ArtZeroAdminRef = dyn AdminTrait;
+pub type AdminRef = dyn AdminTrait;
 
 #[openbrush::wrapper]
 pub type Psp22Ref = dyn PSP22;

@@ -1,15 +1,14 @@
 pub use crate::{
     impls::admin::{
         data,
-        data::Data
+        data::Data,
+        data::*
     },
     traits::{
         admin::*,
-        //error::Error
+        error::Error
     }
 };
-
-pub use crate::traits::error::Error;
 
 use ink_prelude::{
     vec::Vec,
@@ -26,17 +25,14 @@ use openbrush::{
         String,
     },
     contracts::{
-        psp22,
-        psp22::*,
         traits::psp34::{
             Id,
         },
         ownable::*,
     },
 };
-//use crate::traits::psp34_standard::*;
 
-impl<T: Storage<data::Data> + Storage<ownable::Data>> AdminTrait for T
+impl<T: Storage<Data> + Storage<ownable::Data>> AdminTrait for T
 {
     #[modifiers(only_owner)]
     default fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {

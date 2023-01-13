@@ -30,9 +30,9 @@ pub mod nft_pool_generator {
     };
     use my_nft_pool::my_nft_pool::MyNFTPoolRef;
 
+    use inkwhale_project::traits::generic_pool_generator::Psp22Ref;
     use inkwhale_project::impls::generic_pool_generator::*;
-    use inkwhale_project::traits::generic_pool_generator::*;
-    //use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::admin::*;
 
     #[derive(Default, SpreadAllocate, Storage)]
     #[ink(storage)]
@@ -41,13 +41,13 @@ pub mod nft_pool_generator {
         ownable: ownable::Data,
         #[storage_field]
         manager: generic_pool_generator::data::Data,
-        //#[storage_field]
-        //admin_data: admin::data::Data
+        #[storage_field]
+        admin_data: admin::data::Data
     }
 
     impl Ownable for NFTPoolGenerator {}
     impl GenericPoolGeneratorTrait for NFTPoolGenerator {}
-    //impl AdminTrait for NFTPoolGenerator {}
+    impl AdminTrait for NFTPoolGenerator {}
 
     impl NFTPoolGenerator {
         #[ink(constructor)]
