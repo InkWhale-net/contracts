@@ -1,0 +1,1 @@
+export const PROVIDER_URL = 'wss://ws.test.azero.dev';
