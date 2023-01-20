@@ -3,8 +3,9 @@
 - [Inkwhale Technical Doc](#inkwhale-technical-doc)
   - [System Infrastructure](#system-infrastructure)
     - [The FrontEnd](#the-frontend)
-      - [Git Repos](#git-repos)
+      - [Git Repo](#git-repo)
     - [The Contracts](#the-contracts)
+      - [Git Repo](#git-repo-1)
       - [Token Sale Contract](#token-sale-contract)
       - [Token Contract](#token-contract)
       - [Token Generator Contract](#token-generator-contract)
@@ -12,9 +13,19 @@
       - [Pool Generator Contract](#pool-generator-contract)
       - [LP Pool Contract](#lp-pool-contract)
       - [LP Pool Generator Contract](#lp-pool-generator-contract)
-  - [Backend and APIs](#backend-and-apis)
+      - [NFT Pool Contract](#nft-pool-contract)
+      - [NFT Pool Generator Contract](#nft-pool-generator-contract)
+    - [Backend](#backend)
+      - [Git Repo](#git-repo-2)
+      - [APIs](#apis)
+        - [database.js](#databasejs)
+        - [api.js](#apijs)
+        - [pool.js](#pooljs)
 
 ## System Infrastructure
+
+![Alt text](assets/Infrastructure-architecture-diagram.jpg)
+
 Inkwhale Infrastructure contains 3 different components:
 
 - The FrontEnd
@@ -26,13 +37,19 @@ The front-end is the website interface that allows end-users to interact with th
 
 It is located at https://iw-fe.vercel.app/
 
-#### Git Repos
+#### Git Repo
 
 https://github.com/InkWhale-net/frontend/tree/fe-new-ui
 
 ### The Contracts
 
+![Alt text](assets/Inkwhale-system-architecture.jpg)
+
 This is the core component of the whole platform as end-users interact directly to the smart contracts on blockchain to create tokens/staking pools/ lp pools/nft pools and stake/unstake token/nft to/from pools.
+
+#### Git Repo
+
+https://github.com/InkWhale-net/contracts
 
 #### Token Sale Contract
 
@@ -60,7 +77,7 @@ It is the contract to manage each token info created by user. The created token 
 
 Is the contract to create token by users and manange all the token list.
 
-When user utilizes the token creation function in the frontend, it will call the new_token method in this contract which in turn calls the above Token Contract to create the new token. All the token info such as name, symbol, decimal, total supply, creator address and the created token contract address will be stored in the token_manager::data::Token structure and is saved into token_list to manage. The list will be used in frontend to show tokens created by users 
+When user utilizes the token creation function in the frontend, it will call the new_token method in this contract which in turn calls the above Token Contract to create the new token. All the token info such as name, symbol, decimal, total supply, creator address and the created token contract address will be stored in the token_manager::data::Token structure and is saved into token_list to manage. The list will be used in frontend to show tokens created by users. 
 
 ```
 pub struct Token {
@@ -76,9 +93,9 @@ pub struct Token {
 
 #### Pool Contract
 
-It is the contract for staking pool. User will stake the pool token, get reward in APY during a specific duration of the pool and can unstake with a fee by WAL token. Owner of the pool can top up or withdraw reward in the pool.
+It is the contract for staking pool. User will stake the pool token, get rewards in APY during a specific duration of the pool and can unstake with a fee by WAL token. Owner of the pool can top up or withdraw rewards in the pool.
 
-Its main data is described in the generic_pool_contract::data::Data struct, the common struct used for staking/lp/nft pool (mentioned later) as belows
+Its main data is described in the generic_pool_contract::data::Data struct, the common struct used for staking/lp/nft pool (mentioned later) as below
 
 ```
 pub struct Data {
@@ -101,7 +118,7 @@ staking_contract_address: is not used (only for lp and nft pool)
 psp22_contract_address: the address of pool token
 wal_contract: WAL token address
 multiplier: is used here as the APY for the staking pool
-stakers: staker list
+stakers: list of staker info (staked value, unclaimed reward, last reward update) 
 reward_pool: available reward in the pool
 total_staked: total amount of staking token
 duration: duration of the pool
@@ -115,7 +132,7 @@ Is the contract to create staking pool by users and manage all the staking pool 
 
 When user utilizes the staking pool creation function in the frontend with a creation fee, it will call the new_pool method in this contract which in turn calls the above Pool Contract to create the new staking pool. All the pool info will be saved into pool_list to manage. The list will be used in frontend to show staking pools created by users. 
 
-Its main data is described in the generic_pool_generator::data::Data struct, the common struct used for staking/lp/nft pool generator (mentioned later) as belows
+Its main data is described in the generic_pool_generator::data::Data struct, the common struct used for staking/lp/nft pool generator (mentioned later) as below
 
 ```
 pub struct Data {
@@ -147,14 +164,13 @@ pool_ids_last_index: total number of pool by use address
 
 #### LP Pool Contract
 
-It is the contract for LP pool of a token pair (staking and earning tokens). User will stake one token and get reward by mutipilier earning tokens/day during a specific duration of the pool and can unstake with a fee by WAL token. Owner of the pool can top up or withdraw reward in the pool.
+It is the contract for LP pool of a token pair (staking and earning tokens). User will stake one token and get rewards of mutipilier earning tokens/day during a specific duration of the pool and can unstake with a fee by WAL token. Owner of the pool can top up or withdraw rewards in the pool.
 
-Its main data is described in the generic_pool_contract::data::Data struct, the common struct used for staking/lp/nft pool as mentioned in the pool contract with some below notes:  
+Its main data is described in the generic_pool_contract::data::Data struct, the common struct used for staking/lp/nft pool as mentioned in the Pool Contract with some below notes:  
 
 ```
-staking_contract_address: the addres of earning token 
-psp22_contract_address: the address of staking token
-wal_contract: WAL token address
+staking_contract_address: the address of staking token 
+psp22_contract_address: the address of earning token
 multiplier: number of earning tokens per day
 ```
 
@@ -164,8 +180,57 @@ Is the contract to create LP pool by users and manage all the LP pool list.
 
 When user utilizes the LP pool creation function in the frontend with a creation fee, it will call the new_pool method in this contract which in turn calls the above LP Pool Contract to create the new LP pool. All the pool info will be saved into pool_list to manage. The list will be used in frontend to show LP pools created by users. 
 
-Its main data is described in the generic_pool_generator::data::Data struct, the common struct used for staking/lp/nft pool generator as mentioned in the pool generator contract
+Its main data is described in the generic_pool_generator::data::Data struct, the common struct used for staking/lp/nft pool generator as mentioned in the Pool Generator Contract.
 
-## Backend and APIs
+#### NFT Pool Contract
+
+It is the contract for NFT pool. User will stake NFT which follows PSP34 standard and get rewards of mutipilier earning tokens/day during a specific duration of the pool and can unstake with a fee by WAL token. Owner of the pool can top up or withdraw rewards in the pool.
+
+Its main data is described in the generic_pool_contract::data::Data struct, the common struct used for staking/lp/nft pool as mentioned in the Pool Contract with some below notes:  
+
+```
+staking_contract_address: the address of NFT 
+psp22_contract_address: the address of staking token
+multiplier: number of earning tokens per day
+```
+
+#### NFT Pool Generator Contract
+
+Is the contract to create NFT pool by users and manage all the NFT pool list.
+
+When user utilizes the NFT pool creation function in the frontend with a creation fee, it will call the new_pool method in this contract which in turn calls the above NFT Pool Contract to create the new NFT pool. All the pool info will be saved into pool_list to manage. The list will be used in frontend to show NFT pools created by users. 
+
+Its main data is described in the generic_pool_generator::data::Data struct, the common struct used for staking/lp/nft pool generator as mentioned in the Pool Generator Contract.
+
+### Backend
+
+The backend is the place to read and write data to the database, including: token, staking pools, LP pools, NFT pools and queue of requests to update the above data to database.
+
+The backend servers are in the private network zone
+It is located at https://api-dev.inkwhale.net
+
+#### Git Repo
+
+https://github.com/InkWhale-net/backend
+
+#### APIs
+
+Run as pm2 service on the backend server. These are the core files in the backend service:
+
+- database.js
+- api.js
+- pools.js
+
+##### database.js
+
+The backend uses MongoDB to keep all records mainly for front-end uses. All table structures can be found in this file.
+
+##### api.js
 
 Described in apis.md file
+
+##### pool.js
+
+Every second, the script will check the request queue and update tokens/staking pools/lp pools/nft pools.
+
+Every minute, the script also check if there are any new tokens, staking/lp/nft pools created and update to database.
