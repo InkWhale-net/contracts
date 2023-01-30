@@ -58,21 +58,17 @@ pub mod my_pool {
             assert!(duration > 0,"duration must > 0");
             ink_lang::codegen::initialize_contract(|instance: &mut MyPool| {
                 instance._init_with_owner(contract_owner);
-                instance.initialize(
-                    wal_contract,
-                    psp22_contract_address,
-                    apy,
-                    duration,
-                    start_time, 
-                    unstake_fee
-                )
-                .ok()
-                .unwrap();
+                instance.data.staking_contract_address = psp22_contract_address;
+                instance.data.psp22_contract_address = psp22_contract_address;
+                instance.data.multiplier = apy as u128;
+                instance.data.duration = duration;
+                instance.data.start_time = start_time;
+                instance.data.unstake_fee = unstake_fee;
+                instance.data.wal_contract = wal_contract;
             })
         }
 
         #[ink(message)]
-        #[modifiers(only_owner)]
         pub fn initialize(&mut self, wal_contract: AccountId, psp22_contract_address: AccountId, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             self.data.staking_contract_address = psp22_contract_address;

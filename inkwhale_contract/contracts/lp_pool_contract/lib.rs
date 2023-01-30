@@ -60,17 +60,13 @@ pub mod my_lp_pool {
             assert!(duration > 0,"duration must > 0");
             ink_lang::codegen::initialize_contract(|instance: &mut MyLPPool| {
                 instance._init_with_owner(contract_owner);
-                instance.initialize(
-                    wal_contract,
-                    lp_contract_address,
-                    psp22_contract_address,
-                    multiplier,
-                    duration,
-                    start_time,
-                    unstake_fee
-                )
-                .ok()
-                .unwrap();
+                instance.data.staking_contract_address = lp_contract_address;
+                instance.data.psp22_contract_address = psp22_contract_address;
+                instance.data.multiplier = multiplier as u128;
+                instance.data.duration = duration;
+                instance.data.start_time = start_time;
+                instance.data.unstake_fee = unstake_fee;
+                instance.data.wal_contract = wal_contract;
             })
         }
 
