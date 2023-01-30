@@ -10,16 +10,8 @@ use openbrush::{
     }
 };
 
-use ink_storage::{
-    traits::{
-        PackedLayout,
-        SpreadAllocate,
-        SpreadLayout,
-    }
-};
-
 #[derive(
-    Clone, Debug, Ord, PartialOrd, Eq, PartialEq, PackedLayout, SpreadLayout, scale::Encode, scale::Decode,
+    Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode,
 )]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct Token {

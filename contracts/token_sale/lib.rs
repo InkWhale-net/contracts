@@ -18,17 +18,12 @@ pub mod my_psp22_sale {
             DefaultEnv
         },
     };
-    use ink_storage::{
-        traits::{
-            SpreadAllocate,
-        },
-    };
 
     use inkwhale_project::impls::admin::*;
     use inkwhale_project::impls::token_mint_cap::*;
     
     #[ink(storage)]
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     pub struct MyPsp22 {
         #[storage_field]
         psp22: psp22::Data,
@@ -70,19 +65,21 @@ pub mod my_psp22_sale {
         pub fn new(contract_owner: AccountId, cap: Balance, minting_fee: Balance, minting_cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
             assert!(cap >= minting_cap,"invalid input cap");
 
-            ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
-                instance._init_with_owner(contract_owner);
-                instance.initialize(
-                    cap,
-                    minting_fee,
-                    minting_cap,
-                    name,
-                    symbol,
-                    decimal
-                )
-                .ok()
-                .unwrap();
-            })
+            let mut instance = Self::default();
+
+            instance._init_with_owner(contract_owner);
+            instance.initialize(
+                cap,
+                minting_fee,
+                minting_cap,
+                name,
+                symbol,
+                decimal
+            )
+            .ok()
+            .unwrap();
+            
+            instance
         }
 
         #[ink(message)]

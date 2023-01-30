@@ -3,18 +3,12 @@
 
 #[openbrush::contract]
 pub mod token_generator {
-    use ink_prelude::{
+    use ink::prelude::{
         vec::Vec,
     };
-    use ink_lang::ToAccountId;
-    use ink_env::CallFlags;
-    use ink_storage::{
-        traits::{
-            PackedLayout,
-            SpreadAllocate,
-            SpreadLayout,
-        },
-    };
+    use ink::ToAccountId;
+    use ink::env::CallFlags;
+
     use openbrush::{
         contracts::{
             ownable::*,
@@ -35,7 +29,7 @@ pub mod token_generator {
     use inkwhale_project::impls::token_manager::*;
     use inkwhale_project::impls::admin::*;
 
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     #[ink(storage)]
     pub struct TokenGenerator {
         #[storage_field]
@@ -55,16 +49,18 @@ pub mod token_generator {
     impl TokenGenerator {
         #[ink(constructor)]
         pub fn new(psp22_hash: Hash, wal_contract: AccountId, creation_fee: Balance, owner_address: AccountId) -> Self {
-            ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                instance._init_with_owner(owner_address);
-                instance.initialize(
-                    psp22_hash,
-                    wal_contract,
-                    creation_fee
-                )
-                .ok()
-                .unwrap();
-            })
+            let mut instance = Self::default();
+
+            instance._init_with_owner(owner_address);
+            instance.initialize(
+                psp22_hash,
+                wal_contract,
+                creation_fee
+            )
+            .ok()
+            .unwrap();
+            
+            instance
         }
 
         #[ink(message)]

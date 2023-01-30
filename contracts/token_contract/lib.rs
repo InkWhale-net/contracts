@@ -7,7 +7,6 @@ pub use self::my_psp22::{
 
 #[openbrush::contract]
 pub mod my_psp22 {
-    use ink_storage::traits::SpreadAllocate;
     use openbrush::{
         contracts::ownable::*,
         contracts::psp22::{
@@ -25,7 +24,7 @@ pub mod my_psp22 {
 
     use inkwhale_project::impls::admin::*;
 
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     #[ink(storage)]    
     pub struct MyPsp22 {
         #[storage_field]
@@ -64,14 +63,16 @@ pub mod my_psp22 {
     impl MyPsp22 {
         #[ink(constructor)]
         pub fn new(mint_to: AccountId, total_supply: Balance, name: String, symbol: String, decimal: u8) -> Self {
-            ink_lang::codegen::initialize_contract(|instance: &mut MyPsp22| {
-                instance
-                    ._mint_to(mint_to, total_supply)
-                    .expect("Should mint");
-                instance.metadata.name = Some(name);
-                instance.metadata.symbol = Some(symbol);
-                instance.metadata.decimals = decimal;
-            })
+            let mut instance = Self::default();
+
+            instance
+                ._mint_to(mint_to, total_supply)
+                .expect("Should mint");
+            instance.metadata.name = Some(name);
+            instance.metadata.symbol = Some(symbol);
+            instance.metadata.decimals = decimal;
+
+            instance
         }
 
         #[ink(message)]
