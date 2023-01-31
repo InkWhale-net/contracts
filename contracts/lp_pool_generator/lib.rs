@@ -3,17 +3,12 @@
 
 #[openbrush::contract]
 pub mod lp_pool_generator {
-    use ink_prelude::{
+    use ink::prelude::{
         vec::Vec,
     };
-    use ink_lang::ToAccountId;
-    use ink_env::CallFlags;
-    use ink_storage::{
-        traits::{
-            SpreadAllocate,
-            SpreadLayout,
-        }
-    };
+    use ink::ToAccountId;
+    use ink::env::CallFlags;
+
     use openbrush::{
         contracts::{
             ownable::*,
@@ -34,7 +29,7 @@ pub mod lp_pool_generator {
     use inkwhale_project::impls::generic_pool_generator::*;
     use inkwhale_project::impls::admin::*;
 
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     #[ink(storage)]
     pub struct LPPoolGenerator {
         #[storage_field]
@@ -52,17 +47,19 @@ pub mod lp_pool_generator {
     impl LPPoolGenerator {
         #[ink(constructor)]
         pub fn new(pool_hash: Hash, wal_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId,) -> Self {
-            ink_lang::codegen::initialize_contract(|instance: &mut Self| {
-                instance._init_with_owner(owner_address);
-                instance.initialize(
-                    pool_hash,
-                    wal_contract,
-                    creation_fee,
-                    unstake_fee
-                )
-                .ok()
-                .unwrap();
-            })
+            let mut instance = Self::default();
+
+            instance._init_with_owner(owner_address);
+            instance.initialize(
+                pool_hash,
+                wal_contract,
+                creation_fee,
+                unstake_fee
+            )
+            .ok()
+            .unwrap();
+
+            instance
         }
 
         #[ink(message)]

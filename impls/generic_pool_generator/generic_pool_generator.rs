@@ -10,7 +10,7 @@ pub use crate::{
     }
 };
 
-use ink_prelude::{
+use ink::prelude::{
     vec::Vec,
 };
 

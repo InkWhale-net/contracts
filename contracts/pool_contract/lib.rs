@@ -7,17 +7,11 @@ pub use self::my_pool::{
 
 #[openbrush::contract]
 pub mod my_pool {
-    use ink_prelude::{
+    use ink::prelude::{
         vec::Vec,
     };
-    use ink_env::CallFlags;
-    use ink_storage::{
-        traits::{
-            PackedLayout,
-            SpreadAllocate,
-            SpreadLayout,
-        }
-    };
+    use ink::env::CallFlags;
+
     use openbrush::{
         contracts::{
             ownable::*,
@@ -38,7 +32,7 @@ pub mod my_pool {
     use inkwhale_project::impls::admin::*;
 
     #[ink(storage)]
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     pub struct MyPool {
         #[storage_field]
         ownable: ownable::Data,
@@ -56,16 +50,18 @@ pub mod my_pool {
         #[ink(constructor)]
         pub fn new(contract_owner: AccountId, wal_contract: AccountId, psp22_contract_address: AccountId, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
             assert!(duration > 0,"duration must > 0");
-            ink_lang::codegen::initialize_contract(|instance: &mut MyPool| {
-                instance._init_with_owner(contract_owner);
-                instance.data.staking_contract_address = psp22_contract_address;
-                instance.data.psp22_contract_address = psp22_contract_address;
-                instance.data.multiplier = apy as u128;
-                instance.data.duration = duration;
-                instance.data.start_time = start_time;
-                instance.data.unstake_fee = unstake_fee;
-                instance.data.wal_contract = wal_contract;
-            })
+            let mut instance = Self::default();
+
+            instance._init_with_owner(contract_owner);
+            instance.data.staking_contract_address = psp22_contract_address;
+            instance.data.psp22_contract_address = psp22_contract_address;
+            instance.data.multiplier = apy as u128;
+            instance.data.duration = duration;
+            instance.data.start_time = start_time;
+            instance.data.unstake_fee = unstake_fee;
+            instance.data.wal_contract = wal_contract;
+        
+            instance
         }
 
         #[ink(message)]

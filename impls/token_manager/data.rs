@@ -10,10 +10,13 @@ use openbrush::{
     }
 };
 
+#[cfg(feature = "std")]
+use ink::storage::traits::StorageLayout;
+
 #[derive(
     Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode,
 )]
-#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+#[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct Token {
     pub name: String,
     pub symbol: String,

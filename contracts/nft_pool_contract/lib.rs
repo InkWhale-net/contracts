@@ -7,17 +7,11 @@ pub use self::my_nft_pool::{
 
 #[openbrush::contract]
 pub mod my_nft_pool {
-    use ink_prelude::{
+    use ink::prelude::{
         vec::Vec,
     };
-    use ink_env::CallFlags;
-    use ink_storage::{
-        traits::{
-            PackedLayout,
-            SpreadAllocate,
-            SpreadLayout,
-        }
-    };
+    use ink::env::CallFlags;
+
     use openbrush::{
         contracts::{
             ownable::*,
@@ -39,7 +33,7 @@ pub mod my_nft_pool {
     use inkwhale_project::impls::nft_staking_list::*;
 
     #[ink(storage)]
-    #[derive(Default, SpreadAllocate, Storage)]
+    #[derive(Default, Storage)]
     pub struct MyNFTPool {
         #[storage_field]
         ownable: ownable::Data,
@@ -61,16 +55,18 @@ pub mod my_nft_pool {
         pub fn new(contract_owner: AccountId, wal_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
             assert!(multiplier > 0,"multiplier must > 0");
             assert!(duration > 0,"duration must > 0");
-            ink_lang::codegen::initialize_contract(|instance: &mut MyNFTPool| {
-                instance._init_with_owner(contract_owner);
-                instance.data.staking_contract_address = psp34_contract_address;
-                instance.data.psp22_contract_address = psp22_contract_address;
-                instance.data.multiplier = multiplier;
-                instance.data.duration = duration;
-                instance.data.start_time = start_time;
-                instance.data.unstake_fee = unstake_fee;
-                instance.data.wal_contract = wal_contract;
-            })
+            let mut instance = Self::default();
+
+            instance._init_with_owner(contract_owner);
+            instance.data.staking_contract_address = psp34_contract_address;
+            instance.data.psp22_contract_address = psp22_contract_address;
+            instance.data.multiplier = multiplier;
+            instance.data.duration = duration;
+            instance.data.start_time = start_time;
+            instance.data.unstake_fee = unstake_fee;
+            instance.data.wal_contract = wal_contract;
+
+            instance
         }
 
         #[ink(message)]
