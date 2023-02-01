@@ -27,10 +27,12 @@ pub mod my_nft_pool {
 
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;
     use inkwhale_project::traits::generic_pool_contract::Psp34Ref;
-    use inkwhale_project::impls::generic_pool_contract::*;
-    use inkwhale_project::impls::admin::*;
-
-    use inkwhale_project::impls::nft_staking_list::*;
+    use inkwhale_project::impls::{
+        generic_pool_contract::*,
+        nft_staking_list::*,
+        admin::*,
+        upgradeable::*
+    };
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -42,13 +44,16 @@ pub mod my_nft_pool {
         #[storage_field]
         staking_list_data: nft_staking_list::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data
+        admin_data: admin::data::Data,
+        #[storage_field]
+        upgradeable_data: upgradeable::data::Data
     }
 
     impl Ownable for MyNFTPool {}
     impl GenericPoolContractTrait for MyNFTPool {}
     impl NftStakingListTrait for MyNFTPool {}
     impl AdminTrait for MyNFTPool {}
+    impl UpgradeableTrait for MyNFTPool {}
 
     impl MyNFTPool {
         #[ink(constructor)]

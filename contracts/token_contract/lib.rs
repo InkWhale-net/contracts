@@ -22,7 +22,10 @@ pub mod my_psp22 {
         },
     };
 
-    use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::{
+        admin::*,
+        upgradeable::*
+    };
 
     #[derive(Default, Storage)]
     #[ink(storage)]    
@@ -34,7 +37,9 @@ pub mod my_psp22 {
         #[storage_field]
         metadata: metadata::Data,
         #[storage_field]
-        admin_data: admin::data::Data
+        admin_data: admin::data::Data,
+        #[storage_field]
+        upgradeable_data: upgradeable::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
@@ -59,6 +64,7 @@ pub mod my_psp22 {
     impl Ownable for MyPsp22 {}
 
     impl AdminTrait for MyPsp22 {}
+    impl UpgradeableTrait for MyPsp22 {}
 
     impl MyPsp22 {
         #[ink(constructor)]

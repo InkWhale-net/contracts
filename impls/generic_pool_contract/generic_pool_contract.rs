@@ -85,6 +85,8 @@ where
         assert!(self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).unwrap() <= Self::env().block_timestamp(),"not time to withdraw");
         assert!(amount <= self.data::<Data>().reward_pool, "not enough balance to withdraw");
 
+        self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_sub(amount).unwrap();
+
         assert!(Psp22Ref::transfer(
             &self.data::<Data>().psp22_contract_address,
             Self::env().caller(),

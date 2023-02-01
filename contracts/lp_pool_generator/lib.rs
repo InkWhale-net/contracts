@@ -26,8 +26,11 @@ pub mod lp_pool_generator {
     use my_lp_pool::my_lp_pool::MyLPPoolRef;
 
     use inkwhale_project::traits::generic_pool_generator::Psp22Ref;
-    use inkwhale_project::impls::generic_pool_generator::*;
-    use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::{
+        generic_pool_generator::*,
+        admin::*,
+        upgradeable::*
+    };
 
     #[derive(Default, Storage)]
     #[ink(storage)]
@@ -37,12 +40,15 @@ pub mod lp_pool_generator {
         #[storage_field]
         manager: generic_pool_generator::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data
+        admin_data: admin::data::Data,
+        #[storage_field]
+        upgradeable_data: upgradeable::data::Data
     }
 
     impl Ownable for LPPoolGenerator {}
     impl GenericPoolGeneratorTrait for LPPoolGenerator {}
     impl AdminTrait for LPPoolGenerator {}
+    impl UpgradeableTrait for LPPoolGenerator {}
 
     impl LPPoolGenerator {
         #[ink(constructor)]

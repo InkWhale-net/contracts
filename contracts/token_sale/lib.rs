@@ -19,8 +19,11 @@ pub mod my_psp22_sale {
         },
     };
 
-    use inkwhale_project::impls::admin::*;
-    use inkwhale_project::impls::token_mint_cap::*;
+    use inkwhale_project::impls::{
+        token_mint_cap::*,
+        admin::*,
+        upgradeable::*
+    };        
     
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -34,7 +37,9 @@ pub mod my_psp22_sale {
         #[storage_field]
         token_mint_cap: token_mint_cap::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data
+        admin_data: admin::data::Data,
+        #[storage_field]
+        upgradeable_data: upgradeable::data::Data
     }
 
     impl PSP22 for MyPsp22 {}
@@ -59,6 +64,7 @@ pub mod my_psp22_sale {
 
     impl TokenMintCapTrait for MyPsp22 {}  
     impl AdminTrait for MyPsp22 {}
+    impl UpgradeableTrait for MyPsp22 {}
     
     impl MyPsp22 {
         #[ink(constructor)]

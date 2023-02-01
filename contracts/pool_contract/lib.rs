@@ -28,8 +28,11 @@ pub mod my_pool {
     };
 
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;
-    use inkwhale_project::impls::generic_pool_contract::*;
-    use inkwhale_project::impls::admin::*;
+    use inkwhale_project::impls::{
+        generic_pool_contract::*,
+        admin::*,
+        upgradeable::*
+    };
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -39,12 +42,15 @@ pub mod my_pool {
         #[storage_field]
         data: generic_pool_contract::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data
+        admin_data: admin::data::Data,
+        #[storage_field]
+        upgradeable_data: upgradeable::data::Data
     }
 
     impl Ownable for MyPool {}
     impl GenericPoolContractTrait for MyPool {}
     impl AdminTrait for MyPool {}
+    impl UpgradeableTrait for MyPool {}
 
     impl MyPool {
         #[ink(constructor)]
