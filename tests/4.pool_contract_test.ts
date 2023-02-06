@@ -82,7 +82,7 @@ describe('Pool contract test', () => {
         await setup();
     });
     
-    it('Add reward, stake, unstake, claim work', async () => {
+    it('Add reward, stake, claim, unstake work', async () => {
         // Faucet 1000 token for Bob if needed
         let bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
         // console.log("bobTokenBalance ", bobTokenBalance);

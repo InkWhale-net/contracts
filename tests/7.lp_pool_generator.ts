@@ -1,15 +1,15 @@
 import { provider, expect, getSigners, checkAccountsBalance, setGasLimit} from './helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsTokenGenerator from './typed_contracts/constructors/token_generator';
-import ContractTokenGenerator from './typed_contracts/contracts/token_generator';
+import ConstructorsLpPoolGenerator from './typed_contracts/constructors/lp_pool_generator';
+import ContractLpPoolGenerator from './typed_contracts/contracts/lp_pool_generator';
 
 import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
-import myPsp22 from './artifacts/my_psp22.json';
+import myLpPool from './artifacts/my_lp_pool.json';
 
 import { BN } from '@polkadot/util';
 
-describe('Token generator test', () => {
+describe('Pool generator test', () => {
     let api: any;
     let signers: any;
     let defaultSigner: any;
@@ -23,9 +23,10 @@ describe('Token generator test', () => {
 
     let walContract: any;
 
-    let psp22Hash: string;
+    let poolHash: string;
     let walContractAddress: string;
     let creationFee: string;
+    let unstakeFee: string;
 
     async function setup() {
         api = await ApiPromise.create({ provider });
@@ -37,19 +38,21 @@ describe('Token generator test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        psp22Hash = myPsp22.source.hash;
+        poolHash = myLpPool.source.hash;
         walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        creationFee = "3000000000000"; // 3 INW      
-
+        creationFee = "5000000000000"; // 5 INW      
+        unstakeFee = "10000000000000"; // 10 INW      
+        
         let gasLimit = setGasLimit(api, 1_000_000_000, 0);
                 
-        const contractFactory = new ConstructorsTokenGenerator(api, defaultSigner);
+        const contractFactory = new ConstructorsLpPoolGenerator(api, defaultSigner);
 
         contractAddress = (
             await contractFactory.new(                
-                psp22Hash,
+                poolHash,
                 walContractAddress,
                 creationFee,
+                unstakeFee,
                 defaultSigner.address,
                 {gasLimit}
             )
@@ -57,7 +60,7 @@ describe('Token generator test', () => {
 
         // console.log("contractAddress =", contractAddress);
 
-        contract = new ContractTokenGenerator(contractAddress, defaultSigner, api);    
+        contract = new ContractLpPoolGenerator(contractAddress, defaultSigner, api);    
   
         query = contract.query;
         tx = contract.tx;
@@ -70,18 +73,21 @@ describe('Token generator test', () => {
         await setup();
     });
     
-    it('Check general info of token generator', async () => {
-        let rContractHash = (await query.getContractHash()).value.ok;       
-        expect(rContractHash).to.equal(psp22Hash);
+    it('Check general info of lp pool generator', async () => {
+        let rPoolHash = (await query.getPoolHash()).value.ok;       
+        expect(rPoolHash).to.equal(poolHash);
         
         let rWalContractAddress = (await query.getWalContract()).value.ok;     
         expect(rWalContractAddress).to.equal(walContractAddress);
 
         let rCreationFee = (await query.getCreationFee()).value.ok.toString();
-        expect(rCreationFee).to.equal(creationFee);       
+        expect(rCreationFee).to.equal(creationFee);
+        
+        let rUnstakeFee = (await query.getUnstakeFee()).value.ok.toString();
+        expect(rUnstakeFee).to.equal(unstakeFee);
     });
 
-    it('Can create tokens', async () => {   
+    it('Can create lp pools', async () => {   
         // Alice, Bob mint 1000 INW
         
         // Step 1: Get mintingFee
@@ -129,43 +135,50 @@ describe('Token generator test', () => {
             creationFee
         );
         
-        // Step 4: Alice, Bob create their tokens
-        // console.log("Create tokens...");
-        // Token1: AAA, 200M, minto: Alice
-        let totalSupply1 = "200000000000000000000"; // 200M
-        let name1 = "AAA";
-        let symbol1 = "AAA";
-        let decimal1 = 12;
-        await contract.withSigner(alice).tx.newToken(
+        // Step 4: Alice, Bob create their lp pools
+        // console.log("Create pools...");
+        // Alice creates lp pool for staking token: AAA and earning token: XYZ
+    
+        let stakingTokenAddress1 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        let earningTokenAddress1 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        let multiplier1 = "3000000000000"; // Reward 3 earning token/ 1 staking token/ day
+        let duration1 = "7776000000";
+        let startTime1 = new Date().getTime();
+        
+        await contract.withSigner(alice).tx.newPool(
             alice.address,
-            totalSupply1,
-            name1 as unknown as string[],
-            symbol1 as unknown as string[],
-            decimal1
+            stakingTokenAddress1,
+            earningTokenAddress1,
+            multiplier1,
+            duration1,
+            startTime1
         );
 
-        // Token2: XYZ, 10M, minto: Bob
-        let totalSupply2 = "10000000000000000000"; // 10M
-        let name2 = "XYZ";
-        let symbol2 = "XYZ";
-        let decimal2 = 12;
-        await contract.withSigner(bob).tx.newToken(
+        // Bob creates pool for token2: XYZ
+        let stakingTokenAddress2 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        let earningTokenAddress2 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        let multiplier2 = "4000000000000"; // Reward 4 earning token/ 1 staking token/ day
+        let duration2 = "5184000000";
+        let startTime2 = new Date().getTime();
+
+        await contract.withSigner(bob).tx.newPool(
             bob.address,
-            totalSupply2,
-            name2 as unknown as string[],
-            symbol2 as unknown as string[],
-            decimal2
+            stakingTokenAddress2,
+            earningTokenAddress2,
+            multiplier2,
+            duration2,
+            startTime2
         );
         
-        // Step 5: Check token count
-        let tokenCount = (await query.getTokenCount()).value.ok;
-        expect(tokenCount).to.equal(2);
+        // Step 5: Check pool count
+        let poolCount = (await query.getPoolCount()).value.ok;
+        expect(poolCount).to.equal(2);
 
-        let token1 = (await query.getTokenInfo(1)).value.ok;
-        // console.log("token1 ", token1); 
+        let pool1 = (await query.getPool(1)).value.ok;
+        // console.log("pool1 ", pool1); 
         
-        let token2 = (await query.getTokenInfo(2)).value.ok;
-        // console.log("token2 ", token2);   
+        let pool2 = (await query.getPool(2)).value.ok;
+        // console.log("pool2 ", pool2);   
     });
     
     after(async () => {
