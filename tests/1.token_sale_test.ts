@@ -1,12 +1,12 @@
-import { provider, expect, getSigners, checkAccountsBalance, decodeToBytes, toString, setGasLimit} from '../helpers';
+import { provider, expect, getSigners, checkAccountsBalance, decodeToBytes, toString, setGasLimit} from './helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsMyPsp22 from '../typed_contracts/constructors/my_psp22';
-import ContractMyPsp22 from '../typed_contracts/contracts/my_psp22';
+import ConstructorsMyPsp22Sale from './typed_contracts/constructors/my_psp22_sale';
+import ContractMyPsp22Sale from './typed_contracts/contracts/my_psp22_sale';
 
 import { BN } from '@polkadot/util';
 
-describe('Token contract test', () => {
+describe('Token sale test', () => {
     let api: any;
     let signers: any;
     let defaultSigner: any;
@@ -18,7 +18,9 @@ describe('Token contract test', () => {
     let query: any;
     let tx: any;
 
-    let totalSupply: string;
+    let cap: string;
+    let mintingFee: string;
+    let mintingCap: string;
     let name: string;
     let symbol: string;
     let decimal: number;
@@ -33,20 +35,23 @@ describe('Token contract test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        totalSupply = "200000000000000000000"; // 200M
-        name = "ABC";
-        symbol = "ABC";
-        decimal = 12;      
-        
-        // 734697897
+        cap = "100000000000000000000"; // 100M
+        mintingFee = "20000000000"; // 0.02 ZERO
+        mintingCap = "10000000000000000000"; // 10M       
+        name = "INW";
+        symbol = "INW";
+        decimal = 12;
+
         let gasLimit = setGasLimit(api, 6_800_000_000, 0);
-        
-        const contractFactory = new ConstructorsMyPsp22(api, defaultSigner);
-        
+                
+        const contractFactory = new ConstructorsMyPsp22Sale(api, defaultSigner);
+
         contractAddress = (
             await contractFactory.new(
                 defaultSigner.address,
-                totalSupply,
+                cap,
+                mintingFee,
+                mintingCap,
                 name as unknown as string[],
                 symbol as unknown as string[],
                 decimal,
@@ -54,19 +59,29 @@ describe('Token contract test', () => {
             )
         ).address;
 
-        console.log("contractAddress =", contractAddress);
+        // console.log("contractAddress =", contractAddress);
 
-        contract = new ContractMyPsp22(contractAddress, defaultSigner, api);    
+        contract = new ContractMyPsp22Sale(contractAddress, defaultSigner, api);    
+  
         query = contract.query;
         tx = contract.tx;
     };
 
     before(async () => {
-        console.log("Start");
+        // console.log("Start");
         await setup();
     });
     
-    it('Check metadata and receiver balance', async () => {   
+    it('Check metadata', async () => {   
+        let rCap = (await query.cap()).value.ok!.rawNumber.toString();
+        expect(rCap).to.equal(cap);
+
+        let rMintingFee = (await query.mintingFee()).value.ok!.rawNumber.toString();
+        expect(rMintingFee).to.equal(mintingFee);
+
+        let rMintingCap = (await query.mintingCap()).value.ok!.rawNumber.toString();
+        expect(rMintingCap).to.equal(mintingCap);
+
         let encodedName = (await query.tokenName()).value.ok!.toString();
         let nameBytes: number[] = decodeToBytes(encodedName);
         let rName: string = toString(nameBytes);         
@@ -79,30 +94,31 @@ describe('Token contract test', () => {
 
         let rDecimal = (await query.tokenDecimals()).value.ok;         
         expect(rDecimal).to.equal(decimal);    
-        
-        let rTotalSupply = (await query.totalSupply()).value.ok!.rawNumber.toString();
-        expect(rTotalSupply).to.equal(totalSupply);
-
-        let receiver = defaultSigner;
-        let balance = (await query.balanceOf(receiver.address)).value.ok!.rawNumber.toString();
-        expect(balance).to.equal(totalSupply);     
     });
 
-    it('Faucet works', async () => { 
+    it('Can publish mint', async () => {   
         let balance1 = (await query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
         
-        await contract.withSigner(alice).tx.faucet(); 
+        let amount = "400000000000000"; // 400 INW
+        let fee = new BN(amount).div(new BN(10 ** 12)).mul(new BN(mintingFee));
+        // console.log("fee = ", fee.toString());
+        
+        // console.log("contract = ", contract);
+        await contract.withSigner(alice).tx.publicMint(
+            amount,
+            {value: fee.toString()}
+        ); 
         
         let balance2 = (await query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
 
-        console.log("balance1 = ", balance1, "balance2 = ", balance2);
+        // console.log("balance1 = ", balance1, "balance2 = ", balance2);
         const gain = new BN(balance2).sub(new BN(balance1));
-
-        expect(gain.toString()).to.equal("1000000000000000");
+        
+        expect(gain.toString()).to.equal(amount);
     });
-
+    
     after(async () => {
         // api.disconnect();
-        console.log("End");
+        // console.log("End");
     });
 });
