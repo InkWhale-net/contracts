@@ -1,8 +1,8 @@
 import { provider, expect, getSigners, checkAccountsBalance, setGasLimit, delay} from './helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsMyPool from './typed_contracts/constructors/my_pool';
-import ContractMyPool from './typed_contracts/contracts/my_pool';
+import ConstructorsLpPool from './typed_contracts/constructors/my_lp_pool';
+import ContractLpPool from './typed_contracts/contracts/my_lp_pool';
 
 import ContractTokenContract from './typed_contracts/contracts/my_psp22';
 import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
@@ -11,7 +11,7 @@ import myPsp22 from './artifacts/my_psp22.json';
 
 import { BN } from '@polkadot/util';
 
-describe('Pool contract test', () => {
+describe('Lp pool contract test', () => {
     let api: any;
     let signers: any;
     let defaultSigner: any;
@@ -24,11 +24,13 @@ describe('Pool contract test', () => {
     let tx: any;
 
     let walContract: any;
-    let tokenContract: any;
+    let stakingTokenContract: any;
+    let earningTokenContract: any;
 
     let walContractAddress: string;
-    let psp22ContractAddress: string;
-    let apy: string;
+    let stakingTokenAddress: string;
+    let earningTokenAddress: string;
+    let multiplier: string;
     let duration: string;
     let startTime: number;
     let unstakeFee: string;
@@ -44,22 +46,24 @@ describe('Pool contract test', () => {
         await checkAccountsBalance(signers, api);
 
         walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        psp22ContractAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // AAA token 
-        apy = "2000"; // 20%. Scaled by 100
-        duration = "5184000000"; // 60 days
-        startTime = new Date().getTime(); // Current time
-        unstakeFee = "8000000000000"; // 8 INW      
+        stakingTokenAddress = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        earningTokenAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        multiplier = "3000000"; // Scaled by 10^6. Reward 3 earning token/ 1 staking token/ day
+        duration = "7776000000";
+        startTime = new Date().getTime(); 
+        unstakeFee = "10000000000000"; // 10 INW          
              
-        let gasLimit = setGasLimit(api, 1_000_000_000, 0);
+        let gasLimit = setGasLimit(api, 1_200_000_000, 0);
         
-        const contractFactory = new ConstructorsMyPool(api, defaultSigner);
+        const contractFactory = new ConstructorsLpPool(api, defaultSigner);
         
         contractAddress = (
             await contractFactory.new(
                 defaultSigner.address,
                 walContractAddress,
-                psp22ContractAddress,
-                apy,
+                stakingTokenAddress,
+                earningTokenAddress,
+                multiplier,
                 duration,
                 startTime,
                 unstakeFee,
@@ -69,11 +73,13 @@ describe('Pool contract test', () => {
 
         // console.log("contractAddress =", contractAddress);
 
-        contract = new ContractMyPool(contractAddress, defaultSigner, api);    
+        contract = new ContractLpPool(contractAddress, defaultSigner, api);    
         query = contract.query;
         tx = contract.tx;
 
-        tokenContract = new ContractTokenContract(psp22ContractAddress, defaultSigner, api);
+        stakingTokenContract = new ContractTokenContract(stakingTokenAddress, defaultSigner, api);
+        earningTokenContract = new ContractTokenContract(earningTokenAddress, defaultSigner, api);
+        
         walContract = new ContractWalContract(walContractAddress, defaultSigner, api);
     };
 
@@ -83,21 +89,10 @@ describe('Pool contract test', () => {
     });
     
     it('Add reward, stake, claim, unstake work', async () => {
-        // Faucet 1000 token for Bob if needed
-        let bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
-        // console.log("bobTokenBalance ", bobTokenBalance);
-
-        if (new BN(bobTokenBalance).cmp(new BN("100000000000000")) == -1) { // Compare with 100 token
-            await tokenContract.withSigner(bob).tx.faucet(); 
-        
-            bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
-            // console.log("bobTokenBalanceAft = ", bobTokenBalance);
-        }        
-
         // Alice approves and topups reward
-        let rewardAmount = "1000000000000000" // 1000 token
+        let rewardAmount = "1000000000000000" // 1000 earning token (AAA)
         // Approve
-        await tokenContract.withSigner(alice).tx.approve(
+        await earningTokenContract.withSigner(alice).tx.approve(
             contractAddress,
             rewardAmount
         );
@@ -110,8 +105,8 @@ describe('Pool contract test', () => {
  
         // Bob operates  
         // Stake
-        let bobStakeAmount = "100000000000000"; // 100 Token
-        await tokenContract.withSigner(bob).tx.approve(
+        let bobStakeAmount = "100000000000000"; // 100 staking token
+        await stakingTokenContract.withSigner(bob).tx.approve(
             contractAddress,
             bobStakeAmount
         );
@@ -126,12 +121,15 @@ describe('Pool contract test', () => {
         // Claim rewards
         await delay(3000);
 
-        bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+        let bobTokenBalance = (await earningTokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+        // console.log("bobTokenBalance =", bobTokenBalance);
+
         await contract.withSigner(bob).tx.claimReward();
+
         stakeInfo = (await query.getStakeInfo(bob.address)).value.ok;
         // console.log("stakeInfo after claiming reward = ", stakeInfo);
 
-        let bobTokenBalanceAft = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+        let bobTokenBalanceAft = (await earningTokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
         
         const gain = new BN(bobTokenBalanceAft).sub(new BN(bobTokenBalance));
         // console.log("gain =", gain.toString());

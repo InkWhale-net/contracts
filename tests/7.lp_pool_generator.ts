@@ -9,7 +9,7 @@ import myLpPool from './artifacts/my_lp_pool.json';
 
 import { BN } from '@polkadot/util';
 
-describe('Pool generator test', () => {
+describe('Lp pool generator test', () => {
     let api: any;
     let signers: any;
     let defaultSigner: any;
