@@ -1,16 +1,16 @@
 import { provider, expect, getSigners, checkAccountsBalance, setGasLimit} from './helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsLpPoolGenerator from './typed_contracts/constructors/lp_pool_generator';
-import ContractLpPoolGenerator from './typed_contracts/contracts/lp_pool_generator';
+import ConstructorsNftPoolGenerator from './typed_contracts/constructors/nft_pool_generator';
+import ContractNftPoolGenerator from './typed_contracts/contracts/nft_pool_generator';
 
 import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
-import myLpPool from './artifacts/my_lp_pool.json';
+import myNftPool from './artifacts/my_nft_pool.json';
 
 import { BN } from '@polkadot/util';
 
-describe('Lp pool generator test', () => {
-    let api: any;
+describe('Nft pool generator test', () => {
+    let api: any; 
     let signers: any;
     let defaultSigner: any;
     let alice: any;
@@ -38,14 +38,14 @@ describe('Lp pool generator test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        poolHash = myLpPool.source.hash;
+        poolHash = myNftPool.source.hash;
         walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        creationFee = "5000000000000"; // 5 INW      
-        unstakeFee = "10000000000000"; // 10 INW      
+        creationFee = "6000000000000"; // 6 INW      
+        unstakeFee = "12000000000000"; // 12 INW      
         
         let gasLimit = setGasLimit(api, 1_000_000_000, 0);
                 
-        const contractFactory = new ConstructorsLpPoolGenerator(api, defaultSigner);
+        const contractFactory = new ConstructorsNftPoolGenerator(api, defaultSigner);
 
         contractAddress = (
             await contractFactory.new(                
@@ -60,7 +60,7 @@ describe('Lp pool generator test', () => {
 
         // console.log("contractAddress =", contractAddress);
 
-        contract = new ContractLpPoolGenerator(contractAddress, defaultSigner, api);    
+        contract = new ContractNftPoolGenerator(contractAddress, defaultSigner, api);    
   
         query = contract.query;
         tx = contract.tx;
@@ -73,7 +73,7 @@ describe('Lp pool generator test', () => {
         await setup();
     });
     
-    it('Check general info of lp pool generator', async () => {
+    it('Check general info of nft pool generator', async () => {
         let rPoolHash = (await query.getPoolHash()).value.ok;       
         expect(rPoolHash).to.equal(poolHash);
         
@@ -87,7 +87,7 @@ describe('Lp pool generator test', () => {
         expect(rUnstakeFee).to.equal(unstakeFee);
     });
 
-    it('Can create lp pools', async () => {   
+    it('Can create nft pools', async () => {   
         // Alice, Bob mint 1000 INW
         
         // Step 1: Get mintingFee
@@ -135,35 +135,35 @@ describe('Lp pool generator test', () => {
             creationFee
         );
         
-        // Step 4: Alice, Bob create their lp pools
+        // Step 4: Alice, Bob create their nft pools
         // console.log("Create pools...");
-        // Alice creates lp pool for staking token: XYZ and earning token: AAA
+        // Alice creates nft pool with earning token: XYZ
     
-        let stakingTokenAddress1 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        let nftAddress1 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; 
         let earningTokenAddress1 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
-        let multiplier1 = "3000000"; // Scaled 10^6. Reward 3 earning token/ 1 staking token/ day
+        let multiplier1 = "3000000000000"; // Scaled by 10 ** earningToken decimal. Reward 3 earning token/ 1 staking token/ day
         let duration1 = "7776000000";
         let startTime1 = new Date().getTime();
         
         await contract.withSigner(alice).tx.newPool(
             alice.address,
-            stakingTokenAddress1,
+            nftAddress1,
             earningTokenAddress1,
             multiplier1,
             duration1,
             startTime1
         );
 
-        // Bob creates lp pool for staking token: AAA and earning token: XYZ
-        let stakingTokenAddress2 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        // Bob creates pool for token2: XYZ
+        let nftAddress2 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; 
         let earningTokenAddress2 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
-        let multiplier2 = "4000000"; // Scaled 10^6. Reward 4 earning token/ 1 staking token/ day
+        let multiplier2 = "4000000000000"; // Reward 4 earning token/ 1 staking token/ day
         let duration2 = "5184000000";
         let startTime2 = new Date().getTime();
 
         await contract.withSigner(bob).tx.newPool(
             bob.address,
-            stakingTokenAddress2,
+            nftAddress2,
             earningTokenAddress2,
             multiplier2,
             duration2,

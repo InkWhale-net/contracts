@@ -7,8 +7,6 @@ import ContractLpPool from './typed_contracts/contracts/my_lp_pool';
 import ContractTokenContract from './typed_contracts/contracts/my_psp22';
 import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
 
-import myPsp22 from './artifacts/my_psp22.json'; 
-
 import { BN } from '@polkadot/util';
 
 describe('Lp pool contract test', () => {
