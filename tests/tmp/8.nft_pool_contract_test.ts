@@ -1,15 +1,16 @@
-import { provider, expect, getSigners, checkAccountsBalance, setGasLimit, delay} from './helpers';
+import { provider, expect, getSigners, checkAccountsBalance, setGasLimit, delay} from '../helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsLpPool from './typed_contracts/constructors/my_lp_pool';
-import ContractLpPool from './typed_contracts/contracts/my_lp_pool';
+import ConstructorsNftPool from './typed_contracts/constructors/my_nft_pool';
+import ContractNftPool from './typed_contracts/contracts/my_nft_pool';
 
 import ContractTokenContract from './typed_contracts/contracts/my_psp22';
+import ContractNftContract from './typed_contracts/contracts/psp34_nft';
 import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
 
 import { BN } from '@polkadot/util';
 
-describe('Lp pool contract test', () => {
+describe('Nft pool contract test', () => {
     let api: any;
     let signers: any;
     let defaultSigner: any;
@@ -22,11 +23,11 @@ describe('Lp pool contract test', () => {
     let tx: any;
 
     let walContract: any;
-    let stakingTokenContract: any;
+    let nftContract: any;
     let earningTokenContract: any;
 
     let walContractAddress: string;
-    let stakingTokenAddress: string;
+    let nftAddress: string;
     let earningTokenAddress: string;
     let multiplier: string;
     let duration: string;
@@ -44,22 +45,22 @@ describe('Lp pool contract test', () => {
         await checkAccountsBalance(signers, api);
 
         walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        stakingTokenAddress = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        nftAddress = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // TODO: Need to add a real nft collection address 
         earningTokenAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
-        multiplier = "3000000"; // Scaled by 10^6. Reward 3 earning token/ 1 staking token/ day
+        multiplier = "3000000000000"; // Scaled by 10 ** earning token decimal. Reward 3 earning token/ 1 staking token/ day
         duration = "7776000000";
         startTime = new Date().getTime(); 
-        unstakeFee = "10000000000000"; // 10 INW          
+        unstakeFee = "12000000000000"; // 12 INW          
              
         let gasLimit = setGasLimit(api, 1_200_000_000, 0);
         
-        const contractFactory = new ConstructorsLpPool(api, defaultSigner);
+        const contractFactory = new ConstructorsNftPool(api, defaultSigner);
         
         contractAddress = (
             await contractFactory.new(
                 defaultSigner.address,
                 walContractAddress,
-                stakingTokenAddress,
+                nftAddress,
                 earningTokenAddress,
                 multiplier,
                 duration,
@@ -71,11 +72,11 @@ describe('Lp pool contract test', () => {
 
         // console.log("contractAddress =", contractAddress);
 
-        contract = new ContractLpPool(contractAddress, defaultSigner, api);    
+        contract = new ContractNftPool(contractAddress, defaultSigner, api);    
         query = contract.query;
         tx = contract.tx;
 
-        stakingTokenContract = new ContractTokenContract(stakingTokenAddress, defaultSigner, api);
+        nftContract = new ContractNftContract(nftAddress, defaultSigner, api);
         earningTokenContract = new ContractTokenContract(earningTokenAddress, defaultSigner, api);
         
         walContract = new ContractWalContract(walContractAddress, defaultSigner, api);
@@ -103,18 +104,19 @@ describe('Lp pool contract test', () => {
  
         // Bob operates  
         // Stake
-        let bobStakeAmount = "100000000000000"; // 100 staking token
-        await stakingTokenContract.withSigner(bob).tx.approve(
+        let bobStakedTokenId = "1"; // Nft id 1
+        await nftContract.withSigner(bob).tx.approve(
             contractAddress,
-            bobStakeAmount
+            bobStakedTokenId,
+            true
         );
 
-        await contract.withSigner(bob).tx.stake(bobStakeAmount);
+        await contract.withSigner(bob).tx.stake(bobStakedTokenId);
 
         let stakeInfo = (await query.getStakeInfo(bob.address)).value.ok;
         // console.log("stakeInfo = ", stakeInfo);
 
-        expect(stakeInfo.stakedValue.toString()).to.equal(bobStakeAmount);
+        expect(stakeInfo.stakedValue.toString()).to.equal("1");
         
         // Claim rewards
         await delay(3000);
@@ -147,12 +149,11 @@ describe('Lp pool contract test', () => {
             unstakeFee
         );
 
-        let bobUnstakeAmount = "40000000000000"; // 40 Token
-        await contract.withSigner(bob).tx.unstake(bobUnstakeAmount);
+        await contract.withSigner(bob).tx.unstake(bobStakedTokenId);
 
         let stakeInfoAftUnstaking = (await query.getStakeInfo(bob.address)).value.ok;
         // console.log("stakeInfo = ", stakeInfoAftUnstaking);
-        expect(stakeInfoAftUnstaking.stakedValue.toString()).to.equal(new BN(bobStakeAmount).sub(new BN(bobUnstakeAmount)).toString());
+        expect(stakeInfoAftUnstaking.stakedValue.toString()).to.equal("0");
     });
 
     after(async () => {
