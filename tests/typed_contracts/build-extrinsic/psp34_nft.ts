@@ -43,6 +43,18 @@ export default class Methods {
 	}
 
 	/**
+	 * transferOwnership
+	 *
+	 * @param { ArgumentTypes.AccountId } newOwner,
+	*/
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
+	}
+
+	/**
 	 * owner
 	 *
 	*/
@@ -60,40 +72,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
-	}
-
-	/**
-	 * transferOwnership
-	 *
-	 * @param { ArgumentTypes.AccountId } newOwner,
-	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
-	}
-
-	/**
-	 * collectionId
-	 *
-	*/
-	"collectionId" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::collectionId", [], __options);
-	}
-
-	/**
-	 * balanceOf
-	 *
-	 * @param { ArgumentTypes.AccountId } owner,
-	*/
-	"balanceOf" (
-		owner: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::balanceOf", [owner], __options);
 	}
 
 	/**
@@ -123,19 +101,41 @@ export default class Methods {
 	}
 
 	/**
-	 * allowance
+	 * transfer
 	 *
-	 * @param { ArgumentTypes.AccountId } owner,
-	 * @param { ArgumentTypes.AccountId } operator,
-	 * @param { ArgumentTypes.Id | null } id,
+	 * @param { ArgumentTypes.AccountId } to,
+	 * @param { ArgumentTypes.Id } id,
+	 * @param { Array<(number | string | BN)> } data,
 	*/
-	"allowance" (
-		owner: ArgumentTypes.AccountId,
-		operator: ArgumentTypes.AccountId,
-		id: ArgumentTypes.Id | null,
+	"transfer" (
+		to: ArgumentTypes.AccountId,
+		id: ArgumentTypes.Id,
+		data: Array<(number | string | BN)>,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::allowance", [owner, operator, id], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::transfer", [to, id, data], __options);
+	}
+
+	/**
+	 * collectionId
+	 *
+	*/
+	"collectionId" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::collectionId", [], __options);
+	}
+
+	/**
+	 * balanceOf
+	 *
+	 * @param { ArgumentTypes.AccountId } owner,
+	*/
+	"balanceOf" (
+		owner: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::balanceOf", [owner], __options);
 	}
 
 	/**
@@ -151,19 +151,19 @@ export default class Methods {
 	}
 
 	/**
-	 * transfer
+	 * allowance
 	 *
-	 * @param { ArgumentTypes.AccountId } to,
-	 * @param { ArgumentTypes.Id } id,
-	 * @param { Array<(number | string | BN)> } data,
+	 * @param { ArgumentTypes.AccountId } owner,
+	 * @param { ArgumentTypes.AccountId } operator,
+	 * @param { ArgumentTypes.Id | null } id,
 	*/
-	"transfer" (
-		to: ArgumentTypes.AccountId,
-		id: ArgumentTypes.Id,
-		data: Array<(number | string | BN)>,
+	"allowance" (
+		owner: ArgumentTypes.AccountId,
+		operator: ArgumentTypes.AccountId,
+		id: ArgumentTypes.Id | null,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::transfer", [to, id, data], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34::allowance", [owner, operator, id], __options);
 	}
 
 	/**
@@ -207,18 +207,6 @@ export default class Methods {
 	}
 
 	/**
-	 * setBaseUri
-	 *
-	 * @param { string } uri,
-	*/
-	"setBaseUri" (
-		uri: string,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::setBaseUri", [uri], __options);
-	}
-
-	/**
 	 * setMultipleAttributes
 	 *
 	 * @param { ArgumentTypes.Id } tokenId,
@@ -230,82 +218,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::setMultipleAttributes", [tokenId, metadata], __options);
-	}
-
-	/**
-	 * getLastTokenId
-	 *
-	*/
-	"getLastTokenId" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getLastTokenId", [], __options);
-	}
-
-	/**
-	 * getOwner
-	 *
-	*/
-	"getOwner" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getOwner", [], __options);
-	}
-
-	/**
-	 * isLockedNft
-	 *
-	 * @param { ArgumentTypes.Id } tokenId,
-	*/
-	"isLockedNft" (
-		tokenId: ArgumentTypes.Id,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::isLockedNft", [tokenId], __options);
-	}
-
-	/**
-	 * getLockedTokenCount
-	 *
-	*/
-	"getLockedTokenCount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getLockedTokenCount", [], __options);
-	}
-
-	/**
-	 * getAttributeCount
-	 *
-	*/
-	"getAttributeCount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getAttributeCount", [], __options);
-	}
-
-	/**
-	 * getAttributeName
-	 *
-	 * @param { (number | string | BN) } index,
-	*/
-	"getAttributeName" (
-		index: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getAttributeName", [index], __options);
-	}
-
-	/**
-	 * tokenUri
-	 *
-	 * @param { (number | string | BN) } tokenId,
-	*/
-	"tokenUri" (
-		tokenId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::tokenUri", [tokenId], __options);
 	}
 
 	/**
@@ -323,6 +235,16 @@ export default class Methods {
 	}
 
 	/**
+	 * getLockedTokenCount
+	 *
+	*/
+	"getLockedTokenCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getLockedTokenCount", [], __options);
+	}
+
+	/**
 	 * lock
 	 *
 	 * @param { ArgumentTypes.Id } tokenId,
@@ -332,6 +254,84 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::lock", [tokenId], __options);
+	}
+
+	/**
+	 * getOwner
+	 *
+	*/
+	"getOwner" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getOwner", [], __options);
+	}
+
+	/**
+	 * getAttributeCount
+	 *
+	*/
+	"getAttributeCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getAttributeCount", [], __options);
+	}
+
+	/**
+	 * setBaseUri
+	 *
+	 * @param { string } uri,
+	*/
+	"setBaseUri" (
+		uri: string,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::setBaseUri", [uri], __options);
+	}
+
+	/**
+	 * isLockedNft
+	 *
+	 * @param { ArgumentTypes.Id } tokenId,
+	*/
+	"isLockedNft" (
+		tokenId: ArgumentTypes.Id,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::isLockedNft", [tokenId], __options);
+	}
+
+	/**
+	 * getLastTokenId
+	 *
+	*/
+	"getLastTokenId" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getLastTokenId", [], __options);
+	}
+
+	/**
+	 * tokenUri
+	 *
+	 * @param { (number | string | BN) } tokenId,
+	*/
+	"tokenUri" (
+		tokenId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::tokenUri", [tokenId], __options);
+	}
+
+	/**
+	 * getAttributeName
+	 *
+	 * @param { (number | string | BN) } index,
+	*/
+	"getAttributeName" (
+		index: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp34Traits::getAttributeName", [index], __options);
 	}
 
 	/**

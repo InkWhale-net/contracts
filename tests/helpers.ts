@@ -14,12 +14,15 @@ export const bnArg = (value: number | string | number[] | Uint8Array | Buffer | 
 
 export const oneDay = () => (24 * 60 * 60 * 1000);
 
+let mnemonicCharlie = "nest quantum swing rug alpha edge enjoy vacant before home resource slogan";
+
 export const getSigners = (): KeyringPair[] => {
   const keyring = new Keyring({type: 'sr25519'});
 
   const UserAlice: KeyringPair = keyring.addFromUri('//Alice_Inkwhale');
   const UserBob: KeyringPair = keyring.addFromUri('//Bob_Inkwhale');
-  const UserCharlie: KeyringPair = keyring.addFromUri('//Charlie_Inkwhale');
+  //const UserCharlie: KeyringPair = keyring.addFromUri('//Charlie_Inkwhale');
+  const UserCharlie: KeyringPair = keyring.addFromMnemonic(mnemonicCharlie);
 
   return [
     UserAlice, UserBob, UserCharlie
@@ -49,6 +52,7 @@ export async function showAZBalance(api: any, address: string ) {
 
 export async function checkAccountsBalance(signers: KeyringPair[], api: any) {
     // console.log('Checking Accounts and Balance');
+   
     for (var i = 0; i < signers.length; i++){
       const balance = await showAZBalance(api, signers[i].address);
       // console.log(`Account ${i} has address: ${signers[i].address} and balance: ${balance} TZERO`);

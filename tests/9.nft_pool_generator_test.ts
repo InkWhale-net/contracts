@@ -139,7 +139,7 @@ describe('Nft pool generator test', () => {
         // console.log("Create pools...");
         // Alice creates nft pool with earning token: XYZ
     
-        let nftAddress1 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // TODO: Need to add a real nft collection address
+        let nftCollectionAddress1 = "5DSK3RQ2sNGVReYrtrZPTKbmm4ejY7FYxyDrciv49jiXuECC"; // Flowers in Water Paint Collection
         let earningTokenAddress1 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
         let multiplier1 = "3000000000000"; // Scaled by 10 ** earningToken decimal. Reward 3 earning token/ 1 staking token/ day
         let duration1 = "7776000000";
@@ -147,7 +147,7 @@ describe('Nft pool generator test', () => {
         
         await contract.withSigner(alice).tx.newPool(
             alice.address,
-            nftAddress1,
+            nftCollectionAddress1,
             earningTokenAddress1,
             multiplier1,
             duration1,
@@ -155,15 +155,15 @@ describe('Nft pool generator test', () => {
         );
 
         // Bob creates pool for token2: XYZ
-        let nftAddress2 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // TODO: Need to add a real nft collection address
+        let nftCollectionAddress2 = "5FkVyhF4KVMwgVTbRwvDgnJ7oe8tfZ9A7v2sEiqQPccHkUNC"; // Praying Mantis Predators (PMP) Collection
         let earningTokenAddress2 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
-        let multiplier2 = "4000000000000"; // Reward 4 earning token/ 1 staking token/ day
+        let multiplier2 = "4000000000000"; // Scaled by 10 ** earningToken decimal. Reward 4 earning token/ 1 staking token/ day
         let duration2 = "5184000000";
         let startTime2 = new Date().getTime();
 
         await contract.withSigner(bob).tx.newPool(
             bob.address,
-            nftAddress2,
+            nftCollectionAddress2,
             earningTokenAddress2,
             multiplier2,
             duration2,
