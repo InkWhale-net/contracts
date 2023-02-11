@@ -48,7 +48,7 @@ where
 
         self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_add(amount).unwrap();
 
-        if !Psp22Ref::transfer_from_builder(
+        if Psp22Ref::transfer_from_builder(
             &self.data::<Data>().psp22_contract_address,
             caller,
             Self::env().account_id(),
@@ -57,7 +57,7 @@ where
         )
         .call_flags(CallFlags::default().set_allow_reentry(true))
         .fire()
-        .is_ok()
+        .is_err()
         {
             return Err(Error::CannotTransfer)
         }
@@ -65,19 +65,19 @@ where
     }    
 
     default fn multiplier(&self) -> Balance {
-        self.data::<Data>().multiplier.clone()
+        self.data::<Data>().multiplier
     }
 
     default fn duration(&self) -> u64 {
-        self.data::<Data>().duration.clone()
+        self.data::<Data>().duration
     }
 
     default fn start_time(&self) -> u64 {
-        self.data::<Data>().start_time.clone()
+        self.data::<Data>().start_time
     }
 
     default fn reward_pool(&self) -> Balance {
-        self.data::<Data>().reward_pool.clone()
+        self.data::<Data>().reward_pool
     }
 
     #[modifiers(only_owner)]
@@ -99,24 +99,24 @@ where
     }
 
     default fn total_staked(&self) -> Balance {
-        self.data::<Data>().total_staked.clone()
+        self.data::<Data>().total_staked
     }
 
     default fn psp22_contract_address(&self) -> AccountId {
-        self.data::<Data>().psp22_contract_address.clone()
+        self.data::<Data>().psp22_contract_address
     }
 
     default fn unstake_fee(&self) -> Balance {
-        self.data::<Data>().unstake_fee.clone()
+        self.data::<Data>().unstake_fee
     }
 
     default fn wal_contract(&self) -> AccountId {
-        self.data::<Data>().wal_contract.clone()
+        self.data::<Data>().wal_contract
     }
 
     // lp_contract_address/psp34_contract_address 
     default fn staking_contract_address(&self) -> AccountId {
-        self.data::<Data>().staking_contract_address.clone()
+        self.data::<Data>().staking_contract_address
     }
 
     default fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation> {

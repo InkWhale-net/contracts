@@ -1,5 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
+
+#![allow(clippy::inline_fn_without_body)]
+
 pub use self::my_nft_pool::{
     MyNFTPool,
     MyNFTPoolRef,
@@ -15,12 +18,10 @@ pub mod my_nft_pool {
     use openbrush::{
         contracts::{
             ownable::*,
-            traits::psp22::*,
             traits::psp34::*,
         },
         traits::{
             Storage,
-            String,
         },
         modifiers
     };

@@ -6,6 +6,7 @@
       - [Git Repo](#git-repo)
     - [The Contracts](#the-contracts)
       - [Git Repo](#git-repo-1)
+      - [Build contract](#build-contract)
       - [Token Sale Contract](#token-sale-contract)
       - [Token Contract](#token-contract)
       - [Token Generator Contract](#token-generator-contract)
@@ -50,6 +51,18 @@ This is the core component of the whole platform as end-users interact directly 
 #### Git Repo
 
 https://github.com/InkWhale-net/contracts
+
+#### Build contract
+
+Contracts are built to run on Aleph Zero blockchain.
+
+To build the contract:
+1. Go to each contract folder. i.e. "token_sale"
+2. As per the Compiling part of the doc https://docs.alephzero.org/aleph-zero/build/creating-your-first-contract and the Rust part of the link https://docs.alephzero.org/aleph-zero/build/installing-required-tools, run the below cargo +nightly command for each contract:
+
+```
+cargo +nightly contract build --release" 
+```
 
 #### Token Sale Contract
 

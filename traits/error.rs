@@ -1,3 +1,5 @@
+#![allow(clippy::inline_fn_without_body)]
+
 use openbrush::{
     contracts::traits::{
         psp22::PSP22Error,

@@ -36,8 +36,8 @@ where
 {
     default fn public_mint(&mut self, amount: Balance)-> Result<(), PSP22Error> {
         let caller = Self::env().caller();
-        let total_fee = (self.data::<Data>().minting_fee as u128)
-            .checked_mul(amount as u128).unwrap()
+        let total_fee = (self.data::<Data>().minting_fee)
+            .checked_mul(amount).unwrap()
             .checked_div(1000000000000)
             .unwrap();
         assert!(
@@ -68,19 +68,19 @@ where
     }
 
     default fn cap(&self) -> Balance {
-        self.data::<Data>().cap.clone()
+        self.data::<Data>().cap
     }
 
     default fn minting_cap(&self) -> Balance {
-        self.data::<Data>().minting_cap.clone()
+        self.data::<Data>().minting_cap
     }
 
     default fn total_minted(&self) -> Balance {
-        self.data::<Data>().total_minted.clone()
+        self.data::<Data>().total_minted
     }
 
     default fn minting_fee(&self) -> Balance {
-        self.data::<Data>().minting_fee.clone()
+        self.data::<Data>().minting_fee
     }
     
     #[modifiers(only_owner)]

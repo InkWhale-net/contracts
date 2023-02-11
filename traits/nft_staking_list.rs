@@ -1,5 +1,4 @@
-
-use crate::traits::error::Error;
+#![allow(clippy::inline_fn_without_body)]
 
 use openbrush::{
     contracts::{

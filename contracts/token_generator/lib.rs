@@ -1,6 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
+#![allow(clippy::inline_fn_without_body)]
+
 #[openbrush::contract]
 pub mod token_generator {
     use ink::prelude::{
@@ -18,9 +20,6 @@ pub mod token_generator {
             Storage,
             String
         },
-        storage::{
-            Mapping
-        }
     };
 
     use my_psp22::my_psp22::MyPsp22Ref;

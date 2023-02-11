@@ -1,5 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
+
+#![allow(clippy::inline_fn_without_body)]
+
 pub use self::my_lp_pool::{
     MyLPPool,
     MyLPPoolRef,
@@ -15,16 +18,11 @@ pub mod my_lp_pool {
     use openbrush::{
         contracts::{
             ownable::*,
-            traits::psp22::*
         },
         traits::{
             Storage,
-            String,
         },
         modifiers,
-        storage::{
-            Mapping
-        }
     };
 
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;

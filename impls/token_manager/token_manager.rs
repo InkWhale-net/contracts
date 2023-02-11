@@ -22,7 +22,6 @@ use openbrush::{
         Balance,
         AccountId,
         Hash,
-        String
     }
 };
 

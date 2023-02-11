@@ -1,8 +1,9 @@
+#![allow(clippy::inline_fn_without_body)]
+
 use openbrush::{
     traits::{
         Balance,
         AccountId,
-        String
     },
     contracts::{
         traits::psp34::{

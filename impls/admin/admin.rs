@@ -22,7 +22,6 @@ use openbrush::{
         Storage,
         Balance,
         AccountId,
-        String,
     },
     contracts::{
         traits::psp34::{
