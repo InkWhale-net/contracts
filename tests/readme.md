@@ -19,7 +19,8 @@ For example:
 import Contract from "./typed_contracts/contracts/psp34_nft";
 import Constructors from "./typed_contracts/constructors/psp34_nft";
 5. Create test file in .ts
-6. Run all tests **npm run test:mocha**
+6. Run **npm install**
+7. Run all tests **npm run test:mocha**
 
 ## Test Files
 1. File "1.token_sale_test.ts": Test token sale contract (Contract for INW token)

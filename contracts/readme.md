@@ -12,5 +12,5 @@ To build the contract:
 2. As per the Compiling part of the doc https://docs.alephzero.org/aleph-zero/build/creating-your-first-contract and the Rust part of the link https://docs.alephzero.org/aleph-zero/build/installing-required-tools, run the below cargo +nightly command for each contract: 
 
 ```
-cargo +nightly contract build --release" 
+cargo +nightly contract build --release 
 ```
