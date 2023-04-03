@@ -39,7 +39,8 @@ pub mod psp22_standard {
     use inkwhale_project::{
         traits::{
             psp22_standard::*,
-            admin::*,   
+            admin::*,
+            error::Error,
         }
     };
 

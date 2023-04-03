@@ -31,7 +31,6 @@ impl<T: Storage<data::Data> + Storage<ownable::Data>> AdminTrait for T
         if T::env().transfer(receiver, value).is_err() {
             return Err(Error::WithdrawFeeError);
         }
-        self._emit_withdraw_fee(value, receiver);
         Ok(())
     }
 
