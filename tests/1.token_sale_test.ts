@@ -42,7 +42,9 @@ describe('Token sale test', () => {
         symbol = "INW";
         decimal = 12;
 
-        let gasLimit = setGasLimit(api, 6_800_000_000, 0);
+        // "refTime: 470289652"
+        // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 960_000_000, 36_000);
                 
         const contractFactory = new ConstructorsMyPsp22Sale(api, defaultSigner);
 

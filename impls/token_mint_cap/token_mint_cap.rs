@@ -23,7 +23,8 @@ use openbrush::{
     traits::{
         Storage,
         Balance,
-        AccountId
+        AccountId,
+        String
     }
 };
 
@@ -44,8 +45,15 @@ where
             total_fee <= Self::env().transferred_value(),
             "invalid fee"
         );
+        
         self.data::<Data>().total_minted = self.data::<Data>().total_minted.checked_add(amount).unwrap();
-        assert!(self.data::<Data>().total_minted.checked_add(amount).unwrap() <= self.data::<Data>().minting_cap, "minting cap reached");
+
+        assert!(
+            self.data::<Data>().total_minted <= self.data::<Data>().minting_cap &&
+            self.data::<Data>().total_minted <= self.data::<psp22::Data>().total_supply(),  
+            "minting cap reached"
+        );
+        
         self._mint_to(caller, amount)
     }
 
@@ -57,14 +65,28 @@ where
 
     #[modifiers(only_owner)]
     default fn set_cap(&mut self, cap: Balance) -> Result<(), PSP22Error> {
-        self.data::<Data>().cap = cap;
-        Ok(())
+        if cap >= self.data::<Data>().minting_cap { 
+            self.data::<Data>().cap = cap;
+            return Ok(());
+        } else {
+            return Err(PSP22Error::Custom(String::from("Set cap < minting cap")));
+        }
     }
 
     #[modifiers(only_owner)]
     default fn set_minting_fee(&mut self, minting_fee: Balance) -> Result<(), PSP22Error> {
         self.data::<Data>().minting_fee = minting_fee;
         Ok(())
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_minting_cap(&mut self, minting_cap: Balance) -> Result<(), PSP22Error> {
+        if self.data::<Data>().cap >= minting_cap { 
+            self.data::<Data>().minting_cap = minting_cap;
+            return Ok(());
+        } else {
+            return Err(PSP22Error::Custom(String::from("Set minting cap > cap")));
+        }
     }
 
     default fn cap(&self) -> Balance {

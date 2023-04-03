@@ -49,8 +49,10 @@ describe('Pool contract test', () => {
         duration = "5184000000"; // 60 days
         startTime = new Date().getTime(); // Current time
         unstakeFee = "8000000000000"; // 8 INW      
-             
-        let gasLimit = setGasLimit(api, 1_000_000_000, 0);
+        
+        // "refTime: 640544751"
+        // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_400_000_000, 36_000);
         
         const contractFactory = new ConstructorsMyPool(api, defaultSigner);
         
@@ -67,7 +69,7 @@ describe('Pool contract test', () => {
             )
         ).address;
 
-        // console.log("contractAddress =", contractAddress);
+        console.log("contractAddress =", contractAddress);
 
         contract = new ContractMyPool(contractAddress, defaultSigner, api);    
         query = contract.query;
@@ -141,6 +143,8 @@ describe('Pool contract test', () => {
         // Bob public mint INW, approve unstake fee in INW and unstake
         let mintingFee = (await walContract.query.mintingFee()).value.ok!.rawNumber.toString();
         let fee = new BN(unstakeFee).div(new BN(10 ** 12)).mul(new BN(mintingFee));
+        console.log("mintingFee = ", mintingFee);
+        console.log("fee = ", fee.toString());
         await walContract.withSigner(bob).tx.publicMint(
             unstakeFee,
             {value: fee.toString()}

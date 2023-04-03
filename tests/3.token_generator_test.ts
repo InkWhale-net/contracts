@@ -41,7 +41,9 @@ describe('Token generator test', () => {
         walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
         creationFee = "3000000000000"; // 3 INW      
 
-        let gasLimit = setGasLimit(api, 1_000_000_000, 0);
+        // "refTime: 607483492"
+        // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_200_000_000, 36_000);
                 
         const contractFactory = new ConstructorsTokenGenerator(api, defaultSigner);
 

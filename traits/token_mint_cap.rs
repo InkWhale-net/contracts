@@ -32,6 +32,9 @@ pub trait TokenMintCapTrait {
     fn set_minting_fee(&mut self, minting_fee: Balance) -> Result<(), PSP22Error>;
 
     #[ink(message)]
+    fn set_minting_cap(&mut self, minting_cap: Balance) -> Result<(), PSP22Error>;
+
+    #[ink(message)]
     fn cap(&self) -> Balance;
 
     #[ink(message)]

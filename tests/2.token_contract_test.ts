@@ -38,8 +38,9 @@ describe('Token contract test', () => {
         symbol = "ABC";
         decimal = 12;      
         
-        // 734697897
-        let gasLimit = setGasLimit(api, 6_800_000_000, 0);
+        // "refTime: 599049714"
+        // "proofSize: 19456"
+        let gasLimit = setGasLimit(api, 1_200_000_000, 40_000);
         
         const contractFactory = new ConstructorsMyPsp22(api, defaultSigner);
         
