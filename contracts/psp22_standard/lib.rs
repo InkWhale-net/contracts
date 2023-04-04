@@ -29,7 +29,6 @@ pub mod psp22_standard {
             },
             Internal,
         },
-        
         traits::{
             Storage,
             DefaultEnv
@@ -68,12 +67,14 @@ pub mod psp22_standard {
 
     impl Psp22Nft {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, total_supply: Balance, decimal: u8) -> Self {
+        pub fn new(cap: Balance, decimal: u8) -> Self {
             let mut instance = Self::default();
-            instance._init_with_owner(contract_owner);
+            let caller = <Self as DefaultEnv>::env().caller();
+            instance._init_with_owner(caller);
             instance.metadata.name = Some(String::from("Ink Whale Token").into());
             instance.metadata.symbol = Some(String::from("INW").into());
             instance.metadata.decimals = decimal;
+            instance.manager.cap = cap;
             instance
         }
     }

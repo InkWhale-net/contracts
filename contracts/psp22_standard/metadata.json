@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x8e52090ec19890d5238a26cce47d4ed3a55b7bd21dcab140173eb5efd315dd54",
+    "hash": "0xe9271700865f2f5ee76c27e6a105878852cb1d20964b45a742dfc6f88a759e47",
     "language": "ink! 4.1.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -25,16 +25,7 @@
       {
         "args": [
           {
-            "label": "contract_owner",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "total_supply",
+            "label": "cap",
             "type": {
               "displayName": [
                 "Balance"
@@ -60,7 +51,7 @@
             "ink_primitives",
             "ConstructorResult"
           ],
-          "type": 7
+          "type": 6
         },
         "selector": "0x9bae9d5e"
       }
@@ -72,9 +63,55 @@
         "ink",
         "LangError"
       ],
-      "type": 8
+      "type": 7
     },
     "messages": [
+      {
+        "args": [
+          {
+            "label": "spender",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "IncreaseAllowanceInput1"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "delta_value",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "IncreaseAllowanceInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " Atomically increases the allowance granted to `spender` by the caller.",
+          "",
+          " An `Approval` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Returns `ZeroSenderAddress` error if sender's address is zero.",
+          "",
+          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
+        ],
+        "label": "PSP22::increase_allowance",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x96d6b57a"
+      },
       {
         "args": [
           {
@@ -120,26 +157,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 9
+          "type": 8
         },
         "selector": "0xb20f1bbd"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Returns the total token supply."
-        ],
-        "label": "PSP22::total_supply",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 12
-        },
-        "selector": "0x162df8c2"
       },
       {
         "args": [
@@ -213,7 +233,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 9
+          "type": 8
         },
         "selector": "0x54b3c76e"
       },
@@ -243,49 +263,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 12
+          "type": 11
         },
         "selector": "0x6568382f"
-      },
-      {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "AllowanceInput1"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "spender",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "AllowanceInput2"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "docs": [
-          " Returns the amount which `spender` is still allowed to withdraw from `owner`.",
-          "",
-          " Returns `0` if no allowance has been set `0`."
-        ],
-        "label": "PSP22::allowance",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 12
-        },
-        "selector": "0x4d47d921"
       },
       {
         "args": [
@@ -332,9 +312,49 @@
             "ink",
             "MessageResult"
           ],
-          "type": 9
+          "type": 8
         },
         "selector": "0xfecb57d5"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "AllowanceInput1"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "spender",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "AllowanceInput2"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Returns the amount which `spender` is still allowed to withdraw from `owner`.",
+          "",
+          " Returns `0` if no allowance has been set `0`."
+        ],
+        "label": "PSP22::allowance",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 11
+        },
+        "selector": "0x4d47d921"
       },
       {
         "args": [
@@ -392,62 +412,16 @@
             "ink",
             "MessageResult"
           ],
-          "type": 9
+          "type": 8
         },
         "selector": "0xdb20f9f5"
       },
       {
-        "args": [
-          {
-            "label": "spender",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "IncreaseAllowanceInput1"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "delta_value",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "IncreaseAllowanceInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [
-          " Atomically increases the allowance granted to `spender` by the caller.",
-          "",
-          " An `Approval` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Returns `ZeroSenderAddress` error if sender's address is zero.",
-          "",
-          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
-        ],
-        "label": "PSP22::increase_allowance",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 9
-        },
-        "selector": "0x96d6b57a"
-      },
-      {
         "args": [],
         "docs": [
-          " Returns the token name."
+          " Returns the total token supply."
         ],
-        "label": "PSP22Metadata::token_name",
+        "label": "PSP22::total_supply",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -455,9 +429,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 13
+          "type": 11
         },
-        "selector": "0x3d261bd4"
+        "selector": "0x162df8c2"
       },
       {
         "args": [],
@@ -472,9 +446,26 @@
             "ink",
             "MessageResult"
           ],
-          "type": 13
+          "type": 12
         },
         "selector": "0x34205be5"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Returns the token name."
+        ],
+        "label": "PSP22Metadata::token_name",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 12
+        },
+        "selector": "0x3d261bd4"
       },
       {
         "args": [],
@@ -489,7 +480,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 14
         },
         "selector": "0x7271b782"
       },
@@ -529,7 +520,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 9
+          "type": 8
         },
         "selector": "0xfc3c75d4"
       },
@@ -544,26 +535,50 @@
             "ink",
             "MessageResult"
           ],
-          "type": 16
+          "type": 15
         },
         "selector": "0xafaab2e0"
       },
       {
         "args": [],
-        "docs": [
-          " Leaves the contract without owner. It will not be possible to call",
-          " owner's functions anymore. Can only be called by the current owner.",
-          "",
-          " NOTE: Renouncing ownership will leave the contract without an owner,",
-          " thereby removing any functionality that is only available to the owner.",
-          "",
-          " On success a `OwnershipTransferred` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Panics with `CallerIsNotOwner` error if caller is not owner"
+        "docs": [],
+        "label": "Psp22Traits::get_cap",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 11
+        },
+        "selector": "0xd200e252"
+      },
+      {
+        "args": [
+          {
+            "label": "mint_to",
+            "type": {
+              "displayName": [
+                "psp22traits_external",
+                "MintInput1"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "psp22traits_external",
+                "MintInput2"
+              ],
+              "type": 0
+            }
+          }
         ],
-        "label": "Ownable::renounce_ownership",
+        "docs": [],
+        "label": "Psp22Traits::mint",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -571,9 +586,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 17
+          "type": 8
         },
-        "selector": "0x5e228753"
+        "selector": "0x25d5a34d"
       },
       {
         "args": [
@@ -608,7 +623,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 17
+          "type": 16
         },
         "selector": "0x11f43efd"
       },
@@ -625,9 +640,74 @@
             "ink",
             "MessageResult"
           ],
-          "type": 16
+          "type": 15
         },
         "selector": "0x4fa43c8c"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Leaves the contract without owner. It will not be possible to call",
+          " owner's functions anymore. Can only be called by the current owner.",
+          "",
+          " NOTE: Renouncing ownership will leave the contract without an owner,",
+          " thereby removing any functionality that is only available to the owner.",
+          "",
+          " On success a `OwnershipTransferred` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Panics with `CallerIsNotOwner` error if caller is not owner"
+        ],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0x5e228753"
+      },
+      {
+        "args": [
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "WithdrawFeeInput1"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "WithdrawFeeInput2"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " This function allows contract owner to withdraw contract balance to his account."
+        ],
+        "label": "AdminTrait::withdraw_fee",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 19
+        },
+        "selector": "0x07573e99"
       },
       {
         "args": [
@@ -673,47 +753,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 20
+          "type": 19
         },
         "selector": "0xd9aad284"
-      },
-      {
-        "args": [
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "WithdrawFeeInput1"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "WithdrawFeeInput2"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "docs": [
-          " This function allows contract owner to withdraw contract balance to his account."
-        ],
-        "label": "AdminTrait::withdraw_fee",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 20
-        },
-        "selector": "0x07573e99"
       }
     ]
   },
@@ -960,10 +1002,10 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
-                          "ty": 6
+                          "ty": 0
                         }
                       },
-                      "name": "last_token_id"
+                      "name": "cap"
                     },
                     {
                       "layout": {
@@ -1116,14 +1158,6 @@
       "id": 6,
       "type": {
         "def": {
-          "primitive": "u64"
-        }
-      }
-    },
-    {
-      "id": 7,
-      "type": {
-        "def": {
           "variant": {
             "variants": [
               {
@@ -1138,7 +1172,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1154,7 +1188,7 @@
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1163,7 +1197,7 @@
       }
     },
     {
-      "id": 8,
+      "id": 7,
       "type": {
         "def": {
           "variant": {
@@ -1182,7 +1216,7 @@
       }
     },
     {
-      "id": 9,
+      "id": 8,
       "type": {
         "def": {
           "variant": {
@@ -1190,7 +1224,7 @@
               {
                 "fields": [
                   {
-                    "type": 10
+                    "type": 9
                   }
                 ],
                 "index": 0,
@@ -1199,7 +1233,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1211,11 +1245,11 @@
         "params": [
           {
             "name": "T",
-            "type": 10
+            "type": 9
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1224,7 +1258,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 9,
       "type": {
         "def": {
           "variant": {
@@ -1241,7 +1275,7 @@
               {
                 "fields": [
                   {
-                    "type": 11
+                    "type": 10
                   }
                 ],
                 "index": 1,
@@ -1257,7 +1291,7 @@
           },
           {
             "name": "E",
-            "type": 11
+            "type": 10
           }
         ],
         "path": [
@@ -1266,7 +1300,7 @@
       }
     },
     {
-      "id": 11,
+      "id": 10,
       "type": {
         "def": {
           "variant": {
@@ -1320,7 +1354,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 11,
       "type": {
         "def": {
           "variant": {
@@ -1337,7 +1371,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1353,7 +1387,7 @@
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1362,7 +1396,7 @@
       }
     },
     {
-      "id": 13,
+      "id": 12,
       "type": {
         "def": {
           "variant": {
@@ -1370,7 +1404,7 @@
               {
                 "fields": [
                   {
-                    "type": 14
+                    "type": 13
                   }
                 ],
                 "index": 0,
@@ -1379,7 +1413,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1391,11 +1425,11 @@
         "params": [
           {
             "name": "T",
-            "type": 14
+            "type": 13
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1404,7 +1438,7 @@
       }
     },
     {
-      "id": 14,
+      "id": 13,
       "type": {
         "def": {
           "variant": {
@@ -1437,7 +1471,7 @@
       }
     },
     {
-      "id": 15,
+      "id": 14,
       "type": {
         "def": {
           "variant": {
@@ -1454,7 +1488,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1470,7 +1504,7 @@
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1479,7 +1513,7 @@
       }
     },
     {
-      "id": 16,
+      "id": 15,
       "type": {
         "def": {
           "variant": {
@@ -1496,7 +1530,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1512,7 +1546,49 @@
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 17
+          },
+          {
+            "name": "E",
+            "type": 7
           }
         ],
         "path": [
@@ -1529,48 +1605,6 @@
               {
                 "fields": [
                   {
-                    "type": 18
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 8
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 18
-          },
-          {
-            "name": "E",
-            "type": 8
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
                     "type": 1
                   }
                 ],
@@ -1580,7 +1614,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -1596,7 +1630,7 @@
           },
           {
             "name": "E",
-            "type": 19
+            "type": 18
           }
         ],
         "path": [
@@ -1605,7 +1639,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 18,
       "type": {
         "def": {
           "variant": {
@@ -1631,7 +1665,7 @@
       }
     },
     {
-      "id": 20,
+      "id": 19,
       "type": {
         "def": {
           "variant": {
@@ -1639,7 +1673,7 @@
               {
                 "fields": [
                   {
-                    "type": 21
+                    "type": 20
                   }
                 ],
                 "index": 0,
@@ -1648,7 +1682,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 7
                   }
                 ],
                 "index": 1,
@@ -1660,11 +1694,11 @@
         "params": [
           {
             "name": "T",
-            "type": 21
+            "type": 20
           },
           {
             "name": "E",
-            "type": 8
+            "type": 7
           }
         ],
         "path": [
@@ -1673,7 +1707,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 20,
       "type": {
         "def": {
           "variant": {
@@ -1690,7 +1724,7 @@
               {
                 "fields": [
                   {
-                    "type": 22
+                    "type": 21
                   }
                 ],
                 "index": 1,
@@ -1706,7 +1740,7 @@
           },
           {
             "name": "E",
-            "type": 22
+            "type": 21
           }
         ],
         "path": [
@@ -1715,7 +1749,7 @@
       }
     },
     {
-      "id": 22,
+      "id": 21,
       "type": {
         "def": {
           "variant": {
@@ -1723,7 +1757,7 @@
               {
                 "fields": [
                   {
-                    "type": 23,
+                    "type": 22,
                     "typeName": "String"
                   }
                 ],
@@ -1921,7 +1955,7 @@
               {
                 "fields": [
                   {
-                    "type": 19,
+                    "type": 18,
                     "typeName": "OwnableError"
                   }
                 ],
@@ -1931,7 +1965,7 @@
               {
                 "fields": [
                   {
-                    "type": 11,
+                    "type": 10,
                     "typeName": "PSP22Error"
                   }
                 ],
@@ -1954,7 +1988,7 @@
       }
     },
     {
-      "id": 23,
+      "id": 22,
       "type": {
         "def": {
           "primitive": "str"
