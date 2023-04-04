@@ -32,8 +32,8 @@ where
     Storage<psp22::extensions::metadata::Data> +
     Storage<openbrush::contracts::ownable::Data>
 {
-    /// Get Token Count
-    default fn get_last_token_id(&self) -> u64 {
-        return self.data::<Manager>().last_token_id
+    /// Get owner address
+    default fn get_owner(&self) -> AccountId {
+        self.owner()
     }
 }

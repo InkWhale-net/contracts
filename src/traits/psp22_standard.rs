@@ -6,7 +6,8 @@ use ink::prelude::{
 };
 use openbrush::{
     contracts::psp22::extensions::{
-        metadata::*
+        metadata::*,
+        mintable::*
     },
     traits::{
         AccountId
@@ -14,10 +15,10 @@ use openbrush::{
 };
 
 #[openbrush::wrapper]
-pub type Psp22Ref = dyn Psp22Traits + PSP22 + PSP22Metadata;
+pub type Psp22Ref = dyn Psp22Traits + PSP22 + PSP22Metadata + PSP22Mintable;
 
 #[openbrush::trait_definition]
 pub trait Psp22Traits {
     #[ink(message)]
-    fn get_last_token_id(&self) -> u64;
+    fn get_owner(&self) -> AccountId;
 }

@@ -4,9 +4,6 @@ use openbrush::{
         AccountId
     },
     contracts::{
-        traits::psp22::{
-            Id
-        },
         traits::psp22::*,
     },
 };

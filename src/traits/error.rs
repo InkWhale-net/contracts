@@ -1,6 +1,5 @@
 use openbrush::{
-    contracts::ownable::*,
-    contracts::access_control::*,
+    contracts::ownable::*
 };
 use ink::prelude::{
     string::String,
@@ -65,22 +64,13 @@ pub enum Error {
     ClaimMustBeFalse,
     HoldAmountBidderNotExist,
     OwnableError(OwnableError),
-    AccessControlError(AccessControlError),
     PSP22Error(PSP22Error),
-    PSP34Error(PSP34Error),
     CheckedOperations
 }
 
 impl From<OwnableError> for Error {
     fn from(ownable: OwnableError) -> Self {
         Error::OwnableError(ownable)
-    }
-}
-
-
-impl From<AccessControlError> for Error {
-    fn from(access: AccessControlError) -> Self {
-        Error::AccessControlError(access)
     }
 }
 
