@@ -39,7 +39,6 @@ pub mod psp22_standard {
     };
     use inkwhale_project::{
         traits::{
-            psp22_standard::*,
             admin::*,
             error::Error,
         }
@@ -55,8 +54,6 @@ pub mod psp22_standard {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        manager: inkwhale_project::impls::psp22_standard::data::Manager,
-        #[storage_field]
         cap: capped::Data,
         #[storage_field]
         admin_data: inkwhale_project::impls::admin::data::Data,
@@ -65,8 +62,6 @@ pub mod psp22_standard {
     impl PSP22 for Psp22Nft {}
     impl PSP22Metadata for Psp22Nft {}
     impl PSP22Capped for Psp22Nft {}
-    impl PSP22Burnable for Psp22Nft {}
-    impl Psp22Traits for Psp22Nft {}
     impl Ownable for Psp22Nft {}
     impl AdminTrait for Psp22Nft {}
 
@@ -84,12 +79,22 @@ pub mod psp22_standard {
         }
     }
 
+    impl PSP22Burnable for Psp22Nft {
+        #[ink(message)]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            let caller = Self::env().caller();
+            if account == caller {
+                self._burn_from(account, amount)
+            } else {
+                return Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()));
+            }
+        }
+    }
+
     impl PSP22Mintable for Psp22Nft {
         #[ink(message)]
         fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-            
             let caller = Self::env().caller();
-
             if caller == self.owner() {
                 self._mint_to(account, amount)
             } else {
@@ -100,13 +105,13 @@ pub mod psp22_standard {
 
     impl Psp22Nft {
         #[ink(constructor)]
-        pub fn new(cap: Balance, decimal: u8) -> Self {
+        pub fn new(cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
             let mut instance = Self::default();
             let caller = <Self as DefaultEnv>::env().caller();
             instance._init_with_owner(caller);
             assert!(instance._init_cap(cap).is_ok());
-            instance.metadata.name = Some(String::from("Ink Whale Token").into());
-            instance.metadata.symbol = Some(String::from("INW").into());
+            instance.metadata.name = Some(name.into());
+            instance.metadata.symbol = Some(symbol.into());
             instance.metadata.decimals = decimal;
             instance
         }
