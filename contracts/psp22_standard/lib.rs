@@ -74,8 +74,6 @@ pub mod psp22_standard {
             instance.metadata.name = Some(String::from("Ink Whale Token").into());
             instance.metadata.symbol = Some(String::from("INW").into());
             instance.metadata.decimals = decimal;
-
-            assert!(instance._mint_to(<Psp22Nft as DefaultEnv>::env().caller(), total_supply).is_ok());
             instance
         }
     }
