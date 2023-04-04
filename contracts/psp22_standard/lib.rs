@@ -64,13 +64,18 @@ pub mod psp22_standard {
     impl PSP22Mintable for Psp22Nft {}
     impl Psp22Traits for Psp22Nft {}
     impl Ownable for Psp22Nft {}
-    impl AdminTrait for Psp34Nft {}
+    impl AdminTrait for Psp22Nft {}
 
     impl Psp22Nft {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, name: String, symbol: String) -> Self {
+        pub fn new(contract_owner: AccountId, total_supply: Balance, decimal: u8) -> Self {
             let mut instance = Self::default();
             instance._init_with_owner(contract_owner);
+            instance.metadata.name = Some(String::from("Ink Whale Token").into());
+            instance.metadata.symbol = Some(String::from("INW").into());
+            instance.metadata.decimals = decimal;
+
+            assert!(instance._mint_to(<Psp22Nft as DefaultEnv>::env().caller(), total_supply).is_ok());
             instance
         }
     }
