@@ -436,7 +436,7 @@ Use json files and contract addresses in the contract deployment part to create 
      ``` 
 
 10. psp34_standard.js
-   - This file is copied from Artzero project to work with NFT PSP34 standard. It can be downloaded from this link .
+   - This file is copied from Artzero project to work with NFT PSP34 standard. It can be downloaded from this link https://drive.google.com/file/d/1NQoqS7ulR_v_k428pBofF2PMY6fihiFZ/view?usp=sharing.
 
 11. Copy all js files we've created to src/utils/contracts of FE code
 # Update addresses and abis for BE
