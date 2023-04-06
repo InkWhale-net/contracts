@@ -548,3 +548,5 @@ Abi files for BE are stored in /contracts folder. They are nearly the same as js
          nft_pool_generator_contract:nft_pool_generator_contract
       };
      ```
+     
+9. Copy all ts files we've created to /contracts of BE code
