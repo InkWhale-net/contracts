@@ -159,3 +159,392 @@ cargo +nightly contract build --release"
 
 Use json files and contract addresses in the contract deployment part to create abi files for FE  
 
+1. azt_contract.js
+   - Copy metadata json file of token_sale to a place and change name to azt_contract.js
+   - Open azt_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const azt_contract = {
+         CONTRACT_ADDRESS: "Address of the azt_contract contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const azt_contract = {
+         CONTRACT_ADDRESS: "5DVswx19dAJYAZhXTRVrnuzys5MPSs3z6fmQ8N9ZPgbmwUSg",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of azt_contract.js 
+     ```
+      };
+
+      export default azt_contract;
+     ``` 
+
+2. psp22_contract.js
+   - Copy metadata json file of token_contract to a place and change name to psp22_contract.js
+   - Open psp22_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const psp22_contract = {
+         CONTRACT_ADDRESS: "Address of the psp22_contract contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const psp22_contract = {
+         CONTRACT_ADDRESS: "5ERKJQLnfTDUYDPqDQu8YSwt9y2XS2GMQ8hwhZ6Y2L2ECSBm",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of psp22_contract.js 
+     ```
+      };
+
+      export default psp22_contract;
+     ``` 
+
+3. core_contract.js
+   - Copy metadata json file of token_generator to a place and change name to core_contract.js
+   - Open core_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const core_contract = {
+         CONTRACT_ADDRESS: "Address of the core_contract contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const core_contract = {
+         CONTRACT_ADDRESS: "5HKkHC3NfJLeySHdjFuEMmDQgHKxtLGoWJMw78DFvgT8y9hS",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of core_contract.js 
+     ```
+      };
+
+      export default core_contract;
+     ``` 
+
+4. pool_contract.js
+   - Copy metadata json file of pool_contract to a place and change name to pool_contract.js
+   - Open pool_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const pool_contract = {
+         CONTRACT_ADDRESS: "Address of the pool_contract contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const pool_contract = {
+         CONTRACT_ADDRESS: "5ESCyq24S7EGdqgfmDXriSQpL3GAi2bhaRvofRCcjP45HuT3",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of pool_contract.js 
+     ```
+      };
+
+      export default pool_contract;
+     ``` 
+
+5. pool_generator.js
+   - Copy metadata json file of pool_generator to a place and change name to pool_generator.js
+   - Open pool_generator.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const pool_generator_contract = {
+         CONTRACT_ADDRESS: "Address of the pool_generator contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const pool_generator_contract = {
+         CONTRACT_ADDRESS: "5CE1KDXicdpFwUxzcxP7QJzvcJnpV5d6ATRwzumyr5Dg1PNo",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of pool_generator.js 
+     ```
+      };
+
+      export default pool_generator_contract;
+     ``` 
+
+6. lp_pool_contract.js
+   - Copy metadata json file of lp_pool_contract to a place and change name to lp_pool_contract.js
+   - Open lp_pool_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const lp_pool_contract = {
+         CONTRACT_ADDRESS: "Address of the lp_pool contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const lp_pool_contract = {
+         CONTRACT_ADDRESS: "5CJpYhjrtMB99UGLWnh8zxFDSQTX1MezDRsfTTbGnb7jZAbA",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of lp_pool_contract.js 
+     ```
+      };
+
+      export default lp_pool_contract;
+     ``` 
+
+7. lp_pool_generator_contract.js
+   - Copy metadata json file of lp_pool_generator to a place and change name to lp_pool_generator_contract.js
+   - Open lp_pool_generator_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const lp_pool_generator_contract = {
+         CONTRACT_ADDRESS: "Address of the lp_pool_generator contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const lp_pool_generator_contract = {
+         CONTRACT_ADDRESS: "5HC5oYauQ76SDqBq417iBbSir3c9ungYUs9Rfiiwd1a8UcFB",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of lp_pool_generator_contract.js 
+     ```
+      };
+
+      export default lp_pool_generator_contract;
+     ``` 
+
+8. nft_pool_contract.js
+   - Copy metadata json file of nft_pool_contract to a place and change name to nft_pool_contract.js
+   - Open nft_pool_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const nft_pool_contract = {
+         CONTRACT_ADDRESS: "Address of the nft_pool_contract contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const nft_pool_contract = {
+         CONTRACT_ADDRESS: "5Ep7DjpCp1DLXmX1JKgNyJdxLE23sGeJybw6Feo31SnaBu5F",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of nft_pool_contract.js 
+     ```
+      };
+
+      export default nft_pool_contract;
+     ``` 
+
+9. nft_pool_generator_contract.js
+   - Copy metadata json file of nft_pool_generator to a place and change name to nft_pool_generator_contract.js
+   - Open nft_pool_generator_contract.js and modify:
+     ```
+      {
+         "source": {
+     ```
+     to 
+     ```
+      const nft_pool_generator_contract = {
+         CONTRACT_ADDRESS: "Address of the nft_pool_generator contract",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+
+     i.e.
+
+     ```
+      const nft_pool_generator_contract = {
+         CONTRACT_ADDRESS: "5CGHT5oz7EADKiZL5Yx7FcbSNruGnmbvCFBHMS33xdwPrmu1",
+         CONTRACT_ABI: {
+            "source": {
+     ``` 
+   - Add at the end of nft_pool_generator_contract.js 
+     ```
+      };
+
+      export default nft_pool_generator_contract;
+     ``` 
+
+10. psp34_standard.js
+   - This file is copied from Artzero project to work with NFT PSP34 standard. It can be downloaded from this link .
+
+11. Copy all js files we've created to src/utils/contracts of FE code
+# Update addresses and abis for BE
+
+Abi files for BE are stored in /contracts folder. They are nearly the same as js files for FE, we just do small adjustments as below.  
+
+1. psp22.js
+   - Copy psp22_contract.js from FE to a place and rename to psp22.js 
+   - Modify the file:
+     ```
+      export default psp22_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         psp22_contract:psp22_contract
+      };
+     ```
+
+2. token_generator.js
+   - Copy core_contract.js from FE to a place and rename to token_generator.js 
+   - Modify the file:
+     ```
+      const core_contract = {
+     ```
+     to 
+     ```
+      const token_generator_contract = {
+     ```   
+
+     ```
+      export default core_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         token_generator_contract:token_generator_contract
+      };
+     ```
+
+3. pool.js
+   - Copy pool_contract.js from FE to a place and rename to pool.js 
+   - Modify the file:
+     ```
+      export default pool_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         pool_contract:pool_contract
+      };
+     ```
+
+4. pool_generator.js
+   - Copy pool_generator.js from FE to a place 
+   - Modify the file:
+     ```
+      export default pool_generator_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         pool_generator_contract:pool_generator_contract
+      };
+     ```
+
+5. lp_pool.js
+   - Copy lp_pool_contract.js from FE to a place and rename to lp_pool.js
+   - Modify the file:
+     ```
+      export default lp_pool_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         lp_pool_contract:lp_pool_contract
+      };
+     ```
+
+6. lp_pool_generator.js
+   - Copy lp_pool_generator_contract.js from FE to a place and rename to lp_pool_generator.js
+   - Modify the file:
+     ```
+      export default lp_pool_generator_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         lp_pool_generator_contract:lp_pool_generator_contract
+      };
+     ```
+   
+7. nft_pool.js
+   - Copy nft_pool_contract.js from FE to a place and rename to nft_pool.js
+   - Modify the file:
+     ```
+      export default nft_pool_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         nft_pool_contract:nft_pool_contract
+      };
+     ```
+
+8. nft_pool_generator.js
+   - Copy nft_pool_generator_contract.js from FE to a place and rename to nft_pool_generator.js
+   - Modify the file:
+     ```
+      export default nft_pool_generator_contract;
+     ```
+     to 
+     ```
+      module.exports = {
+         nft_pool_generator_contract:nft_pool_generator_contract
+      };
+     ```
