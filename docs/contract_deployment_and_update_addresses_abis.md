@@ -1,4 +1,10 @@
 
+- [Contract deployment](#contract-deployment)
+  - [Build contracts](#build-contracts)
+  - [Deloy contracts](#deloy-contracts)
+- [Update addresses and abis for FE](#update-addresses-and-abis-for-fe)
+- [Update addresses and abis for BE](#update-addresses-and-abis-for-be)
+
 # Contract deployment
 
 ## Build contracts
