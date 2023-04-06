@@ -16,7 +16,7 @@ To build the contract:
 2. Run the below command to build a contract:
 
 ```
-cargo +nightly contract build --release" 
+cargo +nightly contract build --release
 ```
 3. After building, we will have .contract and .json files in target/ink folder for each contract. We will use these file to deploy contracts, update addresses and abis in next steps. 
 

@@ -49,8 +49,7 @@ where
         self.data::<Data>().total_minted = self.data::<Data>().total_minted.checked_add(amount).unwrap();
 
         assert!(
-            self.data::<Data>().total_minted <= self.data::<Data>().minting_cap &&
-            self.data::<Data>().total_minted <= self.data::<psp22::Data>().total_supply(),  
+            self.data::<Data>().total_minted <= self.data::<Data>().minting_cap,
             "minting cap reached"
         );
         
