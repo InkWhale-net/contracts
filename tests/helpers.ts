@@ -55,7 +55,7 @@ export async function checkAccountsBalance(signers: KeyringPair[], api: any) {
    
     for (var i = 0; i < signers.length; i++){
       const balance = await showAZBalance(api, signers[i].address);
-      // console.log(`Account ${i} has address: ${signers[i].address} and balance: ${balance} TZERO`);
+        // console.log(`Account ${i} has address: ${signers[i].address} and balance: ${balance} TZERO`);
     }
 }
 

@@ -43,6 +43,60 @@ export default class Methods {
 	}
 
 	/**
+	 * balanceOf
+	 *
+	 * @param { ArgumentTypes.AccountId } owner,
+	*/
+	"balanceOf" (
+		owner: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::balanceOf", [owner], __options);
+	}
+
+	/**
+	 * increaseAllowance
+	 *
+	 * @param { ArgumentTypes.AccountId } spender,
+	 * @param { (string | number | BN) } deltaValue,
+	*/
+	"increaseAllowance" (
+		spender: ArgumentTypes.AccountId,
+		deltaValue: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::increaseAllowance", [spender, deltaValue], __options);
+	}
+
+	/**
+	 * transferFrom
+	 *
+	 * @param { ArgumentTypes.AccountId } from,
+	 * @param { ArgumentTypes.AccountId } to,
+	 * @param { (string | number | BN) } value,
+	 * @param { Array<(number | string | BN)> } data,
+	*/
+	"transferFrom" (
+		from: ArgumentTypes.AccountId,
+		to: ArgumentTypes.AccountId,
+		value: (string | number | BN),
+		data: Array<(number | string | BN)>,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::transferFrom", [from, to, value, data], __options);
+	}
+
+	/**
+	 * totalSupply
+	 *
+	*/
+	"totalSupply" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::totalSupply", [], __options);
+	}
+
+	/**
 	 * approve
 	 *
 	 * @param { ArgumentTypes.AccountId } spender,
@@ -57,15 +111,17 @@ export default class Methods {
 	}
 
 	/**
-	 * balanceOf
+	 * allowance
 	 *
 	 * @param { ArgumentTypes.AccountId } owner,
+	 * @param { ArgumentTypes.AccountId } spender,
 	*/
-	"balanceOf" (
+	"allowance" (
 		owner: ArgumentTypes.AccountId,
+		spender: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::balanceOf", [owner], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::allowance", [owner, spender], __options);
 	}
 
 	/**
@@ -99,59 +155,13 @@ export default class Methods {
 	}
 
 	/**
-	 * totalSupply
+	 * renounceOwnership
 	 *
 	*/
-	"totalSupply" (
+	"renounceOwnership" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::totalSupply", [], __options);
-	}
-
-	/**
-	 * increaseAllowance
-	 *
-	 * @param { ArgumentTypes.AccountId } spender,
-	 * @param { (string | number | BN) } deltaValue,
-	*/
-	"increaseAllowance" (
-		spender: ArgumentTypes.AccountId,
-		deltaValue: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::increaseAllowance", [spender, deltaValue], __options);
-	}
-
-	/**
-	 * allowance
-	 *
-	 * @param { ArgumentTypes.AccountId } owner,
-	 * @param { ArgumentTypes.AccountId } spender,
-	*/
-	"allowance" (
-		owner: ArgumentTypes.AccountId,
-		spender: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::allowance", [owner, spender], __options);
-	}
-
-	/**
-	 * transferFrom
-	 *
-	 * @param { ArgumentTypes.AccountId } from,
-	 * @param { ArgumentTypes.AccountId } to,
-	 * @param { (string | number | BN) } value,
-	 * @param { Array<(number | string | BN)> } data,
-	*/
-	"transferFrom" (
-		from: ArgumentTypes.AccountId,
-		to: ArgumentTypes.AccountId,
-		value: (string | number | BN),
-		data: Array<(number | string | BN)>,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22::transferFrom", [from, to, value, data], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
 	}
 
 	/**
@@ -162,16 +172,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
-	}
-
-	/**
-	 * renounceOwnership
-	 *
-	*/
-	"renounceOwnership" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
 	}
 
 	/**
@@ -187,16 +187,6 @@ export default class Methods {
 	}
 
 	/**
-	 * tokenSymbol
-	 *
-	*/
-	"tokenSymbol" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22Metadata::tokenSymbol", [], __options);
-	}
-
-	/**
 	 * tokenName
 	 *
 	*/
@@ -204,6 +194,16 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22Metadata::tokenName", [], __options);
+	}
+
+	/**
+	 * tokenSymbol
+	 *
+	*/
+	"tokenSymbol" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "psp22Metadata::tokenSymbol", [], __options);
 	}
 
 	/**
@@ -245,6 +245,16 @@ export default class Methods {
 	}
 
 	/**
+	 * mintingFee
+	 *
+	*/
+	"mintingFee" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::mintingFee", [], __options);
+	}
+
+	/**
 	 * setCap
 	 *
 	 * @param { (string | number | BN) } cap,
@@ -257,27 +267,35 @@ export default class Methods {
 	}
 
 	/**
-	 * setMintingFee
+	 * mintingCap
 	 *
-	 * @param { (string | number | BN) } mintingFee,
 	*/
-	"setMintingFee" (
-		mintingFee: (string | number | BN),
+	"mintingCap" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::setMintingFee", [mintingFee], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::mintingCap", [], __options);
 	}
 
 	/**
-	 * tokenMintCapTrait::withdrawFee
+	 * totalMinted
 	 *
-	 * @param { (string | number | BN) } value,
 	*/
-	"tokenMintCapTrait::withdrawFee" (
-		value: (string | number | BN),
+	"totalMinted" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::withdrawFee", [value], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::totalMinted", [], __options);
+	}
+
+	/**
+	 * setMintingCap
+	 *
+	 * @param { (string | number | BN) } mintingCap,
+	*/
+	"setMintingCap" (
+		mintingCap: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::setMintingCap", [mintingCap], __options);
 	}
 
 	/**
@@ -293,6 +311,30 @@ export default class Methods {
 	}
 
 	/**
+	 * tokenMintCapTrait::withdrawFee
+	 *
+	 * @param { (string | number | BN) } value,
+	*/
+	"tokenMintCapTrait::withdrawFee" (
+		value: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::withdrawFee", [value], __options);
+	}
+
+	/**
+	 * setMintingFee
+	 *
+	 * @param { (string | number | BN) } mintingFee,
+	*/
+	"setMintingFee" (
+		mintingFee: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::setMintingFee", [mintingFee], __options);
+	}
+
+	/**
 	 * cap
 	 *
 	*/
@@ -303,33 +345,17 @@ export default class Methods {
 	}
 
 	/**
-	 * mintingCap
+	 * adminTrait::withdrawFee
 	 *
+	 * @param { (string | number | BN) } value,
+	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"mintingCap" (
+	"adminTrait::withdrawFee" (
+		value: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::mintingCap", [], __options);
-	}
-
-	/**
-	 * mintingFee
-	 *
-	*/
-	"mintingFee" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::mintingFee", [], __options);
-	}
-
-	/**
-	 * totalMinted
-	 *
-	*/
-	"totalMinted" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenMintCapTrait::totalMinted", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::withdrawFee", [value, receiver], __options);
 	}
 
 	/**
@@ -362,20 +388,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::tranferPsp22", [psp22ContractAddress, amount, receiver], __options);
-	}
-
-	/**
-	 * adminTrait::withdrawFee
-	 *
-	 * @param { (string | number | BN) } value,
-	 * @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"adminTrait::withdrawFee" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::withdrawFee", [value, receiver], __options);
 	}
 
 	/**

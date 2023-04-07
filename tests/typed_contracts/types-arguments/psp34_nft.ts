@@ -28,6 +28,7 @@ export interface Error {
 	invalidPhaseCount ? : null,
 	collectionOwnerAndAdmin ? : null,
 	collectionNotActive ? : null,
+	collectionNotExist ? : null,
 	invalidInput ? : null,
 	invalidType ? : null,
 	claimedAll ? : null,
@@ -35,6 +36,7 @@ export interface Error {
 	updatePhase ? : null,
 	phaseNotExist ? : null,
 	phaseExpired ? : null,
+	phaseDeactivate ? : null,
 	whitelistNotExist ? : null,
 	withdrawFeeError ? : null,
 	withdrawNftError ? : null,
@@ -50,9 +52,14 @@ export interface Error {
 	invalidTime ? : null,
 	rewardStarted ? : null,
 	rewardNotStarted ? : null,
+	rewardNotAdded ? : null,
 	claimMustBeFalse ? : null,
+	holdAmountBidderNotExist ? : null,
 	ownableError ? : OwnableError,
-	accessControlError ? : AccessControlError
+	accessControlError ? : AccessControlError,
+	psp22Error ? : PSP22Error,
+	psp34Error ? : PSP34Error,
+	checkedOperations ? : null
 }
 
 export class ErrorBuilder {
@@ -161,6 +168,11 @@ export class ErrorBuilder {
 			collectionNotActive: null,
 		};
 	}
+	static CollectionNotExist(): Error {
+		return {
+			collectionNotExist: null,
+		};
+	}
 	static InvalidInput(): Error {
 		return {
 			invalidInput: null,
@@ -194,6 +206,11 @@ export class ErrorBuilder {
 	static PhaseExpired(): Error {
 		return {
 			phaseExpired: null,
+		};
+	}
+	static PhaseDeactivate(): Error {
+		return {
+			phaseDeactivate: null,
 		};
 	}
 	static WhitelistNotExist(): Error {
@@ -271,9 +288,19 @@ export class ErrorBuilder {
 			rewardNotStarted: null,
 		};
 	}
+	static RewardNotAdded(): Error {
+		return {
+			rewardNotAdded: null,
+		};
+	}
 	static ClaimMustBeFalse(): Error {
 		return {
 			claimMustBeFalse: null,
+		};
+	}
+	static HoldAmountBidderNotExist(): Error {
+		return {
+			holdAmountBidderNotExist: null,
 		};
 	}
 	static OwnableError(value: OwnableError): Error {
@@ -284,6 +311,21 @@ export class ErrorBuilder {
 	static AccessControlError(value: AccessControlError): Error {
 		return {
 			accessControlError: value,
+		};
+	}
+	static PSP22Error(value: PSP22Error): Error {
+		return {
+			psp22Error: value,
+		};
+	}
+	static PSP34Error(value: PSP34Error): Error {
+		return {
+			psp34Error: value,
+		};
+	}
+	static CheckedOperations(): Error {
+		return {
+			checkedOperations: null,
 		};
 	}
 }
@@ -299,44 +341,44 @@ export enum AccessControlError {
 	roleRedundant = 'RoleRedundant'
 }
 
-export interface Id {
-	u8 ? : (number | string | BN),
-	u16 ? : (number | string | BN),
-	u32 ? : (number | string | BN),
-	u64 ? : (number | string | BN),
-	u128 ? : (string | number | BN),
-	bytes ? : Array<(number | string | BN)>
+export interface PSP22Error {
+	custom ? : Array<(number | string | BN)>,
+	insufficientBalance ? : null,
+	insufficientAllowance ? : null,
+	zeroRecipientAddress ? : null,
+	zeroSenderAddress ? : null,
+	safeTransferCheckFailed ? : Array<(number | string | BN)>
 }
 
-export class IdBuilder {
-	static U8(value: (number | string | BN)): Id {
+export class PSP22ErrorBuilder {
+	static Custom(value: Array<(number | string | BN)>): PSP22Error {
 		return {
-			u8: value,
+			custom: value,
 		};
 	}
-	static U16(value: (number | string | BN)): Id {
+	static InsufficientBalance(): PSP22Error {
 		return {
-			u16: value,
+			insufficientBalance: null,
 		};
 	}
-	static U32(value: (number | string | BN)): Id {
+	static InsufficientAllowance(): PSP22Error {
 		return {
-			u32: value,
+			insufficientAllowance: null,
 		};
 	}
-	static U64(value: (number | string | BN)): Id {
+	static ZeroRecipientAddress(): PSP22Error {
 		return {
-			u64: value,
+			zeroRecipientAddress: null,
 		};
 	}
-	static U128(value: (string | number | BN)): Id {
+	static ZeroSenderAddress(): PSP22Error {
 		return {
-			u128: value,
+			zeroSenderAddress: null,
 		};
 	}
-	static Bytes(value: Array<(number | string | BN)>): Id {
+	static SafeTransferCheckFailed(value: Array<(number | string | BN)>): PSP22Error {
 		return {
-			bytes: value,
+			safeTransferCheckFailed: value,
 		};
 	}
 }
@@ -379,6 +421,48 @@ export class PSP34ErrorBuilder {
 	static SafeTransferCheckFailed(value: Array<(number | string | BN)>): PSP34Error {
 		return {
 			safeTransferCheckFailed: value,
+		};
+	}
+}
+
+export interface Id {
+	u8 ? : (number | string | BN),
+	u16 ? : (number | string | BN),
+	u32 ? : (number | string | BN),
+	u64 ? : (number | string | BN),
+	u128 ? : (string | number | BN),
+	bytes ? : Array<(number | string | BN)>
+}
+
+export class IdBuilder {
+	static U8(value: (number | string | BN)): Id {
+		return {
+			u8: value,
+		};
+	}
+	static U16(value: (number | string | BN)): Id {
+		return {
+			u16: value,
+		};
+	}
+	static U32(value: (number | string | BN)): Id {
+		return {
+			u32: value,
+		};
+	}
+	static U64(value: (number | string | BN)): Id {
+		return {
+			u64: value,
+		};
+	}
+	static U128(value: (string | number | BN)): Id {
+		return {
+			u128: value,
+		};
+	}
+	static Bytes(value: Array<(number | string | BN)>): Id {
+		return {
+			bytes: value,
 		};
 	}
 }

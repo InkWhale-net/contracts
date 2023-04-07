@@ -29,6 +29,7 @@ export interface Error {
 	invalidPhaseCount ? : null,
 	collectionOwnerAndAdmin ? : null,
 	collectionNotActive ? : null,
+	collectionNotExist ? : null,
 	invalidInput ? : null,
 	invalidType ? : null,
 	claimedAll ? : null,
@@ -36,6 +37,7 @@ export interface Error {
 	updatePhase ? : null,
 	phaseNotExist ? : null,
 	phaseExpired ? : null,
+	phaseDeactivate ? : null,
 	whitelistNotExist ? : null,
 	withdrawFeeError ? : null,
 	withdrawNftError ? : null,
@@ -51,9 +53,14 @@ export interface Error {
 	invalidTime ? : null,
 	rewardStarted ? : null,
 	rewardNotStarted ? : null,
+	rewardNotAdded ? : null,
 	claimMustBeFalse ? : null,
+	holdAmountBidderNotExist ? : null,
 	ownableError ? : OwnableError,
-	accessControlError ? : AccessControlError
+	accessControlError ? : AccessControlError,
+	psp22Error ? : PSP22Error,
+	psp34Error ? : PSP34Error,
+	checkedOperations ? : null
 }
 
 export class ErrorBuilder {
@@ -162,6 +169,11 @@ export class ErrorBuilder {
 			collectionNotActive: null,
 		};
 	}
+	static CollectionNotExist(): Error {
+		return {
+			collectionNotExist: null,
+		};
+	}
 	static InvalidInput(): Error {
 		return {
 			invalidInput: null,
@@ -195,6 +207,11 @@ export class ErrorBuilder {
 	static PhaseExpired(): Error {
 		return {
 			phaseExpired: null,
+		};
+	}
+	static PhaseDeactivate(): Error {
+		return {
+			phaseDeactivate: null,
 		};
 	}
 	static WhitelistNotExist(): Error {
@@ -272,9 +289,19 @@ export class ErrorBuilder {
 			rewardNotStarted: null,
 		};
 	}
+	static RewardNotAdded(): Error {
+		return {
+			rewardNotAdded: null,
+		};
+	}
 	static ClaimMustBeFalse(): Error {
 		return {
 			claimMustBeFalse: null,
+		};
+	}
+	static HoldAmountBidderNotExist(): Error {
+		return {
+			holdAmountBidderNotExist: null,
 		};
 	}
 	static OwnableError(value: OwnableError): Error {
@@ -285,6 +312,21 @@ export class ErrorBuilder {
 	static AccessControlError(value: AccessControlError): Error {
 		return {
 			accessControlError: value,
+		};
+	}
+	static PSP22Error(value: PSP22Error): Error {
+		return {
+			psp22Error: value,
+		};
+	}
+	static PSP34Error(value: PSP34Error): Error {
+		return {
+			psp34Error: value,
+		};
+	}
+	static CheckedOperations(): Error {
+		return {
+			checkedOperations: null,
 		};
 	}
 }
@@ -300,44 +342,44 @@ export enum AccessControlError {
 	roleRedundant = 'RoleRedundant'
 }
 
-export interface Id {
-	u8 ? : number,
-	u16 ? : number,
-	u32 ? : number,
-	u64 ? : number,
-	u128 ? : ReturnNumber,
-	bytes ? : Array<number>
+export interface PSP22Error {
+	custom ? : Array<number>,
+	insufficientBalance ? : null,
+	insufficientAllowance ? : null,
+	zeroRecipientAddress ? : null,
+	zeroSenderAddress ? : null,
+	safeTransferCheckFailed ? : Array<number>
 }
 
-export class IdBuilder {
-	static U8(value: number): Id {
+export class PSP22ErrorBuilder {
+	static Custom(value: Array<number>): PSP22Error {
 		return {
-			u8: value,
+			custom: value,
 		};
 	}
-	static U16(value: number): Id {
+	static InsufficientBalance(): PSP22Error {
 		return {
-			u16: value,
+			insufficientBalance: null,
 		};
 	}
-	static U32(value: number): Id {
+	static InsufficientAllowance(): PSP22Error {
 		return {
-			u32: value,
+			insufficientAllowance: null,
 		};
 	}
-	static U64(value: number): Id {
+	static ZeroRecipientAddress(): PSP22Error {
 		return {
-			u64: value,
+			zeroRecipientAddress: null,
 		};
 	}
-	static U128(value: ReturnNumber): Id {
+	static ZeroSenderAddress(): PSP22Error {
 		return {
-			u128: value,
+			zeroSenderAddress: null,
 		};
 	}
-	static Bytes(value: Array<number>): Id {
+	static SafeTransferCheckFailed(value: Array<number>): PSP22Error {
 		return {
-			bytes: value,
+			safeTransferCheckFailed: value,
 		};
 	}
 }
@@ -380,6 +422,48 @@ export class PSP34ErrorBuilder {
 	static SafeTransferCheckFailed(value: Array<number>): PSP34Error {
 		return {
 			safeTransferCheckFailed: value,
+		};
+	}
+}
+
+export interface Id {
+	u8 ? : number,
+	u16 ? : number,
+	u32 ? : number,
+	u64 ? : number,
+	u128 ? : ReturnNumber,
+	bytes ? : Array<number>
+}
+
+export class IdBuilder {
+	static U8(value: number): Id {
+		return {
+			u8: value,
+		};
+	}
+	static U16(value: number): Id {
+		return {
+			u16: value,
+		};
+	}
+	static U32(value: number): Id {
+		return {
+			u32: value,
+		};
+	}
+	static U64(value: number): Id {
+		return {
+			u64: value,
+		};
+	}
+	static U128(value: ReturnNumber): Id {
+		return {
+			u128: value,
+		};
+	}
+	static Bytes(value: Array<number>): Id {
+		return {
+			bytes: value,
 		};
 	}
 }

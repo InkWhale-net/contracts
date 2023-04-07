@@ -43,12 +43,12 @@ describe('Pool contract test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        psp22ContractAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // AAA token 
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        psp22ContractAddress = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // AAA token 
         apy = "2000"; // 20%. Scaled by 100
         duration = "5184000000"; // 60 days
         startTime = new Date().getTime(); // Current time
-        unstakeFee = "8000000000000"; // 8 INW      
+        unstakeFee = "12000000000000"; // 12 INW      
         
         // "refTime: 640544751"
         // "proofSize: 17408"

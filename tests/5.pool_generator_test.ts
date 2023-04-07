@@ -39,11 +39,13 @@ describe('Pool generator test', () => {
         await checkAccountsBalance(signers, api);
 
         poolHash = myPool.source.hash;
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        creationFee = "4000000000000"; // 4 INW      
-        unstakeFee = "8000000000000"; // 8 INW      
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        creationFee = "6000000000000"; // 6 INW      
+        unstakeFee = "12000000000000"; // 12 INW      
         
-        let gasLimit = setGasLimit(api, 1_000_000_000, 0);
+        // "refTime: 626966182"
+	    // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_400_000_000, 36_000);
                 
         const contractFactory = new ConstructorsPoolGenerator(api, defaultSigner);
 
@@ -139,7 +141,7 @@ describe('Pool generator test', () => {
         // console.log("Create pools...");
         // Alice creates pool for token1: AAA
     
-        let tokenAddress1 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        let tokenAddress1 = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // Token1 address, name AAA
         let apy1 = "3000";
         let duration1 = "7776000000";
         let startTime1 = new Date().getTime();
@@ -152,7 +154,7 @@ describe('Pool generator test', () => {
         );
 
         // Bob creates pool for token2: XYZ
-        let tokenAddress2 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // 10M
+        let tokenAddress2 = "5Dm9HWq5ma2M7HcogqPcvpwHFgD5AW8FxuZgxqc6u1yEMhz7"; // 10M
         let apy2 = "2000";
         let duration2 = "2592000000";
         let startTime2 = new Date().getTime();

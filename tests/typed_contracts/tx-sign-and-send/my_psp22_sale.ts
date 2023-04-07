@@ -52,6 +52,68 @@ export default class Methods {
 	}
 
 	/**
+	* balanceOf
+	*
+	* @param { ArgumentTypes.AccountId } owner,
+	*/
+	"balanceOf" (
+		owner: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::balanceOf", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [owner], __options);
+	}
+
+	/**
+	* increaseAllowance
+	*
+	* @param { ArgumentTypes.AccountId } spender,
+	* @param { (string | number | BN) } deltaValue,
+	*/
+	"increaseAllowance" (
+		spender: ArgumentTypes.AccountId,
+		deltaValue: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::increaseAllowance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [spender, deltaValue], __options);
+	}
+
+	/**
+	* transferFrom
+	*
+	* @param { ArgumentTypes.AccountId } from,
+	* @param { ArgumentTypes.AccountId } to,
+	* @param { (string | number | BN) } value,
+	* @param { Array<(number | string | BN)> } data,
+	*/
+	"transferFrom" (
+		from: ArgumentTypes.AccountId,
+		to: ArgumentTypes.AccountId,
+		value: (string | number | BN),
+		data: Array<(number | string | BN)>,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::transferFrom", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [from, to, value, data], __options);
+	}
+
+	/**
+	* totalSupply
+	*
+	*/
+	"totalSupply" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::totalSupply", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [], __options);
+	}
+
+	/**
 	* approve
 	*
 	* @param { ArgumentTypes.AccountId } spender,
@@ -68,17 +130,19 @@ export default class Methods {
 	}
 
 	/**
-	* balanceOf
+	* allowance
 	*
 	* @param { ArgumentTypes.AccountId } owner,
+	* @param { ArgumentTypes.AccountId } spender,
 	*/
-	"balanceOf" (
+	"allowance" (
 		owner: ArgumentTypes.AccountId,
+		spender: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::balanceOf", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::allowance", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [owner], __options);
+		}, [owner, spender], __options);
 	}
 
 	/**
@@ -116,67 +180,15 @@ export default class Methods {
 	}
 
 	/**
-	* totalSupply
+	* renounceOwnership
 	*
 	*/
-	"totalSupply" (
+	"renounceOwnership" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::totalSupply", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
 		}, [], __options);
-	}
-
-	/**
-	* increaseAllowance
-	*
-	* @param { ArgumentTypes.AccountId } spender,
-	* @param { (string | number | BN) } deltaValue,
-	*/
-	"increaseAllowance" (
-		spender: ArgumentTypes.AccountId,
-		deltaValue: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::increaseAllowance", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [spender, deltaValue], __options);
-	}
-
-	/**
-	* allowance
-	*
-	* @param { ArgumentTypes.AccountId } owner,
-	* @param { ArgumentTypes.AccountId } spender,
-	*/
-	"allowance" (
-		owner: ArgumentTypes.AccountId,
-		spender: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::allowance", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [owner, spender], __options);
-	}
-
-	/**
-	* transferFrom
-	*
-	* @param { ArgumentTypes.AccountId } from,
-	* @param { ArgumentTypes.AccountId } to,
-	* @param { (string | number | BN) } value,
-	* @param { Array<(number | string | BN)> } data,
-	*/
-	"transferFrom" (
-		from: ArgumentTypes.AccountId,
-		to: ArgumentTypes.AccountId,
-		value: (string | number | BN),
-		data: Array<(number | string | BN)>,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22::transferFrom", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [from, to, value, data], __options);
 	}
 
 	/**
@@ -187,18 +199,6 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [], __options);
-	}
-
-	/**
-	* renounceOwnership
-	*
-	*/
-	"renounceOwnership" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
 		}, [], __options);
 	}
@@ -218,18 +218,6 @@ export default class Methods {
 	}
 
 	/**
-	* tokenSymbol
-	*
-	*/
-	"tokenSymbol" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22Metadata::tokenSymbol", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [], __options);
-	}
-
-	/**
 	* tokenName
 	*
 	*/
@@ -237,6 +225,18 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22Metadata::tokenName", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [], __options);
+	}
+
+	/**
+	* tokenSymbol
+	*
+	*/
+	"tokenSymbol" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "psp22Metadata::tokenSymbol", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
 		}, [], __options);
 	}
@@ -286,6 +286,18 @@ export default class Methods {
 	}
 
 	/**
+	* mintingFee
+	*
+	*/
+	"mintingFee" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::mintingFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [], __options);
+	}
+
+	/**
 	* setCap
 	*
 	* @param { (string | number | BN) } cap,
@@ -300,31 +312,41 @@ export default class Methods {
 	}
 
 	/**
-	* setMintingFee
+	* mintingCap
 	*
-	* @param { (string | number | BN) } mintingFee,
 	*/
-	"setMintingFee" (
-		mintingFee: (string | number | BN),
+	"mintingCap" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::setMintingFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::mintingCap", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [mintingFee], __options);
+		}, [], __options);
 	}
 
 	/**
-	* tokenMintCapTrait::withdrawFee
+	* totalMinted
 	*
-	* @param { (string | number | BN) } value,
 	*/
-	"tokenMintCapTrait::withdrawFee" (
-		value: (string | number | BN),
+	"totalMinted" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::withdrawFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::totalMinted", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [value], __options);
+		}, [], __options);
+	}
+
+	/**
+	* setMintingCap
+	*
+	* @param { (string | number | BN) } mintingCap,
+	*/
+	"setMintingCap" (
+		mintingCap: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::setMintingCap", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [mintingCap], __options);
 	}
 
 	/**
@@ -342,6 +364,34 @@ export default class Methods {
 	}
 
 	/**
+	* tokenMintCapTrait::withdrawFee
+	*
+	* @param { (string | number | BN) } value,
+	*/
+	"tokenMintCapTrait::withdrawFee" (
+		value: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::withdrawFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [value], __options);
+	}
+
+	/**
+	* setMintingFee
+	*
+	* @param { (string | number | BN) } mintingFee,
+	*/
+	"setMintingFee" (
+		mintingFee: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::setMintingFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
+		}, [mintingFee], __options);
+	}
+
+	/**
 	* cap
 	*
 	*/
@@ -354,39 +404,19 @@ export default class Methods {
 	}
 
 	/**
-	* mintingCap
+	* adminTrait::withdrawFee
 	*
+	* @param { (string | number | BN) } value,
+	* @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"mintingCap" (
+	"adminTrait::withdrawFee" (
+		value: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::mintingCap", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::withdrawFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [], __options);
-	}
-
-	/**
-	* mintingFee
-	*
-	*/
-	"mintingFee" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::mintingFee", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [], __options);
-	}
-
-	/**
-	* totalMinted
-	*
-	*/
-	"totalMinted" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenMintCapTrait::totalMinted", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [], __options);
+		}, [value, receiver], __options);
 	}
 
 	/**
@@ -423,22 +453,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
 		}, [psp22ContractAddress, amount, receiver], __options);
-	}
-
-	/**
-	* adminTrait::withdrawFee
-	*
-	* @param { (string | number | BN) } value,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"adminTrait::withdrawFee" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::withdrawFee", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_psp22_sale");
-		}, [value, receiver], __options);
 	}
 
 	/**

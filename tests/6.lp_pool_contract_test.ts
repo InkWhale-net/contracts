@@ -43,15 +43,17 @@ describe('Lp pool contract test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        stakingTokenAddress = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
-        earningTokenAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        stakingTokenAddress = "5Dm9HWq5ma2M7HcogqPcvpwHFgD5AW8FxuZgxqc6u1yEMhz7"; // Token2 address, name XYZ
+        earningTokenAddress = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // Token1 address, name AAA
         multiplier = "3000000"; // Scaled by 10^6. Reward 3 earning token/ 1 staking token/ day
         duration = "7776000000";
         startTime = new Date().getTime(); 
-        unstakeFee = "10000000000000"; // 10 INW          
-             
-        let gasLimit = setGasLimit(api, 1_200_000_000, 0);
+        unstakeFee = "16000000000000"; // 16 INW          
+        
+        // "refTime: 707355720"
+	    // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_400_000_000, 36_000);
         
         const contractFactory = new ConstructorsLpPool(api, defaultSigner);
         

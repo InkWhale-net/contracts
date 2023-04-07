@@ -46,15 +46,17 @@ describe('Nft pool contract test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        nftCollectionAddress = "5FkVyhF4KVMwgVTbRwvDgnJ7oe8tfZ9A7v2sEiqQPccHkUNC"; // Praying Mantis Predators (PMP) Collection 
-        earningTokenAddress = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        nftCollectionAddress = "5H7v8XSTG3nshsNeo7AeriotMcGqwLM6kf9rcNHsrQqwAeYW"; // Praying Mantis Predators (PMP) Collection 
+        earningTokenAddress = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // Token1 address, name AAA
         multiplier = "3000000000000"; // Scaled by 10 ** earning token decimal. Reward 3 earning token/ 1 staking token/ day
         duration = "7776000000";
         startTime = new Date().getTime(); 
-        unstakeFee = "12000000000000"; // 12 INW          
-             
-        let gasLimit = setGasLimit(api, 1_200_000_000, 0);
+        unstakeFee = "20000000000000"; // 20 INW          
+        
+        // "refTime: 709849174"
+	    // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_400_000_000, 36_000);
         
         const contractFactory = new ConstructorsNftPool(api, defaultSigner);
         
@@ -107,7 +109,7 @@ describe('Nft pool contract test', () => {
         // Charlie - Default signer operates  
         // Stake
 
-        const defaultSignerStakedTokenId = PSP34Args.IdBuilder.U64(7); // Nft id 7
+        const defaultSignerStakedTokenId = PSP34Args.IdBuilder.U64(12); // Nft id 12
         await nftContract.withSigner(defaultSigner).tx.approve(
             contractAddress,
             defaultSignerStakedTokenId,

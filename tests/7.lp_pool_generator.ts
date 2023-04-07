@@ -39,11 +39,13 @@ describe('Lp pool generator test', () => {
         await checkAccountsBalance(signers, api);
 
         poolHash = myLpPool.source.hash;
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        creationFee = "5000000000000"; // 5 INW      
-        unstakeFee = "10000000000000"; // 10 INW      
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        creationFee = "8000000000000"; // 8 INW      
+        unstakeFee = "16000000000000"; // 16 INW      
         
-        let gasLimit = setGasLimit(api, 1_000_000_000, 0);
+        // "refTime: 626966182"
+	    // "proofSize: 17408"
+        let gasLimit = setGasLimit(api, 1_400_000_000, 36_000);
                 
         const contractFactory = new ConstructorsLpPoolGenerator(api, defaultSigner);
 
@@ -139,8 +141,8 @@ describe('Lp pool generator test', () => {
         // console.log("Create pools...");
         // Alice creates lp pool for staking token: XYZ and earning token: AAA
     
-        let stakingTokenAddress1 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
-        let earningTokenAddress1 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
+        let stakingTokenAddress1 = "5Dm9HWq5ma2M7HcogqPcvpwHFgD5AW8FxuZgxqc6u1yEMhz7"; // Token2 address, name XYZ
+        let earningTokenAddress1 = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // Token1 address, name AAA
         let multiplier1 = "3000000"; // Scaled 10^6. Reward 3 earning token/ 1 staking token/ day
         let duration1 = "7776000000";
         let startTime1 = new Date().getTime();
@@ -155,8 +157,8 @@ describe('Lp pool generator test', () => {
         );
 
         // Bob creates lp pool for staking token: AAA and earning token: XYZ
-        let stakingTokenAddress2 = "5DeopAuxKedXM7YrYrN6NJWU3oykFYLaMJGbWCJPnvXTEW7S"; // Token1 address, name AAA
-        let earningTokenAddress2 = "5CxpxW9V6RnYhkZdfBk1GoFNAS3U7SDbRC2oHpazP2V8LxMd"; // Token2 address, name XYZ
+        let stakingTokenAddress2 = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // Token1 address, name AAA
+        let earningTokenAddress2 = "5Dm9HWq5ma2M7HcogqPcvpwHFgD5AW8FxuZgxqc6u1yEMhz7"; // Token2 address, name XYZ
         let multiplier2 = "4000000"; // Scaled 10^6. Reward 4 earning token/ 1 staking token/ day
         let duration2 = "5184000000";
         let startTime2 = new Date().getTime();

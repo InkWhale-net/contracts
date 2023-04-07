@@ -38,8 +38,8 @@ describe('Token generator test', () => {
         await checkAccountsBalance(signers, api);
 
         psp22Hash = myPsp22.source.hash;
-        walContractAddress = "5FKxWQhAwpmkZG9gUDZKwGDeUuhjKkzMaCcs8qcWXJ5vegyd"; // INW contract address
-        creationFee = "3000000000000"; // 3 INW      
+        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
+        creationFee = "4000000000000"; // 4 INW      
 
         // "refTime: 607483492"
         // "proofSize: 17408"
