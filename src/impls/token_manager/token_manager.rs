@@ -62,25 +62,26 @@ where
         Ok(())
     }
 
-    /// Withdraw Fees - only Owner
-    #[modifiers(only_owner)]
-    default fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error> {
-        assert!(value <= Self::env().balance(), "not enough balance");
-        assert!(
-            Self::env().transfer(Self::env().caller(), value).is_ok(),
-            "error withdraw_fee"
-        );
-        Ok(())
-    }
-
     #[modifiers(only_owner)]
     default fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error> {
-        assert!(Psp22Ref::transfer(
+        let builder = Psp22Ref::transfer_builder(
             &self.data::<Data>().wal_contract,
             Self::env().caller(),
             value,
             Vec::<u8>::new()
-        ).is_ok());
-        Ok(())
+        )
+        .call_flags(CallFlags::default().set_allow_reentry(true));
+
+        let result = match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => {
+                Err(Error::CannotTransfer)
+            }
+        };
+
+        result
     }
 }
