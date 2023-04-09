@@ -24,6 +24,7 @@ use openbrush::{
         Hash,
     }
 };
+use ink::env::CallFlags;
 
 impl<T> TokenManagerTrait for T 
 where 

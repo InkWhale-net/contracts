@@ -3,7 +3,8 @@ use openbrush::{
         Balance,
         AccountId,
         Hash,
-        String
+        String,
+        ZERO_ADDRESS
     },
     storage::{
         Mapping
@@ -29,7 +30,7 @@ pub struct Token {
 
 pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 #[openbrush::upgradeable_storage(STORAGE_KEY)]
 pub struct Data {
     pub standard_psp22_hash: Hash,
@@ -39,4 +40,18 @@ pub struct Data {
     pub creation_fee: Balance,
     pub token_list: Mapping<u64, Token>,
     pub _reserved: Option<()>
+}
+
+impl Default for Data {
+    fn default() -> Self {
+        Self {
+            standard_psp22_hash: Default::default(),
+            admin_address: ZERO_ADDRESS.into(),
+            token_count: Default::default(),
+            wal_contract: ZERO_ADDRESS.into(),
+            creation_fee: Default::default(),
+            token_list: Default::default(),
+            _reserved: Default::default(),
+        }
+    }
 }

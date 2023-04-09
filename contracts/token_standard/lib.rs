@@ -111,8 +111,8 @@ pub mod token_standard {
             instance
                 ._mint_to(mint_to, total_supply)
                 .expect("Should mint");
-            instance.metadata.name = Some(name);
-            instance.metadata.symbol = Some(symbol);
+            instance.metadata.name = Some(name.into());
+            instance.metadata.symbol = Some(symbol.into());
             instance.metadata.decimals = decimal;
 
             instance

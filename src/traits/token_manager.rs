@@ -46,5 +46,5 @@ pub trait TokenManagerTrait {
     fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error>;
 
     #[ink(message)] 
-    fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>
+    fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>;
 }
