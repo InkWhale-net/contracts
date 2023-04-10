@@ -14,10 +14,9 @@ use openbrush::{
 };
 
 use crate::traits::error::Error;
-use crate::impls::token_manager::data::Token;
 
 #[openbrush::wrapper]
-pub type Psp22Ref = dyn PSP22;
+pub type Psp22Ref = dyn PSP22 + PSP22Burnable;
 
 #[openbrush::wrapper]
 pub type TokenManagerRef = dyn TokenManagerTrait;
@@ -25,7 +24,7 @@ pub type TokenManagerRef = dyn TokenManagerTrait;
 #[openbrush::trait_definition]
 pub trait TokenManagerTrait {    
     #[ink(message)]
-    fn get_token_info(&self, index: u64) -> Option<Token>;
+    fn get_token_contract_address(&self, index: u64) -> Option<AccountId>;
 
     #[ink(message)]
     fn get_token_count(&self) -> u64;

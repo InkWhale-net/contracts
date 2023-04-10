@@ -31,7 +31,7 @@ where
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {
-    default fn get_token_info(&self, index: u64) -> Option<Token> {
+    default fn get_token_contract_address(&self, index: u64) -> Option<AccountId> {
         return self.data::<Data>().token_list.get(&index)
     }
 
