@@ -101,7 +101,7 @@ pub mod pool_generator {
             );
             assert!(balance >= fees,"not enough balance");
 
-            if !Psp22Ref::transfer_from_builder(
+            if Psp22Ref::transfer_from_builder(
                 &self.manager.wal_contract,
                 caller,
                 self.env().account_id(),
@@ -110,11 +110,11 @@ pub mod pool_generator {
             )
             .call_flags(CallFlags::default().set_allow_reentry(true))
             .fire()
-            .is_ok()
+            .is_err()
             {
                 return Err(Error::CannotTransfer)
             }
-            let contract = MyPoolRef::new(contract_owner, self.manager.wal_contract.clone(), psp22_contract_address, apy, duration, start_time, self.manager.unstake_fee.clone())
+            let contract = MyPoolRef::new(contract_owner, self.manager.wal_contract, psp22_contract_address, apy, duration, start_time, self.manager.unstake_fee)
                 .endowment(0)
                 .code_hash(self.manager.pool_hash)
                 .salt_bytes(self.manager.pool_count.to_le_bytes())

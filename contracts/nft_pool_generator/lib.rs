@@ -103,7 +103,7 @@ pub mod nft_pool_generator {
             );
             assert!(balance >= fees,"not enough balance");
 
-            if !Psp22Ref::transfer_from_builder(
+            if Psp22Ref::transfer_from_builder(
                 &self.manager.wal_contract,
                 caller,
                 self.env().account_id(),
@@ -112,11 +112,11 @@ pub mod nft_pool_generator {
             )
             .call_flags(CallFlags::default().set_allow_reentry(true))
             .fire()
-            .is_ok()
+            .is_err()
             {
                 return Err(Error::CannotTransfer)
             }
-            let contract = MyNFTPoolRef::new(contract_owner, self.manager.wal_contract.clone(), psp34_contract_address, psp22_contract_address, multiplier, duration, start_time, self.manager.unstake_fee.clone())
+            let contract = MyNFTPoolRef::new(contract_owner, self.manager.wal_contract, psp34_contract_address, psp22_contract_address, multiplier, duration, start_time, self.manager.unstake_fee)
                 .endowment(0)
                 .code_hash(self.manager.pool_hash)
                 .salt_bytes(self.manager.pool_count.to_le_bytes())

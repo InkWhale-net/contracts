@@ -59,7 +59,7 @@ pub mod my_psp22_sale {
                 self._burn_from(account, amount)
             }
             else{
-                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved")))
+                Err(PSP22Error::Custom(String::from("Caller is not token owner or approved")))
             }
         }
     }

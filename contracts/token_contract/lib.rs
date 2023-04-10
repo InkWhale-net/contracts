@@ -59,7 +59,7 @@ pub mod my_psp22 {
                 self._burn_from(account, amount)
             }
             else{
-                return Err(PSP22Error::Custom(String::from("Caller is not token owner or approved")))
+                Err(PSP22Error::Custom(String::from("Caller is not token owner or approved")))
             }
         }
     }
@@ -87,7 +87,7 @@ pub mod my_psp22 {
         #[ink(message)]
         pub fn faucet(&mut self) -> Result<(), PSP22Error> {
             let caller = self.env().caller();
-            self._mint_to(caller, 1000 * ((10 as u64).pow(self.metadata.decimals as u32) as u128)).expect("Should mint");
+            self._mint_to(caller, 1000 * ((10_u64).pow(self.metadata.decimals as u32) as u128)).expect("Should mint");
             Ok(())
         }
     }

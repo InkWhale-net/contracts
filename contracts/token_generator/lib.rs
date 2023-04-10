@@ -104,7 +104,7 @@ pub mod token_generator {
             );
             assert!(balance >= fees,"not enough balance");
 
-            if !Psp22Ref::transfer_from_builder(
+            if Psp22Ref::transfer_from_builder(
                 &self.manager.wal_contract,
                 caller,
                 self.env().account_id(),
@@ -113,13 +113,13 @@ pub mod token_generator {
             )
             .call_flags(CallFlags::default().set_allow_reentry(true))
             .fire()
-            .is_ok()
+            .is_err()
             {
-                return Err(Error::CannotTransfer)
+                return Err(Error::CannotTransfer);
             }
 
             //create contract
-            let contract = MyPsp22Ref::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
+            let contract = MyPsp22Ref::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal)
                 .endowment(0)
                 .code_hash(self.manager.standard_psp22_hash)
                 .salt_bytes(self.manager.token_count.to_le_bytes())

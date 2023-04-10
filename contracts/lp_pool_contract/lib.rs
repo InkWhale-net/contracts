@@ -2,6 +2,7 @@
 #![feature(min_specialization)]
 
 #![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 
 pub use self::my_lp_pool::{
     MyLPPool,
@@ -104,22 +105,14 @@ pub mod my_lp_pool {
             assert!(balance >= amount,"not enough balance");
 
             let staker = self.data.stakers.get(&caller);
-            if staker.is_none() {
-                let stake_info = StakeInformation{
-                    last_reward_update: self.env().block_timestamp(),
-                    staked_value: amount,
-                    unclaimed_reward: 0
-                };
-                self.data.stakers
-                    .insert(&caller, &stake_info);
-            }else{
+            
+            if let Some(mut stake_info) = staker {
                 //calculate Reward
                 // reward = total_NFT * staked_time_in_days * multiplier
                 // 30 days reward for 1 NFT = 30 * multiplier
-                let mut stake_info = staker.unwrap();
                 let time_length = self.env().block_timestamp() - stake_info.last_reward_update; //second
-                let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier as u128).unwrap().checked_div(1000000).unwrap();
-                let unclaimed_reward = (unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap() ) as u128;
+                let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap().checked_div(1000000).unwrap();
+                let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap();
 
                 stake_info.staked_value = stake_info.staked_value.checked_add(amount).unwrap();
                 stake_info.last_reward_update = self.env().block_timestamp();
@@ -127,10 +120,19 @@ pub mod my_lp_pool {
 
                 self.data.stakers
                     .insert(&caller, &stake_info);
+            } else {
+                let stake_info = StakeInformation{
+                    last_reward_update: self.env().block_timestamp(),
+                    staked_value: amount,
+                    unclaimed_reward: 0
+                };
+                self.data.stakers
+                    .insert(&caller, &stake_info);
             }
+
             self.data.total_staked = self.data.total_staked.checked_add(amount).unwrap();
 
-            if !Psp22Ref::transfer_from_builder(
+            if Psp22Ref::transfer_from_builder(
                 &self.data.staking_contract_address,
                 caller,
                 self.env().account_id(),
@@ -139,7 +141,7 @@ pub mod my_lp_pool {
             )
             .call_flags(CallFlags::default().set_allow_reentry(true))
             .fire()
-            .is_ok()
+            .is_err()
             {
                 return Err(Error::CannotTransfer)
             }
@@ -164,7 +166,7 @@ pub mod my_lp_pool {
             );
             assert!(balance >= fees,"not enough balance");
 
-            if !Psp22Ref::transfer_from_builder(
+            if Psp22Ref::transfer_from_builder(
                 &self.data.wal_contract,
                 caller,
                 self.env().account_id(),
@@ -173,7 +175,7 @@ pub mod my_lp_pool {
             )
             .call_flags(CallFlags::default().set_allow_reentry(true))
             .fire()
-            .is_ok()
+            .is_err()
             {
                 return Err(Error::CannotTransfer)
             }
@@ -188,8 +190,8 @@ pub mod my_lp_pool {
                 reward_time = self.data.start_time + self.data.duration;
             }
             let time_length = reward_time - stake_info.last_reward_update; //second
-            let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier as u128).unwrap().checked_div(1000000).unwrap();
-            let unclaimed_reward = (unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap() ) as u128;
+            let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap().checked_div(1000000).unwrap();
+            let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap();
 
             stake_info.staked_value = stake_info.staked_value.checked_sub(amount).unwrap();
             stake_info.last_reward_update = self.env().block_timestamp();
@@ -223,8 +225,8 @@ pub mod my_lp_pool {
                 reward_time = self.data.start_time + self.data.duration;
             }
             let time_length = reward_time - stake_info.last_reward_update; //second
-            let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier as u128).unwrap().checked_div(1000000).unwrap();
-            let unclaimed_reward = (unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap() ) as u128;
+            let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap().checked_div(1000000).unwrap();
+            let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).unwrap();
             let to_claim = stake_info.unclaimed_reward.checked_add(unclaimed_reward).unwrap();
 
             stake_info.last_reward_update = self.env().block_timestamp();
@@ -232,7 +234,7 @@ pub mod my_lp_pool {
 
             self.data.stakers.insert(&caller, &stake_info);
             assert!(to_claim <= self.data.reward_pool, "not enough reward balance");
-            self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim as u128).unwrap();
+            self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim).unwrap();
 
             assert!(Psp22Ref::transfer(
                 &self.data.psp22_contract_address,
@@ -247,7 +249,7 @@ pub mod my_lp_pool {
 
         #[ink(message)]
         pub fn lp_contract_address(&self) -> AccountId {
-            self.data.staking_contract_address.clone()
+            self.data.staking_contract_address
         }
     }
 }
