@@ -23,7 +23,8 @@ pub enum Error {
     NotCallable,
     CannotTransfer,
     CheckedOperations,
-    InvalidBalanceAndAllowance
+    InvalidBalanceAndAllowance,
+    AlreadyInit
 }
 
 impl From<OwnableError> for Error {

@@ -36,7 +36,7 @@ pub struct Data {
     pub standard_psp22_hash: Hash,
     pub admin_address: AccountId,
     pub token_count: u64,
-    pub wal_contract: AccountId,
+    pub inw_contract: AccountId,
     pub creation_fee: Balance,
     pub token_list: Mapping<u64, Token>,
     pub _reserved: Option<()>
@@ -48,7 +48,7 @@ impl Default for Data {
             standard_psp22_hash: Default::default(),
             admin_address: ZERO_ADDRESS.into(),
             token_count: Default::default(),
-            wal_contract: ZERO_ADDRESS.into(),
+            inw_contract: ZERO_ADDRESS.into(),
             creation_fee: Default::default(),
             token_list: Default::default(),
             _reserved: Default::default(),

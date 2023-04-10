@@ -57,12 +57,12 @@ pub mod token_generator {
 
     impl TokenGenerator {
         #[ink(constructor)]
-        pub fn new(psp22_hash: Hash, wal_contract: AccountId, creation_fee: Balance, owner_address: AccountId) -> Self {
+        pub fn new(psp22_hash: Hash, inw_contract: AccountId, creation_fee: Balance, owner_address: AccountId) -> Self {
             let mut instance = Self::default();
             instance._init_with_owner(owner_address);
             instance.initialize(
                 psp22_hash,
-                wal_contract,
+                inw_contract,
                 creation_fee
             )
             .ok()
@@ -73,11 +73,14 @@ pub mod token_generator {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, psp22_hash: Hash, wal_contract: AccountId, creation_fee: Balance
+        pub fn initialize(&mut self, psp22_hash: Hash, inw_contract: AccountId, creation_fee: Balance
         ) -> Result<(), Error> {
+            if self.manager.creation_fee > 0 {
+                return Err(Error::AlreadyInit);
+            }
             self.manager.standard_psp22_hash = psp22_hash;
             self.manager.creation_fee = creation_fee;
-            self.manager.wal_contract = wal_contract;
+            self.manager.inw_contract = inw_contract;
 
             Ok(())
         }
@@ -95,12 +98,12 @@ pub mod token_generator {
             let caller = self.env().caller();
             let fees = self.manager.creation_fee;
             let allowance = Psp22Ref::allowance(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller,
                 self.env().account_id()
             );
             let balance = Psp22Ref::balance_of(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller
             );
 
@@ -109,7 +112,7 @@ pub mod token_generator {
             }
 
             let builder = Psp22Ref::transfer_from_builder(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller,
                 self.env().account_id(),
                 fees,

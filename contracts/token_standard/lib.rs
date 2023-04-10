@@ -105,7 +105,9 @@ pub mod token_standard {
         #[ink(constructor)]
         pub fn new(mint_to: AccountId, total_supply: Balance, name: String, symbol: String, decimal: u8) -> Self {
             let mut instance = Self::default();
-
+            let caller = <Self as DefaultEnv>::env().caller();
+            instance._init_with_owner(caller);
+            assert!(instance._init_cap(total_supply).is_ok());
             instance
                 ._mint_to(mint_to, total_supply)
                 .expect("Should mint");
@@ -114,13 +116,6 @@ pub mod token_standard {
             instance.metadata.decimals = decimal;
 
             instance
-        }
-
-        #[ink(message)]
-        pub fn faucet(&mut self) -> Result<(), PSP22Error> {
-            let caller = self.env().caller();
-            self._mint_to(caller, 1000 * ((10 as u64).pow(self.metadata.decimals as u32) as u128)).expect("Should mint");
-            Ok(())
         }
     }
 }

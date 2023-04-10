@@ -34,7 +34,7 @@
             }
           },
           {
-            "label": "wal_contract",
+            "label": "inw_contract",
             "type": {
               "displayName": [
                 "AccountId"
@@ -96,7 +96,7 @@
             }
           },
           {
-            "label": "wal_contract",
+            "label": "inw_contract",
             "type": {
               "displayName": [
                 "AccountId"
@@ -272,7 +272,7 @@
       {
         "args": [],
         "docs": [],
-        "label": "TokenManagerTrait::get_wal_contract",
+        "label": "TokenManagerTrait::get_inw_contract",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -369,7 +369,7 @@
       {
         "args": [
           {
-            "label": "wal_contract",
+            "label": "inw_contract",
             "type": {
               "displayName": [
                 "tokenmanagertrait_external",
@@ -380,7 +380,7 @@
           }
         ],
         "docs": [],
-        "label": "TokenManagerTrait::set_wal_contract",
+        "label": "TokenManagerTrait::set_inw_contract",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -640,7 +640,7 @@
                           "ty": 0
                         }
                       },
-                      "name": "wal_contract"
+                      "name": "inw_contract"
                     },
                     {
                       "layout": {

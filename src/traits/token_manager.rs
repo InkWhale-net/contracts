@@ -37,13 +37,13 @@ pub trait TokenManagerTrait {
     fn get_contract_hash(&self) -> Hash;
 
     #[ink(message)]
-    fn get_wal_contract(&self) -> AccountId;
+    fn get_inw_contract(&self) -> AccountId;
 
     #[ink(message)]    
     fn set_contract_hash(&mut self, psp22_hash: Hash) -> Result<(), Error>;
 
     #[ink(message)]    
-    fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error>;
+    fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
 
     #[ink(message)] 
     fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>;

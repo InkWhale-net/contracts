@@ -47,8 +47,8 @@ where
         self.data::<Data>().standard_psp22_hash
     }
 
-    default fn get_wal_contract(&self) -> AccountId {
-        self.data::<Data>().wal_contract
+    default fn get_inw_contract(&self) -> AccountId {
+        self.data::<Data>().inw_contract
     }
 
     #[modifiers(only_owner)]
@@ -58,15 +58,15 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error> {
-        self.data::<Data>().wal_contract = wal_contract;
+    default fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error> {
+        self.data::<Data>().inw_contract = inw_contract;
         Ok(())
     }
 
     #[modifiers(only_owner)]
     default fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error> {
         let builder = Psp22Ref::transfer_builder(
-            &self.data::<Data>().wal_contract,
+            &self.data::<Data>().inw_contract,
             Self::env().caller(),
             value,
             Vec::<u8>::new()
