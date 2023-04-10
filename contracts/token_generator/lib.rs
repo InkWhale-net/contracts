@@ -94,60 +94,61 @@ pub mod token_generator {
         ) -> Result<(), Error> {
             let caller = self.env().caller();
             let fees = self.manager.creation_fee;
-            //Collect WAL as transaction Fees
             let allowance = Psp22Ref::allowance(
                 &self.manager.wal_contract,
                 caller,
                 self.env().account_id()
             );
-            assert!(allowance >= fees);
-
             let balance = Psp22Ref::balance_of(
                 &self.manager.wal_contract,
                 caller
             );
-            assert!(balance >= fees,"not enough balance");
 
+            if allowance < fees || balance < fees {
+                return Err(Error::InvalidBalanceAndAllowance)
+            }
 
-            PSP22Ref::transfer_from_builder(&asset_address, lender, contract, amount, Vec::<u8>::new())
-            .call_flags(ink::env::CallFlags::default().set_allow_reentry(true))
-            .fire()
-            .unwrap()
-            .unwrap()?;
-
-            if !Psp22Ref::transfer_from_builder(
+            let builder = Psp22Ref::transfer_from_builder(
                 &self.manager.wal_contract,
                 caller,
                 self.env().account_id(),
                 fees,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true))
-            .fire()
-            .is_ok()
-            {
-                return Err(Error::CannotTransfer)
-            }
-
-            //create contract
-            let contract = TokenStandardRef::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
-                .endowment(0)
-                .code_hash(self.manager.standard_psp22_hash)
-                .salt_bytes(self.manager.token_count.to_le_bytes())
-                .instantiate();  
-            let contract_account: AccountId = contract.to_account_id();
-
-            let new_token = Token {
-                name,
-                symbol,
-                decimal,
-                contract_address: contract_account,
-                creator: caller,
-                mint_to,
-                total_supply
+            ).call_flags(CallFlags::default().set_allow_reentry(true));
+            let result = match builder.try_invoke() {
+                Ok(Ok(Ok(_))) => Ok(()),
+                Ok(Ok(Err(e))) => Err(e.into()),
+                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                Err(ink::env::Error::NotCallable) => Ok(()),
+                _ => {
+                    Err(Error::CannotTransfer)
+                }
             };
-            self.manager.token_count += 1;
-            self.manager.token_list.insert(&self.manager.token_count, &new_token);
+            if result.is_ok() {
+                //create contract
+                let contract = TokenStandardRef::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
+                    .endowment(0)
+                    .code_hash(self.manager.standard_psp22_hash)
+                    .salt_bytes(self.manager.token_count.to_le_bytes())
+                    .instantiate();  
+                let contract_account: AccountId = contract.to_account_id();
+
+                let new_token = Token {
+                    name,
+                    symbol,
+                    decimal,
+                    contract_address: contract_account,
+                    creator: caller,
+                    mint_to,
+                    total_supply
+                };
+                if let Some(token_count_tmp) = self.manager.token_count.checked_add(1) {
+                    self.manager.token_count = token_count_tmp;
+                    self.manager.token_list.insert(&self.manager.token_count, &new_token);
+                } else {
+                    return Err(Error::CheckedOperations)
+                }
+            }
             Ok(())
         }
     }

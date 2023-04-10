@@ -21,7 +21,9 @@ pub enum Error {
     NotEnoughBalance,
     WithdrawFeeError,
     NotCallable,
-    CannotTransfer
+    CannotTransfer,
+    CheckedOperations,
+    InvalidBalanceAndAllowance
 }
 
 impl From<OwnableError> for Error {
