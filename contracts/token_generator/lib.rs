@@ -30,6 +30,12 @@ pub mod token_generator {
         admin::*,
         upgradeable::*
     };
+    use inkwhale_project::{
+        traits::{
+            admin::*,
+            upgradeable::*
+        }
+    };
 
     #[derive(Default, Storage)]
     #[ink(storage)]
@@ -39,13 +45,12 @@ pub mod token_generator {
         #[storage_field]
         manager: token_manager::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data,
+        admin_data: inkwhale_project::impls::admin::data::Data,
         #[storage_field]
-        upgradeable_data: upgradeable::data::Data
+        upgradeable_data: inkwhale_project::impls::upgradeable::data::Data,
     }   
 
     impl Ownable for TokenGenerator {}
-
     impl TokenManagerTrait for TokenGenerator {}
     impl AdminTrait for TokenGenerator {}
     impl UpgradeableTrait for TokenGenerator {}
@@ -103,6 +108,13 @@ pub mod token_generator {
             );
             assert!(balance >= fees,"not enough balance");
 
+
+            PSP22Ref::transfer_from_builder(&asset_address, lender, contract, amount, Vec::<u8>::new())
+            .call_flags(ink::env::CallFlags::default().set_allow_reentry(true))
+            .fire()
+            .unwrap()
+            .unwrap()?;
+
             if !Psp22Ref::transfer_from_builder(
                 &self.manager.wal_contract,
                 caller,
@@ -122,8 +134,7 @@ pub mod token_generator {
                 .endowment(0)
                 .code_hash(self.manager.standard_psp22_hash)
                 .salt_bytes(self.manager.token_count.to_le_bytes())
-                .instantiate()
-                .unwrap_or_else(|error| panic!("failed at instantiating the PSP22 contract: {:?}", error));
+                .instantiate();  
             let contract_account: AccountId = contract.to_account_id();
 
             let new_token = Token {

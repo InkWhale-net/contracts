@@ -15,10 +15,7 @@ pub mod token_standard {
         reflect::ContractEventBase
     };
     use ink::prelude::{
-        string::{
-            String,
-        },
-        vec::Vec,
+        vec::Vec
     };
     use openbrush::{
         contracts::ownable::*,
@@ -33,7 +30,8 @@ pub mod token_standard {
         },
         traits::{
             Storage,
-            DefaultEnv
+            DefaultEnv,
+            String
         },
         modifiers,
     };
@@ -86,7 +84,7 @@ pub mod token_standard {
             if account == caller {
                 self._burn_from(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()));
+                return Err(PSP22Error::Custom(String::from("Your are not owner")));
             }
         }
     }
@@ -98,7 +96,7 @@ pub mod token_standard {
             if caller == self.owner() {
                 self._mint_to(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()));
+                return Err(PSP22Error::Custom(String::from("Your are not owner")));
             }
         }
     }
