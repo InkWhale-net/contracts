@@ -8,6 +8,11 @@ use openbrush::{
     },
     contracts::{
         traits::psp22::{
+            extensions::{
+                metadata::*,
+                mintable::*,
+                burnable::*,
+            },
             *,
         },
     },
@@ -16,7 +21,7 @@ use openbrush::{
 use crate::traits::error::Error;
 
 #[openbrush::wrapper]
-pub type Psp22Ref = dyn PSP22 + PSP22Burnable;
+pub type Psp22Ref = dyn PSP22 + PSP22Mintable + PSP22Burnable + PSP22Metadata;
 
 #[openbrush::wrapper]
 pub type TokenManagerRef = dyn TokenManagerTrait;

@@ -127,9 +127,7 @@ pub mod token_generator {
                     Err(Error::CannotTransfer)
                 }
             };
-
             Psp22Ref::burn(&self.manager.inw_contract, caller, fees)?;
-
             if result.is_ok() {
                 //create contract
                 let contract = TokenStandardRef::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
