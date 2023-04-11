@@ -127,7 +127,7 @@ pub mod token_generator {
                     Err(Error::CannotTransfer)
                 }
             };
-            Psp22Ref::burn(&self.manager.inw_contract, caller, fees)?;
+            
             if result.is_ok() {
                 //create contract
                 let contract = TokenStandardRef::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
@@ -136,12 +136,16 @@ pub mod token_generator {
                     .salt_bytes(self.manager.token_count.to_le_bytes())
                     .instantiate();  
                 let contract_address: AccountId = contract.to_account_id();
-                if let Some(token_count_tmp) = self.manager.token_count.checked_add(1) {
-                    self.manager.token_count = token_count_tmp;
-                    self.manager.token_list.insert(&self.manager.token_count, &contract_address);
+                if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
+                    if let Some(token_count_tmp) = self.manager.token_count.checked_add(1) {
+                        self.manager.token_count = token_count_tmp;
+                        self.manager.token_list.insert(&self.manager.token_count, &contract_address);
+                    } else {
+                        return Err(Error::CheckedOperations)
+                    }
                 } else {
-                    return Err(Error::CheckedOperations)
-                }
+                    return Err(Error::CannotBurn)
+                } 
             }
             Ok(())
         }

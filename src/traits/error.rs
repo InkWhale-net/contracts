@@ -22,6 +22,7 @@ pub enum Error {
     WithdrawFeeError,
     NotCallable,
     CannotTransfer,
+    CannotBurn,
     CheckedOperations,
     InvalidBalanceAndAllowance,
     AlreadyInit
