@@ -25,7 +25,9 @@ pub enum Error {
     CannotBurn,
     CheckedOperations,
     InvalidBalanceAndAllowance,
-    AlreadyInit
+    AlreadyInit,
+    InvalidBuyAmount,
+    InvalidTransferAmount
 }
 
 impl From<OwnableError> for Error {
