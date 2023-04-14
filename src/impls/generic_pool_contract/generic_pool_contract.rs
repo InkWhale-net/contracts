@@ -116,8 +116,8 @@ where
         self.data::<Data>().unstake_fee
     }
 
-    default fn wal_contract(&self) -> AccountId {
-        self.data::<Data>().wal_contract
+    default fn inw_contract(&self) -> AccountId {
+        self.data::<Data>().inw_contract
     }
 
     // lp_contract_address/psp34_contract_address 

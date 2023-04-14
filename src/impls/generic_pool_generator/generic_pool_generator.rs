@@ -63,8 +63,8 @@ where
         self.data::<Data>().unstake_fee
     }
 
-    default fn get_wal_contract(&self) -> AccountId {
-        self.data::<Data>().wal_contract
+    default fn get_inw_contract(&self) -> AccountId {
+        self.data::<Data>().inw_contract
     }
         
     default fn get_pool_hash(&self) -> Hash {
@@ -78,8 +78,8 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error> {
-        self.data::<Data>().wal_contract = wal_contract;
+    default fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error> {
+        self.data::<Data>().inw_contract = inw_contract;
         Ok(())
     }
     
@@ -107,9 +107,9 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error> {
+    default fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error> {
         assert!(Psp22Ref::transfer(
-            &self.data::<Data>().wal_contract,
+            &self.data::<Data>().inw_contract,
             Self::env().caller(),
             value,
             Vec::<u8>::new()

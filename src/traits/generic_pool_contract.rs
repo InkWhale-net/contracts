@@ -53,7 +53,7 @@ pub trait GenericPoolContractTrait {
     fn unstake_fee(&self) -> Balance;
 
     #[ink(message)]
-    fn wal_contract(&self) -> AccountId;
+    fn inw_contract(&self) -> AccountId;
 
     // lp_contract_address/psp34_contract_address 
     #[ink(message)]

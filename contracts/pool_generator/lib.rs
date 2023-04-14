@@ -49,13 +49,13 @@ pub mod pool_generator {
 
     impl PoolGenerator {
         #[ink(constructor)]
-        pub fn new(pool_hash: Hash, wal_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId,) -> Self {
+        pub fn new(pool_hash: Hash, inw_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId,) -> Self {
             let mut instance = Self::default();
 
             instance._init_with_owner(owner_address);
             instance.initialize(
                 pool_hash,
-                wal_contract,
+                inw_contract,
                 creation_fee,
                 unstake_fee
             )
@@ -67,11 +67,11 @@ pub mod pool_generator {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, pool_hash: Hash, wal_contract: AccountId, creation_fee: Balance, unstake_fee: Balance
+        pub fn initialize(&mut self, pool_hash: Hash, inw_contract: AccountId, creation_fee: Balance, unstake_fee: Balance
         ) -> Result<(), Error> {
             self.manager.pool_hash = pool_hash;
             self.manager.creation_fee = creation_fee;
-            self.manager.wal_contract = wal_contract;
+            self.manager.inw_contract = inw_contract;
             self.manager.unstake_fee = unstake_fee;
 
             Ok(())
@@ -87,22 +87,22 @@ pub mod pool_generator {
         ) -> Result<(), Error> {
             let caller = self.env().caller();
             let fees = self.manager.creation_fee;
-            //Collect WAL as transaction Fees
+            //Collect INW as transaction Fees
             let allowance = Psp22Ref::allowance(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller,
                 self.env().account_id()
             );
             assert!(allowance >= fees);
 
             let balance = Psp22Ref::balance_of(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller
             );
             assert!(balance >= fees,"not enough balance");
 
             let builder = Psp22Ref::transfer_from_builder(
-                &self.manager.wal_contract,
+                &self.manager.inw_contract,
                 caller,
                 self.env().account_id(),
                 fees,
@@ -121,7 +121,7 @@ pub mod pool_generator {
             };
 
             if result.is_ok() {
-                let contract = MyPoolRef::new(contract_owner, self.manager.wal_contract, psp22_contract_address, apy, duration, start_time, self.manager.unstake_fee)
+                let contract = MyPoolRef::new(contract_owner, self.manager.inw_contract, psp22_contract_address, apy, duration, start_time, self.manager.unstake_fee)
                     .endowment(0)
                     .code_hash(self.manager.pool_hash)
                     .salt_bytes(self.manager.pool_count.to_le_bytes())

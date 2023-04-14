@@ -64,7 +64,7 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error> {
+    default fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error> {
         let builder = Psp22Ref::transfer_builder(
             &self.data::<Data>().inw_contract,
             Self::env().caller(),

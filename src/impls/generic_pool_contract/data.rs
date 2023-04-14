@@ -29,7 +29,7 @@ pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 pub struct Data {
     pub staking_contract_address: AccountId, // lp_contract_address/psp34_contract_address 
     pub psp22_contract_address: AccountId,
-    pub wal_contract: AccountId,
+    pub inw_contract: AccountId,
     pub multiplier: Balance,
     pub stakers: Mapping<AccountId, StakeInformation>,
     pub reward_pool: Balance,
@@ -45,7 +45,7 @@ impl Default for Data {
         Self {
             staking_contract_address: ZERO_ADDRESS.into(),
             psp22_contract_address: ZERO_ADDRESS.into(),
-            wal_contract: ZERO_ADDRESS.into(),
+            inw_contract: ZERO_ADDRESS.into(),
             multiplier: Default::default(),
             stakers: Default::default(),
             reward_pool: Default::default(),

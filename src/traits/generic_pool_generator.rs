@@ -46,7 +46,7 @@ pub trait GenericPoolGeneratorTrait {
     fn get_unstake_fee(&self) -> Balance;
 
     #[ink(message)]
-    fn get_wal_contract(&self) -> AccountId;
+    fn get_inw_contract(&self) -> AccountId;
         
     #[ink(message)]
     fn get_pool_hash(&self) -> Hash;
@@ -55,7 +55,7 @@ pub trait GenericPoolGeneratorTrait {
     fn set_pool_hash(&mut self, pool_hash: Hash) -> Result<(), Error>;
 
     #[ink(message)]    
-    fn set_wal_contract(&mut self, wal_contract: AccountId) -> Result<(), Error>;
+    fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
     
     #[ink(message)]    
     fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error>;
@@ -68,5 +68,5 @@ pub trait GenericPoolGeneratorTrait {
     fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error>;
 
     #[ink(message)]    
-    fn withdraw_wal(&mut self, value: Balance) -> Result<(), Error>;
+    fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error>;
 }

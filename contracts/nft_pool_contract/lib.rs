@@ -59,7 +59,7 @@ pub mod my_nft_pool {
 
     impl MyNFTPool {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, wal_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
+        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
             assert!(multiplier > 0,"multiplier must > 0");
             assert!(duration > 0,"duration must > 0");
             let mut instance = Self::default();
@@ -71,14 +71,14 @@ pub mod my_nft_pool {
             instance.data.duration = duration;
             instance.data.start_time = start_time;
             instance.data.unstake_fee = unstake_fee;
-            instance.data.wal_contract = wal_contract;
+            instance.data.inw_contract = inw_contract;
 
             instance
         }
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, wal_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
+        pub fn initialize(&mut self, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             self.data.staking_contract_address = psp34_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
@@ -86,7 +86,7 @@ pub mod my_nft_pool {
             self.data.duration = duration;
             self.data.start_time = start_time;
             self.data.unstake_fee = unstake_fee;
-            self.data.wal_contract = wal_contract;
+            self.data.inw_contract = inw_contract;
 
             Ok(())
         }
@@ -161,22 +161,22 @@ pub mod my_nft_pool {
         pub fn unstake(&mut self, token_id: Id) -> Result<(), Error>  {
             let caller = self.env().caller();
             let fees = self.data.unstake_fee;
-            //Collect WAL as transaction Fees
+            //Collect INW as transaction Fees
             let allowance = Psp22Ref::allowance(
-                &self.data.wal_contract,
+                &self.data.inw_contract,
                 caller,
                 self.env().account_id()
             );
             assert!(allowance >= fees);
 
             let balance = Psp22Ref::balance_of(
-                &self.data.wal_contract,
+                &self.data.inw_contract,
                 caller
             );
             assert!(balance >= fees,"not enough balance");
 
             let builder = Psp22Ref::transfer_from_builder(
-                &self.data.wal_contract,
+                &self.data.inw_contract,
                 caller,
                 self.env().account_id(),
                 fees,
