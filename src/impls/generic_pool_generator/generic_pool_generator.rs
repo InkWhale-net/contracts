@@ -30,6 +30,32 @@ where
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {
+    // Getters
+
+    default fn get_pool_hash(&self) -> Hash {
+        self.data::<Data>().pool_hash
+    }
+
+    default fn get_pool_count(&self) -> u64 {
+        self.data::<Data>().pool_count
+    }
+
+    default fn get_inw_contract(&self) -> AccountId {
+        self.data::<Data>().inw_contract
+    }
+
+    default fn get_creation_fee(&self) -> Balance {
+        self.data::<Data>().creation_fee
+    }
+
+    default fn get_unstake_fee(&self) -> Balance {
+        self.data::<Data>().unstake_fee
+    }
+
+    default fn get_pool(&self, index: u64) -> Option<AccountId> {
+        return self.data::<Data>().pool_list.get(&index);
+    }
+
     default fn get_pool_by_owner(
         &self,
         contract_owner: AccountId,
@@ -47,30 +73,8 @@ where
             .get(&Some(contract_owner)).unwrap_or(0);
     }
 
-    default fn get_pool(&self, index: u64) -> Option<AccountId> {
-        return self.data::<Data>().pool_list.get(&index);
-    }
-
-    default fn get_pool_count(&self) -> u64 {
-        self.data::<Data>().pool_count
-    }
-
-    default fn get_creation_fee(&self) -> Balance {
-        self.data::<Data>().creation_fee
-    }
-
-    default fn get_unstake_fee(&self) -> Balance {
-        self.data::<Data>().unstake_fee
-    }
-
-    default fn get_inw_contract(&self) -> AccountId {
-        self.data::<Data>().inw_contract
-    }
-        
-    default fn get_pool_hash(&self) -> Hash {
-        self.data::<Data>().pool_hash
-    }
-
+    // Setters
+  
     #[modifiers(only_owner)]
     default fn set_pool_hash(&mut self, pool_hash: Hash) -> Result<(), Error> {
         self.data::<Data>().pool_hash = pool_hash;

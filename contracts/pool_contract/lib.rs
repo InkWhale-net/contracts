@@ -2,6 +2,7 @@
 #![feature(min_specialization)]
 
 #![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 
 pub use self::my_pool::{
     MyPool,
@@ -51,13 +52,14 @@ pub mod my_pool {
 
     impl MyPool {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
+        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
             assert!(duration > 0,"duration must > 0");
             let mut instance = Self::default();
 
             instance._init_with_owner(contract_owner);
             instance.data.staking_contract_address = psp22_contract_address;
             instance.data.psp22_contract_address = psp22_contract_address;
+            instance.data.max_staking_amount = max_staking_amount;
             instance.data.multiplier = apy as u128;
             instance.data.duration = duration;
             instance.data.start_time = start_time;
@@ -68,10 +70,11 @@ pub mod my_pool {
         }
 
         #[ink(message)]
-        pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
+        pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             self.data.staking_contract_address = psp22_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
+            self.data.max_staking_amount = max_staking_amount;
             self.data.multiplier = apy as u128;
             self.data.duration = duration;
             self.data.start_time = start_time;
@@ -182,36 +185,40 @@ pub mod my_pool {
             };
 
             if result.is_ok() {
-                let staker = self.data.stakers.get(&caller);
-                assert!(staker.is_some(),"no staker found");
-                let mut stake_info = staker.unwrap();
+                if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_ok() {
+                    let staker = self.data.stakers.get(&caller);
+                    assert!(staker.is_some(),"no staker found");
+                    let mut stake_info = staker.unwrap();
 
-                assert!(stake_info.staked_value >= amount,"invalid staked amount");
+                    assert!(stake_info.staked_value >= amount,"invalid staked amount");
 
-                let mut reward_time = self.env().block_timestamp();
-                if reward_time > self.data.start_time + self.data.duration{
-                    reward_time = self.data.start_time + self.data.duration;
-                }
-                let time_length = reward_time - stake_info.last_reward_update; //second
-                let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap();
-                let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).unwrap();
+                    let mut reward_time = self.env().block_timestamp();
+                    if reward_time > self.data.start_time + self.data.duration{
+                        reward_time = self.data.start_time + self.data.duration;
+                    }
+                    let time_length = reward_time - stake_info.last_reward_update; //second
+                    let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap();
+                    let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).unwrap();
 
-                stake_info.staked_value = stake_info.staked_value.checked_sub(amount).unwrap();
-                stake_info.last_reward_update = self.env().block_timestamp();
-                stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).unwrap();
+                    stake_info.staked_value = stake_info.staked_value.checked_sub(amount).unwrap();
+                    stake_info.last_reward_update = self.env().block_timestamp();
+                    stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).unwrap();
 
-                self.data.stakers.insert(&caller, &stake_info);
-                self.data.total_staked = self.data.total_staked.checked_sub(amount).unwrap();
+                    self.data.stakers.insert(&caller, &stake_info);
+                    self.data.total_staked = self.data.total_staked.checked_sub(amount).unwrap();
 
-                assert!(Psp22Ref::transfer(
-                    &self.data.psp22_contract_address,
-                    caller,
-                    amount,
-                    Vec::<u8>::new()
-                )
-                .is_ok());
+                    assert!(Psp22Ref::transfer(
+                        &self.data.psp22_contract_address,
+                        caller,
+                        amount,
+                        Vec::<u8>::new()
+                    )
+                    .is_ok());
 
-                // return Ok(());
+                    // return Ok(());
+                } else {
+                    return Err(Error::CannotBurn);
+                } 
             }
 
             result

@@ -18,7 +18,6 @@ pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[openbrush::upgradeable_storage(STORAGE_KEY)]
 pub struct Data {
     pub pool_hash: Hash,
-    pub admin_address: AccountId,
     pub pool_count: u64,
     pub inw_contract: AccountId,
     pub creation_fee: Balance,
@@ -33,7 +32,6 @@ impl Default for Data {
     fn default() -> Self {
         Self {
             pool_hash: Default::default(),
-            admin_address: ZERO_ADDRESS.into(),
             pool_count: Default::default(),
             inw_contract: ZERO_ADDRESS.into(),
             creation_fee: Default::default(),

@@ -2,6 +2,7 @@
 #![feature(min_specialization)]
 
 #![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
 
 #[openbrush::contract]
 pub mod nft_pool_generator {
@@ -83,6 +84,7 @@ pub mod nft_pool_generator {
             contract_owner: AccountId,
             psp34_contract_address: AccountId,
             psp22_contract_address: AccountId,
+            max_staking_amount: Balance,
             multiplier: Balance,
             duration: u64,
             start_time: u64
@@ -123,36 +125,40 @@ pub mod nft_pool_generator {
             };
 
             if result.is_ok() {
-                let contract = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, multiplier, duration, start_time, self.manager.unstake_fee)
-                    .endowment(0)
-                    .code_hash(self.manager.pool_hash)
-                    .salt_bytes(self.manager.pool_count.to_le_bytes())
-                    .instantiate();
-                let contract_account: AccountId = contract.to_account_id();
+                if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
+                    let contract = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
+                        .endowment(0)
+                        .code_hash(self.manager.pool_hash)
+                        .salt_bytes(self.manager.pool_count.to_le_bytes())
+                        .instantiate();
+                    let contract_account: AccountId = contract.to_account_id();
 
-                self.manager.pool_count += 1;
-                self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
+                    self.manager.pool_count += 1;
+                    self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
 
-                let mut last_index = 0;
-                if self
-                    .manager
-                    .pool_ids_last_index
-                    .get(&Some(contract_owner))
-                    .is_some()
-                {
-                    last_index = self
+                    let mut last_index = 0;
+                    if self
                         .manager
                         .pool_ids_last_index
                         .get(&Some(contract_owner))
-                        .unwrap();
-                }
-                self.manager.pool_ids.insert(
-                    contract_owner,
-                    &self.manager.pool_count,
-                );
-                self.manager
-                    .pool_ids_last_index
-                    .insert(&Some(contract_owner), &(last_index + 1));
+                        .is_some()
+                    {
+                        last_index = self
+                            .manager
+                            .pool_ids_last_index
+                            .get(&Some(contract_owner))
+                            .unwrap();
+                    }
+                    self.manager.pool_ids.insert(
+                        contract_owner,
+                        &self.manager.pool_count,
+                    );
+                    self.manager
+                        .pool_ids_last_index
+                        .insert(&Some(contract_owner), &(last_index + 1));
+                } else {
+                    return Err(Error::CannotBurn);
+                } 
             }
 
             result

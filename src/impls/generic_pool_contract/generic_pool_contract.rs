@@ -31,6 +31,63 @@ where
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {
+    // Getters
+
+    // lp_contract_address/psp34_contract_address 
+    default fn staking_contract_address(&self) -> AccountId {
+        self.data::<Data>().staking_contract_address
+    }
+
+    default fn psp22_contract_address(&self) -> AccountId {
+        self.data::<Data>().psp22_contract_address
+    }
+
+    default fn inw_contract(&self) -> AccountId {
+        self.data::<Data>().inw_contract
+    }
+
+    default fn multiplier(&self) -> Balance {
+        self.data::<Data>().multiplier
+    }
+
+    default fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation> {
+        self.data::<Data>().stakers.get(&staker)
+    }
+
+    default fn reward_pool(&self) -> Balance {
+        self.data::<Data>().reward_pool
+    }
+
+    default fn max_staking_amount(&self) -> Balance {
+        self.data::<Data>().max_staking_amount
+    }
+
+    default fn total_staked(&self) -> Balance {
+        self.data::<Data>().total_staked
+    }
+
+    default fn duration(&self) -> u64 {
+        self.data::<Data>().duration
+    }
+
+    default fn start_time(&self) -> u64 {
+        self.data::<Data>().start_time
+    }   
+
+    default fn unstake_fee(&self) -> Balance {
+        self.data::<Data>().unstake_fee
+    }    
+
+    // Setters
+
+    #[modifiers(only_owner)]
+    default fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error> {
+        self.data::<Data>().inw_contract = inw_contract;
+        Ok(())
+    }
+
+    // Rewards funcs 
+
     default fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
         let caller = Self::env().caller();
         let allowance = Psp22Ref::allowance(
@@ -68,23 +125,7 @@ where
         };
 
         result
-    }    
-
-    default fn multiplier(&self) -> Balance {
-        self.data::<Data>().multiplier
-    }
-
-    default fn duration(&self) -> u64 {
-        self.data::<Data>().duration
-    }
-
-    default fn start_time(&self) -> u64 {
-        self.data::<Data>().start_time
-    }
-
-    default fn reward_pool(&self) -> Balance {
-        self.data::<Data>().reward_pool
-    }
+    } 
 
     #[modifiers(only_owner)]
     default fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
@@ -102,30 +143,5 @@ where
         .is_ok());
 
         Ok(())
-    }
-
-    default fn total_staked(&self) -> Balance {
-        self.data::<Data>().total_staked
-    }
-
-    default fn psp22_contract_address(&self) -> AccountId {
-        self.data::<Data>().psp22_contract_address
-    }
-
-    default fn unstake_fee(&self) -> Balance {
-        self.data::<Data>().unstake_fee
-    }
-
-    default fn inw_contract(&self) -> AccountId {
-        self.data::<Data>().inw_contract
-    }
-
-    // lp_contract_address/psp34_contract_address 
-    default fn staking_contract_address(&self) -> AccountId {
-        self.data::<Data>().staking_contract_address
-    }
-
-    default fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation> {
-        self.data::<Data>().stakers.get(&staker)
     }
 }

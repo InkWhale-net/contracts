@@ -49,7 +49,7 @@ pub mod pool_generator {
 
     impl PoolGenerator {
         #[ink(constructor)]
-        pub fn new(pool_hash: Hash, inw_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId,) -> Self {
+        pub fn new(pool_hash: Hash, inw_contract: AccountId, creation_fee: Balance, unstake_fee: Balance, owner_address: AccountId) -> Self {
             let mut instance = Self::default();
 
             instance._init_with_owner(owner_address);
@@ -81,6 +81,7 @@ pub mod pool_generator {
             &mut self,
             contract_owner: AccountId,
             psp22_contract_address: AccountId,
+            max_staking_amount: Balance,
             apy: u32,
             duration: u64,
             start_time: u64
@@ -121,36 +122,40 @@ pub mod pool_generator {
             };
 
             if result.is_ok() {
-                let contract = MyPoolRef::new(contract_owner, self.manager.inw_contract, psp22_contract_address, apy, duration, start_time, self.manager.unstake_fee)
-                    .endowment(0)
-                    .code_hash(self.manager.pool_hash)
-                    .salt_bytes(self.manager.pool_count.to_le_bytes())
-                    .instantiate();
-                let contract_account: AccountId = contract.to_account_id();
+                if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
+                    let contract = MyPoolRef::new(contract_owner, self.manager.inw_contract, psp22_contract_address, max_staking_amount, apy, duration, start_time, self.manager.unstake_fee)
+                        .endowment(0)
+                        .code_hash(self.manager.pool_hash)
+                        .salt_bytes(self.manager.pool_count.to_le_bytes())
+                        .instantiate();
+                    let contract_account: AccountId = contract.to_account_id();
 
-                self.manager.pool_count += 1;
-                self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
+                    self.manager.pool_count += 1;
+                    self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
 
-                let mut last_index = 0;
-                if self
-                    .manager
-                    .pool_ids_last_index
-                    .get(&Some(contract_owner))
-                    .is_some()
-                {
-                    last_index = self
+                    let mut last_index = 0;
+                    if self
                         .manager
                         .pool_ids_last_index
                         .get(&Some(contract_owner))
-                        .unwrap();
-                }
-                self.manager.pool_ids.insert(
-                    contract_owner,
-                    &self.manager.pool_count
-                );
-                self.manager
-                    .pool_ids_last_index
-                    .insert(&Some(contract_owner), &(last_index + 1));
+                        .is_some()
+                    {
+                        last_index = self
+                            .manager
+                            .pool_ids_last_index
+                            .get(&Some(contract_owner))
+                            .unwrap();
+                    }
+                    self.manager.pool_ids.insert(
+                        contract_owner,
+                        &self.manager.pool_count
+                    );
+                    self.manager
+                        .pool_ids_last_index
+                        .insert(&Some(contract_owner), &(last_index + 1));
+                } else {
+                    return Err(Error::CannotBurn);
+                } 
             }
 
             result
