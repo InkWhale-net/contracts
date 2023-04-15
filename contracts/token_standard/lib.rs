@@ -103,13 +103,13 @@ pub mod token_standard {
 
     impl TokenStandard {
         #[ink(constructor)]
-        pub fn new(mint_to: AccountId, total_supply: Balance, name: String, symbol: String, decimal: u8) -> Self {
+        pub fn new(mint_to: AccountId, cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
             let mut instance = Self::default();
             let caller = <Self as DefaultEnv>::env().caller();
             instance._init_with_owner(caller);
-            assert!(instance._init_cap(total_supply).is_ok());
+            assert!(instance._init_cap(cap).is_ok());
             instance
-                ._mint_to(mint_to, total_supply)
+                ._mint_to(mint_to, cap)
                 .expect("Should mint");
             instance.metadata.name = Some(name.into());
             instance.metadata.symbol = Some(symbol.into());

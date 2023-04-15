@@ -48,7 +48,7 @@ pub mod token_generator {
         admin_data: inkwhale_project::impls::admin::data::Data,
         #[storage_field]
         upgradeable_data: inkwhale_project::impls::upgradeable::data::Data,
-    }   
+    }
 
     impl Ownable for TokenGenerator {}
     impl TokenManagerTrait for TokenGenerator {}
@@ -90,7 +90,7 @@ pub mod token_generator {
         pub fn new_token(
             &mut self,
             mint_to: AccountId,
-            total_supply: Balance,
+            cap: Balance,
             name: String,
             symbol: String,
             decimal: u8
@@ -131,7 +131,7 @@ pub mod token_generator {
             if result.is_ok() {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
                     //create contract
-                    let contract = TokenStandardRef::new(mint_to, total_supply, name.clone(), symbol.clone(), decimal.clone())
+                    let contract = TokenStandardRef::new(mint_to, cap, name.clone(), symbol.clone(), decimal.clone())
                         .endowment(0)
                         .code_hash(self.manager.standard_psp22_hash)
                         .salt_bytes(self.manager.token_count.to_le_bytes())

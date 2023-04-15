@@ -32,7 +32,7 @@ where
         Storage<ownable::Data>
 {
     default fn get_token_contract_address(&self, index: u64) -> Option<AccountId> {
-        return self.data::<Data>().token_list.get(&index)
+        self.data::<Data>().token_list.get(&index)
     }
 
     default fn get_token_count(&self) -> u64 {
@@ -60,6 +60,12 @@ where
     #[modifiers(only_owner)]
     default fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error> {
         self.data::<Data>().inw_contract = inw_contract;
+        Ok(())
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error> {
+        self.data::<Data>().creation_fee = creation_fee;
         Ok(())
     }
 
