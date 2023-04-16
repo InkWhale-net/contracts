@@ -31,7 +31,8 @@ pub mod token_sale {
     use inkwhale_project::{
         traits::{
             admin::*,
-            upgradeable::*
+            upgradeable::*,
+            token_sale::*
         }
     };
 
@@ -51,6 +52,7 @@ pub mod token_sale {
     impl Ownable for TokenSale {}
     impl AdminTrait for TokenSale {}
     impl UpgradeableTrait for TokenSale {}
+    impl TokenSaleTrait for TokenSale {}
 
     impl TokenSale {
         #[ink(constructor)]
@@ -88,16 +90,15 @@ pub mod token_sale {
             let caller = Self::env().caller();
             let balance = Psp22Ref::balance_of(
                 &self.manager.inw_contract,
-                caller
+                self.env().account_id()
             );
             if amount > balance {
                 return Err(Error::InvalidBuyAmount)
             }
-            let total_fee = (self.manager.inw_price)
-                .checked_mul(amount).unwrap()
-                .checked_div(1000000000000)
-                .unwrap();
-            if total_fee != Self::env().transferred_value() {
+            let decimal = Psp22Ref::token_decimals(&self.manager.inw_contract);
+            let inw_amount = (self.manager.inw_price).checked_mul(amount).ok_or(Error::CheckedOperations)?;
+            let total_fee = inw_amount.checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
+            if total_fee != self.env().transferred_value() {
                 return Err(Error::InvalidTransferAmount)
             }
 

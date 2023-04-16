@@ -49,6 +49,9 @@ pub trait TokenManagerTrait {
     #[ink(message)]    
     fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
 
+    #[ink(message)]    
+    fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error>;
+
     #[ink(message)] 
     fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error>;
 }
