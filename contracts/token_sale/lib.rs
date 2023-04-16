@@ -90,7 +90,7 @@ pub mod token_sale {
             let caller = Self::env().caller();
             let balance = Psp22Ref::balance_of(
                 &self.manager.inw_contract,
-                caller
+                self.env().account_id()
             );
             if amount > balance {
                 return Err(Error::InvalidBuyAmount)
