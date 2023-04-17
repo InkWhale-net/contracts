@@ -19,7 +19,8 @@ use ink::storage::traits::StorageLayout;
 pub struct StakeInformation {
     pub last_reward_update: u64,
     pub staked_value: Balance,
-    pub unclaimed_reward: Balance
+    pub unclaimed_reward: Balance,
+    pub future_reward: Balance
 }
 
 pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
@@ -33,6 +34,7 @@ pub struct Data {
     pub multiplier: Balance,
     pub stakers: Mapping<AccountId, StakeInformation>,
     pub reward_pool: Balance,
+    pub total_unclaimed_reward: Balance,
     pub max_staking_amount: Balance,
     pub total_staked: Balance,
     pub duration: u64,
@@ -50,6 +52,7 @@ impl Default for Data {
             multiplier: Default::default(),
             stakers: Default::default(),
             reward_pool: Default::default(),
+            total_unclaimed_reward: Default::default(),
             max_staking_amount: Default::default(),
             total_staked: Default::default(),
             duration: Default::default(),

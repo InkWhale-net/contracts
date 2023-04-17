@@ -10,10 +10,6 @@ pub use crate::{
     }
 };
 
-use ink::prelude::{
-    vec::Vec,
-};
-
 use openbrush::{
     modifiers,
     contracts::ownable::*,

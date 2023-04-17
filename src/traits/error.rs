@@ -38,7 +38,10 @@ pub enum Error {
     TokenNotFound,
     UserNotStake,
     NoTokenOwner,
-    ExceedTotalStakingAmount
+    ExceedTotalStakingAmount,
+    NoClaimAmount,
+    NotTimeToWithdraw,
+    NotEnoughRewardToWithdraw
 }
 
 impl From<OwnableError> for Error {

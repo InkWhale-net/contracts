@@ -50,6 +50,9 @@ pub trait GenericPoolContractTrait {
     fn reward_pool(&self) -> Balance;
 
     #[ink(message)]
+    fn total_unclaimed_reward(&self) -> Balance;
+
+    #[ink(message)]
     fn max_staking_amount(&self) -> Balance;
 
     #[ink(message)]

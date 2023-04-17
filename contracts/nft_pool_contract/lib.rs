@@ -89,6 +89,7 @@ pub mod my_nft_pool {
             instance.data.start_time = start_time;
             instance.data.unstake_fee = unstake_fee;
             instance.data.inw_contract = inw_contract;
+            instance.data.total_unclaimed_reward = 0;
             instance.data.reward_pool = max_reward_amount;
 
             let builder = Psp22Ref::transfer_from_builder(
@@ -146,6 +147,7 @@ pub mod my_nft_pool {
             self.data.start_time = start_time;
             self.data.unstake_fee = unstake_fee;
             self.data.inw_contract = inw_contract;
+            self.data.total_unclaimed_reward = 0;
             self.data.reward_pool = max_reward_amount;
 
             let builder = Psp22Ref::transfer_from_builder(
@@ -170,84 +172,105 @@ pub mod my_nft_pool {
 
         #[ink(message)]
         pub fn stake(&mut self, token_id: Id) -> Result<(), Error>  {
-            if let Some(end_time) = self.data.start_time.checked_add(self.data.duration) {
-                // Check staking time
-                if self.data.start_time > self.env().block_timestamp() || end_time < self.env().block_timestamp() {
-                    return Err(Error::NotTimeToStake);
+            let end_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
+            
+            // Check staking time
+            if self.data.start_time > self.env().block_timestamp() || end_time < self.env().block_timestamp() {
+                return Err(Error::NotTimeToStake);
+            }
+
+            let caller = self.env().caller();
+            if let Some(token_owner) = Psp34Ref::owner_of(&self.data.staking_contract_address, token_id.clone()) {
+                // Check token owner
+                if caller != token_owner {
+                    return Err(Error::NotTokenOwner);
                 }
 
-                let caller = self.env().caller();
-                if let Some(token_owner) = Psp34Ref::owner_of(&self.data.staking_contract_address, token_id.clone()) {
-                    // Check token owner
-                    if caller != token_owner {
-                        return Err(Error::NotTokenOwner);
-                    }
-
-                    // Check allowance
-                    if !Psp34Ref::allowance(
-                            &self.data.staking_contract_address,
-                            caller,
-                            self.env().account_id(),
-                            Some(token_id.clone())) {
-                        return Err(Error::AllowanceNotSet);
-                    }
-
-                    // Check if total stake < max_staking_amount
-                    if self.data.max_staking_amount <= self.data.total_staked {
-                        return Err(Error::ExceedTotalStakingAmount);
-                    }
-
-                    self.staking_list_data.staking_list.insert(caller, &token_id);
-
-                    let staker = self.data.stakers.get(&caller);
-                    if let Some(mut stake_info) = staker {
-                        //calculate Reward
-                        // reward = total_NFT * staked_time_in_days * multiplier
-                        // 30 days reward for 1 NFT = 30 * multiplier
-                        let time_length = self.env().block_timestamp().checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; //second
-                        let unclaimed_reward_365 = (stake_info.staked_value).checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
-                        let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
-
-                        stake_info.staked_value = stake_info.staked_value.checked_add(1).ok_or(Error::CheckedOperations)?;
-                        stake_info.last_reward_update = self.env().block_timestamp();
-                        stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
-
-                        self.data.stakers
-                            .insert(&caller, &stake_info);
-                    } else {
-                        let stake_info = StakeInformation{
-                            last_reward_update: self.env().block_timestamp(),
-                            staked_value: 1,
-                            unclaimed_reward: 0
-                        };
-                        self.data.stakers
-                            .insert(&caller, &stake_info);
-                    }
-
-                    self.data.total_staked = self.data.total_staked.checked_add(1).ok_or(Error::CheckedOperations)?;
-
-                    let builder = PSP34Ref::transfer_builder(
+                // Check allowance
+                if !Psp34Ref::allowance(
                         &self.data.staking_contract_address,
+                        caller,
                         self.env().account_id(),
-                        token_id,
-                        Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
+                        Some(token_id.clone())) {
+                    return Err(Error::AllowanceNotSet);
+                }
 
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        // Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => {
-                            Err(Error::CannotTransfer)
-                        }
-                    }
+                // Check if total stake < max_staking_amount
+                if self.data.max_staking_amount <= self.data.total_staked {
+                    return Err(Error::ExceedTotalStakingAmount);
+                }
+
+                self.staking_list_data.staking_list.insert(caller, &token_id);
+
+                let staker = self.data.stakers.get(&caller);
+                if let Some(mut stake_info) = staker {
+                    //calculate Reward
+                    // reward = total_NFT * staked_time_in_days * multiplier
+                    // 30 days reward for 1 NFT = 30 * multiplier
+                    let time_length = self.env().block_timestamp().checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; //second
+                    let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
+                    let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+                    stake_info.staked_value = stake_info.staked_value.checked_add(1).ok_or(Error::CheckedOperations)?;
+                    stake_info.last_reward_update = self.env().block_timestamp();
+                    stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+                    // Calculate future reward
+                    let future_time_length = end_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?;
+                    let future_reward_365 = stake_info.staked_value.checked_mul(future_time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
+                    let future_reward = future_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+                    // Recalculate total unclaimed amount
+                    self.data.total_unclaimed_reward = self.data.total_unclaimed_reward
+                                                        .checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?
+                                                        .checked_add(future_reward).ok_or(Error::CheckedOperations)?
+                                                        .checked_sub(stake_info.future_reward).ok_or(Error::CheckedOperations)?;
+                    stake_info.future_reward = future_reward;
+
+                    self.data.stakers
+                        .insert(&caller, &stake_info);
                 } else {
-                    return Err(Error::NoTokenOwner);
+                    let mut stake_info = StakeInformation{
+                        last_reward_update: self.env().block_timestamp(),
+                        staked_value: 1,
+                        unclaimed_reward: 0,
+                        future_reward: 0
+                    };
+
+                    // Calculate future reward
+                    let future_time_length = end_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?;
+                    let future_reward_365 = stake_info.staked_value.checked_mul(future_time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
+                    let future_reward = future_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+                    // Calculate total unclaimed amount
+                    self.data.total_unclaimed_reward = self.data.total_unclaimed_reward.checked_add(future_reward).ok_or(Error::CheckedOperations)?;
+                    stake_info.future_reward = future_reward;
+
+                    self.data.stakers
+                        .insert(&caller, &stake_info);
+                }
+
+                self.data.total_staked = self.data.total_staked.checked_add(1).ok_or(Error::CheckedOperations)?;
+
+                let builder = PSP34Ref::transfer_builder(
+                    &self.data.staking_contract_address,
+                    self.env().account_id(),
+                    token_id,
+                    Vec::<u8>::new(),
+                )
+                .call_flags(CallFlags::default().set_allow_reentry(true));
+
+                match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    // Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => {
+                        Err(Error::CannotTransfer)
+                    }
                 }
             } else {
-                return Err(Error::CheckedOperations);
+                return Err(Error::NoTokenOwner);
             }
         }
 
@@ -320,8 +343,21 @@ pub mod my_nft_pool {
                         let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
 
                         stake_info.staked_value = stake_info.staked_value.checked_sub(1).ok_or(Error::CheckedOperations)?;
-                        stake_info.last_reward_update = self.env().block_timestamp();
+                        stake_info.last_reward_update = reward_time;
                         stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+                        // Calculate future reward
+                        let end_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
+                        let future_time_length = end_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?;
+                        let future_reward_365 = stake_info.staked_value.checked_mul(future_time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
+                        let future_reward = future_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+                        // Recalculate total unclaimed amount
+                        self.data.total_unclaimed_reward = self.data.total_unclaimed_reward
+                                                            .checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?
+                                                            .checked_add(future_reward).ok_or(Error::CheckedOperations)?
+                                                            .checked_sub(stake_info.future_reward).ok_or(Error::CheckedOperations)?;
+                        stake_info.future_reward = future_reward;
 
                         self.data.stakers.insert(&caller, &stake_info);
                         self.data.total_staked = self.data.total_staked.checked_sub(1).ok_or(Error::CheckedOperations)?;
@@ -375,7 +411,7 @@ pub mod my_nft_pool {
                 let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
                 let to_claim = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
-                stake_info.last_reward_update = self.env().block_timestamp();
+                stake_info.last_reward_update = reward_time;
                 stake_info.unclaimed_reward = 0;
 
                 self.data.stakers.insert(&caller, &stake_info);
@@ -383,7 +419,13 @@ pub mod my_nft_pool {
                     return Err(Error::NotEnoughReward);
                 }
 
+                if to_claim <= 0 {
+                    return Err(Error::NoClaimAmount);
+                }
+
+                // Update reward pool and total unclaimed reward
                 self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
+                self.data.total_unclaimed_reward = self.data.total_unclaimed_reward.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
 
                 let builder = Psp22Ref::transfer_from_builder(
                     &self.data.psp22_contract_address,
