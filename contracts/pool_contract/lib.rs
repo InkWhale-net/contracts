@@ -28,7 +28,6 @@ pub mod my_pool {
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;
     use inkwhale_project::impls::{
         generic_pool_contract::*,
-        admin::*,
         upgradeable::*
     };
 
@@ -40,22 +39,38 @@ pub mod my_pool {
         #[storage_field]
         data: generic_pool_contract::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
         upgradeable_data: upgradeable::data::Data
     }
 
     impl Ownable for MyPool {}
     impl GenericPoolContractTrait for MyPool {}
-    impl AdminTrait for MyPool {}
     impl UpgradeableTrait for MyPool {}
 
     impl MyPool {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
-            assert!(duration > 0,"duration must > 0");
+        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Result<Self, Error> {
+            // Check psp22 balance and allowance
             let mut instance = Self::default();
+            let caller = instance.env().caller();
 
+            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+
+            let allowance = Psp22Ref::allowance(
+                &psp22_contract_address,
+                caller,
+                instance.env().account_id()
+            );
+
+            let balance = Psp22Ref::balance_of(
+                &psp22_contract_address,
+                caller
+            );
+
+            assert!(allowance >= max_reward_amount || balance >= max_reward_amount, "Invalid Balance And Allowance");
+            
+            // Add data           
             instance._init_with_owner(contract_owner);
             instance.data.staking_contract_address = psp22_contract_address;
             instance.data.psp22_contract_address = psp22_contract_address;
@@ -66,12 +81,34 @@ pub mod my_pool {
             instance.data.unstake_fee = unstake_fee;
             instance.data.inw_contract = inw_contract;
         
-            instance
+            Ok(instance)
         }
 
         #[ink(message)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
+            // Check psp22 balance and allowance
+            let caller = self.env().caller();
+            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            
+            let allowance = Psp22Ref::allowance(
+                &psp22_contract_address,
+                caller,
+                self.env().account_id()
+            );
+
+            let balance = Psp22Ref::balance_of(
+                &psp22_contract_address,
+                caller
+            );
+            
+            if allowance < max_reward_amount || balance < max_reward_amount {
+                return Err(Error::InvalidBalanceAndAllowance)
+            }
+
+            // Add data
             self.data.staking_contract_address = psp22_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
             self.data.max_staking_amount = max_staking_amount;
@@ -105,7 +142,7 @@ pub mod my_pool {
             let staker = self.data.stakers.get(&caller);
             
             if let Some(mut stake_info) = staker {
-                let time_length = self.env().block_timestamp() - stake_info.last_reward_update; //second
+                let time_length = self.env().block_timestamp() - stake_info.last_reward_update; // ms
                 let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).unwrap().checked_mul(self.data.multiplier).unwrap();
                 let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).unwrap();
 

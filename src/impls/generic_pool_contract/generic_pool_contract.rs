@@ -14,8 +14,6 @@ use ink::prelude::{
     vec::Vec,
 };
 
-use ink::env::CallFlags;
-
 use openbrush::{
     modifiers,
     contracts::ownable::*,
@@ -87,46 +85,6 @@ where
     }
 
     // Rewards funcs 
-
-    default fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
-        let caller = Self::env().caller();
-        let allowance = Psp22Ref::allowance(
-            &self.data::<Data>().psp22_contract_address,
-            caller,
-            Self::env().account_id()
-        );
-        assert!(allowance >= amount);
-
-        let balance = Psp22Ref::balance_of(
-            &self.data::<Data>().psp22_contract_address,
-            caller
-        );
-        assert!(balance >= amount,"not enough balance");
-
-        self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_add(amount).unwrap();
-
-        let builder = Psp22Ref::transfer_from_builder(
-            &self.data::<Data>().psp22_contract_address,
-            caller,
-            Self::env().account_id(),
-            amount,
-            Vec::<u8>::new(),
-        )
-        .call_flags(CallFlags::default().set_allow_reentry(true));
-        
-        let result = match builder.try_invoke() {
-            Ok(Ok(Ok(_))) => Ok(()),
-            Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
-            _ => {
-                Err(Error::CannotTransfer)
-            }
-        };
-
-        result
-    } 
-
     #[modifiers(only_owner)]
     default fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
         assert!(self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).unwrap() <= Self::env().block_timestamp(),"not time to withdraw");

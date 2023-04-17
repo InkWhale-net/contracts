@@ -91,20 +91,38 @@ pub mod nft_pool_generator {
         ) -> Result<(), Error> {
             let caller = self.env().caller();
             let fees = self.manager.creation_fee;
-            //Collect INW as transaction Fees
+
+            // Check INW balance and allowance
             let allowance = Psp22Ref::allowance(
                 &self.manager.inw_contract,
                 caller,
                 self.env().account_id()
             );
-            assert!(allowance >= fees);
 
             let balance = Psp22Ref::balance_of(
                 &self.manager.inw_contract,
                 caller
             );
-            assert!(balance >= fees,"not enough balance");
 
+            if allowance < fees || balance < fees {
+                return Err(Error::InvalidBalanceAndAllowance)
+            }
+
+            // Check balance of psp22 token
+            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_mul(multiplier).ok_or(Error::CheckedOperations)?
+                                    .checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+            
+            let balance = Psp22Ref::balance_of(
+                &psp22_contract_address,
+                caller
+            );
+
+            if balance < max_reward_amount {
+                return Err(Error::InvalidBalanceAndAllowance)
+            }
+
+            // Collect INW as transaction Fees
             let builder = Psp22Ref::transfer_from_builder(
                 &self.manager.inw_contract,
                 caller,
@@ -126,36 +144,32 @@ pub mod nft_pool_generator {
 
             if result.is_ok() {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
-                    let contract = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
+                    if let Result::Ok(contract) = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
                         .endowment(0)
                         .code_hash(self.manager.pool_hash)
                         .salt_bytes(self.manager.pool_count.to_le_bytes())
-                        .instantiate();
-                    let contract_account: AccountId = contract.to_account_id();
-
-                    self.manager.pool_count += 1;
-                    self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
-
-                    let mut last_index = 0;
-                    if self
-                        .manager
-                        .pool_ids_last_index
-                        .get(&Some(contract_owner))
-                        .is_some()
+                        .instantiate()
                     {
-                        last_index = self
-                            .manager
+                        let contract_account: AccountId = contract.to_account_id();
+
+                        self.manager.pool_count = self.manager.pool_count.checked_add(1).ok_or(Error::CheckedOperations)?;
+                        self.manager.pool_list.insert(&self.manager.pool_count, &contract_account);
+
+                        let mut last_index = 0;
+
+                        if let Some(stored_last_index) = self.manager.pool_ids_last_index.get(&Some(contract_owner)) {
+                            last_index = stored_last_index;
+                        }
+                        
+                        self.manager.pool_ids.insert(
+                            contract_owner,
+                            &self.manager.pool_count,
+                        );
+
+                        self.manager
                             .pool_ids_last_index
-                            .get(&Some(contract_owner))
-                            .unwrap();
+                            .insert(&Some(contract_owner), &(last_index + 1));
                     }
-                    self.manager.pool_ids.insert(
-                        contract_owner,
-                        &self.manager.pool_count,
-                    );
-                    self.manager
-                        .pool_ids_last_index
-                        .insert(&Some(contract_owner), &(last_index + 1));
                 } else {
                     return Err(Error::CannotBurn);
                 } 

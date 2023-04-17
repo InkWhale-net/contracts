@@ -70,10 +70,6 @@ pub trait GenericPoolContractTrait {
     fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
     
     // Rewards funcs
-    
-    #[ink(message)]
-    fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;    
-
     #[ink(message)]
     fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;
 }

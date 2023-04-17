@@ -27,7 +27,8 @@ pub enum Error {
     InvalidBalanceAndAllowance,
     AlreadyInit,
     InvalidBuyAmount,
-    InvalidTransferAmount
+    InvalidTransferAmount,
+    CannotCreatePool
 }
 
 impl From<OwnableError> for Error {

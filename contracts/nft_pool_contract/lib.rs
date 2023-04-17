@@ -32,7 +32,6 @@ pub mod my_nft_pool {
     use inkwhale_project::impls::{
         generic_pool_contract::*,
         nft_staking_list::*,
-        admin::*,
         upgradeable::*
     };
 
@@ -46,24 +45,39 @@ pub mod my_nft_pool {
         #[storage_field]
         staking_list_data: nft_staking_list::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
         upgradeable_data: upgradeable::data::Data
     }
 
     impl Ownable for MyNFTPool {}
     impl GenericPoolContractTrait for MyNFTPool {}
     impl NftStakingListTrait for MyNFTPool {}
-    impl AdminTrait for MyNFTPool {}
     impl UpgradeableTrait for MyNFTPool {}
 
     impl MyNFTPool {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance) -> Self {
-            assert!(multiplier > 0,"multiplier must > 0");
-            assert!(duration > 0,"duration must > 0");
+        pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance) -> Result<Self, Error> {
+            // Check psp22 balance and allowance
             let mut instance = Self::default();
+            let caller = instance.env().caller();
 
+            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_mul(multiplier).ok_or(Error::CheckedOperations)?
+                                    .checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+            let allowance = Psp22Ref::allowance(
+                &psp22_contract_address,
+                caller,
+                instance.env().account_id()
+            );
+
+            let balance = Psp22Ref::balance_of(
+                &psp22_contract_address,
+                caller
+            );
+
+            assert!(allowance >= max_reward_amount || balance >= max_reward_amount, "Invalid Balance And Allowance");
+            
+            // Add data
             instance._init_with_owner(contract_owner);
             instance.data.staking_contract_address = psp34_contract_address;
             instance.data.psp22_contract_address = psp22_contract_address;
@@ -74,13 +88,36 @@ pub mod my_nft_pool {
             instance.data.unstake_fee = unstake_fee;
             instance.data.inw_contract = inw_contract;
 
-            instance
+            Ok(instance)
         }
 
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
+            // Check psp22 balance and allowance
+            let caller = self.env().caller();
+
+            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_mul(multiplier).ok_or(Error::CheckedOperations)?
+                                    .checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+
+            let allowance = Psp22Ref::allowance(
+                &psp22_contract_address,
+                caller,
+                self.env().account_id()
+            );
+
+            let balance = Psp22Ref::balance_of(
+                &psp22_contract_address,
+                caller
+            );
+
+            if allowance < max_reward_amount || balance < max_reward_amount {
+                return Err(Error::InvalidBalanceAndAllowance)
+            }
+            
+            // Add data
             self.data.staking_contract_address = psp34_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
             self.data.max_staking_amount = max_staking_amount;
