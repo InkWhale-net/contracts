@@ -3,7 +3,6 @@ use openbrush::{
         Balance,
         AccountId,
         Hash,
-        String,
         ZERO_ADDRESS
     },
     storage::{

@@ -10,15 +10,10 @@ pub use self::psp22_standard::{
 #[allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod psp22_standard {
-    use ink::{
-        codegen::{Env, EmitEvent},
-        reflect::ContractEventBase
-    };
     use ink::prelude::{
         string::{
             String,
-        },
-        vec::Vec,
+        }
     };
     use openbrush::{
         contracts::ownable::*,
@@ -34,13 +29,11 @@ pub mod psp22_standard {
         traits::{
             Storage,
             DefaultEnv
-        },
-        modifiers,
+        }
     };
     use inkwhale_project::{
         traits::{
-            admin::*,
-            error::Error,
+            admin::*
         }
     };
 
@@ -86,7 +79,7 @@ pub mod psp22_standard {
             if account == caller {
                 self._burn_from(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()));
+                Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()))
             }
         }
     }
@@ -98,7 +91,7 @@ pub mod psp22_standard {
             if caller == self.owner() {
                 self._mint_to(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()));
+                Err(PSP22Error::Custom(String::from("Your are not owner").into_bytes()))
             }
         }
     }

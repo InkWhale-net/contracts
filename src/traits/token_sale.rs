@@ -3,18 +3,7 @@
 use openbrush::{
     traits::{
         Balance,
-        AccountId,
-        Hash,
-    },
-    contracts::{
-        traits::psp22::{
-            extensions::{
-                metadata::*,
-                mintable::*,
-                burnable::*,
-            },
-            *,
-        },
+        AccountId
     },
 };
 
