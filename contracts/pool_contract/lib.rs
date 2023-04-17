@@ -163,10 +163,12 @@ pub mod my_pool {
         #[ink(message)]
         pub fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
             if let Some(end_time) = self.data.start_time.checked_add(self.data.duration) {
+                // Check staking time
                 if self.data.start_time > self.env().block_timestamp() || end_time < self.env().block_timestamp() {
                     return Err(Error::NotTimeToStake);
                 }
 
+                // Check psp22 balance and allowance of caller 
                 let caller = self.env().caller();
                 let allowance = Psp22Ref::allowance(
                     &self.data.psp22_contract_address,
@@ -181,6 +183,11 @@ pub mod my_pool {
 
                 if allowance < amount || balance < amount {
                     return Err(Error::InvalidBalanceAndAllowance);
+                }
+
+                // Check if total stake < max_staking_amount
+                if self.data.max_staking_amount < self.data.total_staked.checked_add(amount).ok_or(Error::CheckedOperations)? {
+                    return Err(Error::ExceedTotalStakingAmount);
                 }
 
                 let staker = self.data.stakers.get(&caller);
@@ -236,6 +243,7 @@ pub mod my_pool {
             let caller = self.env().caller();
             let fees = self.data.unstake_fee;
             
+            // Check allowance and balance of caller 
             let allowance = Psp22Ref::allowance(
                 &self.data.inw_contract,
                 caller,
@@ -251,75 +259,79 @@ pub mod my_pool {
                 return Err(Error::InvalidBalanceAndAllowance)
             }
 
-            // Collect INW as transaction Fees
-            let builder = Psp22Ref::transfer_from_builder(
-                &self.data.inw_contract,
-                caller,
-                self.env().account_id(),
-                fees,
-                Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
-            
-            let result = match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => {
-                    Err(Error::CannotTransfer)
+            if let Some(mut stake_info) = self.data.stakers.get(&caller) { 
+                // Check if amount exceeds the staked value of caller                      
+                if stake_info.staked_value < amount {
+                    return Err(Error::InvalidUnstakedAmount);
                 }
-            };
 
-            if result.is_ok() {
-                if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_ok() {
-                    if let Some(mut stake_info) = self.data.stakers.get(&caller) {                       
-                        if stake_info.staked_value < amount {
-                            return Err(Error::InvalidUnstakedAmount);
-                        }
-                 
-                        let mut reward_time = self.env().block_timestamp();
-                        if reward_time > self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?{
-                            reward_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
-                        }
-                        let time_length = reward_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; // ms
-                        let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
-                        let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-
-                        stake_info.staked_value = stake_info.staked_value.checked_sub(amount).ok_or(Error::CheckedOperations)?;
-                        stake_info.last_reward_update = self.env().block_timestamp();
-                        stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
-
-                        self.data.stakers.insert(&caller, &stake_info);
-                        self.data.total_staked = self.data.total_staked.checked_sub(amount).ok_or(Error::CheckedOperations)?;
-
-                        let builder = Psp22Ref::transfer_from_builder(
-                            &self.data.psp22_contract_address,
-                            self.env().account_id(),
-                            caller,
-                            amount,
-                            Vec::<u8>::new(),
-                        )
-                        .call_flags(CallFlags::default().set_allow_reentry(true));
-                        
-                        return match builder.try_invoke() {
-                            Ok(Ok(Ok(_))) => Ok(()),
-                            Ok(Ok(Err(e))) => Err(e.into()),
-                            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                            Err(ink::env::Error::NotCallable) => Ok(()),
-                            _ => {
-                                Err(Error::CannotTransfer)
-                            }
-                        };
-                    } else {
-                        return Err(Error::NoStakerFound);
+                // Collect INW as transaction Fees
+                let builder = Psp22Ref::transfer_from_builder(
+                    &self.data.inw_contract,
+                    caller,
+                    self.env().account_id(),
+                    fees,
+                    Vec::<u8>::new(),
+                )
+                .call_flags(CallFlags::default().set_allow_reentry(true));
+                
+                let result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => {
+                        Err(Error::CannotTransfer)
                     }
-                } else {
-                    return Err(Error::CannotBurn);
-                } 
-            }
+                };
 
-            result
+                if result.is_ok() {                                
+                    let mut reward_time = self.env().block_timestamp();
+                    if reward_time > self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?{
+                        reward_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
+                    }
+                    let time_length = reward_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; // ms
+                    let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
+                    let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+
+                    stake_info.staked_value = stake_info.staked_value.checked_sub(amount).ok_or(Error::CheckedOperations)?;
+                    stake_info.last_reward_update = self.env().block_timestamp();
+                    stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+                    self.data.stakers.insert(&caller, &stake_info);
+                    self.data.total_staked = self.data.total_staked.checked_sub(amount).ok_or(Error::CheckedOperations)?;
+
+                    // Transfer token to caller
+                    let builder = Psp22Ref::transfer_from_builder(
+                        &self.data.psp22_contract_address,
+                        self.env().account_id(),
+                        caller,
+                        amount,
+                        Vec::<u8>::new(),
+                    )
+                    .call_flags(CallFlags::default().set_allow_reentry(true));
+                    
+                    let transfer_result = match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => {
+                            Err(Error::CannotTransfer)
+                        }
+                    };
+
+                    if transfer_result.is_ok() {
+                        if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
+                            return Err(Error::CannotBurn);
+                        }
+                    }                     
+                    return transfer_result;
+                }
+                return result; 
+            } else {
+                return Err(Error::NoStakerFound);
+            } 
         }
 
         #[ink(message)]

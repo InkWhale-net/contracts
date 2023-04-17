@@ -37,7 +37,8 @@ pub enum Error {
     AllowanceNotSet,
     TokenNotFound,
     UserNotStake,
-    NoTokenOwner
+    NoTokenOwner,
+    ExceedTotalStakingAmount
 }
 
 impl From<OwnableError> for Error {
