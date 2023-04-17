@@ -145,11 +145,11 @@ pub mod nft_pool_generator {
             if result.is_ok() {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
                     if let Result::Ok(contract) = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
-                        .endowment(0)
-                        .code_hash(self.manager.pool_hash)
-                        .salt_bytes(self.manager.pool_count.to_le_bytes())
-                        .instantiate()
-                    {
+                            .endowment(0)
+                            .code_hash(self.manager.pool_hash)
+                            .salt_bytes(self.manager.pool_count.to_le_bytes())
+                            .instantiate() {
+
                         let contract_account: AccountId = contract.to_account_id();
 
                         self.manager.pool_count = self.manager.pool_count.checked_add(1).ok_or(Error::CheckedOperations)?;

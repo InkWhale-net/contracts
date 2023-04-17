@@ -87,10 +87,10 @@ where
     // Rewards funcs 
     #[modifiers(only_owner)]
     default fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
-        assert!(self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).unwrap() <= Self::env().block_timestamp(),"not time to withdraw");
+        assert!(self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).ok_or(Error::CheckedOperations)? <= Self::env().block_timestamp(),"not time to withdraw");
         assert!(amount <= self.data::<Data>().reward_pool, "not enough balance to withdraw");
 
-        self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_sub(amount).unwrap();
+        self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_sub(amount).ok_or(Error::CheckedOperations)?;
 
         assert!(Psp22Ref::transfer(
             &self.data::<Data>().psp22_contract_address,

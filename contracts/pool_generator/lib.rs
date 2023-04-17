@@ -145,8 +145,8 @@ pub mod pool_generator {
                             .endowment(0)
                             .code_hash(self.manager.pool_hash)
                             .salt_bytes(self.manager.pool_count.to_le_bytes())
-                            .instantiate()
-                    {
+                            .instantiate() {
+                                
                         let contract_account: AccountId = contract.to_account_id();
 
                         self.manager.pool_count = self.manager.pool_count.checked_add(1).ok_or(Error::CheckedOperations)?;

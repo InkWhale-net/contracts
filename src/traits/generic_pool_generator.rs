@@ -49,7 +49,7 @@ pub trait GenericPoolGeneratorTrait {
         &self,
         contract_owner: AccountId,
         index: u64,
-    ) -> u64;
+    ) -> Option<u64>;
 
     #[ink(message)]
     fn get_pool_count_by_owner(&self, contract_owner: AccountId) -> u64;
@@ -67,11 +67,4 @@ pub trait GenericPoolGeneratorTrait {
       
     #[ink(message)]    
     fn set_unstake_fee(&mut self, unstake_fee: Balance) -> Result<(), Error>;
-
-    /// Withdraw Fees - only Owner
-    #[ink(message)]    
-    fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error>;
-
-    #[ink(message)]    
-    fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error>;
 }

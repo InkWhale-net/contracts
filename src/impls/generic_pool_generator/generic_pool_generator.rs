@@ -60,11 +60,10 @@ where
         &self,
         contract_owner: AccountId,
         index: u64,
-    ) -> u64 {
+    ) -> Option<u64> {
         self.data::<Data>()
             .pool_ids
             .get_value(contract_owner, &(index as u128))
-            .unwrap()
     }
 
     default fn get_pool_count_by_owner(&self, contract_owner: AccountId) -> u64 {
@@ -96,28 +95,6 @@ where
     #[modifiers(only_owner)]
     default fn set_unstake_fee(&mut self, unstake_fee: Balance) -> Result<(), Error> {
         self.data::<Data>().unstake_fee = unstake_fee;
-        Ok(())
-    }
-
-    /// Withdraw Fees - only Owner
-    #[modifiers(only_owner)]
-    default fn withdraw_fee(&mut self, value: Balance) -> Result<(), Error> {
-        assert!(value <= Self::env().balance(), "not enough balance");
-        assert!(
-            Self::env().transfer(Self::env().caller(), value).is_ok(),
-            "error withdraw_fee"
-        );
-        Ok(()) 
-    }
-
-    #[modifiers(only_owner)]
-    default fn withdraw_inw(&mut self, value: Balance) -> Result<(), Error> {
-        assert!(Psp22Ref::transfer(
-            &self.data::<Data>().inw_contract,
-            Self::env().caller(),
-            value,
-            Vec::<u8>::new()
-        ).is_ok());
         Ok(())
     }
 }

@@ -28,7 +28,16 @@ pub enum Error {
     AlreadyInit,
     InvalidBuyAmount,
     InvalidTransferAmount,
-    CannotCreatePool
+    CannotCreatePool,
+    NotTimeToStake,
+    NoStakerFound,
+    InvalidUnstakedAmount,
+    NotEnoughReward,
+    NotTokenOwner,
+    AllowanceNotSet,
+    TokenNotFound,
+    UserNotStake,
+    NoTokenOwner
 }
 
 impl From<OwnableError> for Error {
