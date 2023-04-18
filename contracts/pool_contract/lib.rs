@@ -358,16 +358,14 @@ pub mod my_pool {
                         }
                     };
 
-                    if transfer_result.is_ok() {
-                        if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
-                            return Err(Error::CannotBurn);
-                        }
+                    if transfer_result.is_ok() && Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
+                        return Err(Error::CannotBurn);
                     }                     
                     return transfer_result;
                 }
-                return result; 
+                result
             } else {
-                return Err(Error::NoStakerFound);
+                Err(Error::NoStakerFound)
             } 
         }
 
@@ -393,7 +391,7 @@ pub mod my_pool {
                     return Err(Error::NotEnoughReward);
                 }
 
-                if to_claim <= 0 {
+                if to_claim == 0 {
                     return Err(Error::NoClaimAmount);
                 }
                 
@@ -420,7 +418,7 @@ pub mod my_pool {
                     }
                 }
             } else {
-                return Err(Error::NoStakerFound);
+                Err(Error::NoStakerFound)
             }
         }
 
