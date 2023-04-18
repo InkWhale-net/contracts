@@ -9,22 +9,15 @@ pub use crate::{
         error::Error
     }
 };
-
-use ink::prelude::{
-    vec::Vec,
-};
-
 use openbrush::{
     modifiers,
     contracts::ownable::*,
     traits::{
         Storage,
         Balance,
-        AccountId,
-        Hash,
+        AccountId
     }
 };
-use ink::env::CallFlags;
 
 impl<T> TokenSaleTrait for T 
 where 

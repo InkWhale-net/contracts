@@ -8,7 +8,6 @@ pub mod token_sale {
     use ink::prelude::{
         vec::Vec,
     };
-    use ink::ToAccountId;
     use ink::env::CallFlags;
 
     use openbrush::{
@@ -17,22 +16,18 @@ pub mod token_sale {
         },
         modifiers,
         traits::{
-            Storage,
-            String
+            Storage
         },
     };
 
     use inkwhale_project::traits::token_manager::Psp22Ref;
     use inkwhale_project::impls::{
         token_sale::*,
-        admin::*,
         upgradeable::*
     };
     use inkwhale_project::{
         traits::{
-            admin::*,
-            upgradeable::*,
-            token_sale::*
+            admin::*
         }
     };
 
@@ -109,7 +104,7 @@ pub mod token_sale {
                 amount,
                 Vec::<u8>::new(),
             ).call_flags(CallFlags::default().set_allow_reentry(true));
-            let result = match builder.try_invoke() {
+            let _result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
                 Ok(Ok(Err(e))) => Err(e.into()),
                 Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),

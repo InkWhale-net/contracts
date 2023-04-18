@@ -10,13 +10,6 @@ pub use self::token_standard::{
 #[allow(clippy::too_many_arguments)]
 #[openbrush::contract]
 pub mod token_standard {
-    use ink::{
-        codegen::{Env, EmitEvent},
-        reflect::ContractEventBase
-    };
-    use ink::prelude::{
-        vec::Vec
-    };
     use openbrush::{
         contracts::ownable::*,
         contracts::psp22::{
@@ -32,13 +25,11 @@ pub mod token_standard {
             Storage,
             DefaultEnv,
             String
-        },
-        modifiers,
+        }
     };
     use inkwhale_project::{
         traits::{
-            admin::*,
-            error::Error,
+            admin::*
         }
     };
 
@@ -71,7 +62,7 @@ pub mod token_standard {
             _amount: &Balance,
         ) -> Result<(), PSP22Error> {
             if _from.is_none() && self._is_cap_exceeded(_amount) {
-                return Err(PSP22Error::Custom(String::from("Cap exceeded").into()))
+                return Err(PSP22Error::Custom(String::from("Cap exceeded")))
             }
             Ok(())
         }
@@ -84,7 +75,7 @@ pub mod token_standard {
             if account == caller {
                 self._burn_from(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner")));
+                Err(PSP22Error::Custom(String::from("Your are not owner")))
             }
         }
     }
@@ -96,7 +87,7 @@ pub mod token_standard {
             if caller == self.owner() {
                 self._mint_to(account, amount)
             } else {
-                return Err(PSP22Error::Custom(String::from("Your are not owner")));
+                Err(PSP22Error::Custom(String::from("Your are not owner")))
             }
         }
     }
@@ -111,8 +102,8 @@ pub mod token_standard {
             instance
                 ._mint_to(mint_to, cap)
                 .expect("Should mint");
-            instance.metadata.name = Some(name.into());
-            instance.metadata.symbol = Some(symbol.into());
+            instance.metadata.name = Some(name);
+            instance.metadata.symbol = Some(symbol);
             instance.metadata.decimals = decimal;
 
             instance

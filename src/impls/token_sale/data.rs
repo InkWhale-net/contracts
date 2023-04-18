@@ -2,12 +2,7 @@ use openbrush::{
     traits::{
         Balance,
         AccountId,
-        Hash,
-        String,
         ZERO_ADDRESS
-    },
-    storage::{
-        Mapping
     }
 };
 

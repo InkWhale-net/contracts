@@ -27,13 +27,11 @@ pub mod token_generator {
     use inkwhale_project::traits::token_manager::Psp22Ref;
     use inkwhale_project::impls::{
         token_manager::*,
-        admin::*,
         upgradeable::*
     };
     use inkwhale_project::{
         traits::{
-            admin::*,
-            upgradeable::*
+            admin::*
         }
     };
 
@@ -131,7 +129,7 @@ pub mod token_generator {
             if result.is_ok() {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
                     //create contract
-                    let contract = TokenStandardRef::new(mint_to, cap, name.clone(), symbol.clone(), decimal.clone())
+                    let contract = TokenStandardRef::new(mint_to, cap, name, symbol, decimal)
                         .endowment(0)
                         .code_hash(self.manager.standard_psp22_hash)
                         .salt_bytes(self.manager.token_count.to_le_bytes())
