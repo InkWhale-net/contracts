@@ -173,9 +173,10 @@ pub mod my_nft_pool {
         #[ink(message)]
         pub fn stake(&mut self, token_id: Id) -> Result<(), Error>  {
             let end_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
+            let current_time = self.env().block_timestamp();
             
             // Check staking time
-            if self.data.start_time > self.env().block_timestamp() || end_time < self.env().block_timestamp() {
+            if self.data.start_time > current_time || end_time < current_time {
                 return Err(Error::NotTimeToStake);
             }
 
@@ -207,12 +208,12 @@ pub mod my_nft_pool {
                     //calculate Reward
                     // reward = total_NFT * staked_time_in_days * multiplier
                     // 30 days reward for 1 NFT = 30 * multiplier
-                    let time_length = self.env().block_timestamp().checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; //second
+                    let time_length = current_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; //second
                     let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
                     let unclaimed_reward = unclaimed_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
 
                     stake_info.staked_value = stake_info.staked_value.checked_add(1).ok_or(Error::CheckedOperations)?;
-                    stake_info.last_reward_update = self.env().block_timestamp();
+                    stake_info.last_reward_update = current_time;
                     stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
                     // Calculate future reward
@@ -231,7 +232,7 @@ pub mod my_nft_pool {
                         .insert(&caller, &stake_info);
                 } else {
                     let mut stake_info = StakeInformation{
-                        last_reward_update: self.env().block_timestamp(),
+                        last_reward_update: current_time,
                         staked_value: 1,
                         unclaimed_reward: 0,
                         future_reward: 0

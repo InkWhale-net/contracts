@@ -165,9 +165,10 @@ pub mod my_pool {
         #[ink(message)]
         pub fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
             let end_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
+            let current_time = self.env().block_timestamp();
 
             // Check staking time
-            if self.data.start_time > self.env().block_timestamp() || end_time < self.env().block_timestamp() {
+            if self.data.start_time > current_time || end_time < current_time {
                 return Err(Error::NotTimeToStake);
             }
 
@@ -196,12 +197,12 @@ pub mod my_pool {
             let staker = self.data.stakers.get(&caller);
             
             if let Some(mut stake_info) = staker {
-                let time_length = self.env().block_timestamp().checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; // ms
+                let time_length = current_time.checked_sub(stake_info.last_reward_update).ok_or(Error::CheckedOperations)?; // ms
                 let unclaimed_reward_365 = stake_info.staked_value.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data.multiplier).ok_or(Error::CheckedOperations)?;
                 let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).ok_or(Error::CheckedOperations)?;
 
                 stake_info.staked_value = stake_info.staked_value.checked_add(amount).ok_or(Error::CheckedOperations)?;
-                stake_info.last_reward_update = self.env().block_timestamp();
+                stake_info.last_reward_update = current_time;
                 stake_info.unclaimed_reward = stake_info.unclaimed_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
                 
                 // Calculate future reward
@@ -220,7 +221,7 @@ pub mod my_pool {
                     .insert(&caller, &stake_info);
             } else {
                 let mut stake_info = StakeInformation{
-                    last_reward_update: self.env().block_timestamp(),
+                    last_reward_update: current_time,
                     staked_value: amount,
                     unclaimed_reward: 0,
                     future_reward: 0
