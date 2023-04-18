@@ -49,121 +49,64 @@ pub mod my_pool {
     impl MyPool {
         #[ink(constructor)]
         pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Result<Self, Error> {
-            // Check psp22 balance and allowance
             let mut instance = Self::default();
-            let caller = instance.env().caller();
 
             let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
                                     .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-
-            let allowance = Psp22Ref::allowance(
-                &psp22_contract_address,
-                caller,
-                instance.env().account_id()
-            );
-
-            let balance = Psp22Ref::balance_of(
-                &psp22_contract_address,
-                caller
-            );
-
-            if allowance < max_reward_amount || balance < max_reward_amount {
-                return Err(Error::InvalidBalanceAndAllowance)
-            }
 
             // Add data           
             instance._init_with_owner(contract_owner);
             instance.data.staking_contract_address = psp22_contract_address;
             instance.data.psp22_contract_address = psp22_contract_address;
             instance.data.max_staking_amount = max_staking_amount;
+            instance.data.max_reward_amount = max_reward_amount;
             instance.data.multiplier = apy as u128;
             instance.data.duration = duration;
             instance.data.start_time = start_time;
             instance.data.unstake_fee = unstake_fee;
             instance.data.inw_contract = inw_contract;
             instance.data.total_unclaimed_reward = 0;
-            instance.data.reward_pool = max_reward_amount;
+            instance.data.is_topup_enough_reward = false;
+            instance.data.reward_pool = 0;
 
-            let builder = Psp22Ref::transfer_from_builder(
-                &psp22_contract_address,
-                caller,
-                instance.env().account_id(),
-                max_reward_amount,
-                Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
-            
-            match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(instance),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(instance),
-                Err(ink::env::Error::NotCallable) => Ok(instance),
-                _ => {
-                    Err(Error::CannotTransfer)
-                }
-            }
+            Ok(instance)
         }
 
         #[ink(message)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
-            // Check psp22 balance and allowance
-            let caller = self.env().caller();
-
             let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
                                     .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             
-            let allowance = Psp22Ref::allowance(
-                &psp22_contract_address,
-                caller,
-                self.env().account_id()
-            );
-
-            let balance = Psp22Ref::balance_of(
-                &psp22_contract_address,
-                caller
-            );
-            
-            if allowance < max_reward_amount || balance < max_reward_amount {
-                return Err(Error::InvalidBalanceAndAllowance)
-            }
-
             // Add data
             self.data.staking_contract_address = psp22_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
             self.data.max_staking_amount = max_staking_amount;
+            self.data.max_reward_amount = max_reward_amount;
             self.data.multiplier = apy as u128;
             self.data.duration = duration;
             self.data.start_time = start_time;
             self.data.unstake_fee = unstake_fee;
             self.data.inw_contract = inw_contract;
             self.data.total_unclaimed_reward = 0;
-            self.data.reward_pool = max_reward_amount;
-
-            let builder = Psp22Ref::transfer_from_builder(
-                &self.data.psp22_contract_address,
-                caller,
-                self.env().account_id(),
-                max_reward_amount,
-                Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
+            self.data.is_topup_enough_reward = false;
+            self.data.reward_pool = 0;   
             
-            match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => {
-                    Err(Error::CannotTransfer)
-                }
-            }
-        }   
+            Ok(())
+        }       
 
         #[ink(message)]
         pub fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
+            if !self.data.is_topup_enough_reward {
+                return Err(Error::NotTopupEnoughReward);
+            }
+
+            if amount == 0 {
+                return Err(Error::NoAmount);
+            }
+
             let end_time = self.data.start_time.checked_add(self.data.duration).ok_or(Error::CheckedOperations)?;
             let current_time = self.env().block_timestamp();
 
@@ -259,11 +202,19 @@ pub mod my_pool {
                 _ => {
                     Err(Error::CannotTransfer)
                 }
-            }
+            }            
         }
 
         #[ink(message)]
         pub fn unstake(&mut self, amount: Balance) -> Result<(), Error>  {
+            if !self.data.is_topup_enough_reward {
+                return Err(Error::NotTopupEnoughReward);
+            }
+
+            if amount == 0 {
+                return Err(Error::NoAmount);
+            }
+
             let caller = self.env().caller();
             let fees = self.data.unstake_fee;
             
@@ -339,38 +290,32 @@ pub mod my_pool {
                     self.data.total_staked = self.data.total_staked.checked_sub(amount).ok_or(Error::CheckedOperations)?;
 
                     // Transfer token to caller
-                    let builder = Psp22Ref::transfer_from_builder(
+                    if Psp22Ref::transfer(
                         &self.data.psp22_contract_address,
-                        self.env().account_id(),
                         caller,
                         amount,
                         Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
+                    ).is_err() {
+                        return Err(Error::CannotTransfer);
+                    }
                     
-                    let transfer_result = match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => {
-                            Err(Error::CannotTransfer)
-                        }
-                    };
-
-                    if transfer_result.is_ok() && Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
+                    if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
                         return Err(Error::CannotBurn);
                     }                     
-                    return transfer_result;
+                    return Ok(());
                 }
                 result
             } else {
                 Err(Error::NoStakerFound)
-            } 
+            }             
         }
 
         #[ink(message)]
         pub fn claim_reward(&mut self) -> Result<(), Error>  {
+            if !self.data.is_topup_enough_reward {
+                return Err(Error::NotTopupEnoughReward);
+            }
+
             let caller = self.env().caller();
 
             if let Some(mut stake_info) = self.data.stakers.get(&caller) {                       
@@ -399,24 +344,15 @@ pub mod my_pool {
                 self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
                 self.data.total_unclaimed_reward = self.data.total_unclaimed_reward.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
 
-                let builder = Psp22Ref::transfer_from_builder(
+                if Psp22Ref::transfer(
                     &self.data.psp22_contract_address,
-                    self.env().account_id(),
                     caller,
                     to_claim,
                     Vec::<u8>::new(),
-                )
-                .call_flags(CallFlags::default().set_allow_reentry(true));
-                
-                match builder.try_invoke() {
-                    Ok(Ok(Ok(_))) => Ok(()),
-                    Ok(Ok(Err(e))) => Err(e.into()),
-                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                    Err(ink::env::Error::NotCallable) => Ok(()),
-                    _ => {
-                        Err(Error::CannotTransfer)
-                    }
-                }
+                ).is_err() {
+                    return Err(Error::CannotTransfer);
+                }                
+                Ok(())
             } else {
                 Err(Error::NoStakerFound)
             }

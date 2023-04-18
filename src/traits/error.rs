@@ -41,7 +41,9 @@ pub enum Error {
     ExceedTotalStakingAmount,
     NoClaimAmount,
     NotTimeToWithdraw,
-    NotEnoughRewardToWithdraw
+    NotEnoughRewardToWithdraw,
+    NotTopupEnoughReward,
+    NoAmount
 }
 
 impl From<OwnableError> for Error {

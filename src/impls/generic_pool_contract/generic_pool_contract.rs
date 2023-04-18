@@ -90,6 +90,56 @@ where
 
     // Rewards funcs 
     #[modifiers(only_owner)]
+    default fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {        
+        if self.data::<Data>().is_topup_enough_reward {
+            return Ok(());
+        }
+  
+        let caller = Self::env().caller();
+            
+        let allowance = Psp22Ref::allowance(
+            &self.data::<Data>().psp22_contract_address,
+            caller,
+            Self::env().account_id()
+        );
+
+        let balance = Psp22Ref::balance_of(
+            &self.data::<Data>().psp22_contract_address,
+            caller
+        );
+
+        if allowance < amount || balance < amount || amount < self.data::<Data>().max_reward_amount {
+            return Err(Error::InvalidBalanceAndAllowance)
+        }
+
+        let builder = Psp22Ref::transfer_from_builder(
+            &self.data::<Data>().psp22_contract_address,
+            caller,
+            Self::env().account_id(),
+            amount,
+            Vec::<u8>::new(),
+        )
+        .call_flags(CallFlags::default().set_allow_reentry(true));
+        
+        let result = match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => {
+                Err(Error::CannotTransfer)
+            }
+        };
+
+        if result.is_ok() {
+            self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_add(amount).ok_or(Error::CheckedOperations)?;
+            self.data::<Data>().is_topup_enough_reward = true;
+        }   
+
+        result        
+    } 
+
+    #[modifiers(only_owner)]
     default fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {
         let end_time = self.data::<Data>().start_time.checked_add(self.data::<Data>().duration).ok_or(Error::CheckedOperations)?;
         
@@ -105,24 +155,17 @@ where
         
         self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_sub(amount).ok_or(Error::CheckedOperations)?;
 
-        // Transfer token to caller       
-        let builder = Psp22Ref::transfer_from_builder(
+        // Transfer token to caller 
+        if Psp22Ref::transfer(
             &self.data::<Data>().psp22_contract_address,
-            Self::env().account_id(),
             Self::env().caller(),
             amount,
-            Vec::<u8>::new(),
+            Vec::<u8>::new()
         )
-        .call_flags(CallFlags::default().set_allow_reentry(true));
-        
-        match builder.try_invoke() {
-            Ok(Ok(Ok(_))) => Ok(()),
-            Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
-            _ => {
-                Err(Error::CannotTransfer)
-            }
+        .is_err() {
+            return Err(Error::CannotTransfer);
         }
+
+        Ok(())        
     }
 }

@@ -74,5 +74,8 @@ pub trait GenericPoolContractTrait {
     
     // Rewards funcs
     #[ink(message)]
+    fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
     fn withdraw_reward_pool(&mut self, amount: Balance) -> Result<(), Error>;
 }

@@ -105,20 +105,6 @@ pub mod pool_generator {
                 return Err(Error::InvalidBalanceAndAllowance)
             }
 
-            // Check balance of psp22 token
-            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-            
-            let balance = Psp22Ref::balance_of(
-                &psp22_contract_address,
-                caller
-            );
-
-            if balance < max_reward_amount {
-                return Err(Error::InvalidBalanceAndAllowance)
-            }
-
             // Collect INW as transaction Fees 
             let builder = Psp22Ref::transfer_from_builder(
                 &self.manager.inw_contract,
