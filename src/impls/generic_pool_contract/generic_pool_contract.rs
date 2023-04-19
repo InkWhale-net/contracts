@@ -52,6 +52,10 @@ where
         self.data::<Data>().stakers.get(&staker)
     }
 
+    default fn is_topup_enough_reward(&self) -> bool {
+        self.data::<Data>().is_topup_enough_reward
+    }
+
     default fn reward_pool(&self) -> Balance {
         self.data::<Data>().reward_pool
     }
@@ -62,6 +66,10 @@ where
     
     default fn max_staking_amount(&self) -> Balance {
         self.data::<Data>().max_staking_amount
+    }
+
+    default fn min_reward_amount(&self) -> Balance {
+        self.data::<Data>().min_reward_amount
     }
 
     default fn total_staked(&self) -> Balance {
@@ -108,7 +116,7 @@ where
             caller
         );
 
-        if allowance < amount || balance < amount || amount < self.data::<Data>().max_reward_amount {
+        if allowance < amount || balance < amount {
             return Err(Error::InvalidBalanceAndAllowance)
         }
 
@@ -133,7 +141,9 @@ where
 
         if result.is_ok() {
             self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_add(amount).ok_or(Error::CheckedOperations)?;
-            self.data::<Data>().is_topup_enough_reward = true;
+            if self.data::<Data>().reward_pool >= self.data::<Data>().min_reward_amount {
+                self.data::<Data>().is_topup_enough_reward = true;
+            }
         }   
 
         result        

@@ -47,6 +47,9 @@ pub trait GenericPoolContractTrait {
     fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation>;
 
     #[ink(message)]
+    fn is_topup_enough_reward(&self) -> bool; 
+
+    #[ink(message)]
     fn reward_pool(&self) -> Balance;
 
     #[ink(message)]
@@ -54,6 +57,9 @@ pub trait GenericPoolContractTrait {
 
     #[ink(message)]
     fn max_staking_amount(&self) -> Balance;
+
+    #[ink(message)]
+    fn min_reward_amount(&self) -> Balance;
 
     #[ink(message)]
     fn total_staked(&self) -> Balance;

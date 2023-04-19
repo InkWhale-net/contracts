@@ -51,7 +51,7 @@ pub mod my_pool {
         pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Result<Self, Error> {
             let mut instance = Self::default();
 
-            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+            let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
                                     .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
 
@@ -60,7 +60,7 @@ pub mod my_pool {
             instance.data.staking_contract_address = psp22_contract_address;
             instance.data.psp22_contract_address = psp22_contract_address;
             instance.data.max_staking_amount = max_staking_amount;
-            instance.data.max_reward_amount = max_reward_amount;
+            instance.data.min_reward_amount = min_reward_amount;
             instance.data.multiplier = apy as u128;
             instance.data.duration = duration;
             instance.data.start_time = start_time;
@@ -76,7 +76,7 @@ pub mod my_pool {
         #[ink(message)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
-            let max_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
+            let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
                                     .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             
@@ -84,7 +84,7 @@ pub mod my_pool {
             self.data.staking_contract_address = psp22_contract_address;
             self.data.psp22_contract_address = psp22_contract_address;
             self.data.max_staking_amount = max_staking_amount;
-            self.data.max_reward_amount = max_reward_amount;
+            self.data.min_reward_amount = min_reward_amount;
             self.data.multiplier = apy as u128;
             self.data.duration = duration;
             self.data.start_time = start_time;
