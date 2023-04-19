@@ -150,8 +150,8 @@ pub mod pool_generator {
             };
 
             if result.is_err() {
-                // return Err(Error::CannotTransfer);
-                return result;
+                return Err(Error::CannotTransfer);
+                // return result;
             }
             
             // Collect reward token to generator 
@@ -175,8 +175,8 @@ pub mod pool_generator {
             };
 
             if token_transfer_result.is_err() {
-                // return Err(Error::CannotTransfer);
-                return token_transfer_result;
+                return Err(Error::CannotTransfer);
+                // return token_transfer_result;
             }     
                
             if let Result::Ok(contract) = MyPoolRef::new(contract_owner, self.manager.inw_contract, psp22_contract_address, max_staking_amount, apy, duration, start_time, self.manager.unstake_fee)
@@ -205,22 +205,23 @@ pub mod pool_generator {
                 self.manager
                     .pool_ids_last_index
                     .insert(&Some(contract_owner), &(last_index + 1));
-
-                // Pool generator approves for pool the reward mount    
-                if Psp22Ref::approve(&psp22_contract_address, contract_account, min_reward_amount).is_err() {
-                    return Err(Error::CannotApprove);
-                }
-            
+           
                 // Burn creation fee
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_err() {
                     return Err(Error::CannotBurn);
                 } 
 
-                // Topup reward for pool
+                // Pool generator approves for pool the reward mount    
+                if Psp22Ref::approve(&psp22_contract_address, contract_account, min_reward_amount).is_err() {
+                    return Err(Error::CannotApprove);
+                }
+
+                // Pool generator tops up reward for pool
                 let topup_result = GenericPoolContractRef::topup_reward_pool(&contract_account, min_reward_amount);
 
                 if topup_result.is_err() {
-                    return topup_result;
+                    return Err(Error::CannotTopupRewardPool);
+                    // return topup_result;
                 }
             } else {
                 return Err(Error::CannotCreatePool);
