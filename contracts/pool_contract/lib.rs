@@ -290,19 +290,37 @@ pub mod my_pool {
                     self.data.total_staked = self.data.total_staked.checked_sub(amount).ok_or(Error::CheckedOperations)?;
 
                     // Transfer token to caller
-                    if Psp22Ref::transfer(
+                    let builder = Psp22Ref::transfer_builder(
                         &self.data.psp22_contract_address,
                         caller,
                         amount,
                         Vec::<u8>::new(),
-                    ).is_err() {
-                        return Err(Error::CannotTransfer);
-                    }
+                    ).call_flags(CallFlags::default().set_allow_reentry(true));
+        
+                    let transfer_result = match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => {
+                            Err(Error::CannotTransfer)
+                        }
+                    };
+
+                    // if Psp22Ref::transfer(
+                    //     &self.data.psp22_contract_address,
+                    //     caller,
+                    //     amount,
+                    //     Vec::<u8>::new(),
+                    // ).is_err() {
+                    //     return Err(Error::CannotTransfer);
+                    // }
                     
-                    if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
+                    if transfer_result.is_ok() && Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
                         return Err(Error::CannotBurn);
-                    }                     
-                    return Ok(());
+                    }    
+
+                    return transfer_result;
                 }
                 result
             } else {
@@ -344,15 +362,32 @@ pub mod my_pool {
                 self.data.reward_pool = self.data.reward_pool.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
                 self.data.total_unclaimed_reward = self.data.total_unclaimed_reward.checked_sub(to_claim).ok_or(Error::CheckedOperations)?;
 
-                if Psp22Ref::transfer(
+                let builder = Psp22Ref::transfer_builder(
                     &self.data.psp22_contract_address,
                     caller,
                     to_claim,
                     Vec::<u8>::new(),
-                ).is_err() {
-                    return Err(Error::CannotTransfer);
-                }                
-                Ok(())
+                ).call_flags(CallFlags::default().set_allow_reentry(true));
+    
+                match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => {
+                        Err(Error::CannotTransfer)
+                    }
+                }
+                
+                // if Psp22Ref::transfer(
+                //     &self.data.psp22_contract_address,
+                //     caller,
+                //     to_claim,
+                //     Vec::<u8>::new(),
+                // ).is_err() {
+                //     return Err(Error::CannotTransfer);
+                // }                
+                // Ok(())
             } else {
                 Err(Error::NoStakerFound)
             }

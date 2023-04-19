@@ -97,14 +97,14 @@ pub mod token_sale {
                 return Err(Error::InvalidTransferAmount)
             }
 
-            let builder = Psp22Ref::transfer_from_builder(
+            let builder = Psp22Ref::transfer_builder(
                 &self.manager.inw_contract,
-                self.env().account_id(),
                 caller,
                 amount,
                 Vec::<u8>::new(),
             ).call_flags(CallFlags::default().set_allow_reentry(true));
-            let _result = match builder.try_invoke() {
+
+            match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
                 Ok(Ok(Err(e))) => Err(e.into()),
                 Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
@@ -112,8 +112,7 @@ pub mod token_sale {
                 _ => {
                     Err(Error::CannotTransfer)
                 }
-            };
-            Ok(())
+            }            
         }
     }
 }

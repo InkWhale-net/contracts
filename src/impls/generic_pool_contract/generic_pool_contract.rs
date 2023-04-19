@@ -156,16 +156,33 @@ where
         self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_sub(amount).ok_or(Error::CheckedOperations)?;
 
         // Transfer token to caller 
-        if Psp22Ref::transfer(
+        let builder = Psp22Ref::transfer_builder(
             &self.data::<Data>().psp22_contract_address,
             Self::env().caller(),
             amount,
-            Vec::<u8>::new()
-        )
-        .is_err() {
-            return Err(Error::CannotTransfer);
+            Vec::<u8>::new(),
+        ).call_flags(CallFlags::default().set_allow_reentry(true));
+
+        match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => {
+                Err(Error::CannotTransfer)
+            }
         }
 
-        Ok(())        
+        // if Psp22Ref::transfer(
+        //     &self.data::<Data>().psp22_contract_address,
+        //     Self::env().caller(),
+        //     amount,
+        //     Vec::<u8>::new()
+        // )
+        // .is_err() {
+        //     return Err(Error::CannotTransfer);
+        // }
+
+        // Ok(())        
     }
 }
