@@ -97,7 +97,6 @@ where
     }
 
     // Rewards funcs 
-    #[modifiers(only_owner)]
     default fn topup_reward_pool(&mut self, amount: Balance) -> Result<(), Error> {        
         if self.data::<Data>().is_topup_enough_reward {
             return Ok(());
@@ -116,7 +115,7 @@ where
             caller
         );
 
-        if allowance < amount || balance < amount {
+        if allowance < amount || balance < amount || amount < self.data::<Data>().min_reward_amount {
             return Err(Error::InvalidBalanceAndAllowance)
         }
 
@@ -141,9 +140,7 @@ where
 
         if result.is_ok() {
             self.data::<Data>().reward_pool = self.data::<Data>().reward_pool.checked_add(amount).ok_or(Error::CheckedOperations)?;
-            if self.data::<Data>().reward_pool >= self.data::<Data>().min_reward_amount {
-                self.data::<Data>().is_topup_enough_reward = true;
-            }
+            self.data::<Data>().is_topup_enough_reward = true;
         }   
 
         result        

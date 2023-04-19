@@ -43,7 +43,10 @@ pub enum Error {
     NotTimeToWithdraw,
     NotEnoughRewardToWithdraw,
     NotTopupEnoughReward,
-    NoAmount
+    NoAmount,
+    InvalidTokenBalanceAndAllowance,
+    CannotApprove,
+    CannotTopupRewardPool
 }
 
 impl From<OwnableError> for Error {

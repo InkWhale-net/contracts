@@ -23,6 +23,7 @@ pub mod my_pool {
         traits::{
             Storage,
         },
+        modifiers
     };
 
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;
@@ -74,6 +75,7 @@ pub mod my_pool {
         }
 
         #[ink(message)]
+        #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
