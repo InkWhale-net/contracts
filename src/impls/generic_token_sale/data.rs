@@ -1,0 +1,57 @@
+use openbrush::{
+    traits::{
+        AccountId,
+        Balance,
+        ZERO_ADDRESS
+    },
+    storage::{
+        Mapping
+    }
+};
+
+#[cfg(feature = "std")]
+use ink::storage::traits::StorageLayout;
+
+#[derive(
+    Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode,
+)]
+#[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
+pub struct BuyerInformation {
+    pub purchased_amount: Balance,
+    pub claimed_amount: Balance,
+    pub last_updated_time: u64
+}
+
+pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
+
+#[derive(Debug)]
+#[openbrush::upgradeable_storage(STORAGE_KEY)]
+pub struct Data {
+    pub start_time: u64,
+    pub end_time: u64,
+    pub total_amount: Balance,
+    pub inw_contract: AccountId,
+    pub inw_price: Balance,
+    pub rate_at_tge: u32,
+    pub total_purchased_amount: Balance,
+    pub total_claimed_amount: Balance,
+    pub buyers: Mapping<AccountId, BuyerInformation>,
+    pub _reserved: Option<()>
+}
+
+impl Default for Data {
+    fn default() -> Self {
+        Self {
+            start_time: Default::default(),
+            end_time: Default::default(),
+            total_amount: Default::default(),
+            inw_contract: ZERO_ADDRESS.into(),
+            inw_price: Default::default(),
+            rate_at_tge: Default::default(),
+            total_purchased_amount: Default::default(),
+            total_claimed_amount: Default::default(),
+            buyers: Default::default(),
+            _reserved: Default::default()   
+        }
+    }
+}
