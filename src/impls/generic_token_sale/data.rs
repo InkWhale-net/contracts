@@ -32,10 +32,14 @@ pub struct Data {
     pub total_amount: Balance,
     pub inw_contract: AccountId,
     pub inw_price: Balance,
-    pub rate_at_tge: u32,
+    pub rate_at_tge: u32, // scaled 10000
+    pub vesting_duration: u64,
+    pub end_vesting_time: u64,
+    pub vesting_days: u64,
     pub total_purchased_amount: Balance,
     pub total_claimed_amount: Balance,
     pub buyers: Mapping<AccountId, BuyerInformation>,
+    pub is_burned: bool,
     pub _reserved: Option<()>
 }
 
@@ -48,9 +52,13 @@ impl Default for Data {
             inw_contract: ZERO_ADDRESS.into(),
             inw_price: Default::default(),
             rate_at_tge: Default::default(),
+            vesting_duration: Default::default(),
+            end_vesting_time: Default::default(),
+            vesting_days: Default::default(),
             total_purchased_amount: Default::default(),
             total_claimed_amount: Default::default(),
             buyers: Default::default(),
+            is_burned: Default::default(),
             _reserved: Default::default()   
         }
     }

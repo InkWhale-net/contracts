@@ -4,13 +4,13 @@
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
 
-pub use self::private_sale::{
-    PrivateSale,
-    PrivateSaleRef,
+pub use self::public_sale::{
+    PublicSale,
+    PublicSaleRef,
 };
 
 #[openbrush::contract]
-pub mod private_sale {
+pub mod public_sale {
     use openbrush::{
         contracts::{
             ownable::*,
@@ -29,7 +29,7 @@ pub mod private_sale {
 
     #[ink(storage)]
     #[derive(Default, Storage)]
-    pub struct PrivateSale {
+    pub struct PublicSale {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
@@ -40,14 +40,14 @@ pub mod private_sale {
         upgradeable_data: upgradeable::data::Data
     }
 
-    impl Ownable for PrivateSale {}
-    impl GenericTokenSaleTrait for PrivateSale {}
-    impl AdminTrait for PrivateSale {}
-    impl UpgradeableTrait for PrivateSale {}
+    impl Ownable for PublicSale {}
+    impl GenericTokenSaleTrait for PublicSale {}
+    impl AdminTrait for PublicSale {}
+    impl UpgradeableTrait for PublicSale {}
 
-    impl PrivateSale {
+    impl PublicSale {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, rate_at_tge: u32, vesting_duration: u64) -> Result<Self, Error> {
+        pub fn new(contract_owner: AccountId, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance) -> Result<Self, Error> {
             let mut instance = Self::default();
 
             instance._init_with_owner(contract_owner);
@@ -56,9 +56,7 @@ pub mod private_sale {
                 end_time,
                 total_amount,
                 inw_contract,
-                inw_price,
-                rate_at_tge,
-                vesting_duration
+                inw_price
             ) {
                 Ok(()) => Ok(instance),
                 Err(e) => Err(e),
@@ -67,7 +65,7 @@ pub mod private_sale {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, rate_at_tge: u32, vesting_duration: u64
+        pub fn initialize(&mut self, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance
         ) -> Result<(), Error> {
             self.data.start_time = start_time;
             
@@ -79,24 +77,10 @@ pub mod private_sale {
             self.data.total_amount = total_amount;
             self.data.inw_contract = inw_contract;
             self.data.inw_price = inw_price;
-
-            if rate_at_tge > 10000 {
-                return Err(Error::InvalidPercentage);
-            }
-            self.data.rate_at_tge = rate_at_tge;
-
-            if vesting_duration == 0 { 
-                return Err(Error::InvalidDuration);
-            }
-            self.data.vesting_duration = vesting_duration;
-
-            self.data.end_vesting_time = end_time.checked_add(vesting_duration).ok_or(Error::CheckedOperations)?;
-            
-            self.data.vesting_days = self.data.vesting_duration.checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?;  
-            if self.data.vesting_days.checked_mul(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)? < self.data.vesting_duration {
-                self.data.vesting_days = self.data.vesting_days.checked_add(1).ok_or(Error::CheckedOperations)?;
-            }
-
+            self.data.rate_at_tge = 0;
+            self.data.vesting_duration = 0;
+            self.data.end_vesting_time = end_time;           
+            self.data.vesting_days = 0;            
             self.data.total_purchased_amount = 0;
             self.data.total_claimed_amount = 0;
             self.data.is_burned = false;
@@ -104,5 +88,4 @@ pub mod private_sale {
             Ok(())
         }
     }
-}
-    
+}    

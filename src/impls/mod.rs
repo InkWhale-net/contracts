@@ -1,6 +1,5 @@
 pub mod admin;
 pub mod token_manager;
-pub mod token_sale;
 pub mod generic_token_sale;
 pub mod upgradeable;
 pub mod generic_pool_contract;

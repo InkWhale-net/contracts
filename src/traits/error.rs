@@ -46,7 +46,15 @@ pub enum Error {
     NoAmount,
     InvalidTokenBalanceAndAllowance,
     CannotApprove,
-    CannotTopupRewardPool
+    CannotTopupRewardPool,
+    NotTimeToPurchase,
+    NotTimeToClaim,
+    NotTimeToBurn,
+    NoTokenPurchased,
+    AlreadyBurnt,
+    InvalidTime,
+    InvalidPercentage,
+    InvalidDuration
 }
 
 impl From<OwnableError> for Error {
