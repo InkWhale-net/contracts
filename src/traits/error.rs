@@ -54,7 +54,8 @@ pub enum Error {
     AlreadyBurnt,
     InvalidTime,
     InvalidPercentage,
-    InvalidDuration
+    InvalidDuration,
+    InvalidTopupAmount
 }
 
 impl From<OwnableError> for Error {

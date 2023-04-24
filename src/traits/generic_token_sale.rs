@@ -90,8 +90,11 @@ pub trait GenericTokenSaleTrait {
     
     // Funcs 
 
-    #[ink(message)]
+    #[ink(message, payable)]
     fn purchase(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn get_unclaimed_amount(&mut self) -> Result<Balance, Error>;
 
     #[ink(message)]
     fn claim(&mut self) -> Result<(), Error>;
@@ -101,4 +104,7 @@ pub trait GenericTokenSaleTrait {
     
     #[ink(message)]
     fn burn(&mut self) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn get_balance(&mut self) -> Result<Balance, Error>;
 }

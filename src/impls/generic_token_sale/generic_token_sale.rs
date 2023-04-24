@@ -96,7 +96,7 @@ where
         // Check time condition
         let current_time = Self::env().block_timestamp();
 
-        if current_time >= self.data::<Data>().start_time {
+        if current_time > self.data::<Data>().end_time || current_time > end_time || end_time <= self.data::<Data>().start_time {
             return Err(Error::InvalidTime);
         }
 
@@ -165,7 +165,7 @@ where
         // Check time condition
         let current_time = Self::env().block_timestamp();
 
-        if current_time >= self.data::<Data>().start_time {
+        if current_time >= self.data::<Data>().end_time {
             return Err(Error::InvalidTime);
         }
 
@@ -228,6 +228,64 @@ where
         self.data::<Data>().total_purchased_amount = self.data::<Data>().total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
 
         Ok(())
+    }
+
+    default fn get_unclaimed_amount(&mut self) -> Result<Balance, Error> {
+        // Check claim time
+        let current_time = Self::env().block_timestamp();
+       
+        if self.data::<Data>().end_time >= current_time {
+            return Err(Error::NotTimeToClaim);
+        }
+
+        let caller = Self::env().caller();
+        let buyer_data = self.data::<Data>().buyers.get(&caller);
+
+        if let Some(mut buy_info) = buyer_data {
+            // Check if have unclaimed token
+            if buy_info.purchased_amount == buy_info.claimed_amount {
+                return Err(Error::NoClaimAmount);
+            }
+
+            let mut claim = 0;
+
+            // If it is the last claim
+            if current_time >= self.data::<Data>().end_vesting_time {
+                claim = buy_info.purchased_amount.checked_sub(buy_info.claimed_amount).ok_or(Error::CheckedOperations)?;
+            
+                // buy_info.last_updated_time = self.data::<Data>().end_vesting_time;
+            } else {
+                // If haven't claimed anytime
+                if buy_info.claimed_amount == 0 {
+                    claim = buy_info.purchased_amount
+                            .checked_mul(self.data::<Data>().rate_at_tge as u128).ok_or(Error::CheckedOperations)?
+                            .checked_div(10000).ok_or(Error::CheckedOperations)?;
+                
+                    buy_info.last_updated_time = self.data::<Data>().end_time; 
+                }
+
+                // If still have unclaimed token
+                if self.data::<Data>().rate_at_tge < 10000 && self.data::<Data>().vesting_days > 0 {
+                    let days = (current_time.checked_sub(buy_info.last_updated_time).ok_or(Error::CheckedOperations)?)
+                            .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
+
+                    let total = buy_info.purchased_amount.checked_sub(claim).ok_or(Error::CheckedOperations)?; // Subtract amount at tge       
+                    
+                    claim = claim.checked_add(
+                                total.checked_mul(days as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_div(self.data::<Data>().vesting_days as u128).ok_or(Error::CheckedOperations)?
+                            ).ok_or(Error::CheckedOperations)?;          
+                            
+                    // buy_info.last_updated_time = buy_info.last_updated_time.checked_add(
+                    //                                     days.checked_mul(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?
+                    //                                 ).ok_or(Error::CheckedOperations)?;
+                }
+            }
+            
+            Ok(claim)
+        } else {
+            return Err(Error::NoTokenPurchased);
+        }
     }
 
     default fn claim(&mut self) -> Result<(), Error> {
@@ -329,11 +387,46 @@ where
 
     #[modifiers(only_owner)]
     default fn topup(&mut self, amount: Balance) -> Result<(), Error> {
-        if amount > Self::env().transferred_value() {
-            return Err(Error::InvalidPercentage);
+        if amount != self.data::<Data>().total_amount {
+            return Err(Error::InvalidTopupAmount)
+        }
+        
+        let caller = Self::env().caller();
+
+        let allowance = Psp22Ref::allowance(
+            &self.data::<Data>().inw_contract,
+            caller,
+            Self::env().account_id()
+        );
+        
+        let balance = Psp22Ref::balance_of(
+            &self.data::<Data>().inw_contract,
+            caller
+        );
+        
+        if allowance < amount || balance < amount {
+            return Err(Error::InvalidBalanceAndAllowance)
         }
 
-        Ok(())
+        // Transfer INW to token sale contract
+        let builder = Psp22Ref::transfer_from_builder(
+            &self.data::<Data>().inw_contract,
+            caller,
+            Self::env().account_id(),
+            amount,
+            Vec::<u8>::new(),
+        )
+        .call_flags(CallFlags::default().set_allow_reentry(true));
+        
+        match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => {
+                Err(Error::CannotTransfer)
+            }
+        }
     }
 
     #[modifiers(only_owner)]
@@ -363,5 +456,10 @@ where
         }
 
         Ok(())
+    }
+
+    #[modifiers(only_owner)]
+    default fn get_balance(&mut self) -> Result<Balance, Error> {
+        Ok(Self::env().balance())
     }
 }
