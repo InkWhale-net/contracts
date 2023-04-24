@@ -201,7 +201,7 @@ where
                     .checked_mul(amount).ok_or(Error::CheckedOperations)?
                     .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
 
-        if price != Self::env().transferred_value() {
+        if price > Self::env().transferred_value() {
             return Err(Error::InvalidTransferAmount)
         }
 
@@ -329,7 +329,7 @@ where
 
     #[modifiers(only_owner)]
     default fn topup(&mut self, amount: Balance) -> Result<(), Error> {
-        if amount != Self::env().transferred_value() {
+        if amount > Self::env().transferred_value() {
             return Err(Error::InvalidPercentage);
         }
 
