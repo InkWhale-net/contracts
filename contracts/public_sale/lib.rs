@@ -77,7 +77,7 @@ pub mod public_sale {
             self.data.total_amount = total_amount;
             self.data.inw_contract = inw_contract;
             self.data.inw_price = inw_price;
-            self.data.immediate_buying_rate = 0;
+            self.data.immediate_buying_rate = 10000;
             self.data.vesting_duration = 0;
             self.data.end_vesting_time = end_time;           
             self.data.vesting_days = 0;            
