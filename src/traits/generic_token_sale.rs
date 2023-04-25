@@ -48,7 +48,7 @@ pub trait GenericTokenSaleTrait {
     fn inw_price(&self) -> Balance;
 
     #[ink(message)]
-    fn rate_at_tge(&self) -> u32;
+    fn immediate_buying_rate(&self) -> u32;
 
     #[ink(message)]
     fn vesting_duration(&self) -> u64;
@@ -83,7 +83,7 @@ pub trait GenericTokenSaleTrait {
     fn set_inw_price(&mut self, inw_price: Balance) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_rate_at_tge(&mut self, rate_at_tge: u32) -> Result<(), Error>;
+    fn set_immediate_buying_rate(&mut self, immediate_buying_rate: u32) -> Result<(), Error>;
     
     #[ink(message)]
     fn set_vesting_duration(&mut self, vesting_duration: u64) -> Result<(), Error>;

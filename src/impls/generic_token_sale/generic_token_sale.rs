@@ -52,8 +52,8 @@ where
         self.data::<Data>().inw_price
     }
 
-    default fn rate_at_tge(&self) -> u32 {
-        self.data::<Data>().rate_at_tge
+    default fn immediate_buying_rate(&self) -> u32 {
+        self.data::<Data>().immediate_buying_rate
     }
 
     default fn vesting_duration(&self) -> u64 {
@@ -147,7 +147,7 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn set_rate_at_tge(&mut self, rate_at_tge: u32) -> Result<(), Error> {
+    default fn set_immediate_buying_rate(&mut self, immediate_buying_rate: u32) -> Result<(), Error> {
         // Check time condition
         let current_time = Self::env().block_timestamp();
 
@@ -155,7 +155,7 @@ where
             return Err(Error::InvalidTime);
         }
 
-        self.data::<Data>().rate_at_tge = rate_at_tge;
+        self.data::<Data>().immediate_buying_rate = immediate_buying_rate;
         
         Ok(())
     }
@@ -191,7 +191,7 @@ where
         }
 
         // Check amount to buy
-        if self.data::<Data>().total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)? > self.data::<Data>().total_amount {
+        if amount == 0 || self.data::<Data>().total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)? > self.data::<Data>().total_amount {
             return Err(Error::InvalidBuyAmount);
         }
         
@@ -205,20 +205,61 @@ where
             return Err(Error::InvalidTransferAmount)
         }
 
+        // Return immediately tokens within buying rate
+        let claim = amount.checked_mul(self.data::<Data>().immediate_buying_rate as u128).ok_or(Error::CheckedOperations)?
+                            .checked_div(10000).ok_or(Error::CheckedOperations)?;
+
+        // Check if contract has enough token to transfer
+        let balance = Psp22Ref::balance_of(
+            &self.data::<Data>().inw_contract,
+            Self::env().account_id()
+        );
+
+        if balance < claim {
+            return Err(Error::NotEnoughBalance);
+        }
+        
+        // Transfer token to caller 
+        let caller = Self::env().caller();
+        let builder = Psp22Ref::transfer_builder(
+            &self.data::<Data>().inw_contract,
+            caller,
+            claim,
+            Vec::<u8>::new(),
+        ).call_flags(CallFlags::default().set_allow_reentry(true));
+
+        let result = match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => {
+                Err(Error::CannotTransfer)
+            }
+        };            
+
+        if result.is_err() {
+            return result;
+            // return Err(Error::CannotTransfer);
+        }
+
         // Save data
         let caller = Self::env().caller();
         let buyer_data = self.data::<Data>().buyers.get(&caller);
         
         if let Some(mut buy_info) = buyer_data {
             buy_info.purchased_amount = buy_info.purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;        
-            
+            buy_info.claimed_amount = buy_info.claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
+            buy_info.last_updated_time = current_time;
+
             self.data::<Data>().buyers
                 .insert(&caller, &buy_info);
         } else {
             let buy_info = BuyerInformation{
                 purchased_amount: amount,
-                claimed_amount: 0,
-                last_updated_time: 0,
+                vesting_amount: 0,
+                claimed_amount: claim,
+                last_updated_time: current_time,
             };
 
             self.data::<Data>().buyers
@@ -231,20 +272,20 @@ where
     }
 
     default fn get_unclaimed_amount(&mut self) -> Result<Balance, Error> {
-        // Check claim time
+        // Check time
         let current_time = Self::env().block_timestamp();
        
-        if self.data::<Data>().end_time >= current_time {
-            return Err(Error::NotTimeToClaim);
-        }
+        if self.data::<Data>().start_time > current_time {
+            return Ok(0);
+        }        
 
         let caller = Self::env().caller();
         let buyer_data = self.data::<Data>().buyers.get(&caller);
 
         if let Some(mut buy_info) = buyer_data {
-            // Check if have unclaimed token
-            if buy_info.purchased_amount == buy_info.claimed_amount {
-                return Err(Error::NoClaimAmount);
+            // Check if it is in the sale time or claimed all purchased amount
+            if self.data::<Data>().end_time >= current_time || buy_info.purchased_amount == buy_info.claimed_amount {
+                return Ok(0);
             }
 
             let mut claim = 0;
@@ -252,39 +293,26 @@ where
             // If it is the last claim
             if current_time >= self.data::<Data>().end_vesting_time {
                 claim = buy_info.purchased_amount.checked_sub(buy_info.claimed_amount).ok_or(Error::CheckedOperations)?;
-            
-                // buy_info.last_updated_time = self.data::<Data>().end_vesting_time;
             } else {
-                // If haven't claimed anytime
-                if buy_info.claimed_amount == 0 {
-                    claim = buy_info.purchased_amount
-                            .checked_mul(self.data::<Data>().rate_at_tge as u128).ok_or(Error::CheckedOperations)?
-                            .checked_div(10000).ok_or(Error::CheckedOperations)?;
-                
+                // If it is the first time to claim in the vesting time, get the vesting_amount 
+                if buy_info.vesting_amount == 0 {
+                    buy_info.vesting_amount = buy_info.purchased_amount.checked_sub(buy_info.claimed_amount).ok_or(Error::CheckedOperations)?;                           
                     buy_info.last_updated_time = self.data::<Data>().end_time; 
                 }
 
                 // If still have unclaimed token
-                if self.data::<Data>().rate_at_tge < 10000 && self.data::<Data>().vesting_days > 0 {
+                if self.data::<Data>().immediate_buying_rate < 10000 && self.data::<Data>().vesting_days > 0 {
                     let days = (current_time.checked_sub(buy_info.last_updated_time).ok_or(Error::CheckedOperations)?)
-                            .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
+                                .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
 
-                    let total = buy_info.purchased_amount.checked_sub(claim).ok_or(Error::CheckedOperations)?; // Subtract amount at tge       
-                    
-                    claim = claim.checked_add(
-                                total.checked_mul(days as u128).ok_or(Error::CheckedOperations)?
+                    claim = buy_info.vesting_amount.checked_mul(days as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(self.data::<Data>().vesting_days as u128).ok_or(Error::CheckedOperations)?
-                            ).ok_or(Error::CheckedOperations)?;          
-                            
-                    // buy_info.last_updated_time = buy_info.last_updated_time.checked_add(
-                    //                                     days.checked_mul(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?
-                    //                                 ).ok_or(Error::CheckedOperations)?;
                 }
             }
             
             Ok(claim)
         } else {
-            return Err(Error::NoTokenPurchased);
+            return Ok(0);
         }
     }
 
@@ -313,71 +341,66 @@ where
             
                 buy_info.last_updated_time = self.data::<Data>().end_vesting_time;
             } else {
-                // If haven't claimed anytime
-                if buy_info.claimed_amount == 0 {
-                    claim = buy_info.purchased_amount
-                            .checked_mul(self.data::<Data>().rate_at_tge as u128).ok_or(Error::CheckedOperations)?
-                            .checked_div(10000).ok_or(Error::CheckedOperations)?;
-                
+                // If it is the first time to claim in the vesting time, get the vesting_amount 
+                if buy_info.vesting_amount == 0 {
+                    buy_info.vesting_amount = buy_info.purchased_amount.checked_sub(buy_info.claimed_amount).ok_or(Error::CheckedOperations)?;                           
                     buy_info.last_updated_time = self.data::<Data>().end_time; 
                 }
 
                 // If still have unclaimed token
-                if self.data::<Data>().rate_at_tge < 10000 && self.data::<Data>().vesting_days > 0 {
+                if self.data::<Data>().immediate_buying_rate < 10000 && self.data::<Data>().vesting_days > 0 {
                     let days = (current_time.checked_sub(buy_info.last_updated_time).ok_or(Error::CheckedOperations)?)
-                            .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
+                                .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
 
-                    let total = buy_info.purchased_amount.checked_sub(claim).ok_or(Error::CheckedOperations)?; // Subtract amount at tge       
-                    
-                    claim = claim.checked_add(
-                                total.checked_mul(days as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_div(self.data::<Data>().vesting_days as u128).ok_or(Error::CheckedOperations)?
-                            ).ok_or(Error::CheckedOperations)?;          
-                            
+                    claim = buy_info.vesting_amount.checked_mul(days as u128).ok_or(Error::CheckedOperations)?
+                                    .checked_div(self.data::<Data>().vesting_days as u128).ok_or(Error::CheckedOperations)?;
+                                      
                     buy_info.last_updated_time = buy_info.last_updated_time.checked_add(
                                                         days.checked_mul(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?
                                                     ).ok_or(Error::CheckedOperations)?;
                 }
             }
 
-            // Check if contract has enough token to transfer
-            let balance = Psp22Ref::balance_of(
-                &self.data::<Data>().inw_contract,
-                Self::env().account_id()
-            );
+            if claim > 0 { 
+                // Check if contract has enough token to transfer
+                let balance = Psp22Ref::balance_of(
+                    &self.data::<Data>().inw_contract,
+                    Self::env().account_id()
+                );
 
-            if balance < claim {
-                return Err(Error::NotEnoughBalance);
-            }
-            
-            // Transfer token to caller 
-            let builder = Psp22Ref::transfer_builder(
-                &self.data::<Data>().inw_contract,
-                caller,
-                claim,
-                Vec::<u8>::new(),
-            ).call_flags(CallFlags::default().set_allow_reentry(true));
-
-            let result = match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => {
-                    Err(Error::CannotTransfer)
+                if balance < claim {
+                    return Err(Error::NotEnoughBalance);
                 }
-            };            
+                
+                // Transfer token to caller 
+                let builder = Psp22Ref::transfer_builder(
+                    &self.data::<Data>().inw_contract,
+                    caller,
+                    claim,
+                    Vec::<u8>::new(),
+                ).call_flags(CallFlags::default().set_allow_reentry(true));
 
-            if result.is_err() {
-                return result;
-                // return Err(Error::CannotTransfer);
+                let result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => {
+                        Err(Error::CannotTransfer)
+                    }
+                };            
+
+                if result.is_err() {
+                    return result;
+                    // return Err(Error::CannotTransfer);
+                }
+
+                // Save data
+                buy_info.claimed_amount = buy_info.claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
+            
+                self.data::<Data>().buyers.insert(&caller, &buy_info);
+                self.data::<Data>().total_claimed_amount = self.data::<Data>().total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
             }
-
-            // Save data
-            buy_info.claimed_amount = buy_info.claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
-          
-            self.data::<Data>().buyers.insert(&caller, &buy_info);
-            self.data::<Data>().total_claimed_amount = self.data::<Data>().total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
 
             Ok(())
         } else {

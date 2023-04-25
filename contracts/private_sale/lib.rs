@@ -47,7 +47,7 @@ pub mod private_sale {
 
     impl PrivateSale {
         #[ink(constructor)]
-        pub fn new(contract_owner: AccountId, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, rate_at_tge: u32, vesting_duration: u64) -> Result<Self, Error> {
+        pub fn new(contract_owner: AccountId, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, immediate_buying_rate: u32, vesting_duration: u64) -> Result<Self, Error> {
             let mut instance = Self::default();
 
             instance._init_with_owner(contract_owner);
@@ -57,7 +57,7 @@ pub mod private_sale {
                 total_amount,
                 inw_contract,
                 inw_price,
-                rate_at_tge,
+                immediate_buying_rate,
                 vesting_duration
             ) {
                 Ok(()) => Ok(instance),
@@ -67,7 +67,7 @@ pub mod private_sale {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, rate_at_tge: u32, vesting_duration: u64
+        pub fn initialize(&mut self, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, immediate_buying_rate: u32, vesting_duration: u64
         ) -> Result<(), Error> {
             self.data.start_time = start_time;
             
@@ -80,10 +80,10 @@ pub mod private_sale {
             self.data.inw_contract = inw_contract;
             self.data.inw_price = inw_price;
 
-            if rate_at_tge > 10000 {
+            if immediate_buying_rate > 10000 {
                 return Err(Error::InvalidPercentage);
             }
-            self.data.rate_at_tge = rate_at_tge;
+            self.data.immediate_buying_rate = immediate_buying_rate;
 
             if vesting_duration == 0 { 
                 return Err(Error::InvalidDuration);

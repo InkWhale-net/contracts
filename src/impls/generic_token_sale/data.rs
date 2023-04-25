@@ -18,6 +18,7 @@ use ink::storage::traits::StorageLayout;
 #[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct BuyerInformation {
     pub purchased_amount: Balance,
+    pub vesting_amount: Balance,
     pub claimed_amount: Balance,
     pub last_updated_time: u64
 }
@@ -32,7 +33,7 @@ pub struct Data {
     pub total_amount: Balance,
     pub inw_contract: AccountId,
     pub inw_price: Balance,
-    pub rate_at_tge: u32, // scaled 10000
+    pub immediate_buying_rate: u32, // scaled 10000
     pub vesting_duration: u64,
     pub end_vesting_time: u64,
     pub vesting_days: u64,
@@ -51,7 +52,7 @@ impl Default for Data {
             total_amount: Default::default(),
             inw_contract: ZERO_ADDRESS.into(),
             inw_price: Default::default(),
-            rate_at_tge: Default::default(),
+            immediate_buying_rate: Default::default(),
             vesting_duration: Default::default(),
             end_vesting_time: Default::default(),
             vesting_days: Default::default(),
