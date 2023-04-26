@@ -267,7 +267,8 @@ where
         }
 
         self.data::<Data>().total_purchased_amount = self.data::<Data>().total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
-
+        self.data::<Data>().total_claimed_amount = self.data::<Data>().total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
+        
         Ok(())
     }
 
