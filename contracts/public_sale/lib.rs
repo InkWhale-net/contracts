@@ -27,6 +27,11 @@ pub mod public_sale {
         upgradeable::*
     };
 
+    use ink::{
+        codegen::{Env, EmitEvent},
+        reflect::ContractEventBase
+    };
+
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct PublicSale {
@@ -40,8 +45,44 @@ pub mod public_sale {
         upgradeable_data: upgradeable::data::Data
     }
 
+    #[ink(event)]
+    pub struct PublicPurchaseEvent {
+        buyer: AccountId, 
+        amount: Balance
+    }
+
+    #[ink(event)]
+    pub struct PublicClaimEvent {
+        buyer: AccountId, 
+        amount: Balance
+    }
+
+    pub type Event = <PublicSale as ContractEventBase>::Type;
+
     impl Ownable for PublicSale {}
-    impl GenericTokenSaleTrait for PublicSale {}
+    
+    impl GenericTokenSaleTrait for PublicSale {
+        fn _emit_purchase_event(&self, _buyer: AccountId, _amount: Balance) {
+            PublicSale::emit_event(
+                self.env(),
+                Event::PublicPurchaseEvent(PublicPurchaseEvent {
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+
+        fn _emit_claim_event(&self, _buyer: AccountId, _amount: Balance) {
+            PublicSale::emit_event(
+                self.env(),
+                Event::PublicClaimEvent(PublicClaimEvent {
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+    }
+
     impl AdminTrait for PublicSale {}
     impl UpgradeableTrait for PublicSale {}
 
@@ -86,6 +127,10 @@ pub mod public_sale {
             self.data.is_burned = false;
             
             Ok(())
+        }
+
+        pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
+            emitter.emit_event(event);
         }
     }
 }    

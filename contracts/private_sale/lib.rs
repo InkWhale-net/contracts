@@ -27,6 +27,11 @@ pub mod private_sale {
         upgradeable::*
     };
 
+    use ink::{
+        codegen::{Env, EmitEvent},
+        reflect::ContractEventBase
+    };
+
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct PrivateSale {
@@ -40,8 +45,44 @@ pub mod private_sale {
         upgradeable_data: upgradeable::data::Data
     }
 
+    #[ink(event)]
+    pub struct PrivatePurchaseEvent {
+        buyer: AccountId, 
+        amount: Balance
+    }
+
+    #[ink(event)]
+    pub struct PrivateClaimEvent {
+        buyer: AccountId, 
+        amount: Balance
+    }
+
+    pub type Event = <PrivateSale as ContractEventBase>::Type;
+
     impl Ownable for PrivateSale {}
-    impl GenericTokenSaleTrait for PrivateSale {}
+
+    impl GenericTokenSaleTrait for PrivateSale {
+        fn _emit_purchase_event(&self, _buyer: AccountId, _amount: Balance) {
+            PrivateSale::emit_event(
+                self.env(),
+                Event::PrivatePurchaseEvent(PrivatePurchaseEvent {
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+
+        fn _emit_claim_event(&self, _buyer: AccountId, _amount: Balance) {
+            PrivateSale::emit_event(
+                self.env(),
+                Event::PrivateClaimEvent(PrivateClaimEvent {
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+    }
+
     impl AdminTrait for PrivateSale {}
     impl UpgradeableTrait for PrivateSale {}
 
@@ -102,6 +143,10 @@ pub mod private_sale {
             self.data.is_burned = false;
             
             Ok(())
+        }
+
+        pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
+            emitter.emit_event(event);
         }
     }
 }

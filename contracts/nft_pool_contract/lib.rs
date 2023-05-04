@@ -48,6 +48,30 @@ pub mod my_nft_pool {
         upgradeable_data: upgradeable::data::Data
     }
 
+    #[ink(event)]
+    pub struct NFTPoolStakeEvent {
+        pool_contract: AccountId,
+        nft_contract: AccountId,
+        staker: AccountId,
+        token_id: Id
+    }
+
+    #[ink(event)]
+    pub struct NFTPoolUnstakeEvent {
+        pool_contract: AccountId,
+        nft_contract: AccountId,
+        staker: AccountId,
+        token_id: Id
+    }
+
+    #[ink(event)]
+    pub struct NFTPoolClaimEvent {
+        pool_contract: AccountId,
+        token_contract: AccountId,
+        staker: AccountId,
+        amount: Balance
+    }
+
     impl Ownable for MyNFTPool {}
     impl GenericPoolContractTrait for MyNFTPool {}
     impl NftStakingListTrait for MyNFTPool {}
@@ -192,6 +216,8 @@ pub mod my_nft_pool {
 
                 self.data.total_staked = self.data.total_staked.checked_add(1).ok_or(Error::CheckedOperations)?;
 
+                let tkn_id = token_id.clone();
+
                 let builder = PSP34Ref::transfer_builder(
                     &self.data.staking_contract_address,
                     self.env().account_id(),
@@ -200,7 +226,7 @@ pub mod my_nft_pool {
                 )
                 .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                match builder.try_invoke() {
+                let result = match builder.try_invoke() {
                     Ok(Ok(Ok(_))) => Ok(()),
                     // Ok(Ok(Err(e))) => Err(e.into()),
                     Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
@@ -208,7 +234,18 @@ pub mod my_nft_pool {
                     _ => {
                         Err(Error::CannotTransfer)
                     }
+                };
+
+                if result.is_ok() {
+                    self.env().emit_event(NFTPoolStakeEvent {
+                        pool_contract: self.env().account_id(),
+                        nft_contract: self.data.staking_contract_address,
+                        staker: caller, 
+                        token_id: tkn_id
+                    });
                 }
+    
+                result
             } else {
                 Err(Error::NoTokenOwner)
             }
@@ -319,7 +356,15 @@ pub mod my_nft_pool {
                         
                         if Psp22Ref::burn(&self.data.inw_contract, self.env().account_id(), fees).is_err() { 
                             return Err(Error::CannotBurn);
-                        }                     
+                        }  
+                        
+                        self.env().emit_event(NFTPoolUnstakeEvent {
+                            pool_contract: self.env().account_id(),
+                            nft_contract: self.data.staking_contract_address,
+                            staker: caller, 
+                            token_id: token_id
+                        });
+
                         return Ok(());                    
                     }                    
                     result
@@ -372,7 +417,7 @@ pub mod my_nft_pool {
                     Vec::<u8>::new(),
                 ).call_flags(CallFlags::default().set_allow_reentry(true));
     
-                match builder.try_invoke() {
+                let result = match builder.try_invoke() {
                     Ok(Ok(Ok(_))) => Ok(()),
                     Ok(Ok(Err(e))) => Err(e.into()),
                     Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
@@ -380,17 +425,18 @@ pub mod my_nft_pool {
                     _ => {
                         Err(Error::CannotTransfer)
                     }
-                }
+                };
                          
-                // if Psp22Ref::transfer(
-                //     &self.data.psp22_contract_address,
-                //     caller,
-                //     to_claim,
-                //     Vec::<u8>::new(),
-                // ).is_err() {
-                //     return Err(Error::CannotTransfer);
-                // }                
-                // Ok(())                
+                if result.is_ok() {
+                    self.env().emit_event(NFTPoolClaimEvent {
+                        pool_contract: self.env().account_id(),
+                        token_contract: self.data.psp22_contract_address,
+                        staker: caller, 
+                        amount: to_claim
+                    });
+                }
+                
+                result
             } else {
                 Err(Error::NoStakerFound)
             }

@@ -181,7 +181,10 @@ where
     }
 
     // Funcs 
-    
+    default fn _emit_purchase_event(&self, _buyer: AccountId, _amount: Balance) {}
+
+    default fn _emit_claim_event(&self, _buyer: AccountId, _amount: Balance) {}
+
     default fn purchase(&mut self, amount: Balance) -> Result<(), Error> {
         // Check purchased time
         let current_time = Self::env().block_timestamp();
@@ -269,6 +272,16 @@ where
         self.data::<Data>().total_purchased_amount = self.data::<Data>().total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
         self.data::<Data>().total_claimed_amount = self.data::<Data>().total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
         
+        self._emit_purchase_event(
+            caller,
+            amount
+        );
+
+        self._emit_claim_event(
+            caller,
+            claim
+        );
+
         Ok(())
     }
 
@@ -401,6 +414,11 @@ where
             
                 self.data::<Data>().buyers.insert(&caller, &buy_info);
                 self.data::<Data>().total_claimed_amount = self.data::<Data>().total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
+            
+                self._emit_claim_event(
+                    caller,
+                    claim
+                );
             }
 
             Ok(())

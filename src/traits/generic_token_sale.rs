@@ -89,6 +89,9 @@ pub trait GenericTokenSaleTrait {
     fn set_vesting_duration(&mut self, vesting_duration: u64) -> Result<(), Error>;
     
     // Funcs 
+    fn _emit_purchase_event(&self, _buyer: AccountId, _amount: Balance);
+    
+    fn _emit_claim_event(&self, _buyer: AccountId, _amount: Balance);
 
     #[ink(message, payable)]
     fn purchase(&mut self, amount: Balance) -> Result<(), Error>;
