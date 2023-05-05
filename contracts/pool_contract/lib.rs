@@ -235,7 +235,7 @@ pub mod my_pool {
                     pool_contract: self.env().account_id(),
                     token_contract: self.data.psp22_contract_address,
                     staker: caller, 
-                    amount: amount
+                    amount
                 });
             }
 
@@ -353,7 +353,7 @@ pub mod my_pool {
                             pool_contract: self.env().account_id(),
                             token_contract: self.data.psp22_contract_address,
                             staker: caller, 
-                            amount: amount
+                            amount
                         });
                     }    
 
@@ -385,6 +385,7 @@ pub mod my_pool {
 
                 stake_info.last_reward_update = reward_time;
                 stake_info.unclaimed_reward = 0;
+                stake_info.future_reward = stake_info.future_reward.checked_sub(unclaimed_reward).ok_or(Error::CheckedOperations)?; 
 
                 self.data.stakers.insert(&caller, &stake_info);
                 if to_claim > self.data.reward_pool {

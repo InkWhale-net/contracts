@@ -362,7 +362,7 @@ pub mod my_nft_pool {
                             pool_contract: self.env().account_id(),
                             nft_contract: self.data.staking_contract_address,
                             staker: caller, 
-                            token_id: token_id
+                            token_id
                         });
 
                         return Ok(());                    
@@ -396,6 +396,7 @@ pub mod my_nft_pool {
 
                 stake_info.last_reward_update = reward_time;
                 stake_info.unclaimed_reward = 0;
+                stake_info.future_reward = stake_info.future_reward.checked_sub(unclaimed_reward).ok_or(Error::CheckedOperations)?; 
 
                 self.data.stakers.insert(&caller, &stake_info);
                 if to_claim > self.data.reward_pool {
