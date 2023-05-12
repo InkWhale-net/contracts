@@ -1,5 +1,5 @@
 [package]
-name = "token_standard"
+name = "my_launchpad"
 version = "1.0.0"
 authors = ["InkWhale <admin@artzero.io>"]
 edition = "2021"
@@ -11,13 +11,15 @@ scale-info = { version = "2.3", default-features = false, features = ["derive"],
 
 # These dependencies
 inkwhale_project = { path = "../..", default-features = false }
-openbrush = { git = "https://github.com/727-Ventures/openbrush-contracts", version = "~3.0.0", default-features = false, features = ["psp22", "ownable"] }
+openbrush = { git = "https://github.com/727-Ventures/openbrush-contracts", version = "~3.0.0", default-features = false, features = ["ownable"] }
 
 [lib]
-name = "token_standard"
+name = "my_launchpad"
 path = "lib.rs"
 crate-type = [
+    # Used for normal contract Wasm blobs.
     "cdylib",
+    # Used for ABI generation and for unit test.
     "rlib"
 ]
 

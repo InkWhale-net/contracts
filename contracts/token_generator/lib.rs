@@ -129,7 +129,7 @@ pub mod token_generator {
             if result.is_ok() {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_ok() {
                     //create contract
-                    let contract = TokenStandardRef::new(mint_to, cap, name, symbol, decimal)
+                    let contract = TokenStandardRef::new(caller, mint_to, cap, name, symbol, decimal)
                         .endowment(0)
                         .code_hash(self.manager.standard_psp22_hash)
                         .salt_bytes(self.manager.token_count.to_le_bytes())

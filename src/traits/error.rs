@@ -55,7 +55,14 @@ pub enum Error {
     InvalidTime,
     InvalidPercentage,
     InvalidDuration,
-    InvalidTopupAmount
+    InvalidTopupAmount,
+    LaunchpadNotExist,
+    InvalidIsActiveInput,
+    InvalidCreationFee,
+    InvalidPhaseData,
+    CannotTopupToken,
+    InvalidStartTimeAndEndTime,
+    InvalidPhaseCount
 }
 
 impl From<OwnableError> for Error {
