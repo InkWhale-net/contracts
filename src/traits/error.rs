@@ -62,7 +62,10 @@ pub enum Error {
     InvalidPhaseData,
     CannotTopupToken,
     InvalidStartTimeAndEndTime,
-    InvalidPhaseCount
+    InvalidPhaseCount,
+    InvalidMaxStakingAmount,
+    InvalidApy,
+    InvalidMultiplier
 }
 
 impl From<OwnableError> for Error {

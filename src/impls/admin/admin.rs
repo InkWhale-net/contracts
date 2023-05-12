@@ -35,6 +35,11 @@ impl<T: Storage<data::Data> + Storage<ownable::Data>> AdminTrait for T
     }
 
     #[modifiers(only_owner)]
+    default fn get_balance(&mut self) -> Result<Balance, Error> {
+        Ok(T::env().balance())
+    }
+
+    #[modifiers(only_owner)]
     default fn tranfer_psp22(&mut self, psp22_contract_address: AccountId, amount: Balance, receiver: AccountId) -> Result<(), Error>{
         let builder = Psp22Ref::transfer_builder(
             &psp22_contract_address,

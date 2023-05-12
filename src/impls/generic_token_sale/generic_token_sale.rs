@@ -83,7 +83,7 @@ where
         // Check time condition
         let current_time = Self::env().block_timestamp();
 
-        if current_time >= self.data::<Data>().start_time {
+        if current_time >= self.data::<Data>().start_time || start_time >= self.data::<Data>().end_time {
             return Err(Error::InvalidTime);
         }
 
@@ -134,14 +134,7 @@ where
     }
 
     #[modifiers(only_owner)]
-    default fn set_inw_price(&mut self, inw_price: Balance) -> Result<(), Error> {
-        // Check time condition
-        let current_time = Self::env().block_timestamp();
-        
-        if current_time >= self.data::<Data>().start_time {
-            return Err(Error::InvalidTime);
-        }
-        
+    default fn set_inw_price(&mut self, inw_price: Balance) -> Result<(), Error> {             
         self.data::<Data>().inw_price = inw_price;
         Ok(())
     }
@@ -362,7 +355,7 @@ where
                 }
 
                 // If still have unclaimed token
-                if self.data::<Data>().immediate_buying_rate < 10000 && self.data::<Data>().vesting_days > 0 {
+                if buy_info.vesting_amount > 0 && self.data::<Data>().vesting_days > 0 {
                     let days = (current_time.checked_sub(buy_info.last_updated_time).ok_or(Error::CheckedOperations)?)
                                 .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
 

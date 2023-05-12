@@ -15,7 +15,7 @@ pub mod token_standard {
         contracts::psp22::{
             extensions::{
                 metadata::*,
-                mintable::*,
+                // mintable::*,
                 capped::*,
                 burnable::*
             },
@@ -80,17 +80,17 @@ pub mod token_standard {
         }
     }
 
-    impl PSP22Mintable for TokenStandard {
-        #[ink(message)]
-        fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-            let caller = Self::env().caller();
-            if caller == self.owner() {
-                self._mint_to(account, amount)
-            } else {
-                Err(PSP22Error::Custom(String::from("Your are not owner")))
-            }
-        }
-    }
+    // impl PSP22Mintable for TokenStandard {
+    //     #[ink(message)]
+    //     fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+    //         let caller = Self::env().caller();
+    //         if caller == self.owner() {
+    //             self._mint_to(account, amount)
+    //         } else {
+    //             Err(PSP22Error::Custom(String::from("Your are not owner")))
+    //         }
+    //     }
+    // }
 
     impl TokenStandard {
         #[ink(constructor)]

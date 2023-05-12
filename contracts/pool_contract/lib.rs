@@ -75,33 +75,43 @@ pub mod my_pool {
         #[ink(constructor)]
         pub fn new(contract_owner: AccountId, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance) -> Result<Self, Error> {
             let mut instance = Self::default();
-
-            let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-
-            // Add data           
+                    
             instance._init_with_owner(contract_owner);
-            instance.data.staking_contract_address = psp22_contract_address;
-            instance.data.psp22_contract_address = psp22_contract_address;
-            instance.data.max_staking_amount = max_staking_amount;
-            instance.data.min_reward_amount = min_reward_amount;
-            instance.data.multiplier = apy as u128;
-            instance.data.duration = duration;
-            instance.data.start_time = start_time;
-            instance.data.unstake_fee = unstake_fee;
-            instance.data.inw_contract = inw_contract;
-            instance.data.total_unclaimed_reward = 0;
-            instance.data.is_topup_enough_reward = false;
-            instance.data.reward_pool = 0;
-
-            Ok(instance)
+            
+            match instance.initialize(
+                inw_contract,
+                psp22_contract_address,
+                max_staking_amount, 
+                apy, 
+                duration, 
+                start_time, 
+                unstake_fee
+            ) {
+                Ok(()) => Ok(instance),
+                Err(e) => Err(e),
+            }
         }
 
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
+            if max_staking_amount == 0 {
+                return Err(Error::InvalidMaxStakingAmount);
+            }
+
+            if duration == 0 {
+                return Err(Error::InvalidDuration);
+            }
+
+            if apy == 0 {
+                return Err(Error::InvalidApy);
+            }
+
+            if start_time == 0 {
+                return Err(Error::InvalidTime);
+            }
+
             let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
                                     .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
