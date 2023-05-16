@@ -98,7 +98,7 @@ pub struct Data {
     pub public_buyer: Mapping<(u8, AccountId), BuyerInformation, PublicBuyerKey>,
     // Whitelist sale
     pub whitelist_sale_info: Mapping<u8, WhitelistSaleInfo>,  
-    pub whitelist_list: MultiMapping<u8, AccountId, ValueGuard<u8>>, 
+    pub whitelist_account: MultiMapping<u8, AccountId, ValueGuard<u8>>, 
     pub whitelist_buyer: Mapping<(u8, AccountId), WhitelistBuyerInfo, WhitelistBuyerKey>,  
 
     pub _reserved: Option<()>
@@ -118,7 +118,7 @@ impl Default for Data {
             public_buyer: Default::default(),
 
             whitelist_sale_info: Default::default(),
-            whitelist_list: Default::default(),
+            whitelist_account: Default::default(),
             whitelist_buyer: Default::default(),
             
             _reserved: Default::default()   

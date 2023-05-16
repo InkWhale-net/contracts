@@ -12,9 +12,9 @@ pub use self::my_launchpad::{
 #[openbrush::contract]
 pub mod my_launchpad {
     use ink::prelude::{
+        string::String,
         vec::Vec,
     };
-    use ink::env::CallFlags;
 
     use openbrush::{
         contracts::{
@@ -22,11 +22,13 @@ pub mod my_launchpad {
         },
         traits::{
             Storage,
+            ZERO_ADDRESS
         },
         modifiers
     };
 
-    use inkwhale_project::traits::launchpad_contract::Psp22Ref;
+    // use inkwhale_project::traits::launchpad_contract::Psp22Ref;
+    
     use inkwhale_project::impls::{
         launchpad_contract::*,
         upgradeable::*
@@ -43,13 +45,13 @@ pub mod my_launchpad {
         upgradeable_data: upgradeable::data::Data
     }
 
-    #[ink(event)]
-    pub struct LaunchpadStakeEvent {
-        pool_contract: AccountId,
-        token_contract: AccountId,
-        staker: AccountId,
-        amount: Balance
-    }
+    // #[ink(event)]
+    // pub struct LaunchpadStakeEvent {
+    //     pool_contract: AccountId,
+    //     token_contract: AccountId,
+    //     staker: AccountId,
+    //     amount: Balance
+    // }
 
     impl Ownable for MyLaunchpad {}
     impl LaunchpadContractTrait for MyLaunchpad {}
@@ -64,7 +66,7 @@ pub mod my_launchpad {
             inw_contract: AccountId,
             
             phase_name: Vec<String>,
-            phase_start_time: Vec<u64>
+            phase_start_time: Vec<u64>,
             phase_end_time: Vec<u64>,
             phase_immediate_release_rate: Vec<u32>,
             phase_vesting_duration: Vec<u64>,
@@ -109,7 +111,7 @@ pub mod my_launchpad {
             inw_contract: AccountId,
             
             phase_name: Vec<String>,
-            phase_start_time: Vec<u64>
+            phase_start_time: Vec<u64>,
             phase_end_time: Vec<u64>,
             phase_immediate_release_rate: Vec<u32>,
             phase_vesting_duration: Vec<u64>,
@@ -119,6 +121,10 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>  
         ) -> Result<(), Error> {
+            if self.data.inw_contract != ZERO_ADDRESS.into() {
+                return Err(Error::AlreadyInit);
+            }
+
             self.data.project_info_uri = project_info_uri;
             self.data.token_address = token_address;
             self.data.inw_contract = inw_contract;
@@ -141,7 +147,7 @@ pub mod my_launchpad {
 
             for i in 0..phase_length {
                 let result = self.add_new_phase(
-                    phase_name[i],
+                    phase_name[i].clone(),
                     phase_start_time[i],
                     phase_end_time[i],
                     phase_immediate_release_rate[i],
@@ -158,7 +164,6 @@ pub mod my_launchpad {
                 }
             }
                  
-            // Add phase
             Ok(())
         }
 
@@ -166,7 +171,7 @@ pub mod my_launchpad {
         pub fn add_new_phase(
             &mut self,
             name: String,
-            start_time: u64
+            start_time: u64,
             end_time: u64,
             immediate_release_rate: u32,
             vesting_duration: u64,
@@ -176,7 +181,7 @@ pub mod my_launchpad {
             public_amount: Balance,
             public_price: Balance  
         ) -> Result<(), Error> {
-            if !validate_phase_schedule(&start_time, &end_time) {
+            if !self.validate_phase_schedule(&start_time, &end_time) {
                 return Err(Error::InvalidStartTimeAndEndTime);
             }
 
@@ -190,14 +195,14 @@ pub mod my_launchpad {
 
             let end_vesting_time = end_time.checked_add(vesting_duration).ok_or(Error::CheckedOperations)?;
             
-            let total_vesting_units = vesting_duration.checked_div(vesting_unit).ok_or(Error::CheckedOperations)?;  
+            let mut total_vesting_units = vesting_duration.checked_div(vesting_unit).ok_or(Error::CheckedOperations)?;  
             if total_vesting_units.checked_mul(vesting_unit).ok_or(Error::CheckedOperations)? < vesting_duration {
                 total_vesting_units = total_vesting_units.checked_add(1).ok_or(Error::CheckedOperations)?;
             }
             
             let phase = PhaseInfo {
-                true,
-                name
+                is_active: true,
+                name,
                 start_time,
                 end_time,
                 immediate_release_rate,
@@ -207,22 +212,24 @@ pub mod my_launchpad {
                 total_vesting_units
             };
             
-            self.data.phase.insert(&self.manager.total_phase, &phase);
+            self.data.phase.insert(&self.data.total_phase, &phase);
 
             // Check if has public sale 
             if is_public {
-                let pulic_sale = PublicSale {
+                let pulic_sale = PublicSaleInfo {
                     total_amount: public_amount,
                     price: public_price,
                     total_purchased_amount: 0,
                     total_claimed_amount: 0,
                     is_burned: false
-                }
+                };
 
-                self.data.pulic_sale.insert(&self.manager.total_phase, &pulic_sale);
+                self.data.pulic_sale_info.insert(&self.data.total_phase, &pulic_sale);
             }
 
             self.data.total_phase = self.data.total_phase.checked_add(1).ok_or(Error::InvalidPhaseCount)?;
+            
+            Ok(())
         }
 
         fn validate_phase_schedule(&self, start_time: &u64, end_time: &u64) -> bool {
@@ -232,8 +239,8 @@ pub mod my_launchpad {
 
             for i in 0..self.data.total_phase {
                 if let Some(phase) = self.data.phase.get(&i) {
-                    if phase.is_active && ( ((phase.start_time <= start_time) && (start_time <= phase.end_time))
-                        || ((phase.start_time <= end_time) && (end_time <= phase.end_time))
+                    if phase.is_active && ( ((phase.start_time <= *start_time) && (*start_time <= phase.end_time))
+                        || ((phase.start_time <= *end_time) && (*end_time <= phase.end_time))
                     ) {
                         return false;
                     }

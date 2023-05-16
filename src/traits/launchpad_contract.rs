@@ -15,6 +15,7 @@ use openbrush::{
 
 use ink::prelude::{
     string::String,
+    vec::Vec
 };
 
 use crate::impls::launchpad_contract::data::PhaseInfo;
@@ -56,4 +57,7 @@ pub trait LaunchpadContractTrait {
 
     #[ink(message)]
     fn topup(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn add_multi_whitelists(&mut self, phase_id: u8, accounts: Vec<AccountId>, whitelist_amounts: Vec<Balance>, whitelist_prices: Vec<Balance>) -> Result<(), Error>;
 }

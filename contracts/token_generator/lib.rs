@@ -18,7 +18,8 @@ pub mod token_generator {
         modifiers,
         traits::{
             Storage,
-            String
+            String,
+            ZERO_ADDRESS
         },
     };
 
@@ -73,9 +74,10 @@ pub mod token_generator {
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, psp22_hash: Hash, inw_contract: AccountId, creation_fee: Balance
         ) -> Result<(), Error> {
-            if self.manager.creation_fee > 0 {
+            if self.manager.inw_contract != ZERO_ADDRESS.into() {
                 return Err(Error::AlreadyInit);
             }
+
             self.manager.standard_psp22_hash = psp22_hash;
             self.manager.creation_fee = creation_fee;
             self.manager.inw_contract = inw_contract;

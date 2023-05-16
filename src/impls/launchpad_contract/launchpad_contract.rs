@@ -110,4 +110,93 @@ where
             }
         }  
     } 
+
+    #[modifiers(only_owner)]
+    default fn add_multi_whitelists(
+        &mut self,
+        phase_id: u8,
+        accounts: Vec<AccountId>,
+        whitelist_amounts: Vec<Balance>,
+        whitelist_prices: Vec<Balance>
+    ) -> Result<(), Error> {          
+        let whitelist_count = accounts.len();
+        if whitelist_count == 0 ||
+           whitelist_count != whitelist_amounts.len() ||
+           whitelist_count != whitelist_prices.len() {
+            return Err(Error::InvalidWhitelistData);            
+        }  
+
+        if self.data::<Data>().phase.get(&phase_id).is_some() {
+            let mut total_amount: Balance = 0;
+
+            for i in 0..whitelist_count {
+                total_amount = total_amount.checked_add(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
+                
+                self.data::<Data>().whitelist_account.insert(phase_id, &accounts[i]);
+                
+                let whitelist_buyer_info = WhitelistBuyerInfo {
+                    amount: whitelist_amounts[i],
+                    price: whitelist_prices[i],
+                    purchased_amount: 0,
+                    vesting_amount: 0,
+                    claimed_amount: 0,
+                    last_updated_time: 0
+                };
+
+                self.data::<Data>().whitelist_buyer.insert(&(&phase_id, &accounts[i]), &whitelist_buyer_info); 
+            }
+        
+            // Add whitelist_sale_info
+            let whitelist_sale_info = WhitelistSaleInfo {
+                total_amount,
+                total_purchased_amount: 0,
+                total_claimed_amount: 0,
+                is_burned: false
+            };
+
+            self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
+            
+            // Transfer total_amount of token to launchpad contract
+            self.topup(total_amount)
+        } else {
+            return Err(Error::PhaseNotExist);
+        }   
+    }
+
+    // Update whitelist
+    // #[modifiers(only_owner)]
+    // pub fn update_multi_whitelist(
+    //     &mut self,
+    //     phase_id: u8,
+    //     accounts: Vec<AccountId>,
+    //     whitelist_amounts: Vec<Balance>,
+    //     whitelist_prices: Vec<Balance>
+    // ) -> Result<(), Error> {
+    //     let whitelist_count = accounts.len();
+    //     if whitelist_count == 0 ||
+    //        whitelist_count != whitelist_amounts.len() ||
+    //        whitelist_count != whitelist_prices.len() {
+    //         return Err(Error::InvalidWhitelistData);            
+    //     }  
+        
+    //     let mut total_in = 0;
+    //     let mut total_out = 0;
+
+    //     for i in 0..whitelist_count {
+    //         if let Some(mut whitelist_buyer_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &whitelist_account)) {
+    //             if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+                    
+    //                 if whitelist_buyer_info.amount < whitelist_amount {
+
+    //                 } else if whitelist_buyer_info.amount > whitelist_amount {
+                    
+    //                 }    
+    //             } else {
+    //                 return Err(Error::WhitelistSaleInfoNotExist);
+    //             }    
+    //         } else {
+    //             return Err(Error::WhitelistNotExist);
+    //         }
+    //     }
+    // }
 }

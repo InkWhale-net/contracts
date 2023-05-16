@@ -19,6 +19,7 @@ pub mod nft_pool_generator {
         modifiers,
         traits::{
             Storage,
+            ZERO_ADDRESS
         },
     };
     use my_nft_pool::my_nft_pool::MyNFTPoolRef;
@@ -72,6 +73,10 @@ pub mod nft_pool_generator {
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, pool_hash: Hash, inw_contract: AccountId, creation_fee: Balance, unstake_fee: Balance
         ) -> Result<(), Error> {
+            if self.manager.inw_contract != ZERO_ADDRESS.into() {
+                return Err(Error::AlreadyInit);
+            }
+            
             self.manager.pool_hash = pool_hash;
             self.manager.creation_fee = creation_fee;
             self.manager.inw_contract = inw_contract;

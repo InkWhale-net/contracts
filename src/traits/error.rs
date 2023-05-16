@@ -65,7 +65,11 @@ pub enum Error {
     InvalidPhaseCount,
     InvalidMaxStakingAmount,
     InvalidApy,
-    InvalidMultiplier
+    InvalidMultiplier,
+    InvalidWhitelistData,
+    PhaseNotExist,
+    WhitelistNotExist,
+    WhitelistSaleInfoNotExist
 }
 
 impl From<OwnableError> for Error {

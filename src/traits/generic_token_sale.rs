@@ -19,8 +19,8 @@ use openbrush::{
 use crate::traits::error::Error;
 use crate::impls::generic_token_sale::data::BuyerInformation;
 
-// pub const CLAIMED_DURATION_UNIT: u64 = 86400000; // 1 day = 24 * 60 * 60 * 1000 ms = 86400000 ms
-pub const CLAIMED_DURATION_UNIT: u64 = 300000; // 5' = 5 * 60 * 1000 ms = 300000 ms
+pub const CLAIMED_DURATION_UNIT: u64 = 86400000; // 1 day = 24 * 60 * 60 * 1000 ms = 86400000 ms
+// pub const CLAIMED_DURATION_UNIT: u64 = 300000; // 5' = 5 * 60 * 1000 ms = 300000 ms
 
 #[openbrush::wrapper]
 pub type Psp22Ref = dyn PSP22 + PSP22Burnable + PSP22Metadata;

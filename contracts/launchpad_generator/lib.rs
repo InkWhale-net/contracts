@@ -6,7 +6,9 @@
 #[openbrush::contract]
 pub mod launchpad_generator {
     use ink::prelude::{
+        string::String,
         vec::Vec,
+        vec
     };
     use ink::env::CallFlags;
     use ink::ToAccountId;
@@ -44,11 +46,11 @@ pub mod launchpad_generator {
         upgradeable_data: upgradeable::data::Data
     }
 
-    #[ink(event)]
-    pub struct AddNewLaunchpadEvent {
-        launchpad_id: u64,
-        launchpad_address: AccountId
-    }
+    // #[ink(event)]
+    // pub struct AddNewLaunchpadEvent {
+    //     launchpad_id: u64,
+    //     launchpad_address: AccountId
+    // }
 
     impl Ownable for LaunchpadGenerator {}
     impl LaunchpadGeneratorTrait for LaunchpadGenerator {}
@@ -75,6 +77,10 @@ pub mod launchpad_generator {
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance) -> Result<(), Error> {
+            if self.manager.creation_fee > 0 {
+                return Err(Error::AlreadyInit);
+            }
+            
             self.manager.launchpad_hash = launchpad_hash;
             self.manager.inw_contract = inw_contract;
             
@@ -95,7 +101,7 @@ pub mod launchpad_generator {
             inw_contract: AccountId,
             
             phase_name: Vec<String>,
-            phase_start_time: Vec<u64>
+            phase_start_time: Vec<u64>,
             phase_end_time: Vec<u64>,
             phase_immediate_release_rate: Vec<u32>,
             phase_vesting_duration: Vec<u64>,
@@ -227,15 +233,16 @@ pub mod launchpad_generator {
                 self.manager.launchpad_count = self.manager.launchpad_count.checked_add(1).ok_or(Error::CheckedOperations)?;
                 self.manager.launchpad_by_id.insert(&self.manager.launchpad_count, &contract_account);
 
-                let launchpad_by_owner = self.manager.launchpads_by_owner.get(&contract_owner);
+                let launchpad_by_owner = self.manager.launchpad_by_owner.get(&contract_owner);
 
                 if let Some(mut launchpad) = launchpad_by_owner {
                     launchpad.push(contract_account);
+                    self.manager.launchpad_by_owner.insert(&contract_owner, &launchpad);
                 } else {
-                    let launchpad = vec![contract_account];                    
+                    let launchpad = vec![contract_account];
+                    self.manager.launchpad_by_owner.insert(&contract_owner, &launchpad);                    
                 }
-                self.manager.launchpad_by_owner.insert(&contract_owner, &launchpad);
-                
+                                
                 // Default is the active launchpad
                 self.manager.is_active_launchpad.insert(&contract_account, &true);
                 self.manager.active_launchpad_count = self.manager.active_launchpad_count.checked_add(1).ok_or(Error::CheckedOperations)?;
@@ -245,7 +252,7 @@ pub mod launchpad_generator {
                     return Err(Error::CannotBurn);
                 } 
 
-                if (total_amount > 0) {
+                if total_amount > 0 {
                     // Launchpad generator approves for launchpad contract the token amount   
                     if Psp22Ref::approve(&token_address, contract_account, total_amount).is_err() {
                         return Err(Error::CannotApprove);
@@ -260,10 +267,10 @@ pub mod launchpad_generator {
                 }
 
                 // Emit event
-                self.env().emit_event(AddNewLaunchpadEvent {
-                    launchpad_id: self.manager.launchpad_count,
-                    launchpad_address: contract_account
-                });
+                // self.env().emit_event(AddNewLaunchpadEvent {
+                //     launchpad_id: self.manager.launchpad_count,
+                //     launchpad_address: contract_account
+                // });
             } else {
                 return Err(Error::CannotCreatePool);
             }   

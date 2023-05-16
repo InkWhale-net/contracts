@@ -110,6 +110,10 @@ pub mod private_sale {
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, start_time: u64, end_time: u64, total_amount: Balance, inw_contract: AccountId, inw_price: Balance, immediate_buying_rate: u32, vesting_duration: u64
         ) -> Result<(), Error> {
+            if self.data.end_time > 0 {
+                return Err(Error::AlreadyInit);
+            }
+
             self.data.start_time = start_time;
             
             if end_time <= start_time {

@@ -103,6 +103,10 @@ pub mod my_nft_pool {
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
+            if self.data.max_staking_amount > 0 {
+                return Err(Error::AlreadyInit);
+            }
+            
             if max_staking_amount == 0 {
                 return Err(Error::InvalidMaxStakingAmount);
             }
