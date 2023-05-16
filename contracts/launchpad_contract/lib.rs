@@ -3,6 +3,8 @@
 
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
+#![allow(clippy::large_enum_variant)]
+#![allow(clippy::question_mark)]
 
 pub use self::my_launchpad::{
     MyLaunchpad,
@@ -64,6 +66,7 @@ pub mod my_launchpad {
             project_info_uri: String,
             token_address: AccountId,
             inw_contract: AccountId,
+            tx_rate: u32,
             
             phase_name: Vec<String>,
             phase_start_time: Vec<u64>,
@@ -85,6 +88,7 @@ pub mod my_launchpad {
                 project_info_uri,
                 token_address,
                 inw_contract,
+                tx_rate,
                 
                 phase_name,
                 phase_start_time,
@@ -109,6 +113,7 @@ pub mod my_launchpad {
             project_info_uri: String,
             token_address: AccountId,
             inw_contract: AccountId,
+            tx_rate: u32,
             
             phase_name: Vec<String>,
             phase_start_time: Vec<u64>,
@@ -128,6 +133,7 @@ pub mod my_launchpad {
             self.data.project_info_uri = project_info_uri;
             self.data.token_address = token_address;
             self.data.inw_contract = inw_contract;
+            self.data.tx_rate = tx_rate;
 
             // Check length of data in phase
             let phase_length = phase_name.len();
@@ -193,6 +199,14 @@ pub mod my_launchpad {
                 return Err(Error::InvalidDuration);
             }
 
+            if self.data.project_start_time == 0 || start_time < self.data.project_start_time {
+                self.data.project_start_time = start_time; 
+            } 
+
+            if end_time > self.data.project_end_time {
+                self.data.project_end_time = end_time; 
+            }
+
             let end_vesting_time = end_time.checked_add(vesting_duration).ok_or(Error::CheckedOperations)?;
             
             let mut total_vesting_units = vesting_duration.checked_div(vesting_unit).ok_or(Error::CheckedOperations)?;  
@@ -233,7 +247,7 @@ pub mod my_launchpad {
         }
 
         fn validate_phase_schedule(&self, start_time: &u64, end_time: &u64) -> bool {
-            if *start_time >= *end_time {
+            if *start_time >= *end_time || *start_time == 0 {
                 return false;
             }
 

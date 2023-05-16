@@ -60,4 +60,7 @@ pub trait LaunchpadContractTrait {
 
     #[ink(message)]
     fn add_multi_whitelists(&mut self, phase_id: u8, accounts: Vec<AccountId>, whitelist_amounts: Vec<Balance>, whitelist_prices: Vec<Balance>) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn update_multi_whitelists(&mut self, phase_id: u8, accounts: Vec<AccountId>, whitelist_amounts: Vec<Balance>, whitelist_prices: Vec<Balance>) -> Result<(), Error>;
 }

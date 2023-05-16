@@ -40,6 +40,9 @@ pub trait LaunchpadGeneratorTrait {
     fn get_creation_fee(&self) -> Balance;
 
     #[ink(message)]
+    fn get_tx_rate(&self) -> u32;
+
+    #[ink(message)]
     fn get_launchpad_count(&self) -> u64;
 
     #[ink(message)]
@@ -64,6 +67,9 @@ pub trait LaunchpadGeneratorTrait {
     
     #[ink(message)]    
     fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error>;
 
     #[ink(message)]
     fn set_is_active_launchpad(&mut self, address: AccountId, is_active: bool) -> Result<(), Error>;

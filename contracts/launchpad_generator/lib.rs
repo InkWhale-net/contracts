@@ -2,6 +2,8 @@
 #![feature(min_specialization)]
 
 #![allow(clippy::inline_fn_without_body)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::large_enum_variant)]
 
 #[openbrush::contract]
 pub mod launchpad_generator {
@@ -59,7 +61,7 @@ pub mod launchpad_generator {
 
     impl LaunchpadGenerator {
         #[ink(constructor)]
-        pub fn new(launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, owner_address: AccountId) -> Result<Self, Error> {
+        pub fn new(launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32, owner_address: AccountId) -> Result<Self, Error> {
             let mut instance = Self::default();
 
             instance._init_with_owner(owner_address);
@@ -68,6 +70,7 @@ pub mod launchpad_generator {
                 launchpad_hash,
                 inw_contract,
                 creation_fee,
+                tx_rate
             ) {
                 Ok(()) => Ok(instance),
                 Err(e) => Err(e),
@@ -76,7 +79,7 @@ pub mod launchpad_generator {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance) -> Result<(), Error> {
+        pub fn initialize(&mut self, launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32) -> Result<(), Error> {
             if self.manager.creation_fee > 0 {
                 return Err(Error::AlreadyInit);
             }
@@ -89,6 +92,8 @@ pub mod launchpad_generator {
             }
             self.manager.creation_fee = creation_fee;
 
+            self.manager.tx_rate = tx_rate;
+
             Ok(())
         }
 
@@ -98,7 +103,6 @@ pub mod launchpad_generator {
             contract_owner: AccountId,
             project_info_uri: String,
             token_address: AccountId,
-            inw_contract: AccountId,
             
             phase_name: Vec<String>,
             phase_start_time: Vec<u64>,
@@ -210,7 +214,8 @@ pub mod launchpad_generator {
                     contract_owner, 
                     project_info_uri,
                     token_address,
-                    inw_contract,
+                    self.manager.inw_contract,
+                    self.manager.tx_rate,
                     
                     phase_name,
                     phase_start_time,

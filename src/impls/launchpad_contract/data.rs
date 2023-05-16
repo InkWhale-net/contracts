@@ -90,6 +90,10 @@ pub struct Data {
     pub project_info_uri: String,
     pub token_address: AccountId,
     pub inw_contract: AccountId,
+    pub tx_rate: u32,
+    // Project start end time will get from phases' start, end time
+    pub project_start_time: u64,
+    pub project_end_time: u64,
     // Phase info
     pub total_phase: u8,
     pub phase: Mapping<u8, PhaseInfo>,
@@ -110,6 +114,10 @@ impl Default for Data {
             project_info_uri: Default::default(),
             token_address: ZERO_ADDRESS.into(),
             inw_contract: ZERO_ADDRESS.into(),
+            tx_rate: Default::default(),
+
+            project_start_time: Default::default(),
+            project_end_time: Default::default(),
 
             total_phase: Default::default(),
             phase: Default::default(),

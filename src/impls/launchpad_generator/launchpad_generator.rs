@@ -44,6 +44,10 @@ where
         self.data::<Data>().creation_fee
     }
 
+    default fn get_tx_rate(&self) -> u32 {
+        self.data::<Data>().tx_rate
+    }
+
     default fn get_launchpad_count(&self) -> u64 {
         self.data::<Data>().launchpad_count
     }
@@ -81,6 +85,12 @@ where
     #[modifiers(only_owner)]
     default fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error> {
         self.data::<Data>().creation_fee = creation_fee;
+        Ok(()) 
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error> {
+        self.data::<Data>().tx_rate = tx_rate;
         Ok(()) 
     }
 

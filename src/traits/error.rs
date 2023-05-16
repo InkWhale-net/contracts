@@ -68,8 +68,11 @@ pub enum Error {
     InvalidMultiplier,
     InvalidWhitelistData,
     PhaseNotExist,
-    WhitelistNotExist,
+    WhitelistBuyerInfoNotExist,
+    WhitelistBuyerInfoExist,
+    WhitelistBuyerPurchased,
     WhitelistSaleInfoNotExist
+
 }
 
 impl From<OwnableError> for Error {
