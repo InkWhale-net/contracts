@@ -240,7 +240,6 @@ where
         }
 
         // Save data
-        let caller = Self::env().caller();
         let buyer_data = self.data::<Data>().buyers.get(&caller);
         
         if let Some(mut buy_info) = buyer_data {

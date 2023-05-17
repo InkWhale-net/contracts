@@ -84,7 +84,7 @@ pub mod my_launchpad {
 
             instance._init_with_owner(contract_owner);
 
-            match instance.initialize(
+            match instance.create_launchpad(
                 project_info_uri,
                 token_address,
                 inw_contract,
@@ -109,6 +109,43 @@ pub mod my_launchpad {
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(
+            &mut self, 
+            project_info_uri: String,
+            token_address: AccountId,
+            inw_contract: AccountId,
+            tx_rate: u32,
+            
+            phase_name: Vec<String>,
+            phase_start_time: Vec<u64>,
+            phase_end_time: Vec<u64>,
+            phase_immediate_release_rate: Vec<u32>,
+            phase_vesting_duration: Vec<u64>,
+            phase_vesting_unit: Vec<u64>,
+            
+            phase_is_public: Vec<bool>,
+            phase_public_amount: Vec<Balance>,
+            phase_public_price: Vec<Balance>  
+        ) -> Result<(), Error> {
+            self.create_launchpad(
+                project_info_uri,
+                token_address,
+                inw_contract,
+                tx_rate,
+                
+                phase_name,
+                phase_start_time,
+                phase_end_time,
+                phase_immediate_release_rate,
+                phase_vesting_duration,
+                phase_vesting_unit,
+                
+                phase_is_public,
+                phase_public_amount,
+                phase_public_price
+            )
+        }
+
+        fn create_launchpad(
             &mut self, 
             project_info_uri: String,
             token_address: AccountId,
@@ -238,7 +275,7 @@ pub mod my_launchpad {
                     is_burned: false
                 };
 
-                self.data.pulic_sale_info.insert(&self.data.total_phase, &pulic_sale);
+                self.data.public_sale_info.insert(&self.data.total_phase, &pulic_sale);
             }
 
             self.data.total_phase = self.data.total_phase.checked_add(1).ok_or(Error::InvalidPhaseCount)?;

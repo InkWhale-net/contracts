@@ -98,7 +98,7 @@ pub struct Data {
     pub total_phase: u8,
     pub phase: Mapping<u8, PhaseInfo>,
     // Phase sale
-    pub pulic_sale_info: Mapping<u8, PublicSaleInfo>,
+    pub public_sale_info: Mapping<u8, PublicSaleInfo>,
     pub public_buyer: Mapping<(u8, AccountId), BuyerInformation, PublicBuyerKey>,
     // Whitelist sale
     pub whitelist_sale_info: Mapping<u8, WhitelistSaleInfo>,  
@@ -122,7 +122,7 @@ impl Default for Data {
             total_phase: Default::default(),
             phase: Default::default(),
 
-            pulic_sale_info: Default::default(),
+            public_sale_info: Default::default(),
             public_buyer: Default::default(),
 
             whitelist_sale_info: Default::default(),

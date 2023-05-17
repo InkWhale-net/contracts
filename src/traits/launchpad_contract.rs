@@ -7,7 +7,10 @@ use openbrush::{
     },
     contracts::{
         traits::psp22::{
-            extensions::burnable::*,
+            extensions::{
+                metadata::*,
+                burnable::*
+            },
             *,
         },
     },
@@ -22,7 +25,7 @@ use crate::impls::launchpad_contract::data::PhaseInfo;
 use crate::traits::error::Error;
 
 #[openbrush::wrapper]
-pub type Psp22Ref = dyn PSP22 + PSP22Burnable;
+pub type Psp22Ref = dyn PSP22 + PSP22Burnable + PSP22Metadata;
 
 #[openbrush::wrapper]
 pub type LaunchpadContractRef = dyn LaunchpadContractTrait;
@@ -63,4 +66,16 @@ pub trait LaunchpadContractTrait {
 
     #[ink(message)]
     fn update_multi_whitelists(&mut self, phase_id: u8, accounts: Vec<AccountId>, whitelist_amounts: Vec<Balance>, whitelist_prices: Vec<Balance>) -> Result<(), Error>;
+
+    #[ink(message, payable)]
+    fn public_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn public_claim(&mut self, phase_id: u8) -> Result<(), Error>;
+
+    #[ink(message, payable)]
+    fn whitelist_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error>;
 }
