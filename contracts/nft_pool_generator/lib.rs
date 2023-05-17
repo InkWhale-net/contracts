@@ -186,13 +186,14 @@ pub mod nft_pool_generator {
                 // return token_transfer_result;
             } 
 
-            if let Result::Ok(contract) = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
+            let pool_creation_result = MyNFTPoolRef::new(contract_owner, self.manager.inw_contract, psp34_contract_address, psp22_contract_address, max_staking_amount, multiplier, duration, start_time, self.manager.unstake_fee)
                     .endowment(0)
                     .code_hash(self.manager.pool_hash)
                     .salt_bytes(self.manager.pool_count.to_le_bytes())
-                    .instantiate() {
+                    .instantiate();
 
-                 // Record pool contract address to the pool list
+            if let Result::Ok(contract) = pool_creation_result {
+                // Record pool contract address to the pool list
                 let contract_account: AccountId = contract.to_account_id();
 
                 self.manager.pool_count = self.manager.pool_count.checked_add(1).ok_or(Error::CheckedOperations)?;
@@ -231,7 +232,12 @@ pub mod nft_pool_generator {
                     // return topup_result;
                 }        
             } else {
-                return Err(Error::CannotCreatePool);
+                let r = match pool_creation_result {
+                    Ok(_) => Ok(()),
+                    Err(e) => Err(e),
+                };
+
+                return r;
             }  
             
             Ok(())

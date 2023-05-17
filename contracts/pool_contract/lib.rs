@@ -78,7 +78,7 @@ pub mod my_pool {
                     
             instance._init_with_owner(contract_owner);
             
-            match instance.initialize(
+            match instance.create_pool(
                 inw_contract,
                 psp22_contract_address,
                 max_staking_amount, 
@@ -95,6 +95,19 @@ pub mod my_pool {
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
+        ) -> Result<(), Error> {
+            self.create_pool(
+                inw_contract,
+                psp22_contract_address,
+                max_staking_amount, 
+                apy, 
+                duration, 
+                start_time, 
+                unstake_fee
+            ) 
+        }
+        
+        fn create_pool(&mut self, inw_contract: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, apy: u32, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             if self.data.max_staking_amount > 0 {
                 return Err(Error::AlreadyInit);
@@ -135,7 +148,7 @@ pub mod my_pool {
             self.data.reward_pool = 0;   
             
             Ok(())
-        }       
+        }
 
         #[ink(message)]
         pub fn stake(&mut self, amount: Balance) -> Result<(), Error>  {

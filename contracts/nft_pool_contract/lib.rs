@@ -84,7 +84,7 @@ pub mod my_nft_pool {
 
             instance._init_with_owner(contract_owner);
             
-            match instance.initialize(
+            match instance.create_pool(
                 inw_contract,
                 psp34_contract_address,
                 psp22_contract_address,
@@ -102,6 +102,20 @@ pub mod my_nft_pool {
         #[ink(message)]
         #[modifiers(only_owner)]
         pub fn initialize(&mut self, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
+        ) -> Result<(), Error> {
+            self.create_pool(
+                inw_contract,
+                psp34_contract_address,
+                psp22_contract_address,
+                max_staking_amount, 
+                multiplier, 
+                duration, 
+                start_time, 
+                unstake_fee
+            )
+        }
+
+        pub fn create_pool(&mut self, inw_contract: AccountId, psp34_contract_address: AccountId, psp22_contract_address: AccountId, max_staking_amount: Balance, multiplier: Balance, duration: u64, start_time: u64, unstake_fee: Balance
         ) -> Result<(), Error> {
             if self.data.max_staking_amount > 0 {
                 return Err(Error::AlreadyInit);
