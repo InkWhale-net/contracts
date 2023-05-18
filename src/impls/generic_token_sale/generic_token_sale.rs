@@ -307,7 +307,7 @@ where
                 }
 
                 // If still have unclaimed token
-                if self.data::<Data>().immediate_buying_rate < 10000 && self.data::<Data>().vesting_days > 0 {
+                if buy_info.vesting_amount > 0 && self.data::<Data>().vesting_days > 0 {
                     let days = (current_time.checked_sub(buy_info.last_updated_time).ok_or(Error::CheckedOperations)?)
                                 .checked_div(CLAIMED_DURATION_UNIT).ok_or(Error::CheckedOperations)?; 
 

@@ -28,12 +28,15 @@ pub mod my_launchpad {
         },
         modifiers
     };
-
-    // use inkwhale_project::traits::launchpad_contract::Psp22Ref;
-    
+   
     use inkwhale_project::impls::{
         launchpad_contract::*,
         upgradeable::*
+    };
+
+    use ink::{
+        codegen::{Env, EmitEvent},
+        reflect::ContractEventBase
     };
 
     #[ink(storage)]
@@ -47,16 +50,91 @@ pub mod my_launchpad {
         upgradeable_data: upgradeable::data::Data
     }
 
-    // #[ink(event)]
-    // pub struct LaunchpadStakeEvent {
-    //     pool_contract: AccountId,
-    //     token_contract: AccountId,
-    //     staker: AccountId,
-    //     amount: Balance
-    // }
+    #[ink(event)]
+    pub struct PublicPurchaseEvent {
+        launchpad_contract: AccountId,
+        token_contract: AccountId,
+        buyer: AccountId,
+        amount: Balance
+    }
+
+    #[ink(event)]
+    pub struct PublicClaimEvent {
+        launchpad_contract: AccountId,
+        token_contract: AccountId,
+        buyer: AccountId,
+        amount: Balance
+    }
+
+    #[ink(event)]
+    pub struct WhitelistPurchaseEvent {
+        launchpad_contract: AccountId,
+        token_contract: AccountId,
+        buyer: AccountId,
+        amount: Balance
+    }
+
+    #[ink(event)]
+    pub struct WhitelistClaimEvent {
+        launchpad_contract: AccountId,
+        token_contract: AccountId,
+        buyer: AccountId,
+        amount: Balance
+    }
+
+    pub type Event = <MyLaunchpad as ContractEventBase>::Type;
 
     impl Ownable for MyLaunchpad {}
-    impl LaunchpadContractTrait for MyLaunchpad {}
+    impl LaunchpadContractTrait for MyLaunchpad {
+        fn _emit_public_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
+            MyLaunchpad::emit_event(
+                self.env(),
+                Event::PublicPurchaseEvent(PublicPurchaseEvent{
+                    launchpad_contract: _launchpad_contract,
+                    token_contract: _token_contract,
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+    
+        fn _emit_public_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
+            MyLaunchpad::emit_event(
+                self.env(),
+                Event::PublicClaimEvent(PublicClaimEvent{
+                    launchpad_contract: _launchpad_contract,
+                    token_contract: _token_contract,
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+
+        fn _emit_whitelist_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
+            MyLaunchpad::emit_event(
+                self.env(),
+                Event::WhitelistPurchaseEvent(WhitelistPurchaseEvent{
+                    launchpad_contract: _launchpad_contract,
+                    token_contract: _token_contract,
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+        
+        fn _emit_whitelist_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
+            MyLaunchpad::emit_event(
+                self.env(),
+                Event::WhitelistClaimEvent(WhitelistClaimEvent{
+                    launchpad_contract: _launchpad_contract,
+                    token_contract: _token_contract,
+                    buyer: _buyer,
+                    amount: _amount
+                })
+            );
+        }
+    }
+
     impl UpgradeableTrait for MyLaunchpad {}
 
     impl MyLaunchpad {
@@ -299,6 +377,10 @@ pub mod my_launchpad {
             }
             
             true
+        }
+
+        pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
+            emitter.emit_event(event);
         }
     }       
 }

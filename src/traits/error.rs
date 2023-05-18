@@ -68,6 +68,7 @@ pub enum Error {
     InvalidMultiplier,
     InvalidWhitelistData,
     PhaseNotExist,
+    PhaseNotActive,
     WhitelistBuyerInfoNotExist,
     WhitelistBuyerInfoExist,
     WhitelistBuyerPurchased,

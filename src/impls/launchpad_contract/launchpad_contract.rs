@@ -44,12 +44,105 @@ where
         self.data::<Data>().inw_contract
     }
 
+    default fn get_tx_rate(&self) -> u32 {
+        self.data::<Data>().tx_rate
+    }
+
+    default fn get_project_start_time(&self) -> u64 {
+        self.data::<Data>().project_start_time
+    }
+
+    default fn get_project_end_time(&self) -> u64 {
+        self.data::<Data>().project_end_time
+    }
+
     default fn get_total_phase(&self) -> u8 {
         self.data::<Data>().total_phase
     }
 
-    default fn get_phase(&self, id: u8) -> Option<PhaseInfo> {
-        self.data::<Data>().phase.get(&id)
+    default fn get_phase(&self, phase_id: u8) -> Option<PhaseInfo> {
+        self.data::<Data>().phase.get(&phase_id)
+    }
+
+    default fn get_is_active(&self, phase_id: u8) -> Option<bool> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.is_active);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_name(&self, phase_id: u8) -> Option<String> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.name);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_start_time(&self, phase_id: u8) -> Option<u64> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.start_time);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_end_time(&self, phase_id: u8) -> Option<u64> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.end_time);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_immediate_release_rate(&self, phase_id: u8) -> Option<u32> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.immediate_release_rate);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_vesting_duration(&self, phase_id: u8) -> Option<u64> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.vesting_duration);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_vesting_unit(&self, phase_id: u8) -> Option<u64> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            return Some(phase.vesting_unit);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_public_sale_info(&self, phase_id: u8) -> Option<PublicSaleInfo> {
+        self.data::<Data>().public_sale_info.get(&phase_id)
+    }
+
+    default fn get_public_sale_total_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            return Some(public_sale_info.total_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_public_sale_price(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            return Some(public_sale_info.price);
+        } else {
+            return None;
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn get_balance(&mut self) -> Result<Balance, Error> {
+        Ok(Self::env().balance())
     }
 
     // Setters
@@ -71,6 +164,117 @@ where
         Ok(())
     }
 
+    #[modifiers(only_owner)]
+    default fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error> {
+        self.data::<Data>().tx_rate = tx_rate;
+        Ok(())
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_is_active(&mut self, phase_id: u8, is_active: bool) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.start_time {
+                return Err(Error::InvalidTime);
+            }
+
+            phase.is_active = is_active;
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+    
+    #[modifiers(only_owner)]
+    default fn set_name(&mut self, phase_id: u8, name: String) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            phase.name = name;
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_immediate_release_rate(&mut self, phase_id: u8, immediate_release_rate: u32) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.start_time {
+                return Err(Error::InvalidTime);
+            }
+
+            if immediate_release_rate > 10000 {
+                return Err(Error::InvalidPercentage);
+            }
+
+            phase.immediate_release_rate = immediate_release_rate;
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_vesting_duration(&mut self, phase_id: u8, vesting_duration: u64) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.end_time {
+                return Err(Error::InvalidTime);
+            }
+
+            phase.vesting_duration = vesting_duration;
+            phase.end_vesting_time = phase.end_time.checked_add(phase.vesting_duration).ok_or(Error::CheckedOperations)?; 
+            
+            phase.total_vesting_units = phase.vesting_duration.checked_div(phase.vesting_unit).ok_or(Error::CheckedOperations)?;  
+            if phase.total_vesting_units.checked_mul(phase.vesting_unit).ok_or(Error::CheckedOperations)? < phase.vesting_duration {
+                phase.total_vesting_units = phase.total_vesting_units.checked_add(1).ok_or(Error::CheckedOperations)?;
+            }
+                    
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_vesting_unit(&mut self, phase_id: u8, vesting_unit: u64) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.end_time {
+                return Err(Error::InvalidTime);
+            }
+
+            if vesting_unit == 0 {
+                return Err(Error::InvalidDuration);
+            }
+
+            phase.vesting_unit = vesting_unit;
+
+            phase.total_vesting_units = phase.vesting_duration.checked_div(phase.vesting_unit).ok_or(Error::CheckedOperations)?;  
+            if phase.total_vesting_units.checked_mul(phase.vesting_unit).ok_or(Error::CheckedOperations)? < phase.vesting_duration {
+                phase.total_vesting_units = phase.total_vesting_units.checked_add(1).ok_or(Error::CheckedOperations)?;
+            }
+
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    
     // Funcs
     default fn topup(&mut self, amount: Balance) -> Result<(), Error> {         
         let caller = Self::env().caller();
@@ -269,16 +473,30 @@ where
         }     
     }
 
-    default fn public_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
-        if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-            if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-                // Check purchased time
-                let current_time = Self::env().block_timestamp();
-            
-                if phase_info.start_time > current_time || phase_info.end_time < current_time {
-                    return Err(Error::NotTimeToPurchase);
-                }
+    default fn _emit_public_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
+    
+    default fn _emit_public_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
 
+    default fn _emit_whitelist_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
+    
+    default fn _emit_whitelist_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
+
+
+    default fn public_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
+        if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            // Check if phase is active
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
+            // Check purchased time
+            let current_time = Self::env().block_timestamp();
+            
+            if phase_info.start_time > current_time || phase_info.end_time < current_time {
+                return Err(Error::NotTimeToPurchase);
+            }
+
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {         
                 // Check amount to buy
                 if amount == 0 || public_sale_info.total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)? > public_sale_info.total_amount {
                     return Err(Error::InvalidBuyAmount);
@@ -290,6 +508,12 @@ where
                             .checked_mul(amount).ok_or(Error::CheckedOperations)?
                             .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
 
+                // Add tx fee
+                // let tx_fee = price.checked_mul(self.data::<Data>().tx_rate as u128).ok_or(Error::CheckedOperations)?
+                //                   .checked_div(10000).ok_or(Error::CheckedOperations)?;
+
+                // price = price.checked_add(tx_fee).ok_or(Error::CheckedOperations)?;
+        
                 if price > Self::env().transferred_value() {
                     return Err(Error::InvalidTransferAmount)
                 }
@@ -358,27 +582,37 @@ where
                 public_sale_info.total_claimed_amount = public_sale_info.total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
                 self.data::<Data>().public_sale_info.insert(&phase_id, &public_sale_info);
 
-                // self._emit_purchase_event(
-                //     caller,
-                //     amount
-                // );
+                let token_address = self.data::<Data>().token_address.clone();
+                self._emit_public_purchase_event(
+                    Self::env().account_id(),
+                    token_address,
+                    caller,
+                    amount
+                );
 
-                // self._emit_claim_event(
-                //     caller,
-                //     claim
-                // );
+                self._emit_public_claim_event(
+                    Self::env().account_id(),
+                    token_address,
+                    caller,
+                    claim
+                );
 
                 Ok(())
             } else {
-                return Err(Error::PhaseNotExist);
+                return Err(Error::InvalidPhaseForPublicSale);
             }
         } else {
-            return Err(Error::InvalidPhaseForPublicSale);
+            return Err(Error::PhaseNotExist);
         }
     }
 
     default fn public_claim(&mut self, phase_id: u8) -> Result<(), Error> {
         if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            // Check if phase is active
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
             // Check claim time
             let current_time = Self::env().block_timestamp();
         
@@ -469,10 +703,13 @@ where
                         return Err(Error::InvalidPhaseForPublicSale);
                     }
                     
-                    // self._emit_claim_event(
-                    //     caller,
-                    //     claim
-                    // );
+                    let token_address = self.data::<Data>().token_address.clone();
+                    self._emit_public_claim_event(
+                        Self::env().account_id(),
+                        token_address,
+                        caller,
+                        claim
+                    );    
                 }
 
                 Ok(())
@@ -485,17 +722,22 @@ where
     }
 
     default fn whitelist_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
-        let caller = Self::env().caller();
+        if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            // Check if phase is active
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
 
-        if let Some(mut buy_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &caller)) {
-            if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-                // Check purchased time
-                let current_time = Self::env().block_timestamp();
-            
-                if phase_info.start_time > current_time || phase_info.end_time < current_time {
-                    return Err(Error::NotTimeToPurchase);
-                }
+            // Check purchased time
+            let current_time = Self::env().block_timestamp();
+        
+            if phase_info.start_time > current_time || phase_info.end_time < current_time {
+                return Err(Error::NotTimeToPurchase);
+            }
 
+            let caller = Self::env().caller();
+
+            if let Some(mut buy_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &caller)) {           
                 // Check amount to buy
                 if amount == 0 || buy_info.purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)? > buy_info.amount {
                     return Err(Error::InvalidBuyAmount);
@@ -506,6 +748,12 @@ where
                 let price = buy_info.price
                             .checked_mul(amount).ok_or(Error::CheckedOperations)?
                             .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
+
+                // Add tx fee
+                // let tx_fee = price.checked_mul(self.data::<Data>().tx_rate as u128).ok_or(Error::CheckedOperations)?
+                //                   .checked_div(10000).ok_or(Error::CheckedOperations)?;
+
+                // price = price.checked_add(tx_fee).ok_or(Error::CheckedOperations)?; 
 
                 if price > Self::env().transferred_value() {
                     return Err(Error::InvalidTransferAmount)
@@ -563,37 +811,47 @@ where
                     return Err(Error::InvalidPhaseForWhitelistSale);
                 }
                 
-                // self._emit_purchase_event(
-                //     caller,
-                //     amount
-                // );
+                let token_address = self.data::<Data>().token_address.clone();
+                self._emit_whitelist_purchase_event(
+                    Self::env().account_id(),
+                    token_address,
+                    caller,
+                    amount
+                );
 
-                // self._emit_claim_event(
-                //     caller,
-                //     claim
-                // );
+                self._emit_whitelist_claim_event(
+                    Self::env().account_id(),
+                    token_address,
+                    caller,
+                    claim
+                );
 
                 Ok(())
             } else {
-                return Err(Error::PhaseNotExist);
+                return Err(Error::WhitelistPhaseAccountNotExist);
             }            
         } else {
-            return Err(Error::WhitelistPhaseAccountNotExist);
+            return Err(Error::PhaseNotExist);
         }        
     }
 
     default fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error> {
-        let caller = Self::env().caller();
+        if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            // Check if phase is active
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
 
-        if let Some(mut buy_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &caller)) {
-            if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-                // Check claim time
-                let current_time = Self::env().block_timestamp();
-            
-                if phase_info.end_time >= current_time {
-                    return Err(Error::NotTimeToClaim);
-                }
+            // Check claim time
+            let current_time = Self::env().block_timestamp();
+        
+            if phase_info.end_time >= current_time {
+                return Err(Error::NotTimeToClaim);
+            }
 
+            let caller = Self::env().caller();
+
+            if let Some(mut buy_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &caller)) {
                 // Check if have unclaimed token
                 if buy_info.purchased_amount == buy_info.claimed_amount {
                     return Err(Error::NoClaimAmount);
@@ -673,19 +931,22 @@ where
                         return Err(Error::InvalidPhaseForWhitelistSale);
                     }
                     
-                    // self._emit_claim_event(
-                    //     caller,
-                    //     claim
-                    // );
+                    let token_address = self.data::<Data>().token_address.clone();
+                    self._emit_whitelist_claim_event(
+                        Self::env().account_id(),
+                        token_address,
+                        caller,
+                        claim
+                    );
                 }
 
                 Ok(())
 
             } else {
-                return Err(Error::PhaseNotExist);
+                return Err(Error::WhitelistPhaseAccountNotExist);
             }
         } else {
-            return Err(Error::WhitelistPhaseAccountNotExist);
+            return Err(Error::PhaseNotExist);
         }        
     }
 }
