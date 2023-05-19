@@ -140,6 +140,66 @@ where
         }
     }
 
+    default fn get_public_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            return Some(public_sale_info.total_purchased_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_public_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            return Some(public_sale_info.total_claimed_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_public_buyer(&self, phase_id: u8, account: AccountId) -> Option<BuyerInformation> {
+        self.data::<Data>().public_buyer.get(&(&phase_id, &account))
+    }
+
+    default fn get_whitelist_sale_info(&self, phase_id: u8) -> Option<WhitelistSaleInfo> {
+        self.data::<Data>().whitelist_sale_info.get(&phase_id)
+    }
+
+    default fn get_whitelist_sale_total_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+            return Some(whitelist_sale_info.total_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_whitelist_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+            return Some(whitelist_sale_info.total_purchased_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_whitelist_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance> {
+        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+            return Some(whitelist_sale_info.total_claimed_amount);
+        } else {
+            return None;
+        }
+    }
+
+    default fn get_whitelist_account(&self, phase_id: u8, account_index: u64) -> Option<AccountId> {
+        self.data::<Data>().whitelist_account.get_value(phase_id, &(account_index as u128))
+    }
+
+    default fn get_whitelist_account_count(&self, phase_id: u8) -> u64 {
+        self.data::<Data>().whitelist_account.count(phase_id) as u64
+    }
+
+    default fn get_whitelist_buyer(&self, phase_id: u8, account: AccountId) -> Option<WhitelistBuyerInfo> {
+        self.data::<Data>().whitelist_buyer.get(&(&phase_id, &account))
+    }
+
     #[modifiers(only_owner)]
     default fn get_balance(&mut self) -> Result<Balance, Error> {
         Ok(Self::env().balance())
@@ -176,11 +236,45 @@ where
             // Check time condition
             let current_time = Self::env().block_timestamp();
 
-            if current_time >= phase.start_time {
+            if current_time >= phase.end_time {
                 return Err(Error::InvalidTime);
             }
 
+            if phase.is_active == is_active {
+                return Err(Error::InvalidSetActive);
+            }
+
+            if is_active {
+                // If set phase active, start_time and end_time must not overlap others. 
+                // Should use set_start_and_end_time to make sure them not overlap before using this func  
+           
+                for i in 0..self.data::<Data>().total_phase {
+                    if i != phase_id {
+                        if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                            if phase_info.is_active && 
+                                ( (phase_info.start_time <= phase.start_time && phase.start_time <= phase_info.end_time) ||
+                                (phase_info.start_time <= phase.end_time && phase.end_time <= phase_info.end_time) || 
+                                (phase.start_time <= phase_info.start_time && phase_info.start_time <= phase.end_time) ||
+                                (phase.start_time <= phase_info.end_time && phase_info.end_time <= phase.end_time)  
+                            ) {
+                                return Err(Error::InvalidStartTimeAndEndTime);
+                            }  
+                        }                     
+                    }
+                }
+
+                // Update project_start_time and project_end_time
+                if self.data::<Data>().project_start_time > phase.start_time {
+                    self.data::<Data>().project_start_time = phase.start_time; 
+                }
+
+                if self.data::<Data>().project_end_time < phase.end_time {
+                    self.data::<Data>().project_end_time = phase.end_time; 
+                }
+            }
+
             phase.is_active = is_active;
+
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
@@ -193,6 +287,57 @@ where
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             phase.name = name;
             self.data::<Data>().phase.insert(&phase_id, &phase);
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_start_and_end_time(&mut self, phase_id: u8, start_time: u64, end_time: u64) -> Result<(), Error> {
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time > end_time || start_time >= end_time || start_time == 0 {
+                return Err(Error::InvalidTime);
+            }
+
+            // Check if it is overlap
+            for i in 0..self.data::<Data>().total_phase {
+                if i != phase_id {
+                    if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                        if phase_info.is_active && 
+                            ( (phase_info.start_time <= start_time && start_time <= phase_info.end_time) ||
+                            (phase_info.start_time <= end_time && end_time <= phase_info.end_time) || 
+                            (start_time <= phase_info.start_time && phase_info.start_time <= end_time) ||
+                            (start_time <= phase_info.end_time && phase_info.end_time <= end_time)  
+                        ) {
+                            return Err(Error::InvalidTime);
+                        }  
+                    }
+                }                
+            }
+
+            // Update project_start_time and project_end_time if phase is active
+            if phase.is_active {
+                if self.data::<Data>().project_start_time > start_time {
+                    self.data::<Data>().project_start_time = start_time; 
+                }
+
+                if self.data::<Data>().project_end_time < end_time {
+                    self.data::<Data>().project_end_time = end_time; 
+                }
+            }
+
+            phase.start_time = start_time;
+            phase.end_time = end_time; 
+
+            // Update end_vesting_time
+            phase.end_vesting_time = phase.end_time.checked_add(phase.vesting_duration).ok_or(Error::CheckedOperations)?; 
+                              
+            self.data::<Data>().phase.insert(&phase_id, &phase);
+
             Ok(())
         } else {
             return Err(Error::PhaseNotExist);
@@ -274,6 +419,68 @@ where
         }
     }
 
+    #[modifiers(only_owner)]
+    default fn set_public_total_amount(&mut self, phase_id: u8, total_amount: Balance) -> Result<(), Error> {       
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.start_time {
+                return Err(Error::InvalidTime);
+            }
+
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                if total_amount == 0 {
+                    return Err(Error::InvalidTotalAmount);
+                }
+
+                public_sale_info.total_amount = total_amount;
+
+                if public_sale_info.total_amount < total_amount {
+                    return self.topup(
+                        total_amount.checked_sub(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?
+                    );
+                }
+                
+                if public_sale_info.total_amount > total_amount { // Transfer (total_out - total_in) tokens to owner
+                    let builder = Psp22Ref::transfer_builder(
+                        &self.data::<Data>().token_address,
+                        Self::env().caller(),
+                        public_sale_info.total_amount.checked_sub(total_amount).ok_or(Error::CheckedOperations)?,
+                        Vec::<u8>::new(),
+                    ).call_flags(CallFlags::default().set_allow_reentry(true));
+        
+                    let result = match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => {
+                            Err(Error::CannotTransfer)
+                        }
+                    };
+                    
+                    return result;
+                }  
+            } else {
+                return Err(Error::InvalidPhaseForPublicSale);
+            }
+
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
+    #[modifiers(only_owner)]
+    default fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error> {
+        if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            public_sale_info.price = price;
+            Ok(())
+        } else {
+            return Err(Error::InvalidPhaseForPublicSale);
+        }
+    }
     
     // Funcs
     default fn topup(&mut self, amount: Balance) -> Result<(), Error> {         
@@ -948,5 +1155,58 @@ where
         } else {
             return Err(Error::PhaseNotExist);
         }        
+    }
+
+    // Burn all public and private unsold tokens in contract 
+    #[modifiers(only_owner)]
+    default fn burn(&mut self) -> Result<(), Error> {       
+        // Check burning time
+        let current_time = Self::env().block_timestamp();
+    
+        if self.data::<Data>().project_end_time >= current_time {
+            return Err(Error::NotTimeToBurn);
+        }
+
+        // Check the unsold and burn
+        let mut total_burned: Balance = 0;
+
+        for i in 0..self.data::<Data>().total_phase {
+            // Check public sale info            
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                    total_burned = total_burned.checked_add(
+                        public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                    ).ok_or(Error::CheckedOperations)?;                   
+                    
+                    public_sale_info.total_amount = public_sale_info.total_purchased_amount;
+                    public_sale_info.is_burned = true;
+
+                    self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
+                }
+            }
+
+            // Check whitelist sale info
+            if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                    total_burned = total_burned.checked_add(
+                        whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                    ).ok_or(Error::CheckedOperations)?;                      
+                    
+                    whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
+                    whitelist_sale_info.is_burned = true;
+
+                    self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
+                }
+            }            
+        }
+
+        // Burn the unsold token
+        if total_burned > 0 {
+            if Psp22Ref::burn(&self.data::<Data>().token_address, Self::env().account_id(), total_burned).is_err() {
+                return Err(Error::CannotBurn);
+            }
+        } 
+
+        Ok(())
     }
 }

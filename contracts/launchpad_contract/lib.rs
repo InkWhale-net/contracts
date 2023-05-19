@@ -370,6 +370,8 @@ pub mod my_launchpad {
                 if let Some(phase) = self.data.phase.get(&i) {
                     if phase.is_active && ( ((phase.start_time <= *start_time) && (*start_time <= phase.end_time))
                         || ((phase.start_time <= *end_time) && (*end_time <= phase.end_time))
+                        || ((*start_time <= phase.start_time) && (phase.start_time <= *end_time))
+                        || ((*start_time <= phase.end_time) && (phase.end_time <= *end_time))
                     ) {
                         return false;
                     }

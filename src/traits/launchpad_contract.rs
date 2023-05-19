@@ -23,7 +23,10 @@ use ink::prelude::{
 
 use crate::impls::launchpad_contract::data::{
     PhaseInfo,
-    PublicSaleInfo
+    PublicSaleInfo,
+    BuyerInformation,
+    WhitelistSaleInfo,
+    WhitelistBuyerInfo
 };
 
 use crate::traits::error::Error;
@@ -97,6 +100,36 @@ pub trait LaunchpadContractTrait {
     fn get_public_sale_price(&self, phase_id: u8) -> Option<Balance>;
 
     #[ink(message)]
+    fn get_public_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance>; 
+    
+    #[ink(message)]
+    fn get_public_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance>;
+
+    #[ink(message)]
+    fn get_public_buyer(&self, phase_id: u8, account: AccountId) -> Option<BuyerInformation>;
+    
+    #[ink(message)]
+    fn get_whitelist_sale_info(&self, phase_id: u8) -> Option<WhitelistSaleInfo>;
+
+    #[ink(message)]
+    fn get_whitelist_sale_total_amount(&self, phase_id: u8) -> Option<Balance>;
+
+    #[ink(message)]
+    fn get_whitelist_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance>; 
+    
+    #[ink(message)]
+    fn get_whitelist_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance>;
+
+    #[ink(message)]
+    fn get_whitelist_account(&self, phase_id: u8, account_index: u64) -> Option<AccountId>;
+
+    #[ink(message)]
+    fn get_whitelist_account_count(&self, phase_id: u8) -> u64;
+   
+    #[ink(message)]
+    fn get_whitelist_buyer(&self, phase_id: u8, account: AccountId) -> Option<WhitelistBuyerInfo>;
+   
+    #[ink(message)]
     fn get_balance(&mut self) -> Result<Balance, Error>;
     
     // Setters
@@ -119,6 +152,9 @@ pub trait LaunchpadContractTrait {
     fn set_name(&mut self, phase_id: u8, name: String) -> Result<(), Error>;
 
     #[ink(message)]
+    fn set_start_and_end_time(&mut self, phase_id: u8, start_time: u64, end_time: u64) -> Result<(), Error>;
+        
+    #[ink(message)]
     fn set_immediate_release_rate(&mut self, phase_id: u8, immediate_release_rate: u32) -> Result<(), Error>;
 
     #[ink(message)]
@@ -127,6 +163,12 @@ pub trait LaunchpadContractTrait {
     #[ink(message)]
     fn set_vesting_unit(&mut self, phase_id: u8, vesting_unit: u64) -> Result<(), Error>;
     
+    #[ink(message)]
+    fn set_public_total_amount(&mut self, phase_id: u8, total_amount: Balance) -> Result<(), Error>;
+    
+    #[ink(message)]
+    fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error>;
+        
     // Funcs
     #[ink(message)]
     fn topup(&mut self, amount: Balance) -> Result<(), Error>;
@@ -158,4 +200,7 @@ pub trait LaunchpadContractTrait {
 
     #[ink(message)]
     fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn burn(&mut self) -> Result<(), Error>;
 }

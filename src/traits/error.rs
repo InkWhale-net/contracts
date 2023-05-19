@@ -75,7 +75,9 @@ pub enum Error {
     WhitelistSaleInfoNotExist,
     WhitelistPhaseAccountNotExist,
     InvalidPhaseForPublicSale,
-    InvalidPhaseForWhitelistSale
+    InvalidPhaseForWhitelistSale,
+    InvalidSetActive,
+    InvalidTotalAmount
 }
 
 impl From<OwnableError> for Error {

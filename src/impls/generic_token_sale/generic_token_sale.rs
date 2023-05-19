@@ -83,7 +83,7 @@ where
         // Check time condition
         let current_time = Self::env().block_timestamp();
 
-        if current_time >= self.data::<Data>().start_time || start_time >= self.data::<Data>().end_time {
+        if current_time >= self.data::<Data>().start_time || start_time >= self.data::<Data>().end_time || start_time == 0 {
             return Err(Error::InvalidTime);
         }
 

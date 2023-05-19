@@ -116,8 +116,8 @@ impl Default for Data {
             inw_contract: ZERO_ADDRESS.into(),
             tx_rate: Default::default(),
 
-            project_start_time: Default::default(),
-            project_end_time: Default::default(),
+            project_start_time: Default::default(), // Only for sale, not distribute token
+            project_end_time: Default::default(), // Only for sale, not distribute token
 
             total_phase: Default::default(),
             phase: Default::default(),
