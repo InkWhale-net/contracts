@@ -214,7 +214,7 @@ pub mod launchpad_generator {
                     contract_owner, 
                     project_info_uri,
                     token_address,
-                    self.manager.inw_contract,
+                    self.env().account_id(),
                     self.manager.tx_rate,
                     
                     phase_name,

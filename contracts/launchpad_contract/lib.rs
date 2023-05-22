@@ -143,7 +143,7 @@ pub mod my_launchpad {
             contract_owner: AccountId, 
             project_info_uri: String,
             token_address: AccountId,
-            inw_contract: AccountId,
+            generator_contract: AccountId,
             tx_rate: u32,
             
             phase_name: Vec<String>,
@@ -165,7 +165,7 @@ pub mod my_launchpad {
             match instance.create_launchpad(
                 project_info_uri,
                 token_address,
-                inw_contract,
+                generator_contract,
                 tx_rate,
                 
                 phase_name,
@@ -190,7 +190,7 @@ pub mod my_launchpad {
             &mut self, 
             project_info_uri: String,
             token_address: AccountId,
-            inw_contract: AccountId,
+            generator_contract: AccountId,
             tx_rate: u32,
             
             phase_name: Vec<String>,
@@ -207,7 +207,7 @@ pub mod my_launchpad {
             self.create_launchpad(
                 project_info_uri,
                 token_address,
-                inw_contract,
+                generator_contract,
                 tx_rate,
                 
                 phase_name,
@@ -227,7 +227,7 @@ pub mod my_launchpad {
             &mut self, 
             project_info_uri: String,
             token_address: AccountId,
-            inw_contract: AccountId,
+            generator_contract: AccountId,
             tx_rate: u32,
             
             phase_name: Vec<String>,
@@ -241,13 +241,13 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>  
         ) -> Result<(), Error> {
-            if self.data.inw_contract != ZERO_ADDRESS.into() {
+            if self.data.generator_contract != ZERO_ADDRESS.into() {
                 return Err(Error::AlreadyInit);
             }
 
             self.data.project_info_uri = project_info_uri;
             self.data.token_address = token_address;
-            self.data.inw_contract = inw_contract;
+            self.data.generator_contract = generator_contract;
             self.data.tx_rate = tx_rate;
 
             // Check length of data in phase

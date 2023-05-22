@@ -50,7 +50,7 @@ pub trait LaunchpadContractTrait {
     fn get_token_address(&self) -> AccountId;
 
     #[ink(message)]
-    fn get_inw_contract(&self) -> AccountId;
+    fn get_generator_contract(&self) -> AccountId;
 
     #[ink(message)]
     fn get_tx_rate(&self) -> u32;
@@ -140,7 +140,7 @@ pub trait LaunchpadContractTrait {
     fn set_token_address(&mut self, token_address: AccountId) -> Result<(), Error>;
     
     #[ink(message)]
-    fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>; 
+    fn set_generator_contract(&mut self, generator_contract: AccountId) -> Result<(), Error>; 
     
     #[ink(message)]
     fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error>;

@@ -77,7 +77,10 @@ pub enum Error {
     InvalidPhaseForPublicSale,
     InvalidPhaseForWhitelistSale,
     InvalidSetActive,
-    InvalidTotalAmount
+    InvalidTotalAmount,
+    CannotTransferTxFee,
+    ActiveLaunchpadStatusNotFound,
+    LaunchpadNotActive
 }
 
 impl From<OwnableError> for Error {

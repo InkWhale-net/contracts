@@ -89,7 +89,7 @@ pub struct Data {
     // Genernal info
     pub project_info_uri: String,
     pub token_address: AccountId,
-    pub inw_contract: AccountId,
+    pub generator_contract: AccountId,
     pub tx_rate: u32,
     // Project start end time will get from phases' start, end time
     pub project_start_time: u64,
@@ -113,7 +113,7 @@ impl Default for Data {
         Self {
             project_info_uri: Default::default(),
             token_address: ZERO_ADDRESS.into(),
-            inw_contract: ZERO_ADDRESS.into(),
+            generator_contract: ZERO_ADDRESS.into(),
             tx_rate: Default::default(),
 
             project_start_time: Default::default(), // Only for sale, not distribute token
