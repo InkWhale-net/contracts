@@ -1,11 +1,11 @@
 {
   "source": {
-    "hash": "0xe649b76312b6b26a3217f4c03d598db9d7f68004fc9058911e12031537745221",
+    "hash": "0x748d5c735789330b69dc1ef6a53065c846422543b2f4c16343d896b213072a8a",
     "language": "ink! 4.1.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Debug",
-      "cargo_contract_version": "2.0.0-rc",
+      "build_mode": "Release",
+      "cargo_contract_version": "2.0.2",
       "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
@@ -17,13 +17,22 @@
     "name": "token_standard",
     "version": "1.0.0",
     "authors": [
-      "Support <contact@artzero.io>"
+      "InkWhale <admin@artzero.io>"
     ]
   },
   "spec": {
     "constructors": [
       {
         "args": [
+          {
+            "label": "contract_owner",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 4
+            }
+          },
           {
             "label": "mint_to",
             "type": {
@@ -34,7 +43,7 @@
             }
           },
           {
-            "label": "total_supply",
+            "label": "cap",
             "type": {
               "displayName": [
                 "Balance"
@@ -94,9 +103,54 @@
     },
     "messages": [
       {
-        "args": [],
-        "docs": [],
-        "label": "faucet",
+        "args": [
+          {
+            "label": "to",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput1"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput2"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "data",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput3"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Transfers `value` amount of tokens from the caller's account to account `to`",
+          " with additional `data` in unspecified format.",
+          "",
+          " On success a `Transfer` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Returns `InsufficientBalance` error if there are not enough tokens on",
+          " the caller's account Balance.",
+          "",
+          " Returns `ZeroSenderAddress` error if sender's address is zero.",
+          "",
+          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
+        ],
+        "label": "PSP22::transfer",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -106,7 +160,113 @@
           ],
           "type": 8
         },
-        "selector": "0x91bd0a53"
+        "selector": "0xdb20f9f5"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "BalanceOfInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Returns the account Balance for the specified `owner`.",
+          "",
+          " Returns `0` if the account is non-existent."
+        ],
+        "label": "PSP22::balance_of",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 11
+        },
+        "selector": "0x6568382f"
+      },
+      {
+        "args": [
+          {
+            "label": "from",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferFromInput1"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "to",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferFromInput2"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferFromInput3"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "data",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferFromInput4"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Transfers `value` tokens on the behalf of `from` to the account `to`",
+          " with additional `data` in unspecified format.",
+          "",
+          " This can be used to allow a contract to transfer tokens on ones behalf and/or",
+          " to charge fees in sub-currencies, for example.",
+          "",
+          " On success a `Transfer` and `Approval` events are emitted.",
+          "",
+          " # Errors",
+          "",
+          " Returns `InsufficientAllowance` error if there are not enough tokens allowed",
+          " for the caller to withdraw from `from`.",
+          "",
+          " Returns `InsufficientBalance` error if there are not enough tokens on",
+          " the the account Balance of `from`.",
+          "",
+          " Returns `ZeroSenderAddress` error if sender's address is zero.",
+          "",
+          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
+        ],
+        "label": "PSP22::transfer_from",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x54b3c76e"
       },
       {
         "args": [
@@ -147,23 +307,6 @@
           "type": 11
         },
         "selector": "0x4d47d921"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Returns the total token supply."
-        ],
-        "label": "PSP22::total_supply",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 11
-        },
-        "selector": "0x162df8c2"
       },
       {
         "args": [
@@ -261,24 +404,11 @@
         "selector": "0xfecb57d5"
       },
       {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "BalanceOfInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
+        "args": [],
         "docs": [
-          " Returns the account Balance for the specified `owner`.",
-          "",
-          " Returns `0` if the account is non-existent."
+          " Returns the total token supply."
         ],
-        "label": "PSP22::balance_of",
+        "label": "PSP22::total_supply",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -288,7 +418,7 @@
           ],
           "type": 11
         },
-        "selector": "0x6568382f"
+        "selector": "0x162df8c2"
       },
       {
         "args": [
@@ -338,142 +468,6 @@
           "type": 8
         },
         "selector": "0xb20f1bbd"
-      },
-      {
-        "args": [
-          {
-            "label": "from",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferFromInput1"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "to",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferFromInput2"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferFromInput3"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "data",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferFromInput4"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [
-          " Transfers `value` tokens on the behalf of `from` to the account `to`",
-          " with additional `data` in unspecified format.",
-          "",
-          " This can be used to allow a contract to transfer tokens on ones behalf and/or",
-          " to charge fees in sub-currencies, for example.",
-          "",
-          " On success a `Transfer` and `Approval` events are emitted.",
-          "",
-          " # Errors",
-          "",
-          " Returns `InsufficientAllowance` error if there are not enough tokens allowed",
-          " for the caller to withdraw from `from`.",
-          "",
-          " Returns `InsufficientBalance` error if there are not enough tokens on",
-          " the the account Balance of `from`.",
-          "",
-          " Returns `ZeroSenderAddress` error if sender's address is zero.",
-          "",
-          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
-        ],
-        "label": "PSP22::transfer_from",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x54b3c76e"
-      },
-      {
-        "args": [
-          {
-            "label": "to",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput1"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput2"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "data",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput3"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [
-          " Transfers `value` amount of tokens from the caller's account to account `to`",
-          " with additional `data` in unspecified format.",
-          "",
-          " On success a `Transfer` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Returns `InsufficientBalance` error if there are not enough tokens on",
-          " the caller's account Balance.",
-          "",
-          " Returns `ZeroSenderAddress` error if sender's address is zero.",
-          "",
-          " Returns `ZeroRecipientAddress` error if recipient's address is zero."
-        ],
-        "label": "PSP22::transfer",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0xdb20f9f5"
       },
       {
         "args": [],
@@ -544,6 +538,50 @@
         "selector": "0xf40366b4"
       },
       {
+        "args": [],
+        "docs": [
+          " Returns the address of the current owner."
+        ],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 15
+        },
+        "selector": "0x4fa43c8c"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Leaves the contract without owner. It will not be possible to call",
+          " owner's functions anymore. Can only be called by the current owner.",
+          "",
+          " NOTE: Renouncing ownership will leave the contract without an owner,",
+          " thereby removing any functionality that is only available to the owner.",
+          "",
+          " On success a `OwnershipTransferred` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Panics with `CallerIsNotOwner` error if caller is not owner"
+        ],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0x5e228753"
+      },
+      {
         "args": [
           {
             "label": "new_owner",
@@ -576,53 +614,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 16
         },
         "selector": "0x11f43efd"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Leaves the contract without owner. It will not be possible to call",
-          " owner's functions anymore. Can only be called by the current owner.",
-          "",
-          " NOTE: Renouncing ownership will leave the contract without an owner,",
-          " thereby removing any functionality that is only available to the owner.",
-          "",
-          " On success a `OwnershipTransferred` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Panics with `CallerIsNotOwner` error if caller is not owner"
-        ],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 15
-        },
-        "selector": "0x5e228753"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Returns the address of the current owner."
-        ],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x4fa43c8c"
       },
       {
         "args": [
@@ -711,6 +705,23 @@
         "selector": "0x07573e99"
       },
       {
+        "args": [],
+        "docs": [
+          " Get Azero balance"
+        ],
+        "label": "AdminTrait::get_balance",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0xc4360570"
+      },
+      {
         "args": [
           {
             "label": "account",
@@ -745,42 +756,6 @@
           "type": 8
         },
         "selector": "0x7a9da510"
-      },
-      {
-        "args": [
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "psp22mintable_external",
-                "MintInput1"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "psp22mintable_external",
-                "MintInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [],
-        "label": "PSP22Mintable::mint",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0xfc3c75d4"
       }
     ]
   },
@@ -1546,116 +1521,6 @@
               {
                 "fields": [
                   {
-                    "type": 16
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 7
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 16
-          },
-          {
-            "name": "E",
-            "type": 7
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 16,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 1
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 1
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 17,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "CallerIsNotOwner"
-              },
-              {
-                "index": 1,
-                "name": "NewOwnerIsZero"
-              }
-            ]
-          }
-        },
-        "path": [
-          "openbrush_contracts",
-          "traits",
-          "errors",
-          "ownable",
-          "OwnableError"
-        ]
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
                     "type": 4
                   }
                 ],
@@ -1686,6 +1551,116 @@
         ],
         "path": [
           "Result"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 17
+          },
+          {
+            "name": "E",
+            "type": 7
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 1
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 1
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "CallerIsNotOwner"
+              },
+              {
+                "index": 1,
+                "name": "NewOwnerIsZero"
+              }
+            ]
+          }
+        },
+        "path": [
+          "openbrush_contracts",
+          "traits",
+          "errors",
+          "ownable",
+          "OwnableError"
         ]
       }
     },
@@ -1792,7 +1767,7 @@
               {
                 "fields": [
                   {
-                    "type": 17,
+                    "type": 18,
                     "typeName": "OwnableError"
                   }
                 ],
@@ -1824,6 +1799,242 @@
               {
                 "index": 6,
                 "name": "CannotTransfer"
+              },
+              {
+                "index": 7,
+                "name": "CannotBurn"
+              },
+              {
+                "index": 8,
+                "name": "CheckedOperations"
+              },
+              {
+                "index": 9,
+                "name": "InvalidBalanceAndAllowance"
+              },
+              {
+                "index": 10,
+                "name": "AlreadyInit"
+              },
+              {
+                "index": 11,
+                "name": "InvalidBuyAmount"
+              },
+              {
+                "index": 12,
+                "name": "InvalidTransferAmount"
+              },
+              {
+                "index": 13,
+                "name": "CannotCreatePool"
+              },
+              {
+                "index": 14,
+                "name": "NotTimeToStake"
+              },
+              {
+                "index": 15,
+                "name": "NoStakerFound"
+              },
+              {
+                "index": 16,
+                "name": "InvalidUnstakedAmount"
+              },
+              {
+                "index": 17,
+                "name": "NotEnoughReward"
+              },
+              {
+                "index": 18,
+                "name": "NotTokenOwner"
+              },
+              {
+                "index": 19,
+                "name": "AllowanceNotSet"
+              },
+              {
+                "index": 20,
+                "name": "TokenNotFound"
+              },
+              {
+                "index": 21,
+                "name": "UserNotStake"
+              },
+              {
+                "index": 22,
+                "name": "NoTokenOwner"
+              },
+              {
+                "index": 23,
+                "name": "ExceedTotalStakingAmount"
+              },
+              {
+                "index": 24,
+                "name": "NoClaimAmount"
+              },
+              {
+                "index": 25,
+                "name": "NotTimeToWithdraw"
+              },
+              {
+                "index": 26,
+                "name": "NotEnoughRewardToWithdraw"
+              },
+              {
+                "index": 27,
+                "name": "NotTopupEnoughReward"
+              },
+              {
+                "index": 28,
+                "name": "NoAmount"
+              },
+              {
+                "index": 29,
+                "name": "InvalidTokenBalanceAndAllowance"
+              },
+              {
+                "index": 30,
+                "name": "CannotApprove"
+              },
+              {
+                "index": 31,
+                "name": "CannotTopupRewardPool"
+              },
+              {
+                "index": 32,
+                "name": "NotTimeToPurchase"
+              },
+              {
+                "index": 33,
+                "name": "NotTimeToClaim"
+              },
+              {
+                "index": 34,
+                "name": "NotTimeToBurn"
+              },
+              {
+                "index": 35,
+                "name": "NoTokenPurchased"
+              },
+              {
+                "index": 36,
+                "name": "AlreadyBurnt"
+              },
+              {
+                "index": 37,
+                "name": "InvalidTime"
+              },
+              {
+                "index": 38,
+                "name": "InvalidPercentage"
+              },
+              {
+                "index": 39,
+                "name": "InvalidDuration"
+              },
+              {
+                "index": 40,
+                "name": "InvalidTopupAmount"
+              },
+              {
+                "index": 41,
+                "name": "LaunchpadNotExist"
+              },
+              {
+                "index": 42,
+                "name": "InvalidIsActiveInput"
+              },
+              {
+                "index": 43,
+                "name": "InvalidCreationFee"
+              },
+              {
+                "index": 44,
+                "name": "InvalidPhaseData"
+              },
+              {
+                "index": 45,
+                "name": "CannotTopupToken"
+              },
+              {
+                "index": 46,
+                "name": "InvalidStartTimeAndEndTime"
+              },
+              {
+                "index": 47,
+                "name": "InvalidPhaseCount"
+              },
+              {
+                "index": 48,
+                "name": "InvalidMaxStakingAmount"
+              },
+              {
+                "index": 49,
+                "name": "InvalidApy"
+              },
+              {
+                "index": 50,
+                "name": "InvalidMultiplier"
+              },
+              {
+                "index": 51,
+                "name": "InvalidWhitelistData"
+              },
+              {
+                "index": 52,
+                "name": "PhaseNotExist"
+              },
+              {
+                "index": 53,
+                "name": "PhaseNotActive"
+              },
+              {
+                "index": 54,
+                "name": "WhitelistBuyerInfoNotExist"
+              },
+              {
+                "index": 55,
+                "name": "WhitelistBuyerInfoExist"
+              },
+              {
+                "index": 56,
+                "name": "WhitelistBuyerPurchased"
+              },
+              {
+                "index": 57,
+                "name": "WhitelistSaleInfoNotExist"
+              },
+              {
+                "index": 58,
+                "name": "WhitelistPhaseAccountNotExist"
+              },
+              {
+                "index": 59,
+                "name": "InvalidPhaseForPublicSale"
+              },
+              {
+                "index": 60,
+                "name": "InvalidPhaseForWhitelistSale"
+              },
+              {
+                "index": 61,
+                "name": "InvalidSetActive"
+              },
+              {
+                "index": 62,
+                "name": "InvalidTotalAmount"
+              },
+              {
+                "index": 63,
+                "name": "CannotTransferTxFee"
+              },
+              {
+                "index": 64,
+                "name": "ActiveLaunchpadStatusNotFound"
+              },
+              {
+                "index": 65,
+                "name": "LaunchpadNotActive"
               }
             ]
           }
@@ -1842,6 +2053,90 @@
         "def": {
           "primitive": "str"
         }
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 24
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 24
+          },
+          {
+            "name": "E",
+            "type": 7
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 21
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 21
+          }
+        ],
+        "path": [
+          "Result"
+        ]
       }
     }
   ],
