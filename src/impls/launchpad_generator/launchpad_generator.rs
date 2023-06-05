@@ -14,19 +14,36 @@ use ink::prelude::{
     vec::Vec
 };
 
+use ink::storage::traits::{
+    AutoStorableHint,
+    ManualKey,
+    Storable,
+    StorableHint,
+};
+
 use openbrush::{
     modifiers,
-    contracts::ownable::*,
+    contracts::{
+        ownable::*,
+        access_control::*,
+    },
     traits::{
         Storage,
         Balance,
         AccountId,
-        Hash
+        Hash,
+        OccupiedStorage
     }
 };
 
-impl<T> LaunchpadGeneratorTrait for T 
+impl<T, M> LaunchpadGeneratorTrait for T 
 where 
+    M: members::MembersManager,
+    M: Storable
+        + StorableHint<ManualKey<{ access_control::STORAGE_KEY }>>
+        + AutoStorableHint<ManualKey<3218979580, ManualKey<{ access_control::STORAGE_KEY }>>, Type = M>,
+    T: Storage<access_control::Data<M>>,
+    T: OccupiedStorage<{ access_control::STORAGE_KEY }, WithData = access_control::Data<M>>,
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {
@@ -82,19 +99,19 @@ where
         Ok(())
     }
     
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error> {
         self.data::<Data>().creation_fee = creation_fee;
         Ok(()) 
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error> {
         self.data::<Data>().tx_rate = tx_rate;
         Ok(()) 
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_is_active_launchpad(&mut self, address: AccountId, is_active: bool) -> Result<(), Error> {
         if let Some(current_is_active) = self.data::<Data>().is_active_launchpad.get(&address) {
             if is_active == current_is_active {

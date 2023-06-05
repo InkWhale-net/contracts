@@ -18,6 +18,7 @@ pub mod launchpad_generator {
     use openbrush::{
         contracts::{
             ownable::*,
+            access_control::extensions::enumerable::*,
         },
         modifiers,
         traits::{
@@ -45,7 +46,9 @@ pub mod launchpad_generator {
         #[storage_field]
         admin_data: admin::data::Data,
         #[storage_field]
-        upgradeable_data: upgradeable::data::Data
+        upgradeable_data: upgradeable::data::Data,
+        #[storage_field]
+        access: access_control::Data<enumerable::Members>,
     }
 
     // #[ink(event)]
@@ -58,19 +61,23 @@ pub mod launchpad_generator {
     impl LaunchpadGeneratorTrait for LaunchpadGenerator {}
     impl AdminTrait for LaunchpadGenerator {}
     impl UpgradeableTrait for LaunchpadGenerator {}
+    impl AccessControl for LaunchpadGenerator {}
+    impl AccessControlEnumerable for LaunchpadGenerator {}
 
     impl LaunchpadGenerator {
         #[ink(constructor)]
-        pub fn new(launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32, owner_address: AccountId) -> Result<Self, Error> {
+        pub fn new(launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32, admin_address: AccountId) -> Result<Self, Error> {
             let mut instance = Self::default();
+            let caller = Self::env().caller();
 
-            instance._init_with_owner(owner_address);
+            instance._init_with_owner(caller);
 
             match instance.initialize(
                 launchpad_hash,
                 inw_contract,
                 creation_fee,
-                tx_rate
+                tx_rate,
+                admin_address
             ) {
                 Ok(()) => Ok(instance),
                 Err(e) => Err(e),
@@ -79,7 +86,7 @@ pub mod launchpad_generator {
 
         #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(&mut self, launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32) -> Result<(), Error> {
+        pub fn initialize(&mut self, launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32, admin_address: AccountId) -> Result<(), Error> {
             if self.manager.creation_fee > 0 {
                 return Err(Error::AlreadyInit);
             }
@@ -94,13 +101,15 @@ pub mod launchpad_generator {
 
             self.manager.tx_rate = tx_rate;
 
+            self.grant_role(ADMINER, self.env().caller()).expect("Should grant ADMINER role");
+            self.grant_role(ADMINER, admin_address).expect("Should grant ADMINER role");
+
             Ok(())
         }
 
         #[ink(message)]
         pub fn new_launchpad(
             &mut self,
-            contract_owner: AccountId,
             project_info_uri: String,
             token_address: AccountId,
             
@@ -211,7 +220,7 @@ pub mod launchpad_generator {
             
             if let Result::Ok(contract) = 
                 MyLaunchpadRef::new(
-                    contract_owner, 
+                    caller, 
                     project_info_uri,
                     token_address,
                     self.env().account_id(),
@@ -232,25 +241,24 @@ pub mod launchpad_generator {
                 .salt_bytes(self.manager.launchpad_count.to_le_bytes())
                 .instantiate() {
                 
-                // Record launchpad contract address
+                // Save launchpad contract address
                 let contract_account: AccountId = contract.to_account_id();              
 
                 self.manager.launchpad_count = self.manager.launchpad_count.checked_add(1).ok_or(Error::CheckedOperations)?;
-                self.manager.launchpad_by_id.insert(&self.manager.launchpad_count, &contract_account);
+                self.manager.launchpad_by_id.insert(&self.manager.launchpad_count, &contract_account); // Start from 1
 
-                let launchpad_by_owner = self.manager.launchpad_by_owner.get(&contract_owner);
+                let launchpad_by_owner = self.manager.launchpad_by_owner.get(&caller);
 
                 if let Some(mut launchpad) = launchpad_by_owner {
                     launchpad.push(contract_account);
-                    self.manager.launchpad_by_owner.insert(&contract_owner, &launchpad);
+                    self.manager.launchpad_by_owner.insert(&caller, &launchpad);
                 } else {
                     let launchpad = vec![contract_account];
-                    self.manager.launchpad_by_owner.insert(&contract_owner, &launchpad);                    
+                    self.manager.launchpad_by_owner.insert(&caller, &launchpad);                    
                 }
                                 
-                // Default is the active launchpad
-                self.manager.is_active_launchpad.insert(&contract_account, &true);
-                self.manager.active_launchpad_count = self.manager.active_launchpad_count.checked_add(1).ok_or(Error::CheckedOperations)?;
+                // Default is the deactive launchpad
+                self.manager.is_active_launchpad.insert(&contract_account, &false);
                 
                 // Burn creation fee
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_err() {

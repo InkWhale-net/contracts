@@ -16,19 +16,36 @@ use ink::prelude::{
     vec::Vec
 };
 
+use ink::storage::traits::{
+    AutoStorableHint,
+    ManualKey,
+    Storable,
+    StorableHint,
+};
+
 use ink::env::CallFlags;
 use openbrush::{
     modifiers,
-    contracts::ownable::*,
+    contracts::{
+        ownable::*,
+        access_control::*,
+    },
     traits::{
         Storage,
         Balance,
-        AccountId
+        AccountId,
+        OccupiedStorage
     }
 };
 
-impl<T> LaunchpadContractTrait for T 
+impl<T, M> LaunchpadContractTrait for T 
 where 
+    M: members::MembersManager,
+    M: Storable
+        + StorableHint<ManualKey<{ access_control::STORAGE_KEY }>>
+        + AutoStorableHint<ManualKey<3218979580, ManualKey<{ access_control::STORAGE_KEY }>>, Type = M>,
+    T: Storage<access_control::Data<M>>,
+    T: OccupiedStorage<{ access_control::STORAGE_KEY }, WithData = access_control::Data<M>>,
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {
@@ -207,7 +224,7 @@ where
     }
 
     // Setters
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_project_info_uri(&mut self, project_info_uri: String) -> Result<(), Error> {
         self.data::<Data>().project_info_uri = project_info_uri;
         Ok(())
@@ -225,13 +242,13 @@ where
         Ok(())
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error> {
         self.data::<Data>().tx_rate = tx_rate;
         Ok(())
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_is_active(&mut self, phase_id: u8, is_active: bool) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -283,7 +300,7 @@ where
         }
     }
     
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_name(&mut self, phase_id: u8, name: String) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             phase.name = name;
@@ -294,7 +311,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_start_and_end_time(&mut self, phase_id: u8, start_time: u64, end_time: u64) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -345,7 +362,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_immediate_release_rate(&mut self, phase_id: u8, immediate_release_rate: u32) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -367,7 +384,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_vesting_duration(&mut self, phase_id: u8, vesting_duration: u64) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -392,7 +409,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_vesting_unit(&mut self, phase_id: u8, vesting_unit: u64) -> Result<(), Error> {
         if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -420,7 +437,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_public_total_amount(&mut self, phase_id: u8, total_amount: Balance) -> Result<(), Error> {       
         if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
             // Check time condition
@@ -473,7 +490,7 @@ where
         }
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error> {
         if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
             public_sale_info.price = price;
@@ -523,7 +540,7 @@ where
         }  
     } 
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn add_multi_whitelists(
         &mut self,
         phase_id: u8,
@@ -590,7 +607,7 @@ where
         }        
     }
 
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(ADMINER))]
     default fn update_multi_whitelists(
         &mut self,
         phase_id: u8,

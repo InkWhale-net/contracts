@@ -9,7 +9,8 @@ use openbrush::{
         TypeGuard,
         MultiMapping,
         ValueGuard
-    }
+    },
+    contracts::access_control::*,
 };
 
 use ink::prelude::{
@@ -81,6 +82,9 @@ pub struct WhitelistBuyerInfo {
     pub claimed_amount: Balance,
     pub last_updated_time: u64
 }
+
+// ADMINER RoleType = 3739740293
+pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
 pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]

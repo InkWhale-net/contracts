@@ -1,5 +1,8 @@
 use openbrush::{
-    contracts::ownable::*
+    contracts::{
+        ownable::*,
+        access_control::*,
+    }
 };
 use ink::prelude::{
     string::String,
@@ -7,7 +10,8 @@ use ink::prelude::{
 
 use openbrush::{
     contracts::traits::{
-        psp22::PSP22Error
+        psp22::PSP22Error,
+        psp34::PSP34Error,
     }
 };
 
@@ -17,7 +21,9 @@ use openbrush::{
 pub enum Error {
     Custom(String),
     OwnableError(OwnableError),
+    AccessControlError(AccessControlError),
     PSP22Error(PSP22Error),
+    PSP34Error(PSP34Error),
     NotEnoughBalance,
     WithdrawFeeError,
     NotCallable,
@@ -89,8 +95,20 @@ impl From<OwnableError> for Error {
     }
 }
 
+impl From<AccessControlError> for Error {
+    fn from(access: AccessControlError) -> Self {
+        Error::AccessControlError(access)
+    }
+}
+
 impl From<PSP22Error> for Error {
     fn from(error: PSP22Error) -> Self {
         Error::PSP22Error(error)
+    }
+}
+
+impl From<PSP34Error> for Error {
+    fn from(error: PSP34Error) -> Self {
+        Error::PSP34Error(error)
     }
 }

@@ -7,15 +7,18 @@ use openbrush::{
     },
     storage::{
         Mapping
-    }
+    },
+    contracts::access_control::*,
 };
 
 use ink::prelude::{
     vec::Vec
 };
 
-pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
+// ADMINER RoleType = 3739740293
+pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
+pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]
 #[openbrush::upgradeable_storage(STORAGE_KEY)]
 pub struct Data {

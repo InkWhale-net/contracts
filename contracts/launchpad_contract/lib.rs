@@ -21,6 +21,7 @@ pub mod my_launchpad {
     use openbrush::{
         contracts::{
             ownable::*,
+            access_control::extensions::enumerable::*,
         },
         traits::{
             Storage,
@@ -47,7 +48,9 @@ pub mod my_launchpad {
         #[storage_field]
         data: launchpad_contract::data::Data,
         #[storage_field]
-        upgradeable_data: upgradeable::data::Data
+        upgradeable_data: upgradeable::data::Data,
+        #[storage_field]
+        access: access_control::Data<enumerable::Members>,
     }
 
     #[ink(event)]
@@ -136,6 +139,8 @@ pub mod my_launchpad {
     }
 
     impl UpgradeableTrait for MyLaunchpad {}
+    impl AccessControl for MyLaunchpad {}
+    impl AccessControlEnumerable for MyLaunchpad {}
 
     impl MyLaunchpad {
         #[ink(constructor)]
@@ -161,6 +166,7 @@ pub mod my_launchpad {
             let mut instance = Self::default();
 
             instance._init_with_owner(contract_owner);
+            instance.grant_role(ADMINER, contract_owner).expect("Should grant ADMINER role");
 
             match instance.create_launchpad(
                 project_info_uri,
@@ -204,6 +210,8 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>  
         ) -> Result<(), Error> {
+            self.grant_role(ADMINER, self.env().caller()).expect("Should grant ADMINER role");
+
             self.create_launchpad(
                 project_info_uri,
                 token_address,

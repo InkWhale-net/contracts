@@ -11,7 +11,7 @@ scale-info = { version = "2.3", default-features = false, features = ["derive"],
 
 # These dependencies
 inkwhale_project = { path = "../..", default-features = false }
-openbrush = { git = "https://github.com/727-Ventures/openbrush-contracts", version = "~3.0.0", default-features = false, features = ["ownable"] }
+openbrush = { git = "https://github.com/727-Ventures/openbrush-contracts", version = "~3.0.0", default-features = false, features = ["ownable", "access_control"] }
 
 [lib]
 name = "my_launchpad"
