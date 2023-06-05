@@ -45,7 +45,8 @@ pub struct PublicSaleInfo {
     pub price: Balance, 
     pub total_purchased_amount: Balance,
     pub total_claimed_amount: Balance,
-    pub is_burned: bool
+    pub is_burned: bool,
+    pub is_withdrawn: bool
 }
 
 #[derive(
@@ -67,7 +68,8 @@ pub struct WhitelistSaleInfo {
     pub total_amount: Balance, 
     pub total_purchased_amount: Balance,
     pub total_claimed_amount: Balance,
-    pub is_burned: bool
+    pub is_burned: bool,
+    pub is_withdrawn: bool
 }
 
 #[derive(

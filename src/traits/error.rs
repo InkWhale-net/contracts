@@ -86,7 +86,8 @@ pub enum Error {
     InvalidTotalAmount,
     CannotTransferTxFee,
     ActiveLaunchpadStatusNotFound,
-    LaunchpadNotActive
+    LaunchpadNotActive,
+    InvalidCaller
 }
 
 impl From<OwnableError> for Error {

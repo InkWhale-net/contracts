@@ -202,5 +202,11 @@ pub trait LaunchpadContractTrait {
     fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error>;
 
     #[ink(message)]
-    fn burn(&mut self) -> Result<(), Error>;
+    fn burn_unsold_tokens(&mut self) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn withdraw_unsold_tokens(&mut self, receiver: AccountId) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn withdraw(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error>;
 }

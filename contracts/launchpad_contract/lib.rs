@@ -310,6 +310,10 @@ pub mod my_launchpad {
             public_amount: Balance,
             public_price: Balance  
         ) -> Result<(), Error> {
+            if !self.has_role(ADMINER, self.env().caller()) && self.env().caller() != self.data.generator_contract {
+                return Err(Error::InvalidCaller);
+            }
+
             if !self.validate_phase_schedule(&start_time, &end_time) {
                 return Err(Error::InvalidStartTimeAndEndTime);
             }
@@ -358,7 +362,8 @@ pub mod my_launchpad {
                     price: public_price,
                     total_purchased_amount: 0,
                     total_claimed_amount: 0,
-                    is_burned: false
+                    is_burned: false,
+                    is_withdrawn: false
                 };
 
                 self.data.public_sale_info.insert(&self.data.total_phase, &pulic_sale);

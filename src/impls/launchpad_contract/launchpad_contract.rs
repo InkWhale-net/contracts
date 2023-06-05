@@ -593,7 +593,8 @@ where
                     total_amount,
                     total_purchased_amount: 0,
                     total_claimed_amount: 0,
-                    is_burned: false
+                    is_burned: false,
+                    is_withdrawn: false
                 };
 
                 self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
@@ -1231,7 +1232,7 @@ where
 
     // Burn all public and private unsold tokens in contract 
     #[modifiers(only_owner)]
-    default fn burn(&mut self) -> Result<(), Error> {       
+    default fn burn_unsold_tokens(&mut self) -> Result<(), Error> {       
         // Check burning time
         let current_time = Self::env().block_timestamp();
     
@@ -1279,6 +1280,93 @@ where
             }
         } 
 
+        Ok(())
+    }
+
+    // Withdraw all public and private unsold tokens in contract 
+    #[modifiers(only_owner)]
+    default fn withdraw_unsold_tokens(&mut self, receiver: AccountId) -> Result<(), Error> {       
+        // Check withdrawing time
+        let current_time = Self::env().block_timestamp();
+    
+        if self.data::<Data>().project_end_time >= current_time {
+            return Err(Error::NotTimeToWithdraw);
+        }
+
+        // Check the unsold and withdraw
+        let mut total_withdraw: Balance = 0;
+
+        for i in 0..self.data::<Data>().total_phase {
+            // Check public sale info            
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                    total_withdraw = total_withdraw.checked_add(
+                        public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                    ).ok_or(Error::CheckedOperations)?;                   
+                    
+                    public_sale_info.total_amount = public_sale_info.total_purchased_amount;
+                    public_sale_info.is_withdrawn = true;
+
+                    self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
+                }
+            }
+
+            // Check whitelist sale info
+            if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                    total_withdraw = total_withdraw.checked_add(
+                        whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                    ).ok_or(Error::CheckedOperations)?;                      
+                    
+                    whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
+                    whitelist_sale_info.is_withdrawn = true;
+
+                    self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
+                }
+            }            
+        }
+
+        // Withdraw the unsold token
+        if total_withdraw > 0 {
+            let builder = Psp22Ref::transfer_builder(
+                &self.data::<Data>().token_address,
+                receiver,
+                total_withdraw,
+                Vec::<u8>::new()
+            )
+            .call_flags(CallFlags::default().set_allow_reentry(true));
+    
+            let result = match builder.try_invoke() {
+                Ok(Ok(Ok(_))) => Ok(()),
+                Ok(Ok(Err(e))) => Err(e.into()),
+                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                Err(ink::env::Error::NotCallable) => Ok(()),
+                _ => {
+                    Err(Error::CannotTransfer)
+                }
+            };
+    
+            return result;
+        } 
+
+        Ok(())
+    }
+
+    #[modifiers(only_owner)]
+    default fn withdraw(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
+        // Check withdrawing time
+        let current_time = Self::env().block_timestamp();
+    
+        if self.data::<Data>().project_end_time >= current_time {
+            return Err(Error::NotTimeToWithdraw);
+        }
+        
+        if value > T::env().balance() {
+            return Err(Error::NotEnoughBalance);
+        }
+        if T::env().transfer(receiver, value).is_err() {
+            return Err(Error::WithdrawFeeError);
+        }
         Ok(())
     }
 }
