@@ -257,7 +257,7 @@ pub mod launchpad_generator {
                     self.manager.launchpad_by_owner.insert(&caller, &launchpad);                    
                 }
                                 
-                // Default is the deactive launchpad
+                // Default is the inactive launchpad
                 self.manager.is_active_launchpad.insert(&contract_account, &false);
                 
                 // Burn creation fee

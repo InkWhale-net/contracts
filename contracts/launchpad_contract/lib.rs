@@ -375,7 +375,9 @@ pub mod my_launchpad {
         }
 
         fn validate_phase_schedule(&self, start_time: &u64, end_time: &u64) -> bool {
-            if *start_time >= *end_time || *start_time == 0 {
+            let current_time = self.env().block_timestamp();
+
+            if *start_time >= *end_time || *end_time < current_time || *start_time == 0 {
                 return false;
             }
 

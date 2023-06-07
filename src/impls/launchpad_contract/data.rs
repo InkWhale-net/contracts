@@ -103,7 +103,7 @@ pub struct Data {
     // Phase info
     pub total_phase: u8,
     pub phase: Mapping<u8, PhaseInfo>,
-    // Phase sale
+    // Public sale
     pub public_sale_info: Mapping<u8, PublicSaleInfo>,
     pub public_buyer: Mapping<(u8, AccountId), BuyerInformation, PublicBuyerKey>,
     // Whitelist sale

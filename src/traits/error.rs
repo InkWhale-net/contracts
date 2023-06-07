@@ -80,14 +80,14 @@ pub enum Error {
     WhitelistBuyerPurchased,
     WhitelistSaleInfoNotExist,
     WhitelistPhaseAccountNotExist,
-    InvalidPhaseForPublicSale,
-    InvalidPhaseForWhitelistSale,
+    PublicSaleInfoNotExist,
     InvalidSetActive,
     InvalidTotalAmount,
     CannotTransferTxFee,
     ActiveLaunchpadStatusNotFound,
     LaunchpadNotActive,
-    InvalidCaller
+    InvalidCaller,
+    NoPhaseActive
 }
 
 impl From<OwnableError> for Error {

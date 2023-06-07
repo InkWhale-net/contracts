@@ -101,6 +101,10 @@ where
     
     #[modifiers(only_role(ADMINER))]
     default fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error> {
+        if creation_fee == 0 {
+            return Err(Error::InvalidCreationFee);
+        }
+        
         self.data::<Data>().creation_fee = creation_fee;
         Ok(()) 
     }

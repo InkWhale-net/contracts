@@ -289,6 +289,45 @@ where
                 if self.data::<Data>().project_end_time < phase.end_time {
                     self.data::<Data>().project_end_time = phase.end_time; 
                 }
+            } else {
+                // Update project_start_time and project_end_time
+                if self.data::<Data>().project_start_time == phase.start_time {
+                    let mut project_start_time = 0;
+                    for i in 0..self.data::<Data>().total_phase {
+                        if i != phase_id {
+                            if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                                if phase_info.is_active && (project_start_time > phase_info.start_time || project_start_time == 0) {
+                                    project_start_time = phase_info.start_time;
+                                }
+                            }  
+                        }
+                    }
+                    
+                    if project_start_time == 0 {
+                        return Err(Error::NoPhaseActive);
+                    }
+                        
+                    self.data::<Data>().project_start_time = project_start_time;
+                }
+
+                if self.data::<Data>().project_end_time == phase.end_time {
+                    let mut project_end_time = 0;
+                    for i in 0..self.data::<Data>().total_phase {
+                        if i != phase_id {
+                            if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                                if phase_info.is_active && (project_end_time < phase_info.end_time) {
+                                    project_end_time = phase_info.end_time;
+                                }
+                            }  
+                        }
+                    }
+
+                    if project_end_time == 0 {
+                        return Err(Error::NoPhaseActive);
+                    }    
+                    
+                    self.data::<Data>().project_end_time = project_end_time;
+                }
             }
 
             phase.is_active = is_active;
@@ -321,7 +360,7 @@ where
                 return Err(Error::InvalidTime);
             }
 
-            // Check if it is overlap
+            // Check if it is overlapped
             for i in 0..self.data::<Data>().total_phase {
                 if i != phase_id {
                     if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
@@ -452,19 +491,21 @@ where
                     return Err(Error::InvalidTotalAmount);
                 }
 
+                let current_total_amount = public_sale_info.total_amount;
                 public_sale_info.total_amount = total_amount;
 
-                if public_sale_info.total_amount < total_amount {
+                if current_total_amount < total_amount {
+                    // Note: Need to approve >= current_total_amount before calling topup func
                     return self.topup(
-                        total_amount.checked_sub(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?
-                    );
+                        total_amount.checked_sub(current_total_amount).ok_or(Error::CheckedOperations)?
+                    );                    
                 }
                 
-                if public_sale_info.total_amount > total_amount { // Transfer (total_out - total_in) tokens to owner
+                if current_total_amount > total_amount { // Transfer (total_out - total_in) tokens to owner
                     let builder = Psp22Ref::transfer_builder(
                         &self.data::<Data>().token_address,
                         Self::env().caller(),
-                        public_sale_info.total_amount.checked_sub(total_amount).ok_or(Error::CheckedOperations)?,
+                        current_total_amount.checked_sub(total_amount).ok_or(Error::CheckedOperations)?,
                         Vec::<u8>::new(),
                     ).call_flags(CallFlags::default().set_allow_reentry(true));
         
@@ -477,11 +518,11 @@ where
                             Err(Error::CannotTransfer)
                         }
                     };
-                    
+                   
                     return result;
                 }  
             } else {
-                return Err(Error::InvalidPhaseForPublicSale);
+                return Err(Error::PublicSaleInfoNotExist);
             }
 
             Ok(())
@@ -496,11 +537,13 @@ where
             public_sale_info.price = price;
             Ok(())
         } else {
-            return Err(Error::InvalidPhaseForPublicSale);
+            return Err(Error::PublicSaleInfoNotExist);
         }
     }
     
     // Funcs
+    
+    // Note: Need to approve >= amount before calling topup func
     default fn topup(&mut self, amount: Balance) -> Result<(), Error> {         
         let caller = Self::env().caller();
 
@@ -837,7 +880,7 @@ where
 
                     Ok(())
                 } else {
-                    return Err(Error::InvalidPhaseForPublicSale);
+                    return Err(Error::PublicSaleInfoNotExist);
                 }
             } else {
                 return Err(Error::PhaseNotExist);
@@ -949,7 +992,7 @@ where
                             public_sale_info.total_claimed_amount = public_sale_info.total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
                             self.data::<Data>().public_sale_info.insert(&phase_id, &public_sale_info);
                         } else {
-                            return Err(Error::InvalidPhaseForPublicSale);
+                            return Err(Error::PublicSaleInfoNotExist);
                         }
                         
                         let token_address = self.data::<Data>().token_address.clone();
@@ -1074,7 +1117,7 @@ where
                         whitelist_sale_info.total_claimed_amount = whitelist_sale_info.total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
                         self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
                     } else {
-                        return Err(Error::InvalidPhaseForWhitelistSale);
+                        return Err(Error::WhitelistSaleInfoNotExist);
                     }
                     
                     let token_address = self.data::<Data>().token_address.clone();
@@ -1205,7 +1248,7 @@ where
                             whitelist_sale_info.total_claimed_amount = whitelist_sale_info.total_claimed_amount.checked_add(claim).ok_or(Error::CheckedOperations)?;
                             self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
                         } else {
-                            return Err(Error::InvalidPhaseForWhitelistSale);
+                            return Err(Error::WhitelistSaleInfoNotExist);
                         }
                         
                         let token_address = self.data::<Data>().token_address.clone();
@@ -1230,7 +1273,7 @@ where
         }            
     }
 
-    // Burn all public and private unsold tokens in contract 
+    // Burn all public and whitelisted unsold tokens in contract 
     #[modifiers(only_owner)]
     default fn burn_unsold_tokens(&mut self) -> Result<(), Error> {       
         // Check burning time
@@ -1283,7 +1326,7 @@ where
         Ok(())
     }
 
-    // Withdraw all public and private unsold tokens in contract 
+    // Withdraw all public and whitelisted unsold tokens in contract 
     #[modifiers(only_owner)]
     default fn withdraw_unsold_tokens(&mut self, receiver: AccountId) -> Result<(), Error> {       
         // Check withdrawing time
@@ -1361,10 +1404,10 @@ where
             return Err(Error::NotTimeToWithdraw);
         }
         
-        if value > T::env().balance() {
+        if value > Self::env().balance() {
             return Err(Error::NotEnoughBalance);
         }
-        if T::env().transfer(receiver, value).is_err() {
+        if Self::env().transfer(receiver, value).is_err() {
             return Err(Error::WithdrawFeeError);
         }
         Ok(())
