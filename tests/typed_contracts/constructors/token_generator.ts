@@ -24,13 +24,13 @@ export default class Constructors {
 	* new
 	*
 	* @param { ArgumentTypes.Hash } psp22Hash,
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { (string | number | BN) } creationFee,
 	* @param { ArgumentTypes.AccountId } ownerAddress,
 	*/
    	async "new" (
 		psp22Hash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		ownerAddress: ArgumentTypes.AccountId,
 		__options ? : ConstructorOptions,
@@ -40,7 +40,7 @@ export default class Constructors {
 		const gasLimit = (await _genValidGasLimitAndValue(this.nativeAPI, __options)).gasLimit as WeightV2;
 
 		const storageDepositLimit = __options?.storageDepositLimit;
-			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, psp22Hash, walContract, creationFee, ownerAddress);
+			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, psp22Hash, inwContract, creationFee, ownerAddress);
 			let response;
 
 			try {

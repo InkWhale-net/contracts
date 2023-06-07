@@ -24,18 +24,18 @@ export default class Methods {
 	 * initialize
 	 *
 	 * @param { ArgumentTypes.Hash } poolHash,
-	 * @param { ArgumentTypes.AccountId } walContract,
+	 * @param { ArgumentTypes.AccountId } inwContract,
 	 * @param { (string | number | BN) } creationFee,
 	 * @param { (string | number | BN) } unstakeFee,
 	*/
 	"initialize" (
 		poolHash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		unstakeFee: (string | number | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [poolHash, walContract, creationFee, unstakeFee], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [poolHash, inwContract, creationFee, unstakeFee], __options);
 	}
 
 	/**
@@ -44,6 +44,7 @@ export default class Methods {
 	 * @param { ArgumentTypes.AccountId } contractOwner,
 	 * @param { ArgumentTypes.AccountId } psp34ContractAddress,
 	 * @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	 * @param { (string | number | BN) } maxStakingAmount,
 	 * @param { (string | number | BN) } multiplier,
 	 * @param { (number | string | BN) } duration,
 	 * @param { (number | string | BN) } startTime,
@@ -52,34 +53,13 @@ export default class Methods {
 		contractOwner: ArgumentTypes.AccountId,
 		psp34ContractAddress: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		multiplier: (string | number | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "newPool", [contractOwner, psp34ContractAddress, psp22ContractAddress, multiplier, duration, startTime], __options);
-	}
-
-	/**
-	 * transferOwnership
-	 *
-	 * @param { ArgumentTypes.AccountId } newOwner,
-	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
-	}
-
-	/**
-	 * renounceOwnership
-	 *
-	*/
-	"renounceOwnership" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "newPool", [contractOwner, psp34ContractAddress, psp22ContractAddress, maxStakingAmount, multiplier, duration, startTime], __options);
 	}
 
 	/**
@@ -93,127 +73,25 @@ export default class Methods {
 	}
 
 	/**
-	 * setWalContract
+	 * renounceOwnership
 	 *
-	 * @param { ArgumentTypes.AccountId } walContract,
 	*/
-	"setWalContract" (
-		walContract: ArgumentTypes.AccountId,
+	"renounceOwnership" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setWalContract", [walContract], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
 	}
 
 	/**
-	 * genericPoolGeneratorTrait::withdrawFee
+	 * transferOwnership
 	 *
-	 * @param { (string | number | BN) } value,
+	 * @param { ArgumentTypes.AccountId } newOwner,
 	*/
-	"genericPoolGeneratorTrait::withdrawFee" (
-		value: (string | number | BN),
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::withdrawFee", [value], __options);
-	}
-
-	/**
-	 * withdrawWal
-	 *
-	 * @param { (string | number | BN) } value,
-	*/
-	"withdrawWal" (
-		value: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::withdrawWal", [value], __options);
-	}
-
-	/**
-	 * getPoolHash
-	 *
-	*/
-	"getPoolHash" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolHash", [], __options);
-	}
-
-	/**
-	 * getUnstakeFee
-	 *
-	*/
-	"getUnstakeFee" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getUnstakeFee", [], __options);
-	}
-
-	/**
-	 * setUnstakeFee
-	 *
-	 * @param { (string | number | BN) } unstakeFee,
-	*/
-	"setUnstakeFee" (
-		unstakeFee: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setUnstakeFee", [unstakeFee], __options);
-	}
-
-	/**
-	 * getPoolCount
-	 *
-	*/
-	"getPoolCount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolCount", [], __options);
-	}
-
-	/**
-	 * setPoolHash
-	 *
-	 * @param { ArgumentTypes.Hash } poolHash,
-	*/
-	"setPoolHash" (
-		poolHash: ArgumentTypes.Hash,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setPoolHash", [poolHash], __options);
-	}
-
-	/**
-	 * setCreationFee
-	 *
-	 * @param { (string | number | BN) } creationFee,
-	*/
-	"setCreationFee" (
-		creationFee: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setCreationFee", [creationFee], __options);
-	}
-
-	/**
-	 * getPoolCountByOwner
-	 *
-	 * @param { ArgumentTypes.AccountId } contractOwner,
-	*/
-	"getPoolCountByOwner" (
-		contractOwner: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolCountByOwner", [contractOwner], __options);
-	}
-
-	/**
-	 * getWalContract
-	 *
-	*/
-	"getWalContract" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getWalContract", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
 	}
 
 	/**
@@ -231,6 +109,84 @@ export default class Methods {
 	}
 
 	/**
+	 * setInwContract
+	 *
+	 * @param { ArgumentTypes.AccountId } inwContract,
+	*/
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setInwContract", [inwContract], __options);
+	}
+
+	/**
+	 * getPoolHash
+	 *
+	*/
+	"getPoolHash" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolHash", [], __options);
+	}
+
+	/**
+	 * getPoolCount
+	 *
+	*/
+	"getPoolCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolCount", [], __options);
+	}
+
+	/**
+	 * setUnstakeFee
+	 *
+	 * @param { (string | number | BN) } unstakeFee,
+	*/
+	"setUnstakeFee" (
+		unstakeFee: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setUnstakeFee", [unstakeFee], __options);
+	}
+
+	/**
+	 * getInwContract
+	 *
+	*/
+	"getInwContract" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getInwContract", [], __options);
+	}
+
+	/**
+	 * setPoolHash
+	 *
+	 * @param { ArgumentTypes.Hash } poolHash,
+	*/
+	"setPoolHash" (
+		poolHash: ArgumentTypes.Hash,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setPoolHash", [poolHash], __options);
+	}
+
+	/**
+	 * getPoolCountByOwner
+	 *
+	 * @param { ArgumentTypes.AccountId } contractOwner,
+	*/
+	"getPoolCountByOwner" (
+		contractOwner: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPoolCountByOwner", [contractOwner], __options);
+	}
+
+	/**
 	 * getPool
 	 *
 	 * @param { (number | string | BN) } index,
@@ -240,6 +196,28 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getPool", [index], __options);
+	}
+
+	/**
+	 * setCreationFee
+	 *
+	 * @param { (string | number | BN) } creationFee,
+	*/
+	"setCreationFee" (
+		creationFee: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::setCreationFee", [creationFee], __options);
+	}
+
+	/**
+	 * getUnstakeFee
+	 *
+	*/
+	"getUnstakeFee" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolGeneratorTrait::getUnstakeFee", [], __options);
 	}
 
 	/**
@@ -269,28 +247,22 @@ export default class Methods {
 	}
 
 	/**
-	 * tranferNft
+	 * getBalance
 	 *
-	 * @param { ArgumentTypes.AccountId } nftContractAddress,
-	 * @param { ArgumentTypes.Id } tokenId,
-	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
+	"getBalance" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::tranferNft", [nftContractAddress, tokenId, receiver], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::getBalance", [], __options);
 	}
 
 	/**
-	 * adminTrait::withdrawFee
+	 * withdrawFee
 	 *
 	 * @param { (string | number | BN) } value,
 	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"adminTrait::withdrawFee" (
+	"withdrawFee" (
 		value: (string | number | BN),
 		receiver: ArgumentTypes.AccountId,
 		__options: GasLimit,

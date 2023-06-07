@@ -16,6 +16,48 @@ export default class EventsClass {
 		this.__api = api;
 	}
 
+	public subscribeOnPoolStakeEventEvent(callback : (event : EventTypes.PoolStakeEvent) => void) {
+		const callbackWrapper = (args: any[], event: any) => {
+			const _event: Record < string, any > = {};
+
+			for (let i = 0; i < args.length; i++) {
+				_event[event.args[i]!.name] = args[i]!.toJSON();
+			}
+
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolStakeEvent', 'my_pool')) as EventTypes.PoolStakeEvent);
+		};
+
+		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolStakeEvent');
+	}
+
+	public subscribeOnPoolUnstakeEventEvent(callback : (event : EventTypes.PoolUnstakeEvent) => void) {
+		const callbackWrapper = (args: any[], event: any) => {
+			const _event: Record < string, any > = {};
+
+			for (let i = 0; i < args.length; i++) {
+				_event[event.args[i]!.name] = args[i]!.toJSON();
+			}
+
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolUnstakeEvent', 'my_pool')) as EventTypes.PoolUnstakeEvent);
+		};
+
+		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolUnstakeEvent');
+	}
+
+	public subscribeOnPoolClaimEventEvent(callback : (event : EventTypes.PoolClaimEvent) => void) {
+		const callbackWrapper = (args: any[], event: any) => {
+			const _event: Record < string, any > = {};
+
+			for (let i = 0; i < args.length; i++) {
+				_event[event.args[i]!.name] = args[i]!.toJSON();
+			}
+
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolClaimEvent', 'my_pool')) as EventTypes.PoolClaimEvent);
+		};
+
+		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolClaimEvent');
+	}
+
 
 	private __subscribeOnEvent(
 		callback : (args: any[], event: any) => void,

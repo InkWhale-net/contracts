@@ -4,10 +4,10 @@ import { ApiPromise } from '@polkadot/api';
 import ConstructorsTokenGenerator from './typed_contracts/constructors/token_generator';
 import ContractTokenGenerator from './typed_contracts/contracts/token_generator';
 
-import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
-import myPsp22 from './artifacts/my_psp22.json';
+import ConstructorsInw from './typed_contracts/constructors/psp22_standard';
+import ContractInw from './typed_contracts/contracts/psp22_standard';
 
-import { BN } from '@polkadot/util';
+import TokenStandard from './artifacts/token_standard.json';
 
 describe('Token generator test', () => {
     let api: any;
@@ -16,15 +16,22 @@ describe('Token generator test', () => {
     let alice: any;
     let bob: any;
 
+    let inwContractAddress: any;
+    let inwContract: any;
+    let inwQuery: any;
+    let inwTx: any;
+
+    let inwCap;
+    let inwName;
+    let inwSymbol;
+    let inwDecimal;
+
     let contractAddress: any;
     let contract: any;
     let query: any;
     let tx: any;
 
-    let walContract: any;
-
     let psp22Hash: string;
-    let walContractAddress: string;
     let creationFee: string;
 
     async function setup() {
@@ -37,9 +44,36 @@ describe('Token generator test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        psp22Hash = myPsp22.source.hash;
-        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
-        creationFee = "4000000000000"; // 4 INW      
+        // Step 1: Create inw contract
+        inwCap = "1000000000000000000000"; // 1B    
+        inwName = "Ink Whale Token";
+        inwSymbol = "INW";
+        inwDecimal = 12;
+
+        // "refTime: 470289652"
+        // "proofSize: 17408"
+        let inwGasLimit = setGasLimit(api, 960_000_000, 36_000);
+                
+        const inwContractFactory = new ConstructorsInw(api, defaultSigner);
+
+        inwContractAddress = (
+            await inwContractFactory.new(
+                inwCap,
+                inwName,
+                inwSymbol,
+                inwDecimal,
+                {gasLimit: inwGasLimit}
+            )
+        ).address;
+
+        inwContract = new ContractInw(inwContractAddress, defaultSigner, api);    
+  
+        inwQuery = inwContract.query;
+        inwTx = inwContract.tx;
+
+        // Step 2: Create token generator contract
+        psp22Hash = TokenStandard.source.hash;
+        creationFee = "3000000000000"; // 3 INW      
 
         // "refTime: 607483492"
         // "proofSize: 17408"
@@ -50,7 +84,7 @@ describe('Token generator test', () => {
         contractAddress = (
             await contractFactory.new(                
                 psp22Hash,
-                walContractAddress,
+                inwContractAddress,
                 creationFee,
                 defaultSigner.address,
                 {gasLimit}
@@ -63,8 +97,6 @@ describe('Token generator test', () => {
   
         query = contract.query;
         tx = contract.tx;
-
-        walContract = new ContractWalContract(walContractAddress, defaultSigner, api);    
     };
 
     before(async () => {
@@ -76,97 +108,97 @@ describe('Token generator test', () => {
         let rContractHash = (await query.getContractHash()).value.ok;       
         expect(rContractHash).to.equal(psp22Hash);
         
-        let rWalContractAddress = (await query.getWalContract()).value.ok;     
-        expect(rWalContractAddress).to.equal(walContractAddress);
+        let rInwAddress = (await query.getInwContract()).value.ok;     
+        expect(rInwAddress).to.equal(inwContractAddress);
 
         let rCreationFee = (await query.getCreationFee()).value.ok.toString();
         expect(rCreationFee).to.equal(creationFee);       
     });
 
     it('Can create tokens', async () => {   
-        // Alice, Bob mint 1000 INW
-        
-        // Step 1: Get mintingFee
-        let mintingFee = (await walContract.query.mintingFee()).value.ok!.rawNumber.toString();
-        // console.log("mintingFee =", mintingFee);
+        // Step 1: Onwer mints creation fee in INW to Alice, Bob 
+        await inwContract.tx.mint(
+            alice.address,
+            creationFee
+        ); 
 
-        // Step 2: Mint
-        // console.log("Mint INW...");
-        let aliceBalance = (await walContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
-        let bobBalance = (await walContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+        await inwContract.tx.mint(
+            bob.address,
+            creationFee
+        ); 
+
+        let aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
+        let bobBalance = (await inwContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
 
         // console.log("aliceBalance before =", aliceBalance);
         // console.log("bobBalance before =", bobBalance);
-
-        // let total = creationFee; 
-        let total = "1000000000000000"; // 1000 INW
+        expect(aliceBalance).to.equal(creationFee);
+        expect(bobBalance).to.equal(creationFee);
         
-        if ( new BN(aliceBalance).cmp(new BN(total)) == -1)
-            await walContract.withSigner(alice).tx.publicMint(
-                total,
-                { value: new BN(mintingFee).mul(new BN(total).div(new BN(10 ** 12))) }
-            );
-
-        if ( new BN(bobBalance).cmp(new BN(total)) == -1)    
-            await walContract.withSigner(bob).tx.publicMint(
-                total,
-                { value: new BN(mintingFee).mul(new BN(total).div(new BN(10 ** 12))) }
-            );
-
-        let aliceBalanceAft = (await walContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
-        let bobBalanceAft = (await walContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
-
-        // console.log("aliceBalance aft =", aliceBalanceAft);
-        // console.log("bobBalance aft =", bobBalanceAft);    
-      
-        // Step 3: Alice, Bob approve creationFee in INW for token generator contract
+        // Step 2: Alice, Bob approve creationFee in INW for token generator contract
         // console.log("Approve creationFee for gen contract ...");
-        await walContract.withSigner(alice).tx.approve(
+        await inwContract.withSigner(alice).tx.approve(
             contractAddress,
             creationFee,
         );
 
-        await walContract.withSigner(bob).tx.approve(
+        await inwContract.withSigner(bob).tx.approve(
             contractAddress,
             creationFee
         );
         
-        // Step 4: Alice, Bob create their tokens
+        // Step 3: Alice, Bob create their tokens, check if INW is burnt after creating token
         // console.log("Create tokens...");
         // Token1: AAA, 200M, minto: Alice
-        let totalSupply1 = "200000000000000000000"; // 200M
+        let cap1 = "200000000000000000000"; // 200M
         let name1 = "AAA";
         let symbol1 = "AAA";
         let decimal1 = 12;
         await contract.withSigner(alice).tx.newToken(
             alice.address,
-            totalSupply1,
+            cap1,
             name1 as unknown as string[],
             symbol1 as unknown as string[],
             decimal1
         );
 
+        let contractBalance = (await inwContract.query.balanceOf(contractAddress)).value.ok!.rawNumber.toString();
+        // console.log("contractBalance =", contractBalance);
+        expect(+contractBalance).to.equal(0);
+
         // Token2: XYZ, 10M, minto: Bob
-        let totalSupply2 = "10000000000000000000"; // 10M
+        let cap2 = "10000000000000000000"; // 10M
         let name2 = "XYZ";
         let symbol2 = "XYZ";
         let decimal2 = 12;
         await contract.withSigner(bob).tx.newToken(
             bob.address,
-            totalSupply2,
+            cap2,
             name2 as unknown as string[],
             symbol2 as unknown as string[],
             decimal2
         );
-        
-        // Step 5: Check token count
+
+        contractBalance = (await inwContract.query.balanceOf(contractAddress)).value.ok!.rawNumber.toString();
+        // console.log("contractBalance =", contractBalance);
+        expect(+contractBalance).to.equal(0);
+
+        let aliceBalanceAft = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
+        let bobBalanceAft = (await inwContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+
+        // console.log("aliceBalance aft =", aliceBalanceAft);
+        // console.log("bobBalance aft =", bobBalanceAft);    
+        expect(+aliceBalanceAft).to.equal(0);
+        expect(+bobBalanceAft).to.equal(0);
+
+        // Step 4: Check token count
         let tokenCount = (await query.getTokenCount()).value.ok;
         expect(tokenCount).to.equal(2);
 
-        let token1 = (await query.getTokenInfo(1)).value.ok;
+        // let token1 = (await query.getTokenContractAddress(1)).value.ok;
         // console.log("token1 ", token1); 
         
-        let token2 = (await query.getTokenInfo(2)).value.ok;
+        // let token2 = (await query.getTokenContractAddress(2)).value.ok;
         // console.log("token2 ", token2);   
     });
     

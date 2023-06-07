@@ -24,36 +24,36 @@ export default class Methods {
 	 * initialize
 	 *
 	 * @param { ArgumentTypes.Hash } psp22Hash,
-	 * @param { ArgumentTypes.AccountId } walContract,
+	 * @param { ArgumentTypes.AccountId } inwContract,
 	 * @param { (string | number | BN) } creationFee,
 	*/
 	"initialize" (
 		psp22Hash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [psp22Hash, walContract, creationFee], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [psp22Hash, inwContract, creationFee], __options);
 	}
 
 	/**
 	 * newToken
 	 *
 	 * @param { ArgumentTypes.AccountId } mintTo,
-	 * @param { (string | number | BN) } totalSupply,
+	 * @param { (string | number | BN) } cap,
 	 * @param { Array<(number | string | BN)> } name,
 	 * @param { Array<(number | string | BN)> } symbol,
 	 * @param { (number | string | BN) } decimal,
 	*/
 	"newToken" (
 		mintTo: ArgumentTypes.AccountId,
-		totalSupply: (string | number | BN),
+		cap: (string | number | BN),
 		name: Array<(number | string | BN)>,
 		symbol: Array<(number | string | BN)>,
 		decimal: (number | string | BN),
 		__options: GasLimitAndRequiredValue,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "newToken", [mintTo, totalSupply, name, symbol, decimal], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "newToken", [mintTo, cap, name, symbol, decimal], __options);
 	}
 
 	/**
@@ -64,16 +64,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
-	}
-
-	/**
-	 * owner
-	 *
-	*/
-	"owner" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
 	}
 
 	/**
@@ -89,13 +79,13 @@ export default class Methods {
 	}
 
 	/**
-	 * getTokenCount
+	 * owner
 	 *
 	*/
-	"getTokenCount" (
+	"owner" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getTokenCount", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
 	}
 
 	/**
@@ -109,6 +99,18 @@ export default class Methods {
 	}
 
 	/**
+	 * getTokenContractAddress
+	 *
+	 * @param { (number | string | BN) } index,
+	*/
+	"getTokenContractAddress" (
+		index: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getTokenContractAddress", [index], __options);
+	}
+
+	/**
 	 * getCreationFee
 	 *
 	*/
@@ -119,13 +121,25 @@ export default class Methods {
 	}
 
 	/**
-	 * getWalContract
+	 * getInwContract
 	 *
 	*/
-	"getWalContract" (
+	"getInwContract" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getWalContract", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getInwContract", [], __options);
+	}
+
+	/**
+	 * setCreationFee
+	 *
+	 * @param { (string | number | BN) } creationFee,
+	*/
+	"setCreationFee" (
+		creationFee: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::setCreationFee", [creationFee], __options);
 	}
 
 	/**
@@ -141,81 +155,61 @@ export default class Methods {
 	}
 
 	/**
-	 * tokenManagerTrait::withdrawFee
+	 * getTokenCount
+	 *
+	*/
+	"getTokenCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getTokenCount", [], __options);
+	}
+
+	/**
+	 * withdrawInw
 	 *
 	 * @param { (string | number | BN) } value,
 	*/
-	"tokenManagerTrait::withdrawFee" (
+	"withdrawInw" (
 		value: (string | number | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::withdrawFee", [value], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::withdrawInw", [value], __options);
 	}
 
 	/**
-	 * setWalContract
+	 * setInwContract
 	 *
-	 * @param { ArgumentTypes.AccountId } walContract,
+	 * @param { ArgumentTypes.AccountId } inwContract,
 	*/
-	"setWalContract" (
-		walContract: ArgumentTypes.AccountId,
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::setWalContract", [walContract], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::setInwContract", [inwContract], __options);
 	}
 
 	/**
-	 * getTokenInfo
-	 *
-	 * @param { (number | string | BN) } index,
-	*/
-	"getTokenInfo" (
-		index: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::getTokenInfo", [index], __options);
-	}
-
-	/**
-	 * withdrawWal
-	 *
-	 * @param { (string | number | BN) } value,
-	*/
-	"withdrawWal" (
-		value: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "tokenManagerTrait::withdrawWal", [value], __options);
-	}
-
-	/**
-	 * tranferNft
-	 *
-	 * @param { ArgumentTypes.AccountId } nftContractAddress,
-	 * @param { ArgumentTypes.Id } tokenId,
-	 * @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::tranferNft", [nftContractAddress, tokenId, receiver], __options);
-	}
-
-	/**
-	 * adminTrait::withdrawFee
+	 * withdrawFee
 	 *
 	 * @param { (string | number | BN) } value,
 	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"adminTrait::withdrawFee" (
+	"withdrawFee" (
 		value: (string | number | BN),
 		receiver: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::withdrawFee", [value, receiver], __options);
+	}
+
+	/**
+	 * getBalance
+	 *
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::getBalance", [], __options);
 	}
 
 	/**

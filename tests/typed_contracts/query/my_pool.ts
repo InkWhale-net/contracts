@@ -31,8 +31,9 @@ export default class Methods {
 	/**
 	* initialize
 	*
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } maxStakingAmount,
 	* @param { (number | string | BN) } apy,
 	* @param { (number | string | BN) } duration,
 	* @param { (number | string | BN) } startTime,
@@ -40,15 +41,16 @@ export default class Methods {
 	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
 	"initialize" (
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		apy: (number | string | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
 		unstakeFee: (string | number | BN),
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "initialize", [walContract, psp22ContractAddress, apy, duration, startTime, unstakeFee], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "initialize", [inwContract, psp22ContractAddress, maxStakingAmount, apy, duration, startTime, unstakeFee], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
 	}
 
 	/**
@@ -61,7 +63,7 @@ export default class Methods {
 		amount: (string | number | BN),
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "stake", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "stake", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
 	}
 
 	/**
@@ -74,7 +76,7 @@ export default class Methods {
 		amount: (string | number | BN),
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "unstake", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "unstake", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
 	}
 
 	/**
@@ -85,7 +87,7 @@ export default class Methods {
 	"claimReward" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "claimReward", [], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "claimReward", [], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
 	}
 
 	/**
@@ -113,17 +115,6 @@ export default class Methods {
 	}
 
 	/**
-	* owner
-	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
-	*/
-	"owner" (
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'my_pool')); });
-	}
-
-	/**
 	* renounceOwnership
 	*
 	* @returns { Result<Result<null, ReturnTypes.OwnableError>, ReturnTypes.LangError> }
@@ -135,27 +126,69 @@ export default class Methods {
 	}
 
 	/**
-	* topupRewardPool
+	* owner
 	*
-	* @param { (string | number | BN) } amount,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
 	*/
-	"topupRewardPool" (
-		amount: (string | number | BN),
+	"owner" (
 		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::topupRewardPool", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'my_pool')); });
 	}
 
 	/**
-	* duration
+	* minRewardAmount
 	*
-	* @returns { Result<number, ReturnTypes.LangError> }
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
 	*/
-	"duration" (
+	"minRewardAmount" (
 		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::duration", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::minRewardAmount", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+	}
+
+	/**
+	* unstakeFee
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"unstakeFee" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::unstakeFee", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+	}
+
+	/**
+	* isTopupEnoughReward
+	*
+	* @returns { Result<boolean, ReturnTypes.LangError> }
+	*/
+	"isTopupEnoughReward" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<boolean, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::isTopupEnoughReward", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'my_pool')); });
+	}
+
+	/**
+	* inwContract
+	*
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	*/
+	"inwContract" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::inwContract", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'my_pool')); });
+	}
+
+	/**
+	* maxStakingAmount
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"maxStakingAmount" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::maxStakingAmount", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
 	}
 
 	/**
@@ -166,18 +199,55 @@ export default class Methods {
 	"startTime" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::startTime", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::startTime", [], __options , (result) => { return handleReturnType(result, getTypeDescription(22, 'my_pool')); });
 	}
 
 	/**
-	* walContract
+	* setInwContract
 	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	* @param { ArgumentTypes.AccountId } inwContract,
+	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
-	"walContract" (
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::walContract", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'my_pool')); });
+	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::setInwContract", [inwContract], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
+	}
+
+	/**
+	* rewardPool
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"rewardPool" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::rewardPool", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+	}
+
+	/**
+	* withdrawRewardPool
+	*
+	* @param { (string | number | BN) } amount,
+	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
+	*/
+	"withdrawRewardPool" (
+		amount: (string | number | BN),
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::withdrawRewardPool", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
+	}
+
+	/**
+	* duration
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"duration" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::duration", [], __options , (result) => { return handleReturnType(result, getTypeDescription(22, 'my_pool')); });
 	}
 
 	/**
@@ -192,6 +262,30 @@ export default class Methods {
 	}
 
 	/**
+	* topupRewardPool
+	*
+	* @param { (string | number | BN) } amount,
+	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
+	*/
+	"topupRewardPool" (
+		amount: (string | number | BN),
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::topupRewardPool", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
+	}
+
+	/**
+	* multiplier
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"multiplier" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::multiplier", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
+	}
+
+	/**
 	* psp22ContractAddress
 	*
 	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
@@ -203,25 +297,25 @@ export default class Methods {
 	}
 
 	/**
-	* unstakeFee
+	* totalStaked
 	*
 	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
 	*/
-	"unstakeFee" (
+	"totalStaked" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::unstakeFee", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::totalStaked", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
 	}
 
 	/**
-	* multiplier
+	* totalUnclaimedReward
 	*
 	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
 	*/
-	"multiplier" (
+	"totalUnclaimedReward" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::multiplier", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::totalUnclaimedReward", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'my_pool')); });
 	}
 
 	/**
@@ -234,91 +328,7 @@ export default class Methods {
 		staker: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnTypes.StakeInformation | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::getStakeInfo", [staker], __options , (result) => { return handleReturnType(result, getTypeDescription(22, 'my_pool')); });
-	}
-
-	/**
-	* totalStaked
-	*
-	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
-	*/
-	"totalStaked" (
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::totalStaked", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'my_pool')); });
-	}
-
-	/**
-	* withdrawRewardPool
-	*
-	* @param { (string | number | BN) } amount,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"withdrawRewardPool" (
-		amount: (string | number | BN),
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::withdrawRewardPool", [amount], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
-	}
-
-	/**
-	* rewardPool
-	*
-	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
-	*/
-	"rewardPool" (
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::rewardPool", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'my_pool')); });
-	}
-
-	/**
-	* tranferPsp22
-	*
-	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
-	* @param { (string | number | BN) } amount,
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"tranferPsp22" (
-		psp22ContractAddress: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::tranferPsp22", [psp22ContractAddress, amount, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
-	}
-
-	/**
-	* tranferNft
-	*
-	* @param { ArgumentTypes.AccountId } nftContractAddress,
-	* @param { ArgumentTypes.Id } tokenId,
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::tranferNft", [nftContractAddress, tokenId, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
-	}
-
-	/**
-	* withdrawFee
-	*
-	* @param { (string | number | BN) } value,
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"withdrawFee" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::withdrawFee", [value, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "genericPoolContractTrait::getStakeInfo", [staker], __options , (result) => { return handleReturnType(result, getTypeDescription(23, 'my_pool')); });
 	}
 
 	/**
@@ -331,7 +341,7 @@ export default class Methods {
 		codeHash: Array<(number | string | BN)>,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "upgradeableTrait::setCode", [codeHash], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'my_pool')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "upgradeableTrait::setCode", [codeHash], __options , (result) => { return handleReturnType(result, getTypeDescription(8, 'my_pool')); });
 	}
 
 }

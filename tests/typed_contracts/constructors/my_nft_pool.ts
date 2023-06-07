@@ -24,9 +24,10 @@ export default class Constructors {
 	* new
 	*
 	* @param { ArgumentTypes.AccountId } contractOwner,
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { ArgumentTypes.AccountId } psp34ContractAddress,
 	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } maxStakingAmount,
 	* @param { (string | number | BN) } multiplier,
 	* @param { (number | string | BN) } duration,
 	* @param { (number | string | BN) } startTime,
@@ -34,9 +35,10 @@ export default class Constructors {
 	*/
    	async "new" (
 		contractOwner: ArgumentTypes.AccountId,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		psp34ContractAddress: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		multiplier: (string | number | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
@@ -48,7 +50,7 @@ export default class Constructors {
 		const gasLimit = (await _genValidGasLimitAndValue(this.nativeAPI, __options)).gasLimit as WeightV2;
 
 		const storageDepositLimit = __options?.storageDepositLimit;
-			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, walContract, psp34ContractAddress, psp22ContractAddress, multiplier, duration, startTime, unstakeFee);
+			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, inwContract, psp34ContractAddress, psp22ContractAddress, maxStakingAmount, multiplier, duration, startTime, unstakeFee);
 			let response;
 
 			try {

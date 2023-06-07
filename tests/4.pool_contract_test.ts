@@ -4,10 +4,11 @@ import { ApiPromise } from '@polkadot/api';
 import ConstructorsMyPool from './typed_contracts/constructors/my_pool';
 import ContractMyPool from './typed_contracts/contracts/my_pool';
 
-import ContractTokenContract from './typed_contracts/contracts/my_psp22';
-import ContractWalContract from './typed_contracts/contracts/my_psp22_sale';
+import ConstructorsTokenStandard from './typed_contracts/constructors/token_standard';
+import ContractTokenStandard from './typed_contracts/contracts/token_standard';
 
-import myPsp22 from './artifacts/my_psp22.json'; 
+import ConstructorsInw from './typed_contracts/constructors/psp22_standard';
+import ContractInw from './typed_contracts/contracts/psp22_standard';
 
 import { BN } from '@polkadot/util';
 
@@ -18,16 +19,34 @@ describe('Pool contract test', () => {
     let alice: any;
     let bob: any;
 
+    let inwContractAddress: any;
+    let inwContract: any;
+    let inwQuery: any;
+    let inwTx: any;
+
+    let inwCap;
+    let inwName;
+    let inwSymbol;
+    let inwDecimal;
+
+    let tokenContractAddress: any;
+    let tokenContract: any;
+    let tokenQuery: any;
+    let tokenTx: any;
+
+    let tokenMintTo; 
+    let tokenCap;
+    let tokenName;
+    let tokenSymbol; 
+    let tokenDecimal;
+
     let contractAddress: any;
     let contract: any;
     let query: any;
     let tx: any;
 
-    let walContract: any;
-    let tokenContract: any;
-
-    let walContractAddress: string;
     let psp22ContractAddress: string;
+    let maxStakingAmount: string;
     let apy: string;
     let duration: string;
     let startTime: number;
@@ -43,12 +62,73 @@ describe('Pool contract test', () => {
 
         await checkAccountsBalance(signers, api);
 
-        walContractAddress = "5GiYkqRjQ5JXSvHzYwQZh9RHSrpqq6yPhCewPnpNbCBt2Psq"; // INW contract address
-        psp22ContractAddress = "5CbcaQLoCu8ZFX7tLHCgzW8LKVTcwYw79Z3sxEecCqCz5b8c"; // AAA token 
-        apy = "2000"; // 20%. Scaled by 100
+        // Step 1: Create inw contract
+        inwCap = "1000000000000000000000"; // 1B    
+        inwName = "Ink Whale Token";
+        inwSymbol = "INW";
+        inwDecimal = 12;
+
+        // "refTime: 470289652"
+        // "proofSize: 17408"
+        let inwGasLimit = setGasLimit(api, 960_000_000, 36_000);
+                
+        const inwContractFactory = new ConstructorsInw(api, defaultSigner);
+
+        inwContractAddress = (
+            await inwContractFactory.new(
+                inwCap,
+                inwName,
+                inwSymbol,
+                inwDecimal,
+                {gasLimit: inwGasLimit}
+            )
+        ).address;
+
+        // console.log("inwContractAddress =", inwContractAddress);
+
+        inwContract = new ContractInw(inwContractAddress, defaultSigner, api);    
+  
+        inwQuery = inwContract.query;
+        inwTx = inwContract.tx;
+
+        // Step 2: Create a token contract
+        tokenMintTo = defaultSigner;
+        tokenCap = "200000000000000000000"; // 200M
+        tokenName = "AAA";
+        tokenSymbol = "AAA";
+        tokenDecimal = 12;      
+        
+        // "refTime: 599049714"
+        // "proofSize: 19456"
+        let tokenGasLimit = setGasLimit(api, 1_200_000_000, 40_000);
+        
+        const tokenContractFactory = new ConstructorsTokenStandard(api, defaultSigner);
+        
+        tokenContractAddress = (
+            await tokenContractFactory.new(
+                defaultSigner.address,
+                tokenMintTo.address,
+                tokenCap,
+                tokenName as unknown as string[],
+                tokenSymbol as unknown as string[],
+                tokenDecimal,
+                {gasLimit: tokenGasLimit}
+            )
+        ).address;
+
+        // console.log("tokenContractAddress =", tokenContractAddress);
+
+        tokenContract = new ContractTokenStandard(tokenContractAddress, defaultSigner, api);    
+        tokenQuery = tokenContract.query;
+        tokenTx = tokenContract.tx;
+
+        // Step 3: Create staking pool contract
+        psp22ContractAddress = tokenContractAddress; // AAA token 
+        apy = "1000"; // 10%. Scaled by 100
+        maxStakingAmount = "1000000000000000"; // 1000 AAA token       
         duration = "5184000000"; // 60 days
         startTime = new Date().getTime(); // Current time
-        unstakeFee = "12000000000000"; // 12 INW      
+        unstakeFee = "8000000000000"; // 8 INW      
         
         // "refTime: 640544751"
         // "proofSize: 17408"
@@ -59,8 +139,9 @@ describe('Pool contract test', () => {
         contractAddress = (
             await contractFactory.new(
                 defaultSigner.address,
-                walContractAddress,
+                inwContractAddress,
                 psp22ContractAddress,
+                maxStakingAmount,
                 apy,
                 duration,
                 startTime,
@@ -69,14 +150,14 @@ describe('Pool contract test', () => {
             )
         ).address;
 
-        console.log("contractAddress =", contractAddress);
+        // console.log("contractAddress =", contractAddress);
 
         contract = new ContractMyPool(contractAddress, defaultSigner, api);    
         query = contract.query;
         tx = contract.tx;
 
-        tokenContract = new ContractTokenContract(psp22ContractAddress, defaultSigner, api);
-        walContract = new ContractWalContract(walContractAddress, defaultSigner, api);
+        tokenContract = new ContractTokenStandard(psp22ContractAddress, defaultSigner, api);
+        inwContract = new ContractInw(inwContractAddress, defaultSigner, api);        
     };
 
     before(async () => {
@@ -85,34 +166,39 @@ describe('Pool contract test', () => {
     });
     
     it('Add reward, stake, claim, unstake work', async () => {
-        // Faucet 1000 token for Bob if needed
-        let bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
-        // console.log("bobTokenBalance ", bobTokenBalance);
+        // Step 1: Owner approves and topups reward pool
+        let minRewardAmount = Math.floor(parseFloat(maxStakingAmount) * parseFloat(duration) * parseFloat(apy) / (365 * 24 * 60 * 60 * 1000 * 10000));
+        // console.log("minRewardAmount = ", minRewardAmount);
 
-        if (new BN(bobTokenBalance).cmp(new BN("100000000000000")) == -1) { // Compare with 100 token
-            await tokenContract.withSigner(bob).tx.faucet(); 
-        
-            bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
-            // console.log("bobTokenBalanceAft = ", bobTokenBalance);
-        }        
-
-        // Alice approves and topups reward
-        let rewardAmount = "1000000000000000" // 1000 token
-        // Approve
-        await tokenContract.withSigner(alice).tx.approve(
+        await tokenContract.tx.approve(
             contractAddress,
-            rewardAmount
+            minRewardAmount
         );
 
-        // Topup
-        await contract.withSigner(alice).tx.topupRewardPool(rewardAmount);
-        
-        let addedRewardAmountAft = (await query.rewardPool()).value.ok!.rawNumber.toString();  
+        await tx.topupRewardPool(
+            minRewardAmount
+        );
+
+        // let addedRewardAmountAft = (await query.rewardPool()).value.ok!.rawNumber.toString();  
         // console.log("addedRewardAmount after =", addedRewardAmountAft);
- 
-        // Bob operates  
-        // Stake
-        let bobStakeAmount = "100000000000000"; // 100 Token
+
+        let isTopupEnoughReward = (await query.isTopupEnoughReward()).value.ok!;
+        // console.log("isTopupEnoughReward = ", isTopupEnoughReward);
+        expect(isTopupEnoughReward).to.equal(true);
+        
+        // Step 2: Owner transfer for Bob 100 token AAA
+        let bobStakeAmount = "100000000000000"; // 100 Token 
+        await tokenContract.tx.transfer(
+            bob.address,
+            bobStakeAmount,
+            []
+        );            
+
+        let bobTokenBalance = (await tokenContract.query.balanceOf(bob.address)).value.ok!.rawNumber.toString();
+        // console.log("bobTokenBalance ", bobTokenBalance);
+              
+        // Step 3: Bob stakes, claims reward, unstakes  
+        // Stake        
         await tokenContract.withSigner(bob).tx.approve(
             contractAddress,
             bobStakeAmount
@@ -140,17 +226,13 @@ describe('Pool contract test', () => {
         expect(gain.cmp(new BN(0))).to.equal(1);
 
         // Unstake
-        // Bob public mint INW, approve unstake fee in INW and unstake
-        let mintingFee = (await walContract.query.mintingFee()).value.ok!.rawNumber.toString();
-        let fee = new BN(unstakeFee).div(new BN(10 ** 12)).mul(new BN(mintingFee));
-        console.log("mintingFee = ", mintingFee);
-        console.log("fee = ", fee.toString());
-        await walContract.withSigner(bob).tx.publicMint(
-            unstakeFee,
-            {value: fee.toString()}
+        // Owner mint INW for Bob, Bob approves unstake fee in INW and unstake
+        await inwContract.tx.mint(
+            bob.address,
+            unstakeFee
         );
 
-        await walContract.withSigner(bob).tx.approve(
+        await inwContract.withSigner(bob).tx.approve(
             contractAddress,
             unstakeFee
         )

@@ -31,20 +31,20 @@ export default class Methods {
 	* initialize
 	*
 	* @param { ArgumentTypes.Hash } poolHash,
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { (string | number | BN) } creationFee,
 	* @param { (string | number | BN) } unstakeFee,
 	*/
 	"initialize" (
 		poolHash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		unstakeFee: (string | number | BN),
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "initialize", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [poolHash, walContract, creationFee, unstakeFee], __options);
+		}, [poolHash, inwContract, creationFee, unstakeFee], __options);
 	}
 
 	/**
@@ -52,6 +52,7 @@ export default class Methods {
 	*
 	* @param { ArgumentTypes.AccountId } contractOwner,
 	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } maxStakingAmount,
 	* @param { (number | string | BN) } apy,
 	* @param { (number | string | BN) } duration,
 	* @param { (number | string | BN) } startTime,
@@ -59,6 +60,7 @@ export default class Methods {
 	"newPool" (
 		contractOwner: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		apy: (number | string | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
@@ -66,7 +68,21 @@ export default class Methods {
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "newPool", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [contractOwner, psp22ContractAddress, apy, duration, startTime], __options);
+		}, [contractOwner, psp22ContractAddress, maxStakingAmount, apy, duration, startTime], __options);
+	}
+
+	/**
+	* transferOwnership
+	*
+	* @param { ArgumentTypes.AccountId } newOwner,
+	*/
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "pool_generator");
+		}, [newOwner], __options);
 	}
 
 	/**
@@ -94,17 +110,41 @@ export default class Methods {
 	}
 
 	/**
-	* transferOwnership
+	* getInwContract
 	*
-	* @param { ArgumentTypes.AccountId } newOwner,
 	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId,
+	"getInwContract" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getInwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [newOwner], __options);
+		}, [], __options);
+	}
+
+	/**
+	* getPoolCount
+	*
+	*/
+	"getPoolCount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "pool_generator");
+		}, [], __options);
+	}
+
+	/**
+	* getPoolCountByOwner
+	*
+	* @param { ArgumentTypes.AccountId } contractOwner,
+	*/
+	"getPoolCountByOwner" (
+		contractOwner: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolCountByOwner", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "pool_generator");
+		}, [contractOwner], __options);
 	}
 
 	/**
@@ -136,53 +176,13 @@ export default class Methods {
 	}
 
 	/**
-	* getPoolHash
+	* getUnstakeFee
 	*
 	*/
-	"getPoolHash" (
+	"getUnstakeFee" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolHash", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [], __options);
-	}
-
-	/**
-	* setPoolHash
-	*
-	* @param { ArgumentTypes.Hash } poolHash,
-	*/
-	"setPoolHash" (
-		poolHash: ArgumentTypes.Hash,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setPoolHash", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [poolHash], __options);
-	}
-
-	/**
-	* setCreationFee
-	*
-	* @param { (string | number | BN) } creationFee,
-	*/
-	"setCreationFee" (
-		creationFee: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setCreationFee", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [creationFee], __options);
-	}
-
-	/**
-	* getPoolCount
-	*
-	*/
-	"getPoolCount" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolCount", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getUnstakeFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
 		}, [], __options);
 	}
@@ -202,57 +202,29 @@ export default class Methods {
 	}
 
 	/**
-	* genericPoolGeneratorTrait::withdrawFee
+	* setPoolHash
 	*
-	* @param { (string | number | BN) } value,
+	* @param { ArgumentTypes.Hash } poolHash,
 	*/
-	"genericPoolGeneratorTrait::withdrawFee" (
-		value: (string | number | BN),
+	"setPoolHash" (
+		poolHash: ArgumentTypes.Hash,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::withdrawFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setPoolHash", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [value], __options);
+		}, [poolHash], __options);
 	}
 
 	/**
-	* getUnstakeFee
+	* getPoolHash
 	*
 	*/
-	"getUnstakeFee" (
+	"getPoolHash" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getUnstakeFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolHash", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
 		}, [], __options);
-	}
-
-	/**
-	* getPoolCountByOwner
-	*
-	* @param { ArgumentTypes.AccountId } contractOwner,
-	*/
-	"getPoolCountByOwner" (
-		contractOwner: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getPoolCountByOwner", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [contractOwner], __options);
-	}
-
-	/**
-	* setWalContract
-	*
-	* @param { ArgumentTypes.AccountId } walContract,
-	*/
-	"setWalContract" (
-		walContract: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setWalContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [walContract], __options);
 	}
 
 	/**
@@ -270,29 +242,31 @@ export default class Methods {
 	}
 
 	/**
-	* getWalContract
+	* setInwContract
 	*
+	* @param { ArgumentTypes.AccountId } inwContract,
 	*/
-	"getWalContract" (
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::getWalContract", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setInwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [], __options);
+		}, [inwContract], __options);
 	}
 
 	/**
-	* withdrawWal
+	* setCreationFee
 	*
-	* @param { (string | number | BN) } value,
+	* @param { (string | number | BN) } creationFee,
 	*/
-	"withdrawWal" (
-		value: (string | number | BN),
+	"setCreationFee" (
+		creationFee: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::withdrawWal", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolGeneratorTrait::setCreationFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [value], __options);
+		}, [creationFee], __options);
 	}
 
 	/**
@@ -314,12 +288,24 @@ export default class Methods {
 	}
 
 	/**
-	* adminTrait::withdrawFee
+	* getBalance
+	*
+	*/
+	"getBalance" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::getBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "pool_generator");
+		}, [], __options);
+	}
+
+	/**
+	* withdrawFee
 	*
 	* @param { (string | number | BN) } value,
 	* @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"adminTrait::withdrawFee" (
+	"withdrawFee" (
 		value: (string | number | BN),
 		receiver: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
@@ -327,24 +313,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::withdrawFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "pool_generator");
 		}, [value, receiver], __options);
-	}
-
-	/**
-	* tranferNft
-	*
-	* @param { ArgumentTypes.AccountId } nftContractAddress,
-	* @param { ArgumentTypes.Id } tokenId,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferNft", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "pool_generator");
-		}, [nftContractAddress, tokenId, receiver], __options);
 	}
 
 	/**

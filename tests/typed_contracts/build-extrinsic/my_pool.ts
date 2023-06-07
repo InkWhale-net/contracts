@@ -23,23 +23,25 @@ export default class Methods {
 	/**
 	 * initialize
 	 *
-	 * @param { ArgumentTypes.AccountId } walContract,
+	 * @param { ArgumentTypes.AccountId } inwContract,
 	 * @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	 * @param { (string | number | BN) } maxStakingAmount,
 	 * @param { (number | string | BN) } apy,
 	 * @param { (number | string | BN) } duration,
 	 * @param { (number | string | BN) } startTime,
 	 * @param { (string | number | BN) } unstakeFee,
 	*/
 	"initialize" (
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		apy: (number | string | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
 		unstakeFee: (string | number | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [walContract, psp22ContractAddress, apy, duration, startTime, unstakeFee], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "initialize", [inwContract, psp22ContractAddress, maxStakingAmount, apy, duration, startTime, unstakeFee], __options);
 	}
 
 	/**
@@ -99,16 +101,6 @@ export default class Methods {
 	}
 
 	/**
-	 * owner
-	 *
-	*/
-	"owner" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
-	}
-
-	/**
 	 * renounceOwnership
 	 *
 	*/
@@ -119,65 +111,23 @@ export default class Methods {
 	}
 
 	/**
-	 * topupRewardPool
+	 * owner
 	 *
-	 * @param { (string | number | BN) } amount,
 	*/
-	"topupRewardPool" (
-		amount: (string | number | BN),
+	"owner" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::topupRewardPool", [amount], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
 	}
 
 	/**
-	 * duration
+	 * minRewardAmount
 	 *
 	*/
-	"duration" (
+	"minRewardAmount" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::duration", [], __options);
-	}
-
-	/**
-	 * startTime
-	 *
-	*/
-	"startTime" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::startTime", [], __options);
-	}
-
-	/**
-	 * walContract
-	 *
-	*/
-	"walContract" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::walContract", [], __options);
-	}
-
-	/**
-	 * stakingContractAddress
-	 *
-	*/
-	"stakingContractAddress" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::stakingContractAddress", [], __options);
-	}
-
-	/**
-	 * psp22ContractAddress
-	 *
-	*/
-	"psp22ContractAddress" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::psp22ContractAddress", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::minRewardAmount", [], __options);
 	}
 
 	/**
@@ -191,35 +141,65 @@ export default class Methods {
 	}
 
 	/**
-	 * multiplier
+	 * isTopupEnoughReward
 	 *
 	*/
-	"multiplier" (
+	"isTopupEnoughReward" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::multiplier", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::isTopupEnoughReward", [], __options);
 	}
 
 	/**
-	 * getStakeInfo
+	 * inwContract
 	 *
-	 * @param { ArgumentTypes.AccountId } staker,
 	*/
-	"getStakeInfo" (
-		staker: ArgumentTypes.AccountId,
+	"inwContract" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::getStakeInfo", [staker], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::inwContract", [], __options);
 	}
 
 	/**
-	 * totalStaked
+	 * maxStakingAmount
 	 *
 	*/
-	"totalStaked" (
+	"maxStakingAmount" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::totalStaked", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::maxStakingAmount", [], __options);
+	}
+
+	/**
+	 * startTime
+	 *
+	*/
+	"startTime" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::startTime", [], __options);
+	}
+
+	/**
+	 * setInwContract
+	 *
+	 * @param { ArgumentTypes.AccountId } inwContract,
+	*/
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::setInwContract", [inwContract], __options);
+	}
+
+	/**
+	 * rewardPool
+	 *
+	*/
+	"rewardPool" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::rewardPool", [], __options);
 	}
 
 	/**
@@ -235,59 +215,87 @@ export default class Methods {
 	}
 
 	/**
-	 * rewardPool
+	 * duration
 	 *
 	*/
-	"rewardPool" (
+	"duration" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::rewardPool", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::duration", [], __options);
 	}
 
 	/**
-	 * tranferPsp22
+	 * stakingContractAddress
 	 *
-	 * @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	*/
+	"stakingContractAddress" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::stakingContractAddress", [], __options);
+	}
+
+	/**
+	 * topupRewardPool
+	 *
 	 * @param { (string | number | BN) } amount,
-	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"tranferPsp22" (
-		psp22ContractAddress: ArgumentTypes.AccountId,
+	"topupRewardPool" (
 		amount: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::tranferPsp22", [psp22ContractAddress, amount, receiver], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::topupRewardPool", [amount], __options);
 	}
 
 	/**
-	 * tranferNft
+	 * multiplier
 	 *
-	 * @param { ArgumentTypes.AccountId } nftContractAddress,
-	 * @param { ArgumentTypes.Id } tokenId,
-	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
+	"multiplier" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::tranferNft", [nftContractAddress, tokenId, receiver], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::multiplier", [], __options);
 	}
 
 	/**
-	 * withdrawFee
+	 * psp22ContractAddress
 	 *
-	 * @param { (string | number | BN) } value,
-	 * @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"withdrawFee" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
+	"psp22ContractAddress" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::withdrawFee", [value, receiver], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::psp22ContractAddress", [], __options);
+	}
+
+	/**
+	 * totalStaked
+	 *
+	*/
+	"totalStaked" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::totalStaked", [], __options);
+	}
+
+	/**
+	 * totalUnclaimedReward
+	 *
+	*/
+	"totalUnclaimedReward" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::totalUnclaimedReward", [], __options);
+	}
+
+	/**
+	 * getStakeInfo
+	 *
+	 * @param { ArgumentTypes.AccountId } staker,
+	*/
+	"getStakeInfo" (
+		staker: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "genericPoolContractTrait::getStakeInfo", [staker], __options);
 	}
 
 	/**

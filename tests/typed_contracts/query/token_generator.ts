@@ -32,24 +32,24 @@ export default class Methods {
 	* initialize
 	*
 	* @param { ArgumentTypes.Hash } psp22Hash,
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { (string | number | BN) } creationFee,
 	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
 	"initialize" (
 		psp22Hash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "initialize", [psp22Hash, walContract, creationFee], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "initialize", [psp22Hash, inwContract, creationFee], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
 	* newToken
 	*
 	* @param { ArgumentTypes.AccountId } mintTo,
-	* @param { (string | number | BN) } totalSupply,
+	* @param { (string | number | BN) } cap,
 	* @param { Array<(number | string | BN)> } name,
 	* @param { Array<(number | string | BN)> } symbol,
 	* @param { (number | string | BN) } decimal,
@@ -57,13 +57,13 @@ export default class Methods {
 	*/
 	"newToken" (
 		mintTo: ArgumentTypes.AccountId,
-		totalSupply: (string | number | BN),
+		cap: (string | number | BN),
 		name: Array<(number | string | BN)>,
 		symbol: Array<(number | string | BN)>,
 		decimal: (number | string | BN),
 		__options ? : GasLimitAndRequiredValue,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "newToken", [mintTo, totalSupply, name, symbol, decimal], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "newToken", [mintTo, cap, name, symbol, decimal], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
@@ -75,17 +75,6 @@ export default class Methods {
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.OwnableError>, ReturnTypes.LangError> > >{
 		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::renounceOwnership", [], __options , (result) => { return handleReturnType(result, getTypeDescription(16, 'token_generator')); });
-	}
-
-	/**
-	* owner
-	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
-	*/
-	"owner" (
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options , (result) => { return handleReturnType(result, getTypeDescription(18, 'token_generator')); });
 	}
 
 	/**
@@ -102,14 +91,14 @@ export default class Methods {
 	}
 
 	/**
-	* getTokenCount
+	* owner
 	*
-	* @returns { Result<number, ReturnTypes.LangError> }
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
 	*/
-	"getTokenCount" (
+	"owner" (
 		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getTokenCount", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'token_generator')); });
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options , (result) => { return handleReturnType(result, getTypeDescription(18, 'token_generator')); });
 	}
 
 	/**
@@ -120,7 +109,20 @@ export default class Methods {
 	"getContractHash" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnTypes.Hash, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getContractHash", [], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getContractHash", [], __options , (result) => { return handleReturnType(result, getTypeDescription(19, 'token_generator')); });
+	}
+
+	/**
+	* getTokenContractAddress
+	*
+	* @param { (number | string | BN) } index,
+	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
+	*/
+	"getTokenContractAddress" (
+		index: (number | string | BN),
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getTokenContractAddress", [index], __options , (result) => { return handleReturnType(result, getTypeDescription(20, 'token_generator')); });
 	}
 
 	/**
@@ -131,18 +133,31 @@ export default class Methods {
 	"getCreationFee" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getCreationFee", [], __options , (result) => { return handleReturnType(result, getTypeDescription(21, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getCreationFee", [], __options , (result) => { return handleReturnType(result, getTypeDescription(22, 'token_generator')); });
 	}
 
 	/**
-	* getWalContract
+	* getInwContract
 	*
 	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
 	*/
-	"getWalContract" (
+	"getInwContract" (
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getWalContract", [], __options , (result) => { return handleReturnType(result, getTypeDescription(18, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getInwContract", [], __options , (result) => { return handleReturnType(result, getTypeDescription(18, 'token_generator')); });
+	}
+
+	/**
+	* setCreationFee
+	*
+	* @param { (string | number | BN) } creationFee,
+	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
+	*/
+	"setCreationFee" (
+		creationFee: (string | number | BN),
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::setCreationFee", [creationFee], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
@@ -155,91 +170,70 @@ export default class Methods {
 		psp22Hash: ArgumentTypes.Hash,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::setContractHash", [psp22Hash], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::setContractHash", [psp22Hash], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
-	* tokenManagerTrait::withdrawFee
+	* getTokenCount
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getTokenCount" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getTokenCount", [], __options , (result) => { return handleReturnType(result, getTypeDescription(23, 'token_generator')); });
+	}
+
+	/**
+	* withdrawInw
 	*
 	* @param { (string | number | BN) } value,
 	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
-	"tokenManagerTrait::withdrawFee" (
+	"withdrawInw" (
 		value: (string | number | BN),
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::withdrawFee", [value], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::withdrawInw", [value], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
-	* setWalContract
+	* setInwContract
 	*
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
-	"setWalContract" (
-		walContract: ArgumentTypes.AccountId,
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::setWalContract", [walContract], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::setInwContract", [inwContract], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
-	* getTokenInfo
-	*
-	* @param { (number | string | BN) } index,
-	* @returns { Result<ReturnTypes.Token | null, ReturnTypes.LangError> }
-	*/
-	"getTokenInfo" (
-		index: (number | string | BN),
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.Token | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::getTokenInfo", [index], __options , (result) => { return handleReturnType(result, getTypeDescription(22, 'token_generator')); });
-	}
-
-	/**
-	* withdrawWal
-	*
-	* @param { (string | number | BN) } value,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"withdrawWal" (
-		value: (string | number | BN),
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "tokenManagerTrait::withdrawWal", [value], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
-	}
-
-	/**
-	* tranferNft
-	*
-	* @param { ArgumentTypes.AccountId } nftContractAddress,
-	* @param { ArgumentTypes.Id } tokenId,
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::tranferNft", [nftContractAddress, tokenId, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
-	}
-
-	/**
-	* adminTrait::withdrawFee
+	* withdrawFee
 	*
 	* @param { (string | number | BN) } value,
 	* @param { ArgumentTypes.AccountId } receiver,
 	* @returns { Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> }
 	*/
-	"adminTrait::withdrawFee" (
+	"withdrawFee" (
 		value: (string | number | BN),
 		receiver: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::withdrawFee", [value, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::withdrawFee", [value, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
+	}
+
+	/**
+	* getBalance
+	*
+	* @returns { Result<Result<ReturnNumber, ReturnTypes.Error>, ReturnTypes.LangError> }
+	*/
+	"getBalance" (
+		__options ? : GasLimit,
+	): Promise< QueryReturnType< Result<Result<ReturnNumber, ReturnTypes.Error>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::getBalance", [], __options , (result) => { return handleReturnType(result, getTypeDescription(24, 'token_generator')); });
 	}
 
 	/**
@@ -256,7 +250,7 @@ export default class Methods {
 		receiver: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::tranferPsp22", [psp22ContractAddress, amount, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "adminTrait::tranferPsp22", [psp22ContractAddress, amount, receiver], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 	/**
@@ -269,7 +263,7 @@ export default class Methods {
 		codeHash: Array<(number | string | BN)>,
 		__options ? : GasLimit,
 	): Promise< QueryReturnType< Result<Result<null, ReturnTypes.Error>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "upgradeableTrait::setCode", [codeHash], __options , (result) => { return handleReturnType(result, getTypeDescription(10, 'token_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "upgradeableTrait::setCode", [codeHash], __options , (result) => { return handleReturnType(result, getTypeDescription(9, 'token_generator')); });
 	}
 
 }

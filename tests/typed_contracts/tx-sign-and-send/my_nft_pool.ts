@@ -30,18 +30,20 @@ export default class Methods {
 	/**
 	* initialize
 	*
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { ArgumentTypes.AccountId } psp34ContractAddress,
 	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } maxStakingAmount,
 	* @param { (string | number | BN) } multiplier,
 	* @param { (number | string | BN) } duration,
 	* @param { (number | string | BN) } startTime,
 	* @param { (string | number | BN) } unstakeFee,
 	*/
 	"initialize" (
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		psp34ContractAddress: ArgumentTypes.AccountId,
 		psp22ContractAddress: ArgumentTypes.AccountId,
+		maxStakingAmount: (string | number | BN),
 		multiplier: (string | number | BN),
 		duration: (number | string | BN),
 		startTime: (number | string | BN),
@@ -50,7 +52,7 @@ export default class Methods {
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "initialize", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [walContract, psp34ContractAddress, psp22ContractAddress, multiplier, duration, startTime, unstakeFee], __options);
+		}, [inwContract, psp34ContractAddress, psp22ContractAddress, maxStakingAmount, multiplier, duration, startTime, unstakeFee], __options);
 	}
 
 	/**
@@ -106,17 +108,15 @@ export default class Methods {
 	}
 
 	/**
-	* transferOwnership
+	* owner
 	*
-	* @param { ArgumentTypes.AccountId } newOwner,
 	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId,
+	"owner" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [newOwner], __options);
+		}, [], __options);
 	}
 
 	/**
@@ -132,51 +132,39 @@ export default class Methods {
 	}
 
 	/**
-	* owner
+	* transferOwnership
 	*
+	* @param { ArgumentTypes.AccountId } newOwner,
 	*/
-	"owner" (
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [newOwner], __options);
+	}
+
+	/**
+	* rewardPool
+	*
+	*/
+	"rewardPool" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::rewardPool", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
 
 	/**
-	* multiplier
+	* inwContract
 	*
 	*/
-	"multiplier" (
+	"inwContract" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::multiplier", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [], __options);
-	}
-
-	/**
-	* topupRewardPool
-	*
-	* @param { (string | number | BN) } amount,
-	*/
-	"topupRewardPool" (
-		amount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::topupRewardPool", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [amount], __options);
-	}
-
-	/**
-	* unstakeFee
-	*
-	*/
-	"unstakeFee" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::unstakeFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::inwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
@@ -194,25 +182,75 @@ export default class Methods {
 	}
 
 	/**
-	* stakingContractAddress
+	* psp22ContractAddress
 	*
 	*/
-	"stakingContractAddress" (
+	"psp22ContractAddress" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::stakingContractAddress", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::psp22ContractAddress", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
 
 	/**
-	* walContract
+	* maxStakingAmount
 	*
 	*/
-	"walContract" (
+	"maxStakingAmount" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::walContract", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::maxStakingAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [], __options);
+	}
+
+	/**
+	* totalStaked
+	*
+	*/
+	"totalStaked" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::totalStaked", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [], __options);
+	}
+
+	/**
+	* unstakeFee
+	*
+	*/
+	"unstakeFee" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::unstakeFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [], __options);
+	}
+
+	/**
+	* setInwContract
+	*
+	* @param { ArgumentTypes.AccountId } inwContract,
+	*/
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::setInwContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [inwContract], __options);
+	}
+
+	/**
+	* totalUnclaimedReward
+	*
+	*/
+	"totalUnclaimedReward" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::totalUnclaimedReward", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
@@ -232,39 +270,49 @@ export default class Methods {
 	}
 
 	/**
-	* withdrawRewardPool
-	*
-	* @param { (string | number | BN) } amount,
-	*/
-	"withdrawRewardPool" (
-		amount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::withdrawRewardPool", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [amount], __options);
-	}
-
-	/**
-	* psp22ContractAddress
+	* multiplier
 	*
 	*/
-	"psp22ContractAddress" (
+	"multiplier" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::psp22ContractAddress", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::multiplier", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
 
 	/**
-	* rewardPool
+	* minRewardAmount
 	*
 	*/
-	"rewardPool" (
+	"minRewardAmount" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::rewardPool", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::minRewardAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [], __options);
+	}
+
+	/**
+	* stakingContractAddress
+	*
+	*/
+	"stakingContractAddress" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::stakingContractAddress", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [], __options);
+	}
+
+	/**
+	* isTopupEnoughReward
+	*
+	*/
+	"isTopupEnoughReward" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::isTopupEnoughReward", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [], __options);
 	}
@@ -282,15 +330,31 @@ export default class Methods {
 	}
 
 	/**
-	* totalStaked
+	* topupRewardPool
 	*
+	* @param { (string | number | BN) } amount,
 	*/
-	"totalStaked" (
+	"topupRewardPool" (
+		amount: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::totalStaked", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::topupRewardPool", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [], __options);
+		}, [amount], __options);
+	}
+
+	/**
+	* withdrawRewardPool
+	*
+	* @param { (string | number | BN) } amount,
+	*/
+	"withdrawRewardPool" (
+		amount: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "genericPoolContractTrait::withdrawRewardPool", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
+		}, [amount], __options);
 	}
 
 	/**
@@ -321,58 +385,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "nftStakingListTrait::getStakedId", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
 		}, [account, index], __options);
-	}
-
-	/**
-	* tranferPsp22
-	*
-	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
-	* @param { (string | number | BN) } amount,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"tranferPsp22" (
-		psp22ContractAddress: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [psp22ContractAddress, amount, receiver], __options);
-	}
-
-	/**
-	* tranferNft
-	*
-	* @param { ArgumentTypes.AccountId } nftContractAddress,
-	* @param { ArgumentTypes.Id } tokenId,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferNft", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [nftContractAddress, tokenId, receiver], __options);
-	}
-
-	/**
-	* withdrawFee
-	*
-	* @param { (string | number | BN) } value,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"withdrawFee" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::withdrawFee", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "my_nft_pool");
-		}, [value, receiver], __options);
 	}
 
 	/**

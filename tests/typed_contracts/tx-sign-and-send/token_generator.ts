@@ -31,32 +31,32 @@ export default class Methods {
 	* initialize
 	*
 	* @param { ArgumentTypes.Hash } psp22Hash,
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	* @param { (string | number | BN) } creationFee,
 	*/
 	"initialize" (
 		psp22Hash: ArgumentTypes.Hash,
-		walContract: ArgumentTypes.AccountId,
+		inwContract: ArgumentTypes.AccountId,
 		creationFee: (string | number | BN),
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "initialize", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [psp22Hash, walContract, creationFee], __options);
+		}, [psp22Hash, inwContract, creationFee], __options);
 	}
 
 	/**
 	* newToken
 	*
 	* @param { ArgumentTypes.AccountId } mintTo,
-	* @param { (string | number | BN) } totalSupply,
+	* @param { (string | number | BN) } cap,
 	* @param { Array<(number | string | BN)> } name,
 	* @param { Array<(number | string | BN)> } symbol,
 	* @param { (number | string | BN) } decimal,
 	*/
 	"newToken" (
 		mintTo: ArgumentTypes.AccountId,
-		totalSupply: (string | number | BN),
+		cap: (string | number | BN),
 		name: Array<(number | string | BN)>,
 		symbol: Array<(number | string | BN)>,
 		decimal: (number | string | BN),
@@ -64,7 +64,7 @@ export default class Methods {
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "newToken", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [mintTo, totalSupply, name, symbol, decimal], __options);
+		}, [mintTo, cap, name, symbol, decimal], __options);
 	}
 
 	/**
@@ -75,18 +75,6 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [], __options);
-	}
-
-	/**
-	* owner
-	*
-	*/
-	"owner" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
 		}, [], __options);
 	}
@@ -106,13 +94,13 @@ export default class Methods {
 	}
 
 	/**
-	* getTokenCount
+	* owner
 	*
 	*/
-	"getTokenCount" (
+	"owner" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getTokenCount", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
 		}, [], __options);
 	}
@@ -130,6 +118,20 @@ export default class Methods {
 	}
 
 	/**
+	* getTokenContractAddress
+	*
+	* @param { (number | string | BN) } index,
+	*/
+	"getTokenContractAddress" (
+		index: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getTokenContractAddress", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "token_generator");
+		}, [index], __options);
+	}
+
+	/**
 	* getCreationFee
 	*
 	*/
@@ -142,15 +144,29 @@ export default class Methods {
 	}
 
 	/**
-	* getWalContract
+	* getInwContract
 	*
 	*/
-	"getWalContract" (
+	"getInwContract" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getWalContract", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getInwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
 		}, [], __options);
+	}
+
+	/**
+	* setCreationFee
+	*
+	* @param { (string | number | BN) } creationFee,
+	*/
+	"setCreationFee" (
+		creationFee: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::setCreationFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "token_generator");
+		}, [creationFee], __options);
 	}
 
 	/**
@@ -168,86 +184,52 @@ export default class Methods {
 	}
 
 	/**
-	* tokenManagerTrait::withdrawFee
+	* getTokenCount
+	*
+	*/
+	"getTokenCount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getTokenCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "token_generator");
+		}, [], __options);
+	}
+
+	/**
+	* withdrawInw
 	*
 	* @param { (string | number | BN) } value,
 	*/
-	"tokenManagerTrait::withdrawFee" (
+	"withdrawInw" (
 		value: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::withdrawFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::withdrawInw", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
 		}, [value], __options);
 	}
 
 	/**
-	* setWalContract
+	* setInwContract
 	*
-	* @param { ArgumentTypes.AccountId } walContract,
+	* @param { ArgumentTypes.AccountId } inwContract,
 	*/
-	"setWalContract" (
-		walContract: ArgumentTypes.AccountId,
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::setWalContract", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::setInwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [walContract], __options);
+		}, [inwContract], __options);
 	}
 
 	/**
-	* getTokenInfo
-	*
-	* @param { (number | string | BN) } index,
-	*/
-	"getTokenInfo" (
-		index: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::getTokenInfo", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [index], __options);
-	}
-
-	/**
-	* withdrawWal
-	*
-	* @param { (string | number | BN) } value,
-	*/
-	"withdrawWal" (
-		value: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "tokenManagerTrait::withdrawWal", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [value], __options);
-	}
-
-	/**
-	* tranferNft
-	*
-	* @param { ArgumentTypes.AccountId } nftContractAddress,
-	* @param { ArgumentTypes.Id } tokenId,
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"tranferNft" (
-		nftContractAddress: ArgumentTypes.AccountId,
-		tokenId: ArgumentTypes.Id,
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferNft", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "token_generator");
-		}, [nftContractAddress, tokenId, receiver], __options);
-	}
-
-	/**
-	* adminTrait::withdrawFee
+	* withdrawFee
 	*
 	* @param { (string | number | BN) } value,
 	* @param { ArgumentTypes.AccountId } receiver,
 	*/
-	"adminTrait::withdrawFee" (
+	"withdrawFee" (
 		value: (string | number | BN),
 		receiver: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
@@ -255,6 +237,18 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::withdrawFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "token_generator");
 		}, [value, receiver], __options);
+	}
+
+	/**
+	* getBalance
+	*
+	*/
+	"getBalance" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::getBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "token_generator");
+		}, [], __options);
 	}
 
 	/**
