@@ -68,8 +68,8 @@ pub mod launchpad_generator {
         #[ink(constructor)]
         pub fn new(launchpad_hash: Hash, inw_contract: AccountId, creation_fee: Balance, tx_rate: u32, admin_address: AccountId) -> Result<Self, Error> {
             let mut instance = Self::default();
-            let caller = Self::env().caller();
 
+            let caller = Self::env().caller();
             instance._init_with_owner(caller);
 
             match instance.initialize(
@@ -101,8 +101,12 @@ pub mod launchpad_generator {
 
             self.manager.tx_rate = tx_rate;
 
+            self._init_with_admin(self.env().caller());
             self.grant_role(ADMINER, self.env().caller()).expect("Should grant ADMINER role");
-            self.grant_role(ADMINER, admin_address).expect("Should grant ADMINER role");
+            
+            if !self.has_role(ADMINER, admin_address) {
+                self.grant_role(ADMINER, admin_address).expect("Should grant ADMINER role");
+            }
 
             Ok(())
         }

@@ -162,13 +162,11 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>            
         ) -> Result<Self, Error> {
-
             let mut instance = Self::default();
 
             instance._init_with_owner(contract_owner);
-            instance.grant_role(ADMINER, contract_owner).expect("Should grant ADMINER role");
-
-            match instance.create_launchpad(
+            
+            match instance.initialize(
                 project_info_uri,
                 token_address,
                 generator_contract,
@@ -210,45 +208,9 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>  
         ) -> Result<(), Error> {
+            self._init_with_admin(self.env().caller());
             self.grant_role(ADMINER, self.env().caller()).expect("Should grant ADMINER role");
 
-            self.create_launchpad(
-                project_info_uri,
-                token_address,
-                generator_contract,
-                tx_rate,
-                
-                phase_name,
-                phase_start_time,
-                phase_end_time,
-                phase_immediate_release_rate,
-                phase_vesting_duration,
-                phase_vesting_unit,
-                
-                phase_is_public,
-                phase_public_amount,
-                phase_public_price
-            )
-        }
-
-        fn create_launchpad(
-            &mut self, 
-            project_info_uri: String,
-            token_address: AccountId,
-            generator_contract: AccountId,
-            tx_rate: u32,
-            
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-            
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>  
-        ) -> Result<(), Error> {
             if self.data.generator_contract != ZERO_ADDRESS.into() {
                 return Err(Error::AlreadyInit);
             }
@@ -293,8 +255,8 @@ pub mod my_launchpad {
                 }
             }
                  
-            Ok(())
-        }
+            Ok(())            
+        }        
 
         #[ink(message)]
         pub fn add_new_phase(
