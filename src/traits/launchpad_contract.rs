@@ -50,6 +50,12 @@ pub trait LaunchpadContractTrait {
     fn get_token_address(&self) -> AccountId;
 
     #[ink(message)]
+    fn get_total_supply(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_available_token_amount(&self) -> Balance;
+
+    #[ink(message)]
     fn get_generator_contract(&self) -> AccountId;
 
     #[ink(message)]
@@ -163,6 +169,9 @@ pub trait LaunchpadContractTrait {
     #[ink(message)]
     fn set_vesting_unit(&mut self, phase_id: u8, vesting_unit: u64) -> Result<(), Error>;
     
+    #[ink(message)]
+    fn set_is_public(&mut self, phase_id: u8, is_public: bool) -> Result<(), Error>;
+
     #[ink(message)]
     fn set_public_total_amount(&mut self, phase_id: u8, total_amount: Balance) -> Result<(), Error>;
     

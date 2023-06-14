@@ -58,6 +58,14 @@ where
         self.data::<Data>().token_address
     }
 
+    default fn get_total_supply(&self) -> Balance {
+        self.data::<Data>().total_supply
+    }
+
+    default fn get_available_token_amount(&self) -> Balance {
+        self.data::<Data>().available_token_amount
+    }
+
     default fn get_generator_contract(&self) -> AccountId {
         self.data::<Data>().generator_contract
     }
@@ -289,6 +297,19 @@ where
                 if self.data::<Data>().project_end_time < phase.end_time {
                     self.data::<Data>().project_end_time = phase.end_time; 
                 }
+
+                // Update available_token_amount
+                if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                    if public_sale_info.is_public {
+                        let public_total_changed = public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?;
+                        self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_sub(public_total_changed).ok_or(Error::CheckedOperations)?;
+                    }
+                }
+                
+                if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+                    let whitelist_total_changed = whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?;
+                    self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_sub(whitelist_total_changed).ok_or(Error::CheckedOperations)?;    
+                }
             } else {
                 // Update project_start_time and project_end_time
                 if self.data::<Data>().project_start_time == phase.start_time {
@@ -327,6 +348,19 @@ where
                     }    
                     
                     self.data::<Data>().project_end_time = project_end_time;
+                }
+
+                // Update available_token_amount
+                if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                    if public_sale_info.is_public {
+                        let public_total_changed = public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?;
+                        self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_add(public_total_changed).ok_or(Error::CheckedOperations)?;
+                    }
+                }  
+                
+                if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+                    let whitelist_total_changed = whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?;
+                    self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_add(whitelist_total_changed).ok_or(Error::CheckedOperations)?;
                 }
             }
 
@@ -476,6 +510,44 @@ where
         }
     }
 
+    // Note: Can only set before phase start time and when phase is active 
+    #[modifiers(only_role(ADMINER))]
+    default fn set_is_public(&mut self, phase_id: u8, is_public: bool) -> Result<(), Error> {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
+            // Check time condition
+            let current_time = Self::env().block_timestamp();
+
+            if current_time >= phase.start_time {
+                return Err(Error::InvalidTime);
+            }
+
+            if !phase.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                if public_sale_info.is_public == is_public {
+                    return Err(Error::InvalidSetPublic);
+                }
+
+                if is_public {
+                    self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_sub(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?;
+                } else {
+                    self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_add(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?;
+                }
+
+                public_sale_info.is_public = is_public;
+                self.data::<Data>().public_sale_info.insert(&phase_id, &public_sale_info);
+            } else {
+                return Err(Error::PublicSaleInfoNotExist);
+            }
+
+            Ok(())
+        } else {
+            return Err(Error::PhaseNotExist);
+        }
+    }
+
     #[modifiers(only_role(ADMINER))]
     default fn set_public_total_amount(&mut self, phase_id: u8, total_amount: Balance) -> Result<(), Error> {       
         if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
@@ -486,41 +558,22 @@ where
                 return Err(Error::InvalidTime);
             }
 
-            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            if !phase.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
+            if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                if !public_sale_info.is_public {
+                    return Err(Error::PhaseNotPublic);
+                }
+
                 if total_amount == 0 {
                     return Err(Error::InvalidTotalAmount);
                 }
-
-                let current_total_amount = public_sale_info.total_amount;
-                public_sale_info.total_amount = total_amount;
-
-                if current_total_amount < total_amount {
-                    // Note: Need to approve >= current_total_amount before calling topup func
-                    return self.topup(
-                        total_amount.checked_sub(current_total_amount).ok_or(Error::CheckedOperations)?
-                    );                    
-                }
                 
-                if current_total_amount > total_amount { // Transfer (total_out - total_in) tokens to owner
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        Self::env().caller(),
-                        current_total_amount.checked_sub(total_amount).ok_or(Error::CheckedOperations)?,
-                        Vec::<u8>::new(),
-                    ).call_flags(CallFlags::default().set_allow_reentry(true));
-        
-                    let result = match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => {
-                            Err(Error::CannotTransfer)
-                        }
-                    };
-                   
-                    return result;
-                }  
+                self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount
+                                                                .checked_add(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?
+                                                                .checked_sub(total_amount).ok_or(Error::CheckedOperations)?;
             } else {
                 return Err(Error::PublicSaleInfoNotExist);
             }
@@ -569,8 +622,8 @@ where
             Self::env().account_id(),
             amount,
             Vec::<u8>::new(),
-        )
-        .call_flags(CallFlags::default().set_allow_reentry(true));
+        );
+        // .call_flags(CallFlags::default().set_allow_reentry(true));
         
         match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
@@ -592,6 +645,10 @@ where
         whitelist_prices: Vec<Balance>
     ) -> Result<(), Error> {    
         if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
             let current_time = Self::env().block_timestamp();
             if current_time >= phase_info.end_time {
                 return Err(Error::InvalidTime);
@@ -609,8 +666,11 @@ where
             for i in 0..whitelist_count {
                 if self.data::<Data>().whitelist_buyer.get(&(&phase_id, &accounts[i])).is_some() {
                     return Err(Error::WhitelistBuyerInfoExist);   
-                }
-            
+                }            
+
+                self.data::<Data>().available_token_amount.checked_sub(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
+                total_amount = total_amount.checked_add(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
+                
                 let whitelist_buyer_info = WhitelistBuyerInfo {
                     amount: whitelist_amounts[i],
                     price: whitelist_prices[i],
@@ -621,8 +681,6 @@ where
                 };
 
                 self.data::<Data>().whitelist_buyer.insert(&(&phase_id, &accounts[i]), &whitelist_buyer_info); 
-                
-                total_amount = total_amount.checked_add(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
                 self.data::<Data>().whitelist_account.insert(phase_id, &accounts[i]);     
             }
         
@@ -641,11 +699,9 @@ where
                 };
 
                 self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
-            }    
+            }  
 
-            // Transfer total_amount of token to launchpad contract
-            // Note: Need to approve >= total amount before calling topup func
-            self.topup(total_amount)
+            Ok(())
         } else {
             return Err(Error::PhaseNotExist);
         }        
@@ -660,6 +716,10 @@ where
         whitelist_prices: Vec<Balance>
     ) -> Result<(), Error> {
         if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
+            if !phase_info.is_active {
+                return Err(Error::PhaseNotActive);
+            }
+
             let current_time = Self::env().block_timestamp();
             if current_time >= phase_info.end_time {
                 return Err(Error::InvalidTime);
@@ -697,6 +757,10 @@ where
 
             // Update whitelist sale info total amount
             if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+                self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount
+                                                    .checked_add(total_out).ok_or(Error::CheckedOperations)?
+                                                    .checked_sub(total_in).ok_or(Error::CheckedOperations)?;
+
                 whitelist_sale_info.total_amount = whitelist_sale_info.total_amount
                                                     .checked_add(total_in).ok_or(Error::CheckedOperations)?
                                                     .checked_sub(total_out).ok_or(Error::CheckedOperations)?;
@@ -704,37 +768,7 @@ where
                 self.data::<Data>().whitelist_sale_info.insert(&phase_id, &whitelist_sale_info);
             } else {
                 return Err(Error::WhitelistSaleInfoNotExist);
-            }
-            
-            if total_in > total_out {
-                // Transfer (total_in - total_out) tokens to launchpad contract
-                // Note: Need to approve >= (total_in - total_out) before calling topup func
-                return self.topup(
-                    total_in.checked_sub(total_out).ok_or(Error::CheckedOperations)?
-                );
-            } 
-            
-            if total_in < total_out { // Transfer (total_out - total_in) tokens to owner
-
-                let builder = Psp22Ref::transfer_builder(
-                    &self.data::<Data>().token_address,
-                    Self::env().caller(),
-                    total_out.checked_sub(total_in).ok_or(Error::CheckedOperations)?,
-                    Vec::<u8>::new(),
-                ).call_flags(CallFlags::default().set_allow_reentry(true));
-    
-                let result = match builder.try_invoke() {
-                    Ok(Ok(Ok(_))) => Ok(()),
-                    Ok(Ok(Err(e))) => Err(e.into()),
-                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                    Err(ink::env::Error::NotCallable) => Ok(()),
-                    _ => {
-                        Err(Error::CannotTransfer)
-                    }
-                };
-                
-                return result;
-            }  
+            }           
             
             Ok(())
         } else {
@@ -749,7 +783,6 @@ where
     default fn _emit_whitelist_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
     
     default fn _emit_whitelist_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
-
 
     default fn public_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
         if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
@@ -772,7 +805,11 @@ where
                     return Err(Error::NotTimeToPurchase);
                 }
 
-                if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {         
+                if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                    if !public_sale_info.is_public {
+                        return Err(Error::PhaseNotPublic);
+                    }
+                     
                     // Check amount to buy
                     if amount == 0 || public_sale_info.total_purchased_amount.checked_add(amount).ok_or(Error::CheckedOperations)? > public_sale_info.total_amount {
                         return Err(Error::InvalidBuyAmount);
@@ -890,20 +927,21 @@ where
         }
     }
 
+    // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
     default fn public_claim(&mut self, phase_id: u8) -> Result<(), Error> {
-        if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
-                                                &self.data::<Data>().generator_contract,
-                                                Self::env().account_id()) { 
+        // if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
+        //                                         &self.data::<Data>().generator_contract,
+        //                                         Self::env().account_id()) { 
 
-            if !is_active_launchpad {
-                return Err(Error::LaunchpadNotActive);
-            }
+        //     if !is_active_launchpad {
+        //         return Err(Error::LaunchpadNotActive);
+        //     }
 
             if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-                // Check if phase is active
-                if !phase_info.is_active {
-                    return Err(Error::PhaseNotActive);
-                }
+                // // Check if phase is active
+                // if !phase_info.is_active {
+                //     return Err(Error::PhaseNotActive);
+                // }
 
                 // Check claim time
                 let current_time = Self::env().block_timestamp();
@@ -1011,9 +1049,9 @@ where
             } else {
                 return Err(Error::PhaseNotExist);
             }
-        } else {
-            return Err(Error::ActiveLaunchpadStatusNotFound);
-        }
+        // } else {
+        //     return Err(Error::ActiveLaunchpadStatusNotFound);
+        // }
     }
 
     default fn whitelist_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
@@ -1147,20 +1185,21 @@ where
         }        
     }
 
+    // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
     default fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error> {
-        if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
-                                                &self.data::<Data>().generator_contract,
-                                                Self::env().account_id()) { 
+        // if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
+        //                                         &self.data::<Data>().generator_contract,
+        //                                         Self::env().account_id()) { 
 
-            if !is_active_launchpad {
-                return Err(Error::LaunchpadNotActive);
-            }
+        //     if !is_active_launchpad {
+        //         return Err(Error::LaunchpadNotActive);
+        //     }
 
             if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
                 // Check if phase is active
-                if !phase_info.is_active {
-                    return Err(Error::PhaseNotActive);
-                }
+                // if !phase_info.is_active {
+                //     return Err(Error::PhaseNotActive);
+                // }
 
                 // Check claim time
                 let current_time = Self::env().block_timestamp();
@@ -1268,9 +1307,9 @@ where
             } else {
                 return Err(Error::PhaseNotExist);
             }
-        } else {
-            return Err(Error::ActiveLaunchpadStatusNotFound);
-        }            
+        // } else {
+        //     return Err(Error::ActiveLaunchpadStatusNotFound);
+        // }            
     }
 
     // Burn all public and whitelisted unsold tokens in contract 
@@ -1287,34 +1326,42 @@ where
         let mut total_burned: Balance = 0;
 
         for i in 0..self.data::<Data>().total_phase {
-            // Check public sale info            
-            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
-                if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
-                    total_burned = total_burned.checked_add(
-                        public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
-                    ).ok_or(Error::CheckedOperations)?;                   
-                    
-                    public_sale_info.total_amount = public_sale_info.total_purchased_amount;
-                    public_sale_info.is_burned = true;
+            if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                // Check if phase is active
+                if phase_info.is_active {            
+                    // Check public sale info            
+                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                        if public_sale_info.is_public && public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                            total_burned = total_burned.checked_add(
+                                public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                            ).ok_or(Error::CheckedOperations)?;                   
+                            
+                            public_sale_info.total_amount = public_sale_info.total_purchased_amount;
+                            public_sale_info.is_burned = true;
 
-                    self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
+                            self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
+                        }
+                    }
+
+                    // Check whitelist sale info
+                    if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                        if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                            total_burned = total_burned.checked_add(
+                                whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                            ).ok_or(Error::CheckedOperations)?;                      
+                            
+                            whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
+                            whitelist_sale_info.is_burned = true;
+
+                            self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
+                        }
+                    }
                 }
-            }
-
-            // Check whitelist sale info
-            if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
-                if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
-                    total_burned = total_burned.checked_add(
-                        whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
-                    ).ok_or(Error::CheckedOperations)?;                      
-                    
-                    whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
-                    whitelist_sale_info.is_burned = true;
-
-                    self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
-                }
-            }            
+            }              
         }
+
+        // Add available_token_amount
+        total_burned = total_burned.checked_add(self.data::<Data>().available_token_amount).ok_or(Error::CheckedOperations)?;  
 
         // Burn the unsold token
         if total_burned > 0 {
@@ -1340,34 +1387,42 @@ where
         let mut total_withdraw: Balance = 0;
 
         for i in 0..self.data::<Data>().total_phase {
-            // Check public sale info            
-            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
-                if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
-                    total_withdraw = total_withdraw.checked_add(
-                        public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
-                    ).ok_or(Error::CheckedOperations)?;                   
-                    
-                    public_sale_info.total_amount = public_sale_info.total_purchased_amount;
-                    public_sale_info.is_withdrawn = true;
+            if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
+                // Check if phase is active
+                if phase_info.is_active {     
+                    // Check public sale info            
+                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                        if public_sale_info.is_public && public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                            total_withdraw = total_withdraw.checked_add(
+                                public_sale_info.total_amount.checked_sub(public_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                            ).ok_or(Error::CheckedOperations)?;                   
+                            
+                            public_sale_info.total_amount = public_sale_info.total_purchased_amount;
+                            public_sale_info.is_withdrawn = true;
 
-                    self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
-                }
-            }
+                            self.data::<Data>().public_sale_info.insert(&i, &public_sale_info);
+                        }
+                    }
 
-            // Check whitelist sale info
-            if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
-                if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
-                    total_withdraw = total_withdraw.checked_add(
-                        whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
-                    ).ok_or(Error::CheckedOperations)?;                      
-                    
-                    whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
-                    whitelist_sale_info.is_withdrawn = true;
+                    // Check whitelist sale info
+                    if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                        if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                            total_withdraw = total_withdraw.checked_add(
+                                whitelist_sale_info.total_amount.checked_sub(whitelist_sale_info.total_purchased_amount).ok_or(Error::CheckedOperations)?
+                            ).ok_or(Error::CheckedOperations)?;                      
+                            
+                            whitelist_sale_info.total_amount = whitelist_sale_info.total_purchased_amount;
+                            whitelist_sale_info.is_withdrawn = true;
 
-                    self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
-                }
-            }            
+                            self.data::<Data>().whitelist_sale_info.insert(&i, &whitelist_sale_info);
+                        }
+                    } 
+                }    
+            }       
         }
+
+        // Add available_token_amount
+        total_withdraw = total_withdraw.checked_add(self.data::<Data>().available_token_amount).ok_or(Error::CheckedOperations)?;  
 
         // Withdraw the unsold token
         if total_withdraw > 0 {

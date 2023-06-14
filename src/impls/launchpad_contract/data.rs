@@ -41,6 +41,7 @@ pub struct PhaseInfo {
 )]
 #[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct PublicSaleInfo {
+    pub is_public: bool,
     pub total_amount: Balance, 
     pub price: Balance, 
     pub total_purchased_amount: Balance,
@@ -92,9 +93,11 @@ pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]
 #[openbrush::upgradeable_storage(STORAGE_KEY)]
 pub struct Data {
-    // Genernal info
+    // Genernal info    
     pub project_info_uri: String,
     pub token_address: AccountId,
+    pub total_supply: Balance, 
+    pub available_token_amount: Balance,
     pub generator_contract: AccountId,
     pub tx_rate: u32,
     // Project start end time will get from phases' start, end time
@@ -119,6 +122,8 @@ impl Default for Data {
         Self {
             project_info_uri: Default::default(),
             token_address: ZERO_ADDRESS.into(),
+            total_supply: Default::default(),
+            available_token_amount: Default::default(),
             generator_contract: ZERO_ADDRESS.into(),
             tx_rate: Default::default(),
 

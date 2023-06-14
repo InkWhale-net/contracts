@@ -145,9 +145,10 @@ pub mod my_launchpad {
     impl MyLaunchpad {
         #[ink(constructor)]
         pub fn new(
-            contract_owner: AccountId, 
+            contract_owner: AccountId,
             project_info_uri: String,
             token_address: AccountId,
+            total_supply: Balance,             
             generator_contract: AccountId,
             tx_rate: u32,
             
@@ -167,11 +168,13 @@ pub mod my_launchpad {
             instance._init_with_owner(contract_owner);
 
             instance._init_with_admin(Self::env().caller());
+            instance._init_with_admin(contract_owner);
             instance.grant_role(ADMINER, contract_owner).expect("Should grant ADMINER role");
             
             match instance.create_pool(
                 project_info_uri,
                 token_address,
+                total_supply,
                 generator_contract,
                 tx_rate,
                 
@@ -197,6 +200,7 @@ pub mod my_launchpad {
             &mut self, 
             project_info_uri: String,
             token_address: AccountId,
+            total_supply: Balance,
             generator_contract: AccountId,
             tx_rate: u32,
             
@@ -217,6 +221,7 @@ pub mod my_launchpad {
             match self.create_pool(
                 project_info_uri,
                 token_address,
+                total_supply,
                 generator_contract,
                 tx_rate,
                 
@@ -235,11 +240,12 @@ pub mod my_launchpad {
                 Err(e) => Err(e),
             }         
         } 
-        
+
         fn create_pool(
             &mut self, 
             project_info_uri: String,
             token_address: AccountId,
+            total_supply: Balance,
             generator_contract: AccountId,
             tx_rate: u32,
             
@@ -260,6 +266,8 @@ pub mod my_launchpad {
 
             self.data.project_info_uri = project_info_uri;
             self.data.token_address = token_address;
+            self.data.total_supply = total_supply;
+            self.data.available_token_amount = total_supply;
             self.data.generator_contract = generator_contract;
             self.data.tx_rate = tx_rate;
 
@@ -315,7 +323,7 @@ pub mod my_launchpad {
             public_amount: Balance,
             public_price: Balance  
         ) -> Result<(), Error> {
-            if !self.has_role(ADMINER, self.env().caller()) && self.env().caller() != self.data.generator_contract {
+            if !self.has_role(ADMINER, self.env().caller()) && !self.has_role(Self::_default_admin(), self.env().caller()) && self.env().caller() != self.data.generator_contract {
                 return Err(Error::InvalidCaller);
             }
 
@@ -356,22 +364,23 @@ pub mod my_launchpad {
                 end_vesting_time,
                 vesting_unit,
                 total_vesting_units
-            };
-            
+            };            
             self.data.phase.insert(&self.data.total_phase, &phase);
-
+            
+            let public_sale = PublicSaleInfo {
+                is_public,
+                total_amount: public_amount,
+                price: public_price,
+                total_purchased_amount: 0,
+                total_claimed_amount: 0,
+                is_burned: false,
+                is_withdrawn: false
+            };
+            self.data.public_sale_info.insert(&self.data.total_phase, &public_sale);
+        
             // Check if has public sale 
             if is_public {
-                let pulic_sale = PublicSaleInfo {
-                    total_amount: public_amount,
-                    price: public_price,
-                    total_purchased_amount: 0,
-                    total_claimed_amount: 0,
-                    is_burned: false,
-                    is_withdrawn: false
-                };
-
-                self.data.public_sale_info.insert(&self.data.total_phase, &pulic_sale);
+                self.data.available_token_amount = self.data.available_token_amount.checked_sub(public_amount).ok_or(Error::CheckedOperations)?;
             }
 
             self.data.total_phase = self.data.total_phase.checked_add(1).ok_or(Error::InvalidPhaseCount)?;

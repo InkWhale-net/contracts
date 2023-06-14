@@ -116,7 +116,8 @@ pub mod launchpad_generator {
             &mut self,
             project_info_uri: String,
             token_address: AccountId,
-            
+            total_supply: Balance,
+
             phase_name: Vec<String>,
             phase_start_time: Vec<u64>,
             phase_end_time: Vec<u64>,
@@ -148,13 +149,9 @@ pub mod launchpad_generator {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
 
-            // Get total amount of tokens for puclic sale
-            let total_amount = phase_public_amount
-                                    .iter()
-                                    .enumerate()
-                                    .filter(|&(i, _)| phase_is_public[i])
-                                    .map(|(_, e)| e)
-                                    .sum();
+            if total_supply == 0 {
+                return Err(Error::InvalidTotalSupply);
+            }
             
             // Check token balance and allowance
             let token_allowance = Psp22Ref::allowance(
@@ -168,7 +165,7 @@ pub mod launchpad_generator {
                 caller
             );
 
-            if  token_allowance < total_amount || token_balance < total_amount {
+            if  token_allowance < total_supply || token_balance < total_supply {
                 return Err(Error::InvalidTokenBalanceAndAllowance);
             }
 
@@ -196,37 +193,36 @@ pub mod launchpad_generator {
                 return Err(Error::CannotTransfer);
             }   
             
-            // Collect token for public sale if avail
-            if total_amount > 0 {
-                let builder = Psp22Ref::transfer_from_builder(
-                    &token_address,
-                    caller,
-                    self.env().account_id(),
-                    total_amount,
-                    Vec::<u8>::new(),
-                )
-                .call_flags(CallFlags::default().set_allow_reentry(true));
+            // Collect total supply of token            
+            let builder = Psp22Ref::transfer_from_builder(
+                &token_address,
+                caller,
+                self.env().account_id(),
+                total_supply,
+                Vec::<u8>::new(),
+            )
+            .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                let token_transfer_result = match builder.try_invoke() {
-                    Ok(Ok(Ok(_))) => Ok(()),
-                    Ok(Ok(Err(e))) => Err(e.into()),
-                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                    Err(ink::env::Error::NotCallable) => Ok(()),
-                    _ => {
-                        Err(Error::CannotTransfer)
-                    }
-                };
+            let token_transfer_result = match builder.try_invoke() {
+                Ok(Ok(Ok(_))) => Ok(()),
+                Ok(Ok(Err(e))) => Err(e.into()),
+                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                Err(ink::env::Error::NotCallable) => Ok(()),
+                _ => {
+                    Err(Error::CannotTransfer)
+                }
+            };
 
-                if token_transfer_result.is_err() {
-                    return Err(Error::CannotTransfer);
-                }   
-            }
+            if token_transfer_result.is_err() {
+                return Err(Error::CannotTransfer);
+            }             
             
-            if let Result::Ok(contract) = 
+            let launchpad_creation_result = 
                 MyLaunchpadRef::new(
-                    caller, 
+                    caller,
                     project_info_uri,
                     token_address,
+                    total_supply,
                     self.env().account_id(),
                     self.manager.tx_rate,
                     
@@ -243,8 +239,9 @@ pub mod launchpad_generator {
                 .endowment(0)
                 .code_hash(self.manager.launchpad_hash)
                 .salt_bytes(self.manager.launchpad_count.to_le_bytes())
-                .instantiate() {
-                
+                .instantiate();
+
+            if let Result::Ok(contract) = launchpad_creation_result {               
                 // Save launchpad contract address
                 let contract_account: AccountId = contract.to_account_id();              
 
@@ -268,20 +265,18 @@ pub mod launchpad_generator {
                 if Psp22Ref::burn(&self.manager.inw_contract, self.env().account_id(), fees).is_err() {
                     return Err(Error::CannotBurn);
                 } 
-
-                if total_amount > 0 {
-                    // Launchpad generator approves for launchpad contract the token amount   
-                    if Psp22Ref::approve(&token_address, contract_account, total_amount).is_err() {
-                        return Err(Error::CannotApprove);
-                    }
-
-                    // Launchpad generator tops up token for launchpad
-                    let topup_result = LaunchpadContractRef::topup(&contract_account, total_amount);
-
-                    if topup_result.is_err() {
-                        return Err(Error::CannotTopupToken);
-                    }
+                
+                // Launchpad generator approves for launchpad contract the token amount   
+                if Psp22Ref::approve(&token_address, contract_account, total_supply).is_err() {
+                    return Err(Error::CannotApprove);
                 }
+
+                // Launchpad generator tops up token for launchpad
+                let topup_result = LaunchpadContractRef::topup(&contract_account, total_supply);
+
+                if topup_result.is_err() {
+                    return Err(Error::CannotTopupToken);
+                }            
 
                 // Emit event
                 // self.env().emit_event(AddNewLaunchpadEvent {
@@ -289,7 +284,12 @@ pub mod launchpad_generator {
                 //     launchpad_address: contract_account
                 // });
             } else {
-                return Err(Error::CannotCreatePool);
+                let r = match launchpad_creation_result {
+                    Ok(_) => Ok(()),
+                    Err(e) => Err(e),
+                };
+
+                return r;
             }   
             
             Ok(())

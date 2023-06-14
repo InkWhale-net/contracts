@@ -87,7 +87,10 @@ pub enum Error {
     ActiveLaunchpadStatusNotFound,
     LaunchpadNotActive,
     InvalidCaller,
-    NoPhaseActive
+    NoPhaseActive,
+    InvalidTotalSupply,
+    PhaseNotPublic,
+    InvalidSetPublic
 }
 
 impl From<OwnableError> for Error {
