@@ -245,6 +245,65 @@ where
     }
 
     #[modifiers(only_owner)]
+    default fn set_total_supply(&mut self, total_supply: Balance) -> Result<(), Error> {
+        let current_time = Self::env().block_timestamp();
+
+        if current_time >= self.data::<Data>().project_start_time {
+            return Err(Error::InvalidTime);
+        }
+
+        if total_supply == 0 {
+            return Err(Error::InvalidTotalSupply);
+        }        
+
+        if total_supply > self.data::<Data>().total_supply {
+            let total_changed = total_supply.checked_sub(self.data::<Data>().total_supply).ok_or(Error::CheckedOperations)?; 
+            self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_add(total_changed).ok_or(Error::CheckedOperations)?; 
+            self.data::<Data>().total_supply = total_supply; 
+
+            // Note: Need to approve the additional tokens before topup
+            let topup_result = self.topup(total_changed);
+            if topup_result.is_err() {
+                return Err(Error::CannotTopupToken);
+            }    
+        }
+
+        if total_supply < self.data::<Data>().total_supply {
+            let total_changed = self.data::<Data>().total_supply.checked_sub(total_supply).ok_or(Error::CheckedOperations)?; 
+            
+            self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_sub(total_changed).ok_or(Error::CheckedOperations)?; 
+            self.data::<Data>().total_supply = total_supply; 
+
+            let caller = Self::env().caller();
+
+            let builder = Psp22Ref::transfer_from_builder(
+                &self.data::<Data>().token_address,
+                caller,
+                Self::env().account_id(),
+                total_changed,
+                Vec::<u8>::new(),
+            )
+            .call_flags(CallFlags::default().set_allow_reentry(true));
+
+            let token_transfer_result = match builder.try_invoke() {
+                Ok(Ok(Ok(_))) => Ok(()),
+                Ok(Ok(Err(e))) => Err(e.into()),
+                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                Err(ink::env::Error::NotCallable) => Ok(()),
+                _ => {
+                    Err(Error::CannotTransfer)
+                }
+            };
+
+            if token_transfer_result.is_err() {
+                return Err(Error::CannotTransfer);
+            }   
+        }
+
+        Ok(())
+    }
+
+    #[modifiers(only_owner)]
     default fn set_generator_contract(&mut self, generator_contract: AccountId) -> Result<(), Error> {
         self.data::<Data>().generator_contract = generator_contract;
         Ok(())
@@ -593,6 +652,124 @@ where
             return Err(Error::PublicSaleInfoNotExist);
         }
     }
+
+    #[modifiers(only_role(ADMINER))]
+    default fn set_phase(
+        &mut self, 
+        phase_id: u8, 
+        is_active: bool,
+        name: String,
+        start_time: u64, 
+        end_time: u64,
+        immediate_release_rate: u32,
+        vesting_duration: u64,
+        vesting_unit: u64,
+        is_public: bool,
+        total_amount: Balance,
+        price: Balance
+    ) -> Result<(), Error> {
+        let set_is_active_result = self.set_is_active(phase_id, is_active);
+        if set_is_active_result.is_err() && set_is_active_result != Err(Error::InvalidSetActive) {
+            return set_is_active_result;
+        }
+
+        let set_name_result = self.set_name(phase_id, name);
+        if set_name_result.is_err() {
+            return set_name_result;
+        }
+
+        let set_start_and_end_time_result = self.set_start_and_end_time(phase_id, start_time, end_time);
+        if set_start_and_end_time_result.is_err() {
+            return set_start_and_end_time_result;
+        }
+
+        let set_immediate_release_rate_result = self.set_immediate_release_rate(phase_id, immediate_release_rate);
+        if set_immediate_release_rate_result.is_err() {
+            return set_immediate_release_rate_result;
+        }
+
+        let set_vesting_duration_result = self.set_vesting_duration(phase_id, vesting_duration);
+        if set_vesting_duration_result.is_err() {
+            return set_vesting_duration_result;
+        }
+
+        let set_vesting_unit_result = self.set_vesting_unit(phase_id, vesting_unit);
+        if set_vesting_unit_result.is_err() {
+            return set_vesting_unit_result;
+        }
+
+        let set_is_public_result = self.set_is_public(phase_id, is_public);
+        if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
+            return set_is_public_result;
+        }
+
+        let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
+        if set_public_total_amount_result.is_err() {
+            return set_public_total_amount_result;
+        }
+
+        let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
+        if set_public_sale_price_result.is_err() {
+            return set_public_sale_price_result;
+        }
+
+        Ok(())
+    } 
+
+    #[modifiers(only_role(ADMINER))]
+    default fn set_multi_phases(
+        &mut self, 
+        phase_id: Vec<u8>, 
+        is_active: Vec<bool>,
+        name: Vec<String>,
+        start_time: Vec<u64>, 
+        end_time: Vec<u64>,
+        immediate_release_rate: Vec<u32>,
+        vesting_duration: Vec<u64>,
+        vesting_unit: Vec<u64>,
+        is_public: Vec<bool>,
+        total_amount: Vec<Balance>,
+        price: Vec<Balance>
+    ) -> Result<(), Error> {
+        let len = phase_id.len();
+
+        if  len == 0 || 
+            len != is_active.len() ||
+            len != name.len() ||
+            len != start_time.len() ||
+            len != end_time.len() ||
+            len != immediate_release_rate.len() ||
+            len != vesting_duration.len() ||
+            len != vesting_unit.len() ||
+            len != is_public.len() ||
+            len != total_amount.len() ||
+            len != price.len() {
+        
+            return Err(Error::InvalidPhaseData);  
+        }
+
+        for i in 0..len {
+            let set_phase_result = self.set_phase(
+                phase_id[i], 
+                is_active[i],
+                name[i].clone(),
+                start_time[i], 
+                end_time[i],
+                immediate_release_rate[i],
+                vesting_duration[i],
+                vesting_unit[i],
+                is_public[i],
+                total_amount[i],
+                price[i]
+            ); 
+
+            if set_phase_result.is_err() {
+                return set_phase_result;
+            }    
+        }
+
+        Ok(())
+    } 
     
     // Funcs
     

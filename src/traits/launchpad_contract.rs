@@ -146,6 +146,9 @@ pub trait LaunchpadContractTrait {
     fn set_token_address(&mut self, token_address: AccountId) -> Result<(), Error>;
     
     #[ink(message)]
+    fn set_total_supply(&mut self, total_supply: Balance) -> Result<(), Error>;
+    
+    #[ink(message)]
     fn set_generator_contract(&mut self, generator_contract: AccountId) -> Result<(), Error>; 
     
     #[ink(message)]
@@ -177,7 +180,39 @@ pub trait LaunchpadContractTrait {
     
     #[ink(message)]
     fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error>;
-        
+       
+    #[ink(message)]
+    fn set_phase(
+        &mut self, 
+        phase_id: u8, 
+        is_active: bool,
+        name: String,
+        start_time: u64, 
+        end_time: u64,
+        immediate_release_rate: u32,
+        vesting_duration: u64,
+        vesting_unit: u64,
+        is_public: bool,
+        total_amount: Balance,
+        price: Balance
+    ) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_multi_phases(
+        &mut self, 
+        phase_id: Vec<u8>, 
+        is_active: Vec<bool>,
+        name: Vec<String>,
+        start_time: Vec<u64>, 
+        end_time: Vec<u64>,
+        immediate_release_rate: Vec<u32>,
+        vesting_duration: Vec<u64>,
+        vesting_unit: Vec<u64>,
+        is_public: Vec<bool>,
+        total_amount: Vec<Balance>,
+        price: Vec<Balance>
+    ) -> Result<(), Error>;
+
     // Funcs
     #[ink(message)]
     fn topup(&mut self, amount: Balance) -> Result<(), Error>;
