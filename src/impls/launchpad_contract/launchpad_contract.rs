@@ -845,7 +845,7 @@ where
                     return Err(Error::WhitelistBuyerInfoExist);   
                 }            
 
-                self.data::<Data>().available_token_amount.checked_sub(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
+                self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount.checked_sub(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
                 total_amount = total_amount.checked_add(whitelist_amounts[i]).ok_or(Error::CheckedOperations)?;
                 
                 let whitelist_buyer_info = WhitelistBuyerInfo {
@@ -1217,6 +1217,8 @@ where
                             caller,
                             claim
                         );    
+                    } else {
+                        return Err(Error::NoClaimAmount);
                     }
 
                     Ok(())
@@ -1474,6 +1476,8 @@ where
                             caller,
                             claim
                         );
+                    } else {
+                        return Err(Error::NoClaimAmount);
                     }
 
                     Ok(())
