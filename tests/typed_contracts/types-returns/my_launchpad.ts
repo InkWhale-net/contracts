@@ -72,7 +72,10 @@ export interface Error {
 	activeLaunchpadStatusNotFound ? : null,
 	launchpadNotActive ? : null,
 	invalidCaller ? : null,
-	noPhaseActive ? : null
+	noPhaseActive ? : null,
+	invalidTotalSupply ? : null,
+	phaseNotPublic ? : null,
+	invalidSetPublic ? : null
 }
 
 export class ErrorBuilder {
@@ -421,6 +424,21 @@ export class ErrorBuilder {
 			noPhaseActive: null,
 		};
 	}
+	static InvalidTotalSupply(): Error {
+		return {
+			invalidTotalSupply: null,
+		};
+	}
+	static PhaseNotPublic(): Error {
+		return {
+			phaseNotPublic: null,
+		};
+	}
+	static InvalidSetPublic(): Error {
+		return {
+			invalidSetPublic: null,
+		};
+	}
 }
 
 export enum OwnableError {
@@ -522,8 +540,10 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type WhitelistSaleInfo = {
+export type PublicSaleInfo = {
+	isPublic: boolean,
 	totalAmount: ReturnNumber,
+	price: ReturnNumber,
 	totalPurchasedAmount: ReturnNumber,
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
@@ -537,6 +557,23 @@ export type BuyerInformation = {
 	lastUpdatedTime: number
 }
 
+export type WhitelistBuyerInfo = {
+	amount: ReturnNumber,
+	price: ReturnNumber,
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
+}
+
+export type WhitelistSaleInfo = {
+	totalAmount: ReturnNumber,
+	totalPurchasedAmount: ReturnNumber,
+	totalClaimedAmount: ReturnNumber,
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
 export type PhaseInfo = {
 	isActive: boolean,
 	name: string,
@@ -547,23 +584,5 @@ export type PhaseInfo = {
 	endVestingTime: number,
 	vestingUnit: number,
 	totalVestingUnits: number
-}
-
-export type PublicSaleInfo = {
-	totalAmount: ReturnNumber,
-	price: ReturnNumber,
-	totalPurchasedAmount: ReturnNumber,
-	totalClaimedAmount: ReturnNumber,
-	isBurned: boolean,
-	isWithdrawn: boolean
-}
-
-export type WhitelistBuyerInfo = {
-	amount: ReturnNumber,
-	price: ReturnNumber,
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
 }
 

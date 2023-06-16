@@ -26,6 +26,7 @@ export default class Constructors {
 	* @param { ArgumentTypes.AccountId } contractOwner,
 	* @param { string } projectInfoUri,
 	* @param { ArgumentTypes.AccountId } tokenAddress,
+	* @param { (string | number | BN) } totalSupply,
 	* @param { ArgumentTypes.AccountId } generatorContract,
 	* @param { (number | string | BN) } txRate,
 	* @param { Array<string> } phaseName,
@@ -42,6 +43,7 @@ export default class Constructors {
 		contractOwner: ArgumentTypes.AccountId,
 		projectInfoUri: string,
 		tokenAddress: ArgumentTypes.AccountId,
+		totalSupply: (string | number | BN),
 		generatorContract: ArgumentTypes.AccountId,
 		txRate: (number | string | BN),
 		phaseName: Array<string>,
@@ -60,7 +62,7 @@ export default class Constructors {
 		const gasLimit = (await _genValidGasLimitAndValue(this.nativeAPI, __options)).gasLimit as WeightV2;
 
 		const storageDepositLimit = __options?.storageDepositLimit;
-			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, projectInfoUri, tokenAddress, generatorContract, txRate, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice);
+			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, projectInfoUri, tokenAddress, totalSupply, generatorContract, txRate, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice);
 			let response;
 
 			try {

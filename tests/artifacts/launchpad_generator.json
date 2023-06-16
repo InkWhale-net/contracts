@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x31d2d0d7b45a2c7329bac2d679fe4118edf6c4806a3106b05fd9f610138b630d",
+    "hash": "0x8b810ec696dd48ddcbc163573c68196613aaea2cab3c24aaff1904642b3d5d3e",
     "language": "ink! 4.1.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -175,6 +175,15 @@
             }
           },
           {
+            "label": "total_supply",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 5
+            }
+          },
+          {
             "label": "phase_name",
             "type": {
               "displayName": [
@@ -270,50 +279,6 @@
         "selector": "0xfee9221d"
       },
       {
-        "args": [],
-        "docs": [
-          " Returns the address of the current owner."
-        ],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 25
-        },
-        "selector": "0x4fa43c8c"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Leaves the contract without owner. It will not be possible to call",
-          " owner's functions anymore. Can only be called by the current owner.",
-          "",
-          " NOTE: Renouncing ownership will leave the contract without an owner,",
-          " thereby removing any functionality that is only available to the owner.",
-          "",
-          " On success a `OwnershipTransferred` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Panics with `CallerIsNotOwner` error if caller is not owner"
-        ],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x5e228753"
-      },
-      {
         "args": [
           {
             "label": "new_owner",
@@ -346,9 +311,53 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 25
         },
         "selector": "0x11f43efd"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Leaves the contract without owner. It will not be possible to call",
+          " owner's functions anymore. Can only be called by the current owner.",
+          "",
+          " NOTE: Renouncing ownership will leave the contract without an owner,",
+          " thereby removing any functionality that is only available to the owner.",
+          "",
+          " On success a `OwnershipTransferred` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Panics with `CallerIsNotOwner` error if caller is not owner"
+        ],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0x5e228753"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Returns the address of the current owner."
+        ],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x4fa43c8c"
       },
       {
         "args": [
@@ -377,45 +386,9 @@
         "selector": "0xdd198c6e"
       },
       {
-        "args": [
-          {
-            "label": "address",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "SetIsActiveLaunchpadInput1"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "is_active",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "SetIsActiveLaunchpadInput2"
-              ],
-              "type": 9
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::set_is_active_launchpad",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 10
-        },
-        "selector": "0x74afd096"
-      },
-      {
         "args": [],
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_hash",
+        "label": "LaunchpadGeneratorTrait::get_creation_fee",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -425,7 +398,22 @@
           ],
           "type": 28
         },
-        "selector": "0xbf42ec1e"
+        "selector": "0xd6f68769"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_launchpad_count",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0xf0cb2510"
       },
       {
         "args": [
@@ -449,25 +437,14 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 30
         },
         "selector": "0x165393dc"
       },
       {
-        "args": [
-          {
-            "label": "address",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "GetIsActiveLaunchpadInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
+        "args": [],
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_is_active_launchpad",
+        "label": "LaunchpadGeneratorTrait::get_active_launchpad_count",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -475,9 +452,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 31
+          "type": 29
         },
-        "selector": "0xe638edfe"
+        "selector": "0xbc14706d"
       },
       {
         "args": [
@@ -508,7 +485,7 @@
       {
         "args": [],
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_inw_contract",
+        "label": "LaunchpadGeneratorTrait::get_launchpad_hash",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -516,95 +493,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 25
+          "type": 32
         },
-        "selector": "0x356faef0"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_creation_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 33
-        },
-        "selector": "0xd6f68769"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 34
-        },
-        "selector": "0xf0cb2510"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_tx_rate",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 35
-        },
-        "selector": "0x151595a1"
-      },
-      {
-        "args": [
-          {
-            "label": "owner_address",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "GetLaunchpadByOwnerInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_by_owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 36
-        },
-        "selector": "0xd06c43d4"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_active_launchpad_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 34
-        },
-        "selector": "0xbc14706d"
+        "selector": "0xbf42ec1e"
       },
       {
         "args": [
@@ -661,40 +552,28 @@
       {
         "args": [
           {
-            "label": "psp22_contract_address",
+            "label": "address",
             "type": {
               "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input1"
+                "launchpadgeneratortrait_external",
+                "SetIsActiveLaunchpadInput1"
               ],
               "type": 0
             }
           },
           {
-            "label": "amount",
+            "label": "is_active",
             "type": {
               "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input2"
+                "launchpadgeneratortrait_external",
+                "SetIsActiveLaunchpadInput2"
               ],
-              "type": 5
-            }
-          },
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input3"
-              ],
-              "type": 0
+              "type": 9
             }
           }
         ],
-        "docs": [
-          " This function allow contract owner withdraw PSP22 to an account in case there is any token sent to contract by mistake"
-        ],
-        "label": "AdminTrait::tranfer_psp22",
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::set_is_active_launchpad",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -704,7 +583,89 @@
           ],
           "type": 10
         },
-        "selector": "0xd9aad284"
+        "selector": "0x74afd096"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x356faef0"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_tx_rate",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 33
+        },
+        "selector": "0x151595a1"
+      },
+      {
+        "args": [
+          {
+            "label": "owner_address",
+            "type": {
+              "displayName": [
+                "launchpadgeneratortrait_external",
+                "GetLaunchpadByOwnerInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_launchpad_by_owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 34
+        },
+        "selector": "0xd06c43d4"
+      },
+      {
+        "args": [
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "launchpadgeneratortrait_external",
+                "GetIsActiveLaunchpadInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_is_active_launchpad",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 35
+        },
+        "selector": "0xe638edfe"
       },
       {
         "args": [
@@ -764,6 +725,54 @@
       {
         "args": [
           {
+            "label": "psp22_contract_address",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input1"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input2"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input3"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " This function allow contract owner withdraw PSP22 to an account in case there is any token sent to contract by mistake"
+        ],
+        "label": "AdminTrait::tranfer_psp22",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xd9aad284"
+      },
+      {
+        "args": [
+          {
             "label": "code_hash",
             "type": {
               "displayName": [
@@ -796,42 +805,26 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "RevokeRoleInput1"
+                "GetRoleAdminInput1"
               ],
               "type": 6
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "RevokeRoleInput2"
-              ],
-              "type": 0
             }
           }
         ],
         "docs": [
-          " Revokes `role` from `account`.",
-          "",
-          " On success a `RoleRevoked` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Returns with `MissingRole` error if caller can't grant the `role` or if `account` doesn't have `role`."
+          " Returns the admin role that controls `role`. See `grant_role` and `revoke_role`."
         ],
-        "label": "AccessControl::revoke_role",
-        "mutates": true,
+        "label": "AccessControl::get_role_admin",
+        "mutates": false,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 39
+          "type": 33
         },
-        "selector": "0x6e4f0991"
+        "selector": "0x83da3bb2"
       },
       {
         "args": [
@@ -867,7 +860,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 41
+          "type": 39
         },
         "selector": "0xc1d9ac18"
       },
@@ -912,9 +905,53 @@
             "ink",
             "MessageResult"
           ],
-          "type": 39
+          "type": 40
         },
         "selector": "0x4ac062fd"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "RevokeRoleInput1"
+              ],
+              "type": 6
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "RevokeRoleInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " Revokes `role` from `account`.",
+          "",
+          " On success a `RoleRevoked` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Returns with `MissingRole` error if caller can't grant the `role` or if `account` doesn't have `role`."
+        ],
+        "label": "AccessControl::revoke_role",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 40
+        },
+        "selector": "0x6e4f0991"
       },
       {
         "args": [
@@ -960,67 +997,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 39
+          "type": 40
         },
         "selector": "0xeaf1248a"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "GetRoleAdminInput1"
-              ],
-              "type": 6
-            }
-          }
-        ],
-        "docs": [
-          " Returns the admin role that controls `role`. See `grant_role` and `revoke_role`."
-        ],
-        "label": "AccessControl::get_role_admin",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 35
-        },
-        "selector": "0x83da3bb2"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrolenumerable_external",
-                "GetRoleMemberCountInput1"
-              ],
-              "type": 6
-            }
-          }
-        ],
-        "docs": [
-          " Returns the number of accounts that have `role`.",
-          " Can be used together with {get_role_member} to enumerate",
-          " all bearers of a role."
-        ],
-        "label": "AccessControlEnumerable::get_role_member_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 35
-        },
-        "selector": "0xf1b1a9d7"
       },
       {
         "args": [
@@ -1059,9 +1038,39 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 30
         },
         "selector": "0x163469e0"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrolenumerable_external",
+                "GetRoleMemberCountInput1"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [
+          " Returns the number of accounts that have `role`.",
+          " Can be used together with {get_role_member} to enumerate",
+          " all bearers of a role."
+        ],
+        "label": "AccessControlEnumerable::get_role_member_count",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 33
+        },
+        "selector": "0xf1b1a9d7"
       }
     ]
   },
@@ -1949,6 +1958,18 @@
               {
                 "index": 68,
                 "name": "NoPhaseActive"
+              },
+              {
+                "index": 69,
+                "name": "InvalidTotalSupply"
+              },
+              {
+                "index": 70,
+                "name": "PhaseNotPublic"
+              },
+              {
+                "index": 71,
+                "name": "InvalidSetPublic"
               }
             ]
           }
@@ -2221,7 +2242,7 @@
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 26
                   }
                 ],
                 "index": 0,
@@ -2242,7 +2263,7 @@
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 26
           },
           {
             "name": "E",
@@ -2256,48 +2277,6 @@
     },
     {
       "id": 26,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 27
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 27
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 27,
       "type": {
         "def": {
           "variant": {
@@ -2339,107 +2318,28 @@
       }
     },
     {
-      "id": 28,
+      "id": 27,
       "type": {
         "def": {
           "variant": {
             "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 4
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 4
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 29,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 30
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 30
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 30,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
               {
                 "fields": [
                   {
                     "type": 0
                   }
                 ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -2448,44 +2348,6 @@
           {
             "name": "T",
             "type": 0
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 31,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 32
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 32
           },
           {
             "name": "E",
@@ -2498,40 +2360,7 @@
       }
     },
     {
-      "id": 32,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 9
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 9
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 33,
+      "id": 28,
       "type": {
         "def": {
           "variant": {
@@ -2573,7 +2402,7 @@
       }
     },
     {
-      "id": 34,
+      "id": 29,
       "type": {
         "def": {
           "variant": {
@@ -2615,7 +2444,124 @@
       }
     },
     {
-      "id": 35,
+      "id": 30,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 31
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 31
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 33,
       "type": {
         "def": {
           "variant": {
@@ -2657,7 +2603,7 @@
       }
     },
     {
-      "id": 36,
+      "id": 34,
       "type": {
         "def": {
           "variant": {
@@ -2695,6 +2641,81 @@
         ],
         "path": [
           "Result"
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 36
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 36
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 9
+          }
+        ],
+        "path": [
+          "Option"
         ]
       }
     },
@@ -2791,7 +2812,7 @@
               {
                 "fields": [
                   {
-                    "type": 40
+                    "type": 9
                   }
                 ],
                 "index": 0,
@@ -2812,7 +2833,7 @@
         "params": [
           {
             "name": "T",
-            "type": 40
+            "type": 9
           },
           {
             "name": "E",
@@ -2826,6 +2847,48 @@
     },
     {
       "id": 40,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 41
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 41
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 41,
       "type": {
         "def": {
           "variant": {
@@ -2859,48 +2922,6 @@
           {
             "name": "E",
             "type": 15
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 41,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 9
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 9
-          },
-          {
-            "name": "E",
-            "type": 19
           }
         ],
         "path": [

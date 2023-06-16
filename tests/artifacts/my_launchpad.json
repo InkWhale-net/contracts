@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x18c70a966ccf2a89986bdf603ab97badbc2d44aec479c4acffedad68219c9235",
+    "hash": "0x4c62e7a19cffbed4d18106d20128f097d204f9ec79f6aa662d7ae37e7e21c275",
     "language": "ink! 4.1.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -52,6 +52,15 @@
             }
           },
           {
+            "label": "total_supply",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 5
+            }
+          },
+          {
             "label": "generator_contract",
             "type": {
               "displayName": [
@@ -66,7 +75,7 @@
               "displayName": [
                 "u32"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -209,7 +218,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -259,7 +268,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -309,7 +318,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -359,7 +368,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -396,6 +405,15 @@
             }
           },
           {
+            "label": "total_supply",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 5
+            }
+          },
+          {
             "label": "generator_contract",
             "type": {
               "displayName": [
@@ -410,7 +428,7 @@
               "displayName": [
                 "u32"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -525,7 +543,7 @@
               "displayName": [
                 "u64"
               ],
-              "type": 6
+              "type": 7
             }
           },
           {
@@ -534,7 +552,7 @@
               "displayName": [
                 "u64"
               ],
-              "type": 6
+              "type": 7
             }
           },
           {
@@ -543,7 +561,7 @@
               "displayName": [
                 "u32"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -552,7 +570,7 @@
               "displayName": [
                 "u64"
               ],
-              "type": 6
+              "type": 7
             }
           },
           {
@@ -561,7 +579,7 @@
               "displayName": [
                 "u64"
               ],
-              "type": 6
+              "type": 7
             }
           },
           {
@@ -570,7 +588,7 @@
               "displayName": [
                 "bool"
               ],
-              "type": 7
+              "type": 8
             }
           },
           {
@@ -579,7 +597,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           },
           {
@@ -588,7 +606,7 @@
               "displayName": [
                 "Balance"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -693,148 +711,89 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetEndTimeInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_end_time",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x52288dbd"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_token_address",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 25
-        },
-        "selector": "0xae1a6481"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistAccountInput1"
+                "SetPhaseInput1"
               ],
               "type": 2
             }
           },
           {
-            "label": "account_index",
+            "label": "is_active",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetWhitelistAccountInput2"
-              ],
-              "type": 6
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_whitelist_account",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 28
-        },
-        "selector": "0xd3091cff"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "WhitelistPurchaseInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "WhitelistPurchaseInput2"
+                "SetPhaseInput2"
               ],
               "type": 8
             }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::whitelist_purchase",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xca252d08"
-      },
-      {
-        "args": [
+          },
           {
-            "label": "receiver",
+            "label": "name",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "WithdrawUnsoldTokensInput1"
+                "SetPhaseInput3"
               ],
-              "type": 0
+              "type": 4
             }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::withdraw_unsold_tokens",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xf165e99c"
-      },
-      {
-        "args": [
+          },
           {
-            "label": "phase_id",
+            "label": "start_time",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetPublicTotalAmountInput1"
+                "SetPhaseInput4"
               ],
-              "type": 2
+              "type": 7
+            }
+          },
+          {
+            "label": "end_time",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput5"
+              ],
+              "type": 7
+            }
+          },
+          {
+            "label": "immediate_release_rate",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput6"
+              ],
+              "type": 6
+            }
+          },
+          {
+            "label": "vesting_duration",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput7"
+              ],
+              "type": 7
+            }
+          },
+          {
+            "label": "vesting_unit",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput8"
+              ],
+              "type": 7
+            }
+          },
+          {
+            "label": "is_public",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput9"
+              ],
+              "type": 8
             }
           },
           {
@@ -842,14 +801,24 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetPublicTotalAmountInput2"
+                "SetPhaseInput10"
               ],
-              "type": 8
+              "type": 5
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPhaseInput11"
+              ],
+              "type": 5
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_public_total_amount",
+        "label": "LaunchpadContractTrait::set_phase",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -859,7 +828,7 @@
           ],
           "type": 14
         },
-        "selector": "0xe78eb129"
+        "selector": "0x002e8971"
       },
       {
         "args": [
@@ -868,33 +837,7 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetPublicSaleTotalPurchasedAmountInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_public_sale_total_purchased_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0x6bd125b3"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "AddMultiWhitelistsInput1"
+                "UpdateMultiWhitelistsInput1"
               ],
               "type": 2
             }
@@ -904,9 +847,9 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "AddMultiWhitelistsInput2"
+                "UpdateMultiWhitelistsInput2"
               ],
-              "type": 32
+              "type": 26
             }
           },
           {
@@ -914,7 +857,7 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "AddMultiWhitelistsInput3"
+                "UpdateMultiWhitelistsInput3"
               ],
               "type": 13
             }
@@ -924,14 +867,14 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "AddMultiWhitelistsInput4"
+                "UpdateMultiWhitelistsInput4"
               ],
               "type": 13
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::add_multi_whitelists",
+        "label": "LaunchpadContractTrait::update_multi_whitelists",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -941,7 +884,7 @@
           ],
           "type": 14
         },
-        "selector": "0xc6a48084"
+        "selector": "0x53789416"
       },
       {
         "args": [
@@ -950,34 +893,14 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetStartAndEndTimeInput1"
+                "WhitelistClaimInput1"
               ],
               "type": 2
-            }
-          },
-          {
-            "label": "start_time",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetStartAndEndTimeInput2"
-              ],
-              "type": 6
-            }
-          },
-          {
-            "label": "end_time",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetStartAndEndTimeInput3"
-              ],
-              "type": 6
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_start_and_end_time",
+        "label": "LaunchpadContractTrait::whitelist_claim",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -987,7 +910,123 @@
           ],
           "type": 14
         },
-        "selector": "0x596d9c64"
+        "selector": "0x4ded4cf0"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetNameInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_name",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x3c5c0be1"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicSaleInfoInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [
+          " Public sale"
+        ],
+        "label": "LaunchpadContractTrait::get_public_sale_info",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x396b5ab7"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetIsPublicInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "is_public",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetIsPublicInput2"
+              ],
+              "type": 8
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_is_public",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xa958aa3e"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistSaleTotalPurchasedAmountInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_whitelist_sale_total_purchased_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0x2beb629f"
       },
       {
         "args": [
@@ -1032,24 +1071,212 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetIsActiveInput1"
+                "PublicClaimInput1"
               ],
               "type": 2
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_is_active",
-        "mutates": false,
+        "label": "LaunchpadContractTrait::public_claim",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 33
+          "type": 14
         },
-        "selector": "0x34edecf0"
+        "selector": "0x0d1cbfe8"
+      },
+      {
+        "args": [
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "WithdrawInput1"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "WithdrawInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::withdraw",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x2b959dac"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput1"
+              ],
+              "type": 20
+            }
+          },
+          {
+            "label": "is_active",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput2"
+              ],
+              "type": 12
+            }
+          },
+          {
+            "label": "name",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput3"
+              ],
+              "type": 9
+            }
+          },
+          {
+            "label": "start_time",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput4"
+              ],
+              "type": 10
+            }
+          },
+          {
+            "label": "end_time",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput5"
+              ],
+              "type": 10
+            }
+          },
+          {
+            "label": "immediate_release_rate",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput6"
+              ],
+              "type": 11
+            }
+          },
+          {
+            "label": "vesting_duration",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput7"
+              ],
+              "type": 10
+            }
+          },
+          {
+            "label": "vesting_unit",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput8"
+              ],
+              "type": 10
+            }
+          },
+          {
+            "label": "is_public",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput9"
+              ],
+              "type": 12
+            }
+          },
+          {
+            "label": "total_amount",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput10"
+              ],
+              "type": 13
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetMultiPhasesInput11"
+              ],
+              "type": 13
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_multi_phases",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xcc99f231"
+      },
+      {
+        "args": [
+          {
+            "label": "total_supply",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetTotalSupplyInput1"
+              ],
+              "type": 5
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_total_supply",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x6e74930d"
       },
       {
         "args": [],
@@ -1065,102 +1292,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 35
+          "type": 34
         },
         "selector": "0x11652eee"
       },
       {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_project_end_time",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 36
-        },
-        "selector": "0xfb0942d5"
-      },
-      {
         "args": [
           {
-            "label": "phase_id",
+            "label": "tx_rate",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetNameInput1"
+                "SetTxRateInput1"
               ],
-              "type": 2
+              "type": 6
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_name",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 37
-        },
-        "selector": "0x3c5c0be1"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistSaleInfoInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_whitelist_sale_info",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 39
-        },
-        "selector": "0xc8e626b9"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetImmediateReleaseRateInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "immediate_release_rate",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetImmediateReleaseRateInput2"
-              ],
-              "type": 5
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::set_immediate_release_rate",
+        "label": "LaunchpadContractTrait::set_tx_rate",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1170,64 +1320,12 @@
           ],
           "type": 14
         },
-        "selector": "0x491cf52b"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistSaleTotalPurchasedAmountInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_whitelist_sale_total_purchased_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0x2beb629f"
+        "selector": "0x005b2af4"
       },
       {
         "args": [],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_balance",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 42
-        },
-        "selector": "0xc209eacc"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetPublicSaleTotalAmountInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_public_sale_total_amount",
+        "label": "LaunchpadContractTrait::get_total_supply",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1235,76 +1333,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 30
+          "type": 35
         },
-        "selector": "0xb6d2b81a"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistSaleTotalAmountInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_whitelist_sale_total_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0x8a32d9b4"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetVestingUnitInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_vesting_unit",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x8cab2e95"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_tx_rate",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 44
-        },
-        "selector": "0xe569dc1a"
+        "selector": "0x410ec6e8"
       },
       {
         "args": [
@@ -1328,7 +1359,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 45
+          "type": 36
         },
         "selector": "0x482c7183"
       },
@@ -1339,50 +1370,24 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetStartTimeInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_start_time",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x8dc373df"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetPublicSalePriceInput1"
+                "SetVestingDurationInput1"
               ],
               "type": 2
             }
           },
           {
-            "label": "price",
+            "label": "vesting_duration",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetPublicSalePriceInput2"
+                "SetVestingDurationInput2"
               ],
-              "type": 8
+              "type": 7
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_public_sale_price",
+        "label": "LaunchpadContractTrait::set_vesting_duration",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1392,79 +1397,12 @@
           ],
           "type": 14
         },
-        "selector": "0xa125c795"
+        "selector": "0x6cbcc9c3"
       },
       {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetPublicSaleTotalClaimedAmountInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
+        "args": [],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_public_sale_total_claimed_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0xb3545314"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "UpdateMultiWhitelistsInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "accounts",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "UpdateMultiWhitelistsInput2"
-              ],
-              "type": 32
-            }
-          },
-          {
-            "label": "whitelist_amounts",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "UpdateMultiWhitelistsInput3"
-              ],
-              "type": 13
-            }
-          },
-          {
-            "label": "whitelist_prices",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "UpdateMultiWhitelistsInput4"
-              ],
-              "type": 13
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::update_multi_whitelists",
+        "label": "LaunchpadContractTrait::burn_unsold_tokens",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1474,7 +1412,7 @@
           ],
           "type": 14
         },
-        "selector": "0x53789416"
+        "selector": "0x6549d39e"
       },
       {
         "args": [
@@ -1483,14 +1421,60 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetPublicSalePriceInput1"
+                "SetVestingUnitInput1"
               ],
               "type": 2
+            }
+          },
+          {
+            "label": "vesting_unit",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetVestingUnitInput2"
+              ],
+              "type": 7
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_public_sale_price",
+        "label": "LaunchpadContractTrait::set_vesting_unit",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x28eb4533"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicBuyerInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicBuyerInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_public_buyer",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1498,9 +1482,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 30
+          "type": 38
         },
-        "selector": "0xa8604763"
+        "selector": "0xc6941757"
       },
       {
         "args": [
@@ -1524,9 +1508,35 @@
             "ink",
             "MessageResult"
           ],
-          "type": 36
+          "type": 41
         },
         "selector": "0x54208622"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicSaleTotalPurchasedAmountInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_public_sale_total_purchased_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0x6bd125b3"
       },
       {
         "args": [
@@ -1550,14 +1560,40 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 42
         },
         "selector": "0x3acd8ddf"
       },
       {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicSaleTotalClaimedAmountInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_public_sale_total_claimed_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0xb3545314"
+      },
+      {
         "args": [],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_generator_contract",
+        "label": "LaunchpadContractTrait::get_token_address",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1567,7 +1603,33 @@
           ],
           "type": 25
         },
-        "selector": "0x2bdec393"
+        "selector": "0xae1a6481"
+      },
+      {
+        "args": [
+          {
+            "label": "token_address",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetTokenAddressInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_token_address",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xcfc68012"
       },
       {
         "args": [
@@ -1591,9 +1653,365 @@
             "ink",
             "MessageResult"
           ],
-          "type": 30
+          "type": 32
         },
         "selector": "0xffb82283"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetIsActiveInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "is_active",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetIsActiveInput2"
+              ],
+              "type": 8
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_is_active",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xec4589d6"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistBuyerInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistBuyerInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_whitelist_buyer",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 44
+        },
+        "selector": "0xfd687fca"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistSaleTotalAmountInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_whitelist_sale_total_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0x8a32d9b4"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetImmediateReleaseRateInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "immediate_release_rate",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetImmediateReleaseRateInput2"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_immediate_release_rate",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x491cf52b"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetIsActiveInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_is_active",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 47
+        },
+        "selector": "0x34edecf0"
+      },
+      {
+        "args": [
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "WithdrawUnsoldTokensInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::withdraw_unsold_tokens",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xf165e99c"
+      },
+      {
+        "args": [
+          {
+            "label": "generator_contract",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetGeneratorContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_generator_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x8d51a8a7"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistSaleInfoInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_whitelist_sale_info",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 49
+        },
+        "selector": "0xc8e626b9"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistAccountInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "account_index",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetWhitelistAccountInput2"
+              ],
+              "type": 7
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_whitelist_account",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 52
+        },
+        "selector": "0xd3091cff"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "AddMultiWhitelistsInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "accounts",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "AddMultiWhitelistsInput2"
+              ],
+              "type": 26
+            }
+          },
+          {
+            "label": "whitelist_amounts",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "AddMultiWhitelistsInput3"
+              ],
+              "type": 13
+            }
+          },
+          {
+            "label": "whitelist_prices",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "AddMultiWhitelistsInput4"
+              ],
+              "type": 13
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::add_multi_whitelists",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xc6a48084"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetEndTimeInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_end_time",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 42
+        },
+        "selector": "0x52288dbd"
       },
       {
         "args": [
@@ -1628,24 +2046,14 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "GetPublicBuyerInput1"
+                "GetStartTimeInput1"
               ],
               "type": 2
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetPublicBuyerInput2"
-              ],
-              "type": 0
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::get_public_buyer",
+        "label": "LaunchpadContractTrait::get_start_time",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1653,25 +2061,71 @@
             "ink",
             "MessageResult"
           ],
-          "type": 47
+          "type": 42
         },
-        "selector": "0xc6941757"
+        "selector": "0x8dc373df"
       },
       {
         "args": [
           {
-            "label": "token_address",
+            "label": "phase_id",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetTokenAddressInput1"
+                "WhitelistPurchaseInput1"
               ],
-              "type": 0
+              "type": 2
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "WhitelistPurchaseInput2"
+              ],
+              "type": 5
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_token_address",
+        "label": "LaunchpadContractTrait::whitelist_purchase",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xca252d08"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPublicTotalAmountInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "total_amount",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPublicTotalAmountInput2"
+              ],
+              "type": 5
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::set_public_total_amount",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1681,7 +2135,33 @@
           ],
           "type": 14
         },
-        "selector": "0xcfc68012"
+        "selector": "0xe78eb129"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetVestingUnitInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_vesting_unit",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 42
+        },
+        "selector": "0x8cab2e95"
       },
       {
         "args": [
@@ -1692,7 +2172,7 @@
                 "launchpadcontracttrait_external",
                 "TopupInput1"
               ],
-              "type": 8
+              "type": 5
             }
           }
         ],
@@ -1710,47 +2190,6 @@
         "selector": "0x28577c22"
       },
       {
-        "args": [
-          {
-            "label": "generator_contract",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetGeneratorContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::set_generator_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x8d51a8a7"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "LaunchpadContractTrait::burn_unsold_tokens",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x6549d39e"
-      },
-      {
         "args": [],
         "docs": [],
         "label": "LaunchpadContractTrait::get_project_start_time",
@@ -1761,9 +2200,101 @@
             "ink",
             "MessageResult"
           ],
-          "type": 36
+          "type": 41
         },
         "selector": "0x9395b689"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_available_token_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 35
+        },
+        "selector": "0x83754ee7"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "GetPublicSaleTotalAmountInput1"
+              ],
+              "type": 2
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_public_sale_total_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0xb6d2b81a"
+      },
+      {
+        "args": [
+          {
+            "label": "phase_id",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "PublicPurchaseInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "PublicPurchaseInput2"
+              ],
+              "type": 5
+            }
+          }
+        ],
+        "docs": [],
+        "label": "LaunchpadContractTrait::public_purchase",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x26ca12dd"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_project_end_time",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 41
+        },
+        "selector": "0xfb0942d5"
       },
       {
         "args": [],
@@ -1776,45 +2307,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 50
+          "type": 54
         },
         "selector": "0xe6a1c0c4"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetVestingDurationInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "vesting_duration",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetVestingDurationInput2"
-              ],
-              "type": 6
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::set_vesting_duration",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x6cbcc9c3"
       },
       {
         "args": [
@@ -1838,25 +2333,50 @@
             "ink",
             "MessageResult"
           ],
-          "type": 51
+          "type": 55
         },
         "selector": "0x60b655b0"
       },
       {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_generator_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0x2bdec393"
+      },
+      {
         "args": [
           {
-            "label": "tx_rate",
+            "label": "phase_id",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetTxRateInput1"
+                "SetPublicSalePriceInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetPublicSalePriceInput2"
               ],
               "type": 5
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_tx_rate",
+        "label": "LaunchpadContractTrait::set_public_sale_price",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1866,7 +2386,7 @@
           ],
           "type": 14
         },
-        "selector": "0x005b2af4"
+        "selector": "0xa125c795"
       },
       {
         "args": [
@@ -1875,24 +2395,29 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetVestingUnitInput1"
+                "GetPublicSalePriceInput1"
               ],
               "type": 2
-            }
-          },
-          {
-            "label": "vesting_unit",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "SetVestingUnitInput2"
-              ],
-              "type": 6
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_vesting_unit",
+        "label": "LaunchpadContractTrait::get_public_sale_price",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0xa8604763"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_balance",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1900,9 +2425,24 @@
             "ink",
             "MessageResult"
           ],
-          "type": 14
+          "type": 58
         },
-        "selector": "0x28eb4533"
+        "selector": "0xc209eacc"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "LaunchpadContractTrait::get_tx_rate",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 60
+        },
+        "selector": "0xe569dc1a"
       },
       {
         "args": [
@@ -1911,24 +2451,34 @@
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetIsActiveInput1"
+                "SetStartAndEndTimeInput1"
               ],
               "type": 2
             }
           },
           {
-            "label": "is_active",
+            "label": "start_time",
             "type": {
               "displayName": [
                 "launchpadcontracttrait_external",
-                "SetIsActiveInput2"
+                "SetStartAndEndTimeInput2"
+              ],
+              "type": 7
+            }
+          },
+          {
+            "label": "end_time",
+            "type": {
+              "displayName": [
+                "launchpadcontracttrait_external",
+                "SetStartAndEndTimeInput3"
               ],
               "type": 7
             }
           }
         ],
         "docs": [],
-        "label": "LaunchpadContractTrait::set_is_active",
+        "label": "LaunchpadContractTrait::set_start_and_end_time",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1938,195 +2488,7 @@
           ],
           "type": 14
         },
-        "selector": "0xec4589d6"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetPublicSaleInfoInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [
-          " Public sale"
-        ],
-        "label": "LaunchpadContractTrait::get_public_sale_info",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 54
-        },
-        "selector": "0x396b5ab7"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "PublicPurchaseInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "PublicPurchaseInput2"
-              ],
-              "type": 8
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::public_purchase",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x26ca12dd"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "PublicClaimInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::public_claim",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x0d1cbfe8"
-      },
-      {
-        "args": [
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "WithdrawInput1"
-              ],
-              "type": 8
-            }
-          },
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "WithdrawInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::withdraw",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x2b959dac"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "WhitelistClaimInput1"
-              ],
-              "type": 2
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::whitelist_claim",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0x4ded4cf0"
-      },
-      {
-        "args": [
-          {
-            "label": "phase_id",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistBuyerInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "launchpadcontracttrait_external",
-                "GetWhitelistBuyerInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [],
-        "label": "LaunchpadContractTrait::get_whitelist_buyer",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 57
-        },
-        "selector": "0xfd687fca"
+        "selector": "0x596d9c64"
       },
       {
         "args": [
@@ -2165,7 +2527,7 @@
                 "accesscontrol_external",
                 "HasRoleInput1"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -2190,7 +2552,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 60
+          "type": 61
         },
         "selector": "0xc1d9ac18"
       },
@@ -2203,7 +2565,7 @@
                 "accesscontrol_external",
                 "RevokeRoleInput1"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -2234,7 +2596,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 61
+          "type": 62
         },
         "selector": "0x6e4f0991"
       },
@@ -2245,82 +2607,9 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "GetRoleAdminInput1"
-              ],
-              "type": 5
-            }
-          }
-        ],
-        "docs": [
-          " Returns the admin role that controls `role`. See `grant_role` and `revoke_role`."
-        ],
-        "label": "AccessControl::get_role_admin",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 44
-        },
-        "selector": "0x83da3bb2"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "GrantRoleInput1"
-              ],
-              "type": 5
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "GrantRoleInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [
-          " Grants `role` to `account`.",
-          "",
-          " On success a `RoleGranted` event is emitted.",
-          "",
-          " # Errors",
-          "",
-          " Returns with `MissingRole` error if caller can't grant the role.",
-          " Returns with `RoleRedundant` error `account` has `role`."
-        ],
-        "label": "AccessControl::grant_role",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 61
-        },
-        "selector": "0x4ac062fd"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
                 "RenounceRoleInput1"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -2355,9 +2644,112 @@
             "ink",
             "MessageResult"
           ],
-          "type": 61
+          "type": 62
         },
         "selector": "0xeaf1248a"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "GetRoleAdminInput1"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [
+          " Returns the admin role that controls `role`. See `grant_role` and `revoke_role`."
+        ],
+        "label": "AccessControl::get_role_admin",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 60
+        },
+        "selector": "0x83da3bb2"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "GrantRoleInput1"
+              ],
+              "type": 6
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "GrantRoleInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [
+          " Grants `role` to `account`.",
+          "",
+          " On success a `RoleGranted` event is emitted.",
+          "",
+          " # Errors",
+          "",
+          " Returns with `MissingRole` error if caller can't grant the role.",
+          " Returns with `RoleRedundant` error `account` has `role`."
+        ],
+        "label": "AccessControl::grant_role",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 62
+        },
+        "selector": "0x4ac062fd"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrolenumerable_external",
+                "GetRoleMemberCountInput1"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "docs": [
+          " Returns the number of accounts that have `role`.",
+          " Can be used together with {get_role_member} to enumerate",
+          " all bearers of a role."
+        ],
+        "label": "AccessControlEnumerable::get_role_member_count",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 60
+        },
+        "selector": "0xf1b1a9d7"
       },
       {
         "args": [
@@ -2368,7 +2760,7 @@
                 "accesscontrolenumerable_external",
                 "GetRoleMemberInput1"
               ],
-              "type": 5
+              "type": 6
             }
           },
           {
@@ -2378,7 +2770,7 @@
                 "accesscontrolenumerable_external",
                 "GetRoleMemberInput2"
               ],
-              "type": 5
+              "type": 6
             }
           }
         ],
@@ -2396,39 +2788,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 28
+          "type": 52
         },
         "selector": "0x163469e0"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrolenumerable_external",
-                "GetRoleMemberCountInput1"
-              ],
-              "type": 5
-            }
-          }
-        ],
-        "docs": [
-          " Returns the number of accounts that have `role`.",
-          " Can be used together with {get_role_member} to enumerate",
-          " all bearers of a role."
-        ],
-        "label": "AccessControlEnumerable::get_role_member_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 44
-        },
-        "selector": "0xf1b1a9d7"
       }
     ]
   },
@@ -2511,6 +2873,24 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
+                          "ty": 5
+                        }
+                      },
+                      "name": "total_supply"
+                    },
+                    {
+                      "layout": {
+                        "leaf": {
+                          "key": "0x00000000",
+                          "ty": 5
+                        }
+                      },
+                      "name": "available_token_amount"
+                    },
+                    {
+                      "layout": {
+                        "leaf": {
+                          "key": "0x00000000",
                           "ty": 0
                         }
                       },
@@ -2520,7 +2900,7 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
-                          "ty": 5
+                          "ty": 6
                         }
                       },
                       "name": "tx_rate"
@@ -2529,7 +2909,7 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
-                          "ty": 6
+                          "ty": 7
                         }
                       },
                       "name": "project_start_time"
@@ -2538,7 +2918,7 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
-                          "ty": 6
+                          "ty": 7
                         }
                       },
                       "name": "project_end_time"
@@ -2562,7 +2942,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 7
+                                      "ty": 8
                                     }
                                   },
                                   "name": "is_active"
@@ -2580,7 +2960,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "start_time"
@@ -2589,7 +2969,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "end_time"
@@ -2598,7 +2978,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 5
+                                      "ty": 6
                                     }
                                   },
                                   "name": "immediate_release_rate"
@@ -2607,7 +2987,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "vesting_duration"
@@ -2616,7 +2996,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "end_vesting_time"
@@ -2625,7 +3005,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "vesting_unit"
@@ -2634,7 +3014,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0xd8f85b6e",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "total_vesting_units"
@@ -2661,13 +3041,22 @@
                                       "ty": 8
                                     }
                                   },
+                                  "name": "is_public"
+                                },
+                                {
+                                  "layout": {
+                                    "leaf": {
+                                      "key": "0x003a4ea3",
+                                      "ty": 5
+                                    }
+                                  },
                                   "name": "total_amount"
                                 },
                                 {
                                   "layout": {
                                     "leaf": {
                                       "key": "0x003a4ea3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "price"
@@ -2676,7 +3065,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x003a4ea3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "total_purchased_amount"
@@ -2685,7 +3074,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x003a4ea3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "total_claimed_amount"
@@ -2694,7 +3083,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x003a4ea3",
-                                      "ty": 7
+                                      "ty": 8
                                     }
                                   },
                                   "name": "is_burned"
@@ -2703,7 +3092,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x003a4ea3",
-                                      "ty": 7
+                                      "ty": 8
                                     }
                                   },
                                   "name": "is_withdrawn"
@@ -2727,7 +3116,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x6cc683c9",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "purchased_amount"
@@ -2736,7 +3125,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x6cc683c9",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "vesting_amount"
@@ -2745,7 +3134,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x6cc683c9",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "claimed_amount"
@@ -2754,7 +3143,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x6cc683c9",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "last_updated_time"
@@ -2778,7 +3167,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x0c150b14",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "total_amount"
@@ -2787,7 +3176,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x0c150b14",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "total_purchased_amount"
@@ -2796,7 +3185,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x0c150b14",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "total_claimed_amount"
@@ -2805,7 +3194,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x0c150b14",
-                                      "ty": 7
+                                      "ty": 8
                                     }
                                   },
                                   "name": "is_burned"
@@ -2814,7 +3203,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x0c150b14",
-                                      "ty": 7
+                                      "ty": 8
                                     }
                                   },
                                   "name": "is_withdrawn"
@@ -2852,7 +3241,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "amount"
@@ -2861,7 +3250,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "price"
@@ -2870,7 +3259,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "purchased_amount"
@@ -2879,7 +3268,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "vesting_amount"
@@ -2888,7 +3277,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 8
+                                      "ty": 5
                                     }
                                   },
                                   "name": "claimed_amount"
@@ -2897,7 +3286,7 @@
                                   "layout": {
                                     "leaf": {
                                       "key": "0x38f51bc3",
-                                      "ty": 6
+                                      "ty": 7
                                     }
                                   },
                                   "name": "last_updated_time"
@@ -2995,7 +3384,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0x6a2cd2b4",
-                              "ty": 5
+                              "ty": 6
                             }
                           },
                           "root_key": "0x6a2cd2b4"
@@ -3158,7 +3547,7 @@
       "id": 5,
       "type": {
         "def": {
-          "primitive": "u32"
+          "primitive": "u128"
         }
       }
     },
@@ -3166,7 +3555,7 @@
       "id": 6,
       "type": {
         "def": {
-          "primitive": "u64"
+          "primitive": "u32"
         }
       }
     },
@@ -3174,7 +3563,7 @@
       "id": 7,
       "type": {
         "def": {
-          "primitive": "bool"
+          "primitive": "u64"
         }
       }
     },
@@ -3182,7 +3571,7 @@
       "id": 8,
       "type": {
         "def": {
-          "primitive": "u128"
+          "primitive": "bool"
         }
       }
     },
@@ -3201,7 +3590,7 @@
       "type": {
         "def": {
           "sequence": {
-            "type": 6
+            "type": 7
           }
         }
       }
@@ -3211,7 +3600,7 @@
       "type": {
         "def": {
           "sequence": {
-            "type": 5
+            "type": 6
           }
         }
       }
@@ -3221,7 +3610,7 @@
       "type": {
         "def": {
           "sequence": {
-            "type": 7
+            "type": 8
           }
         }
       }
@@ -3231,7 +3620,7 @@
       "type": {
         "def": {
           "sequence": {
-            "type": 8
+            "type": 5
           }
         }
       }
@@ -3631,6 +4020,18 @@
               {
                 "index": 68,
                 "name": "NoPhaseActive"
+              },
+              {
+                "index": 69,
+                "name": "InvalidTotalSupply"
+              },
+              {
+                "index": 70,
+                "name": "PhaseNotPublic"
+              },
+              {
+                "index": 71,
+                "name": "InvalidSetPublic"
               }
             ]
           }
@@ -3966,12 +4367,22 @@
       "id": 26,
       "type": {
         "def": {
+          "sequence": {
+            "type": 0
+          }
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "def": {
           "variant": {
             "variants": [
               {
                 "fields": [
                   {
-                    "type": 27
+                    "type": 28
                   }
                 ],
                 "index": 0,
@@ -3992,7 +4403,7 @@
         "params": [
           {
             "name": "T",
-            "type": 27
+            "type": 28
           },
           {
             "name": "E",
@@ -4001,39 +4412,6 @@
         ],
         "path": [
           "Result"
-        ]
-      }
-    },
-    {
-      "id": 27,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 6
-          }
-        ],
-        "path": [
-          "Option"
         ]
       }
     },
@@ -4044,22 +4422,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 29
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 22
+                    "type": 4
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -4067,15 +4440,11 @@
         "params": [
           {
             "name": "T",
-            "type": 29
-          },
-          {
-            "name": "E",
-            "type": 22
+            "type": 4
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -4086,17 +4455,22 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 30
+                  }
+                ],
                 "index": 0,
-                "name": "None"
+                "name": "Ok"
               },
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 22
                   }
                 ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -4104,11 +4478,15 @@
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 30
+          },
+          {
+            "name": "E",
+            "type": 22
           }
         ],
         "path": [
-          "Option"
+          "Result"
         ]
       }
     },
@@ -4119,9 +4497,95 @@
           "variant": {
             "variants": [
               {
+                "index": 0,
+                "name": "None"
+              },
+              {
                 "fields": [
                   {
                     "type": 31
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 31
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "is_public",
+                "type": 8,
+                "typeName": "bool"
+              },
+              {
+                "name": "total_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "price",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "total_purchased_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "total_claimed_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "is_burned",
+                "type": 8,
+                "typeName": "bool"
+              },
+              {
+                "name": "is_withdrawn",
+                "type": 8,
+                "typeName": "bool"
+              }
+            ]
+          }
+        },
+        "path": [
+          "inkwhale_project",
+          "impls",
+          "launchpad_contract",
+          "data",
+          "PublicSaleInfo"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 33
                   }
                 ],
                 "index": 0,
@@ -4142,7 +4606,7 @@
         "params": [
           {
             "name": "T",
-            "type": 31
+            "type": 33
           },
           {
             "name": "E",
@@ -4152,49 +4616,6 @@
         "path": [
           "Result"
         ]
-      }
-    },
-    {
-      "id": 31,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 8
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 8
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 32,
-      "type": {
-        "def": {
-          "sequence": {
-            "type": 0
-          }
-        }
       }
     },
     {
@@ -4204,55 +4625,13 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 34
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 34
-          },
-          {
-            "name": "E",
-            "type": 22
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 34,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
                 "index": 0,
                 "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 7
+                    "type": 5
                   }
                 ],
                 "index": 1,
@@ -4264,7 +4643,7 @@
         "params": [
           {
             "name": "T",
-            "type": 7
+            "type": 5
           }
         ],
         "path": [
@@ -4273,7 +4652,7 @@
       }
     },
     {
-      "id": 35,
+      "id": 34,
       "type": {
         "def": {
           "variant": {
@@ -4303,6 +4682,48 @@
           {
             "name": "T",
             "type": 4
+          },
+          {
+            "name": "E",
+            "type": 22
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
           },
           {
             "name": "E",
@@ -4323,7 +4744,7 @@
               {
                 "fields": [
                   {
-                    "type": 6
+                    "type": 37
                   }
                 ],
                 "index": 0,
@@ -4344,7 +4765,7 @@
         "params": [
           {
             "name": "T",
-            "type": 6
+            "type": 37
           },
           {
             "name": "E",
@@ -4363,22 +4784,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 38
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 22
+                    "type": 6
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -4386,15 +4802,11 @@
         "params": [
           {
             "name": "T",
-            "type": 38
-          },
-          {
-            "name": "E",
-            "type": 22
+            "type": 6
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -4405,42 +4817,9 @@
           "variant": {
             "variants": [
               {
-                "index": 0,
-                "name": "None"
-              },
-              {
                 "fields": [
                   {
-                    "type": 4
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 4
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 39,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 40
+                    "type": 39
                   }
                 ],
                 "index": 0,
@@ -4461,7 +4840,7 @@
         "params": [
           {
             "name": "T",
-            "type": 40
+            "type": 39
           },
           {
             "name": "E",
@@ -4474,7 +4853,7 @@
       }
     },
     {
-      "id": 40,
+      "id": 39,
       "type": {
         "def": {
           "variant": {
@@ -4486,7 +4865,7 @@
               {
                 "fields": [
                   {
-                    "type": 41
+                    "type": 40
                   }
                 ],
                 "index": 1,
@@ -4498,7 +4877,7 @@
         "params": [
           {
             "name": "T",
-            "type": 41
+            "type": 40
           }
         ],
         "path": [
@@ -4507,35 +4886,30 @@
       }
     },
     {
-      "id": 41,
+      "id": 40,
       "type": {
         "def": {
           "composite": {
             "fields": [
               {
-                "name": "total_amount",
-                "type": 8,
+                "name": "purchased_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "total_purchased_amount",
-                "type": 8,
+                "name": "vesting_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "total_claimed_amount",
-                "type": 8,
+                "name": "claimed_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "is_burned",
+                "name": "last_updated_time",
                 "type": 7,
-                "typeName": "bool"
-              },
-              {
-                "name": "is_withdrawn",
-                "type": 7,
-                "typeName": "bool"
+                "typeName": "u64"
               }
             ]
           }
@@ -4545,7 +4919,49 @@
           "impls",
           "launchpad_contract",
           "data",
-          "WhitelistSaleInfo"
+          "BuyerInformation"
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 22
+          }
+        ],
+        "path": [
+          "Result"
         ]
       }
     },
@@ -4598,22 +5014,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 8
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 7
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -4621,15 +5032,11 @@
         "params": [
           {
             "name": "T",
-            "type": 8
-          },
-          {
-            "name": "E",
-            "type": 16
+            "type": 7
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -4642,7 +5049,7 @@
               {
                 "fields": [
                   {
-                    "type": 5
+                    "type": 45
                   }
                 ],
                 "index": 0,
@@ -4663,7 +5070,7 @@
         "params": [
           {
             "name": "T",
-            "type": 5
+            "type": 45
           },
           {
             "name": "E",
@@ -4682,55 +5089,13 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 46
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 46
-          },
-          {
-            "name": "E",
-            "type": 22
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 46,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
                 "index": 0,
                 "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 5
+                    "type": 46
                   }
                 ],
                 "index": 1,
@@ -4742,11 +5107,59 @@
         "params": [
           {
             "name": "T",
-            "type": 5
+            "type": 46
           }
         ],
         "path": [
           "Option"
+        ]
+      }
+    },
+    {
+      "id": 46,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "price",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "purchased_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "vesting_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "claimed_amount",
+                "type": 5,
+                "typeName": "Balance"
+              },
+              {
+                "name": "last_updated_time",
+                "type": 7,
+                "typeName": "u64"
+              }
+            ]
+          }
+        },
+        "path": [
+          "inkwhale_project",
+          "impls",
+          "launchpad_contract",
+          "data",
+          "WhitelistBuyerInfo"
         ]
       }
     },
@@ -4805,7 +5218,7 @@
               {
                 "fields": [
                   {
-                    "type": 49
+                    "type": 8
                   }
                 ],
                 "index": 1,
@@ -4817,7 +5230,7 @@
         "params": [
           {
             "name": "T",
-            "type": 49
+            "type": 8
           }
         ],
         "path": [
@@ -4829,27 +5242,107 @@
       "id": 49,
       "type": {
         "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 50
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 50
+          },
+          {
+            "name": "E",
+            "type": 22
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 50,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 51
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 51
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 51,
+      "type": {
+        "def": {
           "composite": {
             "fields": [
               {
-                "name": "purchased_amount",
-                "type": 8,
+                "name": "total_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "vesting_amount",
-                "type": 8,
+                "name": "total_purchased_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "claimed_amount",
-                "type": 8,
+                "name": "total_claimed_amount",
+                "type": 5,
                 "typeName": "Balance"
               },
               {
-                "name": "last_updated_time",
-                "type": 6,
-                "typeName": "u64"
+                "name": "is_burned",
+                "type": 8,
+                "typeName": "bool"
+              },
+              {
+                "name": "is_withdrawn",
+                "type": 8,
+                "typeName": "bool"
               }
             ]
           }
@@ -4859,12 +5352,87 @@
           "impls",
           "launchpad_contract",
           "data",
-          "BuyerInformation"
+          "WhitelistSaleInfo"
         ]
       }
     },
     {
-      "id": 50,
+      "id": 52,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 53
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 53
+          },
+          {
+            "name": "E",
+            "type": 22
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 53,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 54,
       "type": {
         "def": {
           "variant": {
@@ -4906,7 +5474,7 @@
       }
     },
     {
-      "id": 51,
+      "id": 55,
       "type": {
         "def": {
           "variant": {
@@ -4914,7 +5482,7 @@
               {
                 "fields": [
                   {
-                    "type": 52
+                    "type": 56
                   }
                 ],
                 "index": 0,
@@ -4935,7 +5503,7 @@
         "params": [
           {
             "name": "T",
-            "type": 52
+            "type": 56
           },
           {
             "name": "E",
@@ -4948,7 +5516,7 @@
       }
     },
     {
-      "id": 52,
+      "id": 56,
       "type": {
         "def": {
           "variant": {
@@ -4960,7 +5528,7 @@
               {
                 "fields": [
                   {
-                    "type": 53
+                    "type": 57
                   }
                 ],
                 "index": 1,
@@ -4972,7 +5540,7 @@
         "params": [
           {
             "name": "T",
-            "type": 53
+            "type": 57
           }
         ],
         "path": [
@@ -4981,14 +5549,14 @@
       }
     },
     {
-      "id": 53,
+      "id": 57,
       "type": {
         "def": {
           "composite": {
             "fields": [
               {
                 "name": "is_active",
-                "type": 7,
+                "type": 8,
                 "typeName": "bool"
               },
               {
@@ -4998,37 +5566,37 @@
               },
               {
                 "name": "start_time",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               },
               {
                 "name": "end_time",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               },
               {
                 "name": "immediate_release_rate",
-                "type": 5,
+                "type": 6,
                 "typeName": "u32"
               },
               {
                 "name": "vesting_duration",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               },
               {
                 "name": "end_vesting_time",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               },
               {
                 "name": "vesting_unit",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               },
               {
                 "name": "total_vesting_units",
-                "type": 6,
+                "type": 7,
                 "typeName": "u64"
               }
             ]
@@ -5044,188 +5612,28 @@
       }
     },
     {
-      "id": 54,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 55
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 55
-          },
-          {
-            "name": "E",
-            "type": 22
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 55,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 56
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 56
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 56,
-      "type": {
-        "def": {
-          "composite": {
-            "fields": [
-              {
-                "name": "total_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "price",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "total_purchased_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "total_claimed_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "is_burned",
-                "type": 7,
-                "typeName": "bool"
-              },
-              {
-                "name": "is_withdrawn",
-                "type": 7,
-                "typeName": "bool"
-              }
-            ]
-          }
-        },
-        "path": [
-          "inkwhale_project",
-          "impls",
-          "launchpad_contract",
-          "data",
-          "PublicSaleInfo"
-        ]
-      }
-    },
-    {
-      "id": 57,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 58
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 58
-          },
-          {
-            "name": "E",
-            "type": 22
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
       "id": 58,
       "type": {
         "def": {
           "variant": {
             "variants": [
               {
-                "index": 0,
-                "name": "None"
-              },
-              {
                 "fields": [
                   {
                     "type": 59
                   }
                 ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -5234,10 +5642,14 @@
           {
             "name": "T",
             "type": 59
+          },
+          {
+            "name": "E",
+            "type": 22
           }
         ],
         "path": [
-          "Option"
+          "Result"
         ]
       }
     },
@@ -5245,47 +5657,41 @@
       "id": 59,
       "type": {
         "def": {
-          "composite": {
-            "fields": [
+          "variant": {
+            "variants": [
               {
-                "name": "amount",
-                "type": 8,
-                "typeName": "Balance"
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
               },
               {
-                "name": "price",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "purchased_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "vesting_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "claimed_amount",
-                "type": 8,
-                "typeName": "Balance"
-              },
-              {
-                "name": "last_updated_time",
-                "type": 6,
-                "typeName": "u64"
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
               }
             ]
           }
         },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
         "path": [
-          "inkwhale_project",
-          "impls",
-          "launchpad_contract",
-          "data",
-          "WhitelistBuyerInfo"
+          "Result"
         ]
       }
     },
@@ -5298,7 +5704,7 @@
               {
                 "fields": [
                   {
-                    "type": 7
+                    "type": 6
                   }
                 ],
                 "index": 0,
@@ -5319,7 +5725,7 @@
         "params": [
           {
             "name": "T",
-            "type": 7
+            "type": 6
           },
           {
             "name": "E",
@@ -5340,7 +5746,7 @@
               {
                 "fields": [
                   {
-                    "type": 62
+                    "type": 8
                   }
                 ],
                 "index": 0,
@@ -5361,7 +5767,7 @@
         "params": [
           {
             "name": "T",
-            "type": 62
+            "type": 8
           },
           {
             "name": "E",
@@ -5375,6 +5781,48 @@
     },
     {
       "id": 62,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 63
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 63
+          },
+          {
+            "name": "E",
+            "type": 22
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 63,
       "type": {
         "def": {
           "variant": {

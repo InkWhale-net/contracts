@@ -63,6 +63,7 @@ export default class Methods {
 	*
 	* @param { string } projectInfoUri,
 	* @param { ArgumentTypes.AccountId } tokenAddress,
+	* @param { (string | number | BN) } totalSupply,
 	* @param { Array<string> } phaseName,
 	* @param { Array<(number | string | BN)> } phaseStartTime,
 	* @param { Array<(number | string | BN)> } phaseEndTime,
@@ -77,6 +78,7 @@ export default class Methods {
 	"newLaunchpad" (
 		projectInfoUri: string,
 		tokenAddress: ArgumentTypes.AccountId,
+		totalSupply: (string | number | BN),
 		phaseName: Array<string>,
 		phaseStartTime: Array<(number | string | BN)>,
 		phaseEndTime: Array<(number | string | BN)>,
@@ -90,31 +92,7 @@ export default class Methods {
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "newLaunchpad", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [projectInfoUri, tokenAddress, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice], __options);
-	}
-
-	/**
-	* owner
-	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
-	*/
-	"owner" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options, (result) => { return handleReturnType(result, getTypeDescription(25, 'launchpad_generator')); });
-	}
-
-	/**
-	* renounceOwnership
-	*
-	* @returns { void }
-	*/
-	"renounceOwnership" (
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
+		}, [projectInfoUri, tokenAddress, totalSupply, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice], __options);
 	}
 
 	/**
@@ -133,6 +111,30 @@ export default class Methods {
 	}
 
 	/**
+	* renounceOwnership
+	*
+	* @returns { void }
+	*/
+	"renounceOwnership" (
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
+	* owner
+	*
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	*/
+	"owner" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options, (result) => { return handleReturnType(result, getTypeDescription(27, 'launchpad_generator')); });
+	}
+
+	/**
 	* setTxRate
 	*
 	* @param { (number | string | BN) } txRate,
@@ -148,31 +150,25 @@ export default class Methods {
 	}
 
 	/**
-	* setIsActiveLaunchpad
+	* getCreationFee
 	*
-	* @param { ArgumentTypes.AccountId } address,
-	* @param { boolean } isActive,
-	* @returns { void }
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
 	*/
-	"setIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
-		isActive: boolean,
+	"getCreationFee" (
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setIsActiveLaunchpad", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [address, isActive], __options);
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getCreationFee", [], __options, (result) => { return handleReturnType(result, getTypeDescription(28, 'launchpad_generator')); });
 	}
 
 	/**
-	* getLaunchpadHash
+	* getLaunchpadCount
 	*
-	* @returns { Result<ReturnTypes.Hash, ReturnTypes.LangError> }
+	* @returns { Result<number, ReturnTypes.LangError> }
 	*/
-	"getLaunchpadHash" (
+	"getLaunchpadCount" (
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.Hash, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadHash", [], __options, (result) => { return handleReturnType(result, getTypeDescription(28, 'launchpad_generator')); });
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadCount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(29, 'launchpad_generator')); });
 	}
 
 	/**
@@ -185,20 +181,18 @@ export default class Methods {
 		id: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadById", [id], __options, (result) => { return handleReturnType(result, getTypeDescription(29, 'launchpad_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadById", [id], __options, (result) => { return handleReturnType(result, getTypeDescription(30, 'launchpad_generator')); });
 	}
 
 	/**
-	* getIsActiveLaunchpad
+	* getActiveLaunchpadCount
 	*
-	* @param { ArgumentTypes.AccountId } address,
-	* @returns { Result<boolean | null, ReturnTypes.LangError> }
+	* @returns { Result<number, ReturnTypes.LangError> }
 	*/
-	"getIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
+	"getActiveLaunchpadCount" (
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<boolean | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getIsActiveLaunchpad", [address], __options, (result) => { return handleReturnType(result, getTypeDescription(31, 'launchpad_generator')); });
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getActiveLaunchpadCount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(29, 'launchpad_generator')); });
 	}
 
 	/**
@@ -217,71 +211,14 @@ export default class Methods {
 	}
 
 	/**
-	* getInwContract
+	* getLaunchpadHash
 	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	* @returns { Result<ReturnTypes.Hash, ReturnTypes.LangError> }
 	*/
-	"getInwContract" (
+	"getLaunchpadHash" (
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getInwContract", [], __options, (result) => { return handleReturnType(result, getTypeDescription(25, 'launchpad_generator')); });
-	}
-
-	/**
-	* getCreationFee
-	*
-	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
-	*/
-	"getCreationFee" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getCreationFee", [], __options, (result) => { return handleReturnType(result, getTypeDescription(33, 'launchpad_generator')); });
-	}
-
-	/**
-	* getLaunchpadCount
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getLaunchpadCount" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadCount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(34, 'launchpad_generator')); });
-	}
-
-	/**
-	* getTxRate
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getTxRate" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getTxRate", [], __options, (result) => { return handleReturnType(result, getTypeDescription(35, 'launchpad_generator')); });
-	}
-
-	/**
-	* getLaunchpadByOwner
-	*
-	* @param { ArgumentTypes.AccountId } ownerAddress,
-	* @returns { Result<Array<ReturnTypes.AccountId>, ReturnTypes.LangError> }
-	*/
-	"getLaunchpadByOwner" (
-		ownerAddress: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<Array<ReturnTypes.AccountId>, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadByOwner", [ownerAddress], __options, (result) => { return handleReturnType(result, getTypeDescription(36, 'launchpad_generator')); });
-	}
-
-	/**
-	* getActiveLaunchpadCount
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getActiveLaunchpadCount" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getActiveLaunchpadCount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(34, 'launchpad_generator')); });
+	): Promise< QueryReturnType< Result<ReturnTypes.Hash, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadHash", [], __options, (result) => { return handleReturnType(result, getTypeDescription(32, 'launchpad_generator')); });
 	}
 
 	/**
@@ -315,22 +252,68 @@ export default class Methods {
 	}
 
 	/**
-	* tranferPsp22
+	* setIsActiveLaunchpad
 	*
-	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
-	* @param { (string | number | BN) } amount,
-	* @param { ArgumentTypes.AccountId } receiver,
+	* @param { ArgumentTypes.AccountId } address,
+	* @param { boolean } isActive,
 	* @returns { void }
 	*/
-	"tranferPsp22" (
-		psp22ContractAddress: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
+	"setIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		isActive: boolean,
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setIsActiveLaunchpad", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [psp22ContractAddress, amount, receiver], __options);
+		}, [address, isActive], __options);
+	}
+
+	/**
+	* getInwContract
+	*
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	*/
+	"getInwContract" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getInwContract", [], __options, (result) => { return handleReturnType(result, getTypeDescription(27, 'launchpad_generator')); });
+	}
+
+	/**
+	* getTxRate
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getTxRate" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getTxRate", [], __options, (result) => { return handleReturnType(result, getTypeDescription(33, 'launchpad_generator')); });
+	}
+
+	/**
+	* getLaunchpadByOwner
+	*
+	* @param { ArgumentTypes.AccountId } ownerAddress,
+	* @returns { Result<Array<ReturnTypes.AccountId>, ReturnTypes.LangError> }
+	*/
+	"getLaunchpadByOwner" (
+		ownerAddress: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<Array<ReturnTypes.AccountId>, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getLaunchpadByOwner", [ownerAddress], __options, (result) => { return handleReturnType(result, getTypeDescription(34, 'launchpad_generator')); });
+	}
+
+	/**
+	* getIsActiveLaunchpad
+	*
+	* @param { ArgumentTypes.AccountId } address,
+	* @returns { Result<boolean | null, ReturnTypes.LangError> }
+	*/
+	"getIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<boolean | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadGeneratorTrait::getIsActiveLaunchpad", [address], __options, (result) => { return handleReturnType(result, getTypeDescription(35, 'launchpad_generator')); });
 	}
 
 	/**
@@ -364,6 +347,25 @@ export default class Methods {
 	}
 
 	/**
+	* tranferPsp22
+	*
+	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } amount,
+	* @param { ArgumentTypes.AccountId } receiver,
+	* @returns { void }
+	*/
+	"tranferPsp22" (
+		psp22ContractAddress: ArgumentTypes.AccountId,
+		amount: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [psp22ContractAddress, amount, receiver], __options);
+	}
+
+	/**
 	* setCode
 	*
 	* @param { Array<(number | string | BN)> } codeHash,
@@ -379,20 +381,16 @@ export default class Methods {
 	}
 
 	/**
-	* revokeRole
+	* getRoleAdmin
 	*
 	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId } account,
-	* @returns { void }
+	* @returns { Result<number, ReturnTypes.LangError> }
 	*/
-	"revokeRole" (
+	"getRoleAdmin" (
 		role: (number | string | BN),
-		account: ArgumentTypes.AccountId,
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [role, account], __options);
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::getRoleAdmin", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(33, 'launchpad_generator')); });
 	}
 
 	/**
@@ -407,7 +405,7 @@ export default class Methods {
 		address: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<boolean, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::hasRole", [role, address], __options, (result) => { return handleReturnType(result, getTypeDescription(41, 'launchpad_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::hasRole", [role, address], __options, (result) => { return handleReturnType(result, getTypeDescription(39, 'launchpad_generator')); });
 	}
 
 	/**
@@ -423,6 +421,23 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::grantRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [role, account], __options);
+	}
+
+	/**
+	* revokeRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId } account,
+	* @returns { void }
+	*/
+	"revokeRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
 		}, [role, account], __options);
 	}
@@ -445,16 +460,18 @@ export default class Methods {
 	}
 
 	/**
-	* getRoleAdmin
+	* getRoleMember
 	*
 	* @param { (number | string | BN) } role,
-	* @returns { Result<number, ReturnTypes.LangError> }
+	* @param { (number | string | BN) } index,
+	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
 	*/
-	"getRoleAdmin" (
+	"getRoleMember" (
 		role: (number | string | BN),
+		index: (number | string | BN),
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::getRoleAdmin", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(35, 'launchpad_generator')); });
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMember", [role, index], __options, (result) => { return handleReturnType(result, getTypeDescription(30, 'launchpad_generator')); });
 	}
 
 	/**
@@ -467,22 +484,7 @@ export default class Methods {
 		role: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMemberCount", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(35, 'launchpad_generator')); });
-	}
-
-	/**
-	* getRoleMember
-	*
-	* @param { (number | string | BN) } role,
-	* @param { (number | string | BN) } index,
-	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
-	*/
-	"getRoleMember" (
-		role: (number | string | BN),
-		index: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMember", [role, index], __options, (result) => { return handleReturnType(result, getTypeDescription(29, 'launchpad_generator')); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMemberCount", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(33, 'launchpad_generator')); });
 	}
 
 }

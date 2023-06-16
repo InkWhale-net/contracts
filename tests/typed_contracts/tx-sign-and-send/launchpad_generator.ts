@@ -54,6 +54,7 @@ export default class Methods {
 	*
 	* @param { string } projectInfoUri,
 	* @param { ArgumentTypes.AccountId } tokenAddress,
+	* @param { (string | number | BN) } totalSupply,
 	* @param { Array<string> } phaseName,
 	* @param { Array<(number | string | BN)> } phaseStartTime,
 	* @param { Array<(number | string | BN)> } phaseEndTime,
@@ -67,6 +68,7 @@ export default class Methods {
 	"newLaunchpad" (
 		projectInfoUri: string,
 		tokenAddress: ArgumentTypes.AccountId,
+		totalSupply: (string | number | BN),
 		phaseName: Array<string>,
 		phaseStartTime: Array<(number | string | BN)>,
 		phaseEndTime: Array<(number | string | BN)>,
@@ -80,31 +82,7 @@ export default class Methods {
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "newLaunchpad", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [projectInfoUri, tokenAddress, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice], __options);
-	}
-
-	/**
-	* owner
-	*
-	*/
-	"owner" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
-	}
-
-	/**
-	* renounceOwnership
-	*
-	*/
-	"renounceOwnership" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
+		}, [projectInfoUri, tokenAddress, totalSupply, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice], __options);
 	}
 
 	/**
@@ -122,6 +100,30 @@ export default class Methods {
 	}
 
 	/**
+	* renounceOwnership
+	*
+	*/
+	"renounceOwnership" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
+	* owner
+	*
+	*/
+	"owner" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
 	* setTxRate
 	*
 	* @param { (number | string | BN) } txRate,
@@ -133,88 +135,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setTxRate", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
 		}, [txRate], __options);
-	}
-
-	/**
-	* setIsActiveLaunchpad
-	*
-	* @param { ArgumentTypes.AccountId } address,
-	* @param { boolean } isActive,
-	*/
-	"setIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
-		isActive: boolean,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setIsActiveLaunchpad", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [address, isActive], __options);
-	}
-
-	/**
-	* getLaunchpadHash
-	*
-	*/
-	"getLaunchpadHash" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadHash", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
-	}
-
-	/**
-	* getLaunchpadById
-	*
-	* @param { (number | string | BN) } id,
-	*/
-	"getLaunchpadById" (
-		id: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadById", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [id], __options);
-	}
-
-	/**
-	* getIsActiveLaunchpad
-	*
-	* @param { ArgumentTypes.AccountId } address,
-	*/
-	"getIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getIsActiveLaunchpad", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [address], __options);
-	}
-
-	/**
-	* setInwContract
-	*
-	* @param { ArgumentTypes.AccountId } inwContract,
-	*/
-	"setInwContract" (
-		inwContract: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setInwContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [inwContract], __options);
-	}
-
-	/**
-	* getInwContract
-	*
-	*/
-	"getInwContract" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getInwContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
 	}
 
 	/**
@@ -242,29 +162,17 @@ export default class Methods {
 	}
 
 	/**
-	* getTxRate
+	* getLaunchpadById
 	*
+	* @param { (number | string | BN) } id,
 	*/
-	"getTxRate" (
+	"getLaunchpadById" (
+		id: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getTxRate", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadById", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [], __options);
-	}
-
-	/**
-	* getLaunchpadByOwner
-	*
-	* @param { ArgumentTypes.AccountId } ownerAddress,
-	*/
-	"getLaunchpadByOwner" (
-		ownerAddress: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadByOwner", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [ownerAddress], __options);
+		}, [id], __options);
 	}
 
 	/**
@@ -275,6 +183,32 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getActiveLaunchpadCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
+	* setInwContract
+	*
+	* @param { ArgumentTypes.AccountId } inwContract,
+	*/
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setInwContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [inwContract], __options);
+	}
+
+	/**
+	* getLaunchpadHash
+	*
+	*/
+	"getLaunchpadHash" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadHash", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
 		}, [], __options);
 	}
@@ -308,21 +242,71 @@ export default class Methods {
 	}
 
 	/**
-	* tranferPsp22
+	* setIsActiveLaunchpad
 	*
-	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
-	* @param { (string | number | BN) } amount,
-	* @param { ArgumentTypes.AccountId } receiver,
+	* @param { ArgumentTypes.AccountId } address,
+	* @param { boolean } isActive,
 	*/
-	"tranferPsp22" (
-		psp22ContractAddress: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
+	"setIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		isActive: boolean,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::setIsActiveLaunchpad", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [psp22ContractAddress, amount, receiver], __options);
+		}, [address, isActive], __options);
+	}
+
+	/**
+	* getInwContract
+	*
+	*/
+	"getInwContract" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getInwContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
+	* getTxRate
+	*
+	*/
+	"getTxRate" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getTxRate", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [], __options);
+	}
+
+	/**
+	* getLaunchpadByOwner
+	*
+	* @param { ArgumentTypes.AccountId } ownerAddress,
+	*/
+	"getLaunchpadByOwner" (
+		ownerAddress: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getLaunchpadByOwner", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [ownerAddress], __options);
+	}
+
+	/**
+	* getIsActiveLaunchpad
+	*
+	* @param { ArgumentTypes.AccountId } address,
+	*/
+	"getIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadGeneratorTrait::getIsActiveLaunchpad", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [address], __options);
 	}
 
 	/**
@@ -354,6 +338,24 @@ export default class Methods {
 	}
 
 	/**
+	* tranferPsp22
+	*
+	* @param { ArgumentTypes.AccountId } psp22ContractAddress,
+	* @param { (string | number | BN) } amount,
+	* @param { ArgumentTypes.AccountId } receiver,
+	*/
+	"tranferPsp22" (
+		psp22ContractAddress: ArgumentTypes.AccountId,
+		amount: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "adminTrait::tranferPsp22", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [psp22ContractAddress, amount, receiver], __options);
+	}
+
+	/**
 	* setCode
 	*
 	* @param { Array<(number | string | BN)> } codeHash,
@@ -368,19 +370,17 @@ export default class Methods {
 	}
 
 	/**
-	* revokeRole
+	* getRoleAdmin
 	*
 	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId } account,
 	*/
-	"revokeRole" (
+	"getRoleAdmin" (
 		role: (number | string | BN),
-		account: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::getRoleAdmin", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [role, account], __options);
+		}, [role], __options);
 	}
 
 	/**
@@ -416,6 +416,22 @@ export default class Methods {
 	}
 
 	/**
+	* revokeRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId } account,
+	*/
+	"revokeRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
+		}, [role, account], __options);
+	}
+
+	/**
 	* renounceRole
 	*
 	* @param { (number | string | BN) } role,
@@ -432,17 +448,19 @@ export default class Methods {
 	}
 
 	/**
-	* getRoleAdmin
+	* getRoleMember
 	*
 	* @param { (number | string | BN) } role,
+	* @param { (number | string | BN) } index,
 	*/
-	"getRoleAdmin" (
+	"getRoleMember" (
 		role: (number | string | BN),
+		index: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::getRoleAdmin", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMember", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [role], __options);
+		}, [role, index], __options);
 	}
 
 	/**
@@ -457,22 +475,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMemberCount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
 		}, [role], __options);
-	}
-
-	/**
-	* getRoleMember
-	*
-	* @param { (number | string | BN) } role,
-	* @param { (number | string | BN) } index,
-	*/
-	"getRoleMember" (
-		role: (number | string | BN),
-		index: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMember", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, "launchpad_generator");
-		}, [role, index], __options);
 	}
 
 }

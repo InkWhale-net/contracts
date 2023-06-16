@@ -73,7 +73,10 @@ export interface Error {
 	activeLaunchpadStatusNotFound ? : null,
 	launchpadNotActive ? : null,
 	invalidCaller ? : null,
-	noPhaseActive ? : null
+	noPhaseActive ? : null,
+	invalidTotalSupply ? : null,
+	phaseNotPublic ? : null,
+	invalidSetPublic ? : null
 }
 
 export class ErrorBuilder {
@@ -420,6 +423,21 @@ export class ErrorBuilder {
 	static NoPhaseActive(): Error {
 		return {
 			noPhaseActive: null,
+		};
+	}
+	static InvalidTotalSupply(): Error {
+		return {
+			invalidTotalSupply: null,
+		};
+	}
+	static PhaseNotPublic(): Error {
+		return {
+			phaseNotPublic: null,
+		};
+	}
+	static InvalidSetPublic(): Error {
+		return {
+			invalidSetPublic: null,
 		};
 	}
 }
