@@ -621,7 +621,7 @@ where
                 return Err(Error::PhaseNotActive);
             }
 
-            if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
                 if !public_sale_info.is_public {
                     return Err(Error::PhaseNotPublic);
                 }
@@ -633,6 +633,9 @@ where
                 self.data::<Data>().available_token_amount = self.data::<Data>().available_token_amount
                                                                 .checked_add(public_sale_info.total_amount).ok_or(Error::CheckedOperations)?
                                                                 .checked_sub(total_amount).ok_or(Error::CheckedOperations)?;
+
+                public_sale_info.total_amount = total_amount;
+                self.data::<Data>().public_sale_info.insert(&phase_id, &public_sale_info);
             } else {
                 return Err(Error::PublicSaleInfoNotExist);
             }
@@ -647,6 +650,7 @@ where
     default fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error> {
         if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
             public_sale_info.price = price;
+            self.data::<Data>().public_sale_info.insert(&phase_id, &public_sale_info);
             Ok(())
         } else {
             return Err(Error::PublicSaleInfoNotExist);
