@@ -99,8 +99,8 @@ pub mod my_launchpad {
                     amount: _amount
                 })
             );
-        }
-    
+        }      
+
         fn _emit_public_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
             MyLaunchpad::emit_event(
                 self.env(),
@@ -123,7 +123,7 @@ pub mod my_launchpad {
                     amount: _amount
                 })
             );
-        }
+        }        
         
         fn _emit_whitelist_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {
             MyLaunchpad::emit_event(

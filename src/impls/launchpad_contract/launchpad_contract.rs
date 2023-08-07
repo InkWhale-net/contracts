@@ -246,7 +246,7 @@ where
 
     #[modifiers(only_owner)]
     default fn set_total_supply(&mut self, total_supply: Balance) -> Result<(), Error> {
-        let current_time = Self::env().block_timestamp();
+        let current_time: u64 = Self::env().block_timestamp();
 
         if current_time >= self.data::<Data>().project_start_time {
             return Err(Error::InvalidTime);
@@ -958,7 +958,7 @@ where
     }
 
     default fn _emit_public_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
-    
+
     default fn _emit_public_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
 
     default fn _emit_whitelist_purchase_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
@@ -966,7 +966,7 @@ where
     default fn _emit_whitelist_claim_event(&self, _launchpad_contract: AccountId, _token_contract: AccountId, _buyer: AccountId, _amount: Balance) {}
 
     default fn public_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
-        if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
+        if let Some(is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
                                                 &self.data::<Data>().generator_contract,
                                                 Self::env().account_id()) { 
             if !is_active_launchpad {
@@ -997,25 +997,24 @@ where
                     }
                         
                     let decimal = Psp22Ref::token_decimals(&self.data::<Data>().token_address);
+                    
                     // price to buy amount of token
                     let price = public_sale_info.price
                                 .checked_mul(amount).ok_or(Error::CheckedOperations)?
-                                .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
+                                .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;                    
+           
+                    if price > Self::env().transferred_value() {
+                        return Err(Error::InvalidTransferAmount);
+                    }
 
                     // tx fee
                     let tx_fee = price.checked_mul(self.data::<Data>().tx_rate as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(10000).ok_or(Error::CheckedOperations)?;
 
-                    let total = price.checked_add(tx_fee).ok_or(Error::CheckedOperations)?;
-            
-                    if total > Self::env().transferred_value() {
-                        return Err(Error::InvalidTransferAmount);
-                    }
-
-                    // Transfer tx fee to launchpad generator
+                    // Transfer tx fee to generator_contract               
                     if Self::env().transfer(self.data::<Data>().generator_contract, tx_fee).is_err() {
                         return Err(Error::CannotTransferTxFee);
-                    }
+                    };                
 
                     // Return immediately tokens within release rate
                     let claim = amount.checked_mul(phase_info.immediate_release_rate as u128).ok_or(Error::CheckedOperations)?
@@ -1238,7 +1237,7 @@ where
     }
 
     default fn whitelist_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
-        if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
+        if let Some(is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
                                                 &self.data::<Data>().generator_contract,
                                                 Self::env().account_id()) { 
                             
@@ -1273,21 +1272,19 @@ where
                     let price = buy_info.price
                                 .checked_mul(amount).ok_or(Error::CheckedOperations)?
                                 .checked_div(10_u128.pow(decimal as u32)).ok_or(Error::CheckedOperations)?;
+                    
+                    if price > Self::env().transferred_value() {
+                        return Err(Error::InvalidTransferAmount);
+                    }
 
                     // tx fee
                     let tx_fee = price.checked_mul(self.data::<Data>().tx_rate as u128).ok_or(Error::CheckedOperations)?
                                     .checked_div(10000).ok_or(Error::CheckedOperations)?;
 
-                    let total = price.checked_add(tx_fee).ok_or(Error::CheckedOperations)?; 
-
-                    if total > Self::env().transferred_value() {
-                        return Err(Error::InvalidTransferAmount);
-                    }
-
-                    // Transfer tx fee to launchpad generator
+                    // Transfer tx fee to generator_contract
                     if Self::env().transfer(self.data::<Data>().generator_contract, tx_fee).is_err() {
                         return Err(Error::CannotTransferTxFee);
-                    }
+                    };                 
 
                     // Return immediately tokens within release rate
                     let claim = amount.checked_mul(phase_info.immediate_release_rate as u128).ok_or(Error::CheckedOperations)?

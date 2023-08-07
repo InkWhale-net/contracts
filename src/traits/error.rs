@@ -65,6 +65,7 @@ pub enum Error {
     LaunchpadNotExist,
     InvalidIsActiveInput,
     InvalidCreationFee,
+    InvalidTxRate,
     InvalidPhaseData,
     CannotTopupToken,
     InvalidStartTimeAndEndTime,

@@ -99,8 +99,11 @@ pub mod launchpad_generator {
             }
             self.manager.creation_fee = creation_fee;
 
-            self.manager.tx_rate = tx_rate;
-
+            if tx_rate > 10000 {
+                return Err(Error::InvalidTxRate);
+            }
+            self.manager.tx_rate = tx_rate;          
+            
             self._init_with_admin(self.env().caller());
             self.grant_role(ADMINER, self.env().caller()).expect("Should grant ADMINER role");
             

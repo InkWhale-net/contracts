@@ -111,6 +111,10 @@ where
 
     #[modifiers(only_role(ADMINER))]
     default fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error> {
+        if tx_rate > 10000 {
+            return Err(Error::InvalidTxRate);
+        }
+        
         self.data::<Data>().tx_rate = tx_rate;
         Ok(()) 
     }
