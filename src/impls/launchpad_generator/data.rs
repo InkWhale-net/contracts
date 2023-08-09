@@ -7,7 +7,7 @@ use openbrush::{
     storage::{
         Mapping
     },
-    contracts::access_control::*,
+    contracts::traits::access_control::RoleType,
 };
 
 use ink::prelude::{
@@ -19,7 +19,7 @@ pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
 pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]
-#[openbrush::upgradeable_storage(STORAGE_KEY)]
+#[openbrush::storage_item]
 pub struct Data {
     pub launchpad_hash: Hash,
     pub inw_contract: AccountId,

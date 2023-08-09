@@ -1,62 +1,47 @@
-pub use crate::{
-    impls::admin::{
-        data
-    },
-    traits::admin::*,
-};
 use crate::traits::error::Error;
-use ink::prelude::{
-    vec::Vec,
-};
+pub use crate::{impls::admin::data, traits::admin::*};
 use ink::env::CallFlags;
+use ink::prelude::vec::Vec;
 use openbrush::{
+    contracts::ownable::*,
     modifiers,
-    traits::{
-        Storage,
-        Balance,
-        AccountId
-    },
-    contracts::{
-        ownable::*,
-    },
+    traits::{AccountId, Balance, Storage},
 };
 
-impl<T: Storage<data::Data> + Storage<ownable::Data>> AdminTrait for T
-{
-    #[modifiers(only_owner)]
-    default fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
-        if value > T::env().balance() {
+pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
+    // #[modifiers(only_owner)]
+    fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
+        if value > Self::env().balance() {
             return Err(Error::NotEnoughBalance);
         }
-        if T::env().transfer(receiver, value).is_err() {
+        if Self::env().transfer(receiver, value).is_err() {
             return Err(Error::WithdrawFeeError);
         }
         Ok(())
     }
 
-    #[modifiers(only_owner)]
-    default fn get_balance(&mut self) -> Result<Balance, Error> {
-        Ok(T::env().balance())
+    // #[modifiers(only_owner)]
+    fn get_balance(&mut self) -> Result<Balance, Error> {
+        Ok(Self::env().balance())
     }
 
-    #[modifiers(only_owner)]
-    default fn tranfer_psp22(&mut self, psp22_contract_address: AccountId, amount: Balance, receiver: AccountId) -> Result<(), Error>{
-        let builder = Psp22Ref::transfer_builder(
-            &psp22_contract_address,
-            receiver,
-            amount,
-            Vec::<u8>::new()
-        )
-        .call_flags(CallFlags::default().set_allow_reentry(true));
+    // #[modifiers(only_owner)]
+    fn tranfer_psp22(
+        &mut self,
+        psp22_contract_address: AccountId,
+        amount: Balance,
+        receiver: AccountId,
+    ) -> Result<(), Error> {
+        let builder =
+            Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new())
+                .call_flags(CallFlags::default().set_allow_reentry(true));
 
         let result = match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
             Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
             Err(ink::env::Error::NotCallable) => Ok(()),
-            _ => {
-                Err(Error::CannotTransfer)
-            }
+            _ => Err(Error::CannotTransfer),
         };
 
         result

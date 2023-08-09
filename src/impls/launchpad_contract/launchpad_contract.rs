@@ -28,7 +28,7 @@ use openbrush::{
     modifiers,
     contracts::{
         ownable::*,
-        access_control::*,
+        traits::access_control,
     },
     traits::{
         Storage,
@@ -42,10 +42,10 @@ impl<T, M> LaunchpadContractTrait for T
 where 
     M: members::MembersManager,
     M: Storable
-        + StorableHint<ManualKey<{ access_control::STORAGE_KEY }>>
-        + AutoStorableHint<ManualKey<3218979580, ManualKey<{ access_control::STORAGE_KEY }>>, Type = M>,
-    T: Storage<access_control::Data<M>>,
-    T: OccupiedStorage<{ access_control::STORAGE_KEY }, WithData = access_control::Data<M>>,
+        + StorableHint<ManualKey<{ STORAGE_KEY }>>
+        + AutoStorableHint<ManualKey<3218979580, ManualKey<{ STORAGE_KEY }>>, Type = M>,
+    T: Storage<Data<M>>,
+    T: OccupiedStorage<{ STORAGE_KEY }, WithData = Data<M>>,
     T:  Storage<Data> + 
         Storage<ownable::Data>
 {

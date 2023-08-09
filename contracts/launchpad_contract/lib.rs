@@ -25,7 +25,6 @@ pub mod my_launchpad {
         },
         traits::{
             Storage,
-            ZERO_ADDRESS
         },
         modifiers
     };
@@ -260,7 +259,7 @@ pub mod my_launchpad {
             phase_public_amount: Vec<Balance>,
             phase_public_price: Vec<Balance>  
         ) -> Result<(), Error> {            
-            if self.data.generator_contract != ZERO_ADDRESS.into() {
+            if self.data.generator_contract != [0u8; 32].into().into() {
                 return Err(Error::AlreadyInit);
             }
 

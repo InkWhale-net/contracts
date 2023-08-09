@@ -1,13 +1,8 @@
-use openbrush::{
-    traits::{
-        Balance,
-        AccountId
-    },
-    contracts::{
-        traits::psp22::*,
-    },
-};
 use crate::traits::error::Error;
+use openbrush::{
+    contracts::traits::psp22::*,
+    traits::{AccountId, Balance},
+};
 
 #[openbrush::wrapper]
 pub type InkWhaleAdminRef = dyn AdminTrait;
@@ -23,8 +18,13 @@ pub trait AdminTrait {
     /// Get Azero balance
     #[ink(message)]
     fn get_balance(&mut self) -> Result<Balance, Error>;
-    
+
     /// This function allow contract owner withdraw PSP22 to an account in case there is any token sent to contract by mistake
     #[ink(message)]
-    fn tranfer_psp22(&mut self, psp22_contract_address: AccountId, amount: Balance, receiver: AccountId) -> Result<(), Error>;
+    fn tranfer_psp22(
+        &mut self,
+        psp22_contract_address: AccountId,
+        amount: Balance,
+        receiver: AccountId,
+    ) -> Result<(), Error>;
 }

@@ -1,22 +1,11 @@
 #![allow(clippy::inline_fn_without_body)]
 
 use openbrush::{
-    traits::{
-        Balance,
-        AccountId,
-        Hash
-    },
-    contracts::{
-        traits::psp22::{
-            extensions::burnable::*,
-            *,
-        },
-    },
+    contracts::traits::psp22::{extensions::burnable::*, *},
+    traits::{AccountId, Balance, Hash},
 };
 
-use ink::prelude::{
-    vec::Vec
-};
+use ink::prelude::vec::Vec;
 
 use crate::traits::error::Error;
 
@@ -27,7 +16,7 @@ pub type Psp22Ref = dyn PSP22 + PSP22Burnable;
 pub type LaunchpadGeneratorRef = dyn LaunchpadGeneratorTrait;
 
 #[openbrush::trait_definition]
-pub trait LaunchpadGeneratorTrait {     
+pub trait LaunchpadGeneratorTrait {
     // Getters
 
     #[ink(message)]
@@ -59,18 +48,19 @@ pub trait LaunchpadGeneratorTrait {
 
     // Setters
 
-    #[ink(message)]    
+    #[ink(message)]
     fn set_launchpad_hash(&mut self, launchpad_hash: Hash) -> Result<(), Error>;
 
-    #[ink(message)]    
+    #[ink(message)]
     fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
-    
-    #[ink(message)]    
+
+    #[ink(message)]
     fn set_creation_fee(&mut self, creation_fee: Balance) -> Result<(), Error>;
 
     #[ink(message)]
     fn set_tx_rate(&mut self, tx_rate: u32) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_is_active_launchpad(&mut self, address: AccountId, is_active: bool) -> Result<(), Error>;
+    fn set_is_active_launchpad(&mut self, address: AccountId, is_active: bool)
+        -> Result<(), Error>;
 }
