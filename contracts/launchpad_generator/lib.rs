@@ -1,9 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(min_specialization)]
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::large_enum_variant)]
-
+#[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
 pub mod launchpad_generator {
     use ink::env::CallFlags;
@@ -34,7 +33,9 @@ pub mod launchpad_generator {
         #[storage_field]
         upgradeable_data: upgradeable::data::Data,
         #[storage_field]
-        access: access_control::Data<enumerable::Members>,
+        access: access_control::Data,
+        #[storage_field]
+        enumerable: enumerable::Data,
     }
 
     // #[ink(event)]
@@ -43,12 +44,9 @@ pub mod launchpad_generator {
     //     launchpad_address: AccountId
     // }
 
-    impl Ownable for LaunchpadGenerator {}
     impl LaunchpadGeneratorTrait for LaunchpadGenerator {}
     impl AdminTrait for LaunchpadGenerator {}
     impl UpgradeableTrait for LaunchpadGenerator {}
-    impl AccessControl for LaunchpadGenerator {}
-    impl AccessControlEnumerable for LaunchpadGenerator {}
 
     impl LaunchpadGenerator {
         #[ink(constructor)]
@@ -62,7 +60,7 @@ pub mod launchpad_generator {
             let mut instance = Self::default();
 
             let caller = Self::env().caller();
-            instance._init_with_owner(caller);
+            ownable::Internal::_init_with_owner(&mut instance, caller);
 
             match instance.initialize(
                 launchpad_hash,
@@ -103,12 +101,12 @@ pub mod launchpad_generator {
             }
             self.manager.tx_rate = tx_rate;
 
-            self._init_with_admin(self.env().caller());
-            self.grant_role(ADMINER, self.env().caller())
+            access_control::Internal::_init_with_admin(self, Some(self.env().caller()));
+            AccessControl::grant_role(self, ADMINER, Some(self.env().caller()))
                 .expect("Should grant ADMINER role");
 
-            if !self.has_role(ADMINER, admin_address) {
-                self.grant_role(ADMINER, admin_address)
+            if !AccessControl::has_role(self, ADMINER, Some(admin_address)) {
+                AccessControl::grant_role(self, ADMINER, Some(admin_address))
                     .expect("Should grant ADMINER role");
             }
 

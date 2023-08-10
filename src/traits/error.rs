@@ -1,7 +1,7 @@
 use ink::prelude::string::String;
-use openbrush::contracts::ownable::*;
+use openbrush::contracts::{ownable::*, access_control::*};
 
-use openbrush::contracts::traits::{access_control::*, psp22::PSP22Error, psp34::PSP34Error};
+use openbrush::contracts::traits::{psp22::PSP22Error, psp34::PSP34Error};
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]

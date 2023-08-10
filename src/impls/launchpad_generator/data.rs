@@ -1,18 +1,10 @@
 use openbrush::{
-    traits::{
-        AccountId,
-        Balance,
-        Hash,
-    },
-    storage::{
-        Mapping
-    },
-    contracts::traits::access_control::RoleType,
+    contracts::access_control::*,
+    storage::Mapping,
+    traits::{AccountId, Balance, Hash},
 };
 
-use ink::prelude::{
-    vec::Vec
-};
+use ink::prelude::vec::Vec;
 
 // ADMINER RoleType = 3739740293
 pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
@@ -26,11 +18,11 @@ pub struct Data {
     pub creation_fee: Balance,
     pub tx_rate: u32, // scaled 10000
     pub launchpad_count: u64,
-    pub launchpad_by_id: Mapping<u64, AccountId>,                
+    pub launchpad_by_id: Mapping<u64, AccountId>,
     pub launchpad_by_owner: Mapping<AccountId, Vec<AccountId>>,
     pub active_launchpad_count: u64,
     pub is_active_launchpad: Mapping<AccountId, bool>,
-    pub _reserved: Option<()>
+    pub _reserved: Option<()>,
 }
 
 impl Default for Data {

@@ -9,7 +9,7 @@ use openbrush::{
 };
 
 pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
-    // #[modifiers(only_owner)]
+    #[modifiers(only_owner)]
     fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
         if value > Self::env().balance() {
             return Err(Error::NotEnoughBalance);
@@ -20,12 +20,12 @@ pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
         Ok(())
     }
 
-    // #[modifiers(only_owner)]
+    #[modifiers(only_owner)]
     fn get_balance(&mut self) -> Result<Balance, Error> {
         Ok(Self::env().balance())
     }
 
-    // #[modifiers(only_owner)]
+    #[modifiers(only_owner)]
     fn tranfer_psp22(
         &mut self,
         psp22_contract_address: AccountId,
