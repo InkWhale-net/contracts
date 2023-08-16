@@ -10,7 +10,7 @@ pub use self::token_standard::{TokenStandard, TokenStandardRef};
     PSP22Capped,
     PSP22Metadata,
     PSP22Mintable,
-    PSP22Burnable,
+    // PSP22Burnable,
     Ownable
 )]
 #[openbrush::contract]
@@ -115,14 +115,15 @@ pub mod token_standard {
         Ok(())
     }
 
-    #[default_impl(PSP22Burnable)]
-    #[modifiers(only_owner)]
-    fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-        let caller = Self::env().caller();
-        if account == caller {
-            self._burn_from(account, amount)
-        } else {
-            Err(PSP22Error::Custom(String::from("Your are not owner")))
+    impl PSP22Burnable for TokenStandard {
+        #[ink(message)]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            let caller = Self::env().caller();
+            if account == caller {
+                psp22::Internal::_burn_from(self, account, amount)
+            } else {
+                Err(PSP22Error::Custom(String::from("Your are not owner")))
+            }
         }
     }
 

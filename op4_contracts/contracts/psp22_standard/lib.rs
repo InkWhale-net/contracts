@@ -10,7 +10,7 @@ pub use self::psp22_standard::{Psp22Nft, Psp22NftRef};
     PSP22Capped,
     PSP22Metadata,
     PSP22Mintable,
-    PSP22Burnable,
+    // PSP22Burnable,
     Ownable
 )]
 #[openbrush::contract]
@@ -114,31 +114,21 @@ pub mod psp22_standard {
         Ok(())
     }
 
-    #[default_impl(PSP22Burnable)]
-    #[modifiers(only_owner)]
-    fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-        let caller = Self::env().caller();
-        if account == caller {
-            self._burn_from(account, amount)
-        } else {
-            Err(PSP22Error::Custom(
-                String::from("Your are not owner").into_bytes(),
-            ))
+    impl PSP22Burnable for Psp22Nft {
+        #[ink(message)]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            let caller = Self::env().caller();
+            if account == caller {
+                psp22::Internal::_burn_from(self, account, amount)
+            } else {
+                Err(PSP22Error::Custom(String::from("Your are not owner")))
+            }
         }
     }
 
     #[default_impl(PSP22Mintable)]
     #[modifiers(only_owner)]
-    fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-        let caller = Self::env().caller();
-        if caller == self.owner() {
-            self._mint_to(account, amount)
-        } else {
-            Err(PSP22Error::Custom(
-                String::from("Your are not owner").into_bytes(),
-            ))
-        }
-    }
+    fn mint() {}
 
     impl Psp22Nft {
         #[ink(constructor)]
