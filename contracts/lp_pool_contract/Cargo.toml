@@ -1,6 +1,6 @@
 [package]
-name = "lp_pool_generator"
-version = "1.0.1"
+name = "my_lp_pool"
+version = "0.1.0"
 authors = ["Support <contact@artzero.io>"]
 edition = "2021"
 
@@ -12,16 +12,15 @@ scale-info = { version = "2.6", default-features = false, features = ["derive"],
 # These dependencies
 inkwhale_project = { path = "../..", default-features = false }
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0-beta", default-features = false, features = ["ownable", "psp22"] }
-my_lp_pool = { path = "../lp_pool_contract", default-features = false, features = ["ink-as-dependency"]  }
 
 [lib]
-name = "lp_pool_generator"
+name = "my_lp_pool"
 path = "lib.rs"
 crate-type = [
     # Used for normal contract Wasm blobs.
     "cdylib",
     # Used for ABI generation and for unit test.
-    "lib"
+    "rlib"
 ]
 
 [features]
@@ -40,6 +39,7 @@ ink-as-dependency = []
 
 [profile.dev]
 codegen-units = 16
+overflow-checks = false
 
 [profile.release]
 overflow-checks = false

@@ -3,7 +3,7 @@
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::large_enum_variant)]
 
-#[openbrush::implementation(AccessControl, Ownable)]
+#[openbrush::implementation( Ownable)]
 #[openbrush::contract]
 pub mod lp_pool_generator {
     use ink::env::CallFlags;
@@ -12,7 +12,7 @@ pub mod lp_pool_generator {
 
     use my_lp_pool::my_lp_pool::MyLPPoolRef;
     use openbrush::{
-        contracts::{access_control::extensions::enumerable::*, ownable::*},
+        contracts::{ownable::*},
         modifiers,
         traits::Storage,
     };
@@ -82,7 +82,7 @@ pub mod lp_pool_generator {
             lp_contract_address: AccountId,
             psp22_contract_address: AccountId,
             max_staking_amount: Balance,
-            multiplier: Balance,
+            multiplier: u128,
             duration: u64,
             start_time: u64,
         ) -> Result<(), Error> {
@@ -100,22 +100,22 @@ pub mod lp_pool_generator {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
             let decimal_staking_contract =
-                Psp22Ref::token_decimals(&self.data.staking_contract_address);
-            let calculated_decimal_staking_contract = 10u32.pow(decimal_staking_contract);
+                Psp22Ref::token_decimals(&lp_contract_address);
+            let calculated_decimal_staking_contract = 10u64.pow(decimal_staking_contract.into());
 
             let decimal_reward_contract =
-                Psp22Ref::token_decimals(&self.data.psp22_contract_address);
-            let calculated_decimal_reward_contract = 10u32.pow(decimal_reward_contract);
+                Psp22Ref::token_decimals(&psp22_contract_address);
+            let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
 
             // Check token balance and allowance
             let min_reward_amount = max_staking_amount
                 .checked_mul(duration as u128)
                 .ok_or(Error::CheckedOperations)?
-                .checked_mul(self.data.multiplier)
+                .checked_mul(multiplier)
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(calculated_decimal_staking_contract)
+                .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_mul(calculated_decimal_reward_contract)
+                .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(24 * 60 * 60 * 1000)
                 .ok_or(Error::CheckedOperations)?;
@@ -124,7 +124,6 @@ pub mod lp_pool_generator {
                 Psp22Ref::allowance(&psp22_contract_address, caller, self.env().account_id());
 
             let token_balance = Psp22Ref::balance_of(&psp22_contract_address, caller);
-
             if token_allowance < min_reward_amount || token_balance < min_reward_amount {
                 return Err(Error::InvalidTokenBalanceAndAllowance);
             }
@@ -242,7 +241,8 @@ pub mod lp_pool_generator {
                     return Err(Error::CannotTopupRewardPool);
                     // return topup_result;
                 }
-            } else {
+            } 
+            else {
                 let r = match pool_creation_result {
                     Ok(_) => Ok(()),
                     Err(e) => Err(e),
@@ -251,7 +251,7 @@ pub mod lp_pool_generator {
                 return r;
             }
 
-            Ok(())
+            return Ok(());
         }
     }
 }
