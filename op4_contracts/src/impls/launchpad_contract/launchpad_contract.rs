@@ -491,6 +491,11 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
+            // If the current time is already in the sale time, the new start time must be <= current start time. Otherwise there may be some purchases within [phase.start_time, new start time) which are not in the new sale time  
+            if phase.start_time > 0 && current_time >= phase.start_time && start_time > phase.start_time {
+                return Err(Error::InvalidTime);
+            }
+
             // Check if it is overlapped
             for i in 0..self.data::<Data>().total_phase {
                 if i != phase_id {
@@ -1993,13 +1998,6 @@ pub trait LaunchpadContractTrait:
 
     #[modifiers(only_owner)]
     fn withdraw(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
-        // Check withdrawing time
-        let current_time = Self::env().block_timestamp();
-
-        if self.data::<Data>().project_end_time >= current_time {
-            return Err(Error::NotTimeToWithdraw);
-        }
-
         if value > Self::env().balance() {
             return Err(Error::NotEnoughBalance);
         }
