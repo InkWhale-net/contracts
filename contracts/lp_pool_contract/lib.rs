@@ -1,5 +1,4 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(min_specialization)]
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
 
@@ -218,7 +217,7 @@ pub mod my_lp_pool {
             }
 
             // Check if total stake < max_staking_amount
-            if self.data.max_staking_amount <= self.data.total_staked {
+            if self.data.max_staking_amount < self.data.total_staked.checked_add(amount).ok_or(Error::CheckedOperations)? {
                 return Err(Error::ExceedTotalStakingAmount);
             }
 
@@ -332,7 +331,7 @@ pub mod my_lp_pool {
                 .ok_or(Error::CheckedOperations)?;
 
             let builder = Psp22Ref::transfer_from_builder(
-                &self.data.psp22_contract_address,
+                &self.data.staking_contract_address,
                 caller,
                 self.env().account_id(),
                 amount,
@@ -499,7 +498,7 @@ pub mod my_lp_pool {
 
                     // Transfer token to caller
                     let builder = Psp22Ref::transfer_builder(
-                        &self.data.psp22_contract_address,
+                        &self.data.staking_contract_address,
                         caller,
                         amount,
                         Vec::<u8>::new(),

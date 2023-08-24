@@ -1993,12 +1993,6 @@ pub trait LaunchpadContractTrait:
 
     #[modifiers(only_owner)]
     fn withdraw(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
-        // Check withdrawing time
-        let current_time = Self::env().block_timestamp();
-
-        if self.data::<Data>().project_end_time >= current_time {
-            return Err(Error::NotTimeToWithdraw);
-        }
 
         if value > Self::env().balance() {
             return Err(Error::NotEnoughBalance);
