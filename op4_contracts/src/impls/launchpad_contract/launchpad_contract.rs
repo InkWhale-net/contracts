@@ -1822,22 +1822,19 @@ pub trait LaunchpadContractTrait:
                 // Check if phase is active
                 if phase_info.is_active {
                     // Check public sale info
-                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i)
-                    {
-                        if public_sale_info.is_public
-                            && public_sale_info.total_purchased_amount
-                                < public_sale_info.total_amount
-                        {
-                            total_burned = total_burned
-                                .checked_add(
-                                    public_sale_info
-                                        .total_amount
-                                        .checked_sub(public_sale_info.total_purchased_amount)
-                                        .ok_or(Error::CheckedOperations)?,
-                                )
-                                .ok_or(Error::CheckedOperations)?;
+                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                        if public_sale_info.is_public && !public_sale_info.is_burned {
+                            if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                                total_burned = total_burned
+                                    .checked_add(
+                                        public_sale_info
+                                            .total_amount
+                                            .checked_sub(public_sale_info.total_purchased_amount)
+                                            .ok_or(Error::CheckedOperations)?,
+                                    )
+                                    .ok_or(Error::CheckedOperations)?;
+                            }
 
-                            public_sale_info.total_amount = public_sale_info.total_purchased_amount;
                             public_sale_info.is_burned = true;
 
                             self.data::<Data>()
@@ -1847,28 +1844,24 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // Check whitelist sale info
-                    if let Some(mut whitelist_sale_info) =
-                        self.data::<Data>().whitelist_sale_info.get(&i)
-                    {
-                        if whitelist_sale_info.total_purchased_amount
-                            < whitelist_sale_info.total_amount
-                        {
-                            total_burned = total_burned
-                                .checked_add(
-                                    whitelist_sale_info
-                                        .total_amount
-                                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                                        .ok_or(Error::CheckedOperations)?,
-                                )
-                                .ok_or(Error::CheckedOperations)?;
-
-                            whitelist_sale_info.total_amount =
-                                whitelist_sale_info.total_purchased_amount;
+                    if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                        if !whitelist_sale_info.is_burned {
+                            if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                                total_burned = total_burned
+                                    .checked_add(
+                                        whitelist_sale_info
+                                            .total_amount
+                                            .checked_sub(whitelist_sale_info.total_purchased_amount)
+                                            .ok_or(Error::CheckedOperations)?,
+                                    )
+                                    .ok_or(Error::CheckedOperations)?;
+                            }
+                                
                             whitelist_sale_info.is_burned = true;
 
                             self.data::<Data>()
                                 .whitelist_sale_info
-                                .insert(&i, &whitelist_sale_info);
+                                .insert(&i, &whitelist_sale_info);                            
                         }
                     }
                 }
@@ -1914,22 +1907,19 @@ pub trait LaunchpadContractTrait:
                 // Check if phase is active
                 if phase_info.is_active {
                     // Check public sale info
-                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i)
-                    {
-                        if public_sale_info.is_public
-                            && public_sale_info.total_purchased_amount
-                                < public_sale_info.total_amount
-                        {
-                            total_withdraw = total_withdraw
-                                .checked_add(
-                                    public_sale_info
-                                        .total_amount
-                                        .checked_sub(public_sale_info.total_purchased_amount)
-                                        .ok_or(Error::CheckedOperations)?,
-                                )
-                                .ok_or(Error::CheckedOperations)?;
-
-                            public_sale_info.total_amount = public_sale_info.total_purchased_amount;
+                    if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&i) {
+                        if public_sale_info.is_public && !public_sale_info.is_withdrawn {
+                            if public_sale_info.total_purchased_amount < public_sale_info.total_amount {
+                                total_withdraw = total_withdraw
+                                    .checked_add(
+                                        public_sale_info
+                                            .total_amount
+                                            .checked_sub(public_sale_info.total_purchased_amount)
+                                            .ok_or(Error::CheckedOperations)?,
+                                    )
+                                    .ok_or(Error::CheckedOperations)?;
+                            }
+                            
                             public_sale_info.is_withdrawn = true;
 
                             self.data::<Data>()
@@ -1939,29 +1929,25 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // Check whitelist sale info
-                    if let Some(mut whitelist_sale_info) =
-                        self.data::<Data>().whitelist_sale_info.get(&i)
-                    {
-                        if whitelist_sale_info.total_purchased_amount
-                            < whitelist_sale_info.total_amount
-                        {
-                            total_withdraw = total_withdraw
-                                .checked_add(
-                                    whitelist_sale_info
-                                        .total_amount
-                                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                                        .ok_or(Error::CheckedOperations)?,
-                                )
-                                .ok_or(Error::CheckedOperations)?;
+                    if let Some(mut whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&i) {
+                        if !whitelist_sale_info.is_withdrawn {
+                            if whitelist_sale_info.total_purchased_amount < whitelist_sale_info.total_amount {
+                                total_withdraw = total_withdraw
+                                    .checked_add(
+                                        whitelist_sale_info
+                                            .total_amount
+                                            .checked_sub(whitelist_sale_info.total_purchased_amount)
+                                            .ok_or(Error::CheckedOperations)?,
+                                    )
+                                    .ok_or(Error::CheckedOperations)?;                                
+                            }
 
-                            whitelist_sale_info.total_amount =
-                                whitelist_sale_info.total_purchased_amount;
                             whitelist_sale_info.is_withdrawn = true;
 
                             self.data::<Data>()
                                 .whitelist_sale_info
                                 .insert(&i, &whitelist_sale_info);
-                        }
+                        }                        
                     }
                 }
             }
