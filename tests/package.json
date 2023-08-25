@@ -15,6 +15,7 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "test:mocha": "mocha --require @babel/register --require ts-node/register ./ --extension \".ts\" --exit --no-timeouts"
+    "test:mocha": "mocha --require @babel/register --require ts-node/register ./ --extension \".ts\" --exit --no-timeouts",
+    "test:launchpad": "mocha --require @babel/register --require ts-node/register  10.launchpad_contract_op4_test.ts --exit --no-timeouts"
   }
 }
