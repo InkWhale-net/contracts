@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x54da90779f320e1634a8db355f5d6d4a14020441a2622f810ab6353318c080cb",
+    "hash": "0x6eb012b7c395905f68dddeeba03cde9c3b4e266eb598fbeb99a01154c5a2df62",
     "language": "ink! 4.2.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -530,7 +530,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "GenericPoolContractTrait::is_topup_enough_reward",
+        "label": "GenericPoolContractTrait::duration",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -540,34 +540,7 @@
           ],
           "type": 17
         },
-        "selector": "0x7663de4d"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "genericpoolcontracttrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 7
-        },
-        "selector": "0xb89c001e"
+        "selector": "0xec96d641"
       },
       {
         "args": [
@@ -600,86 +573,6 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "GenericPoolContractTrait::duration",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xec96d641"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::max_staking_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0x11fd5b2b"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::inw_contract",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 16
-        },
-        "selector": "0xf96ce121"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::total_unclaimed_reward",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0x16231caf"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::unstake_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0xc74b547f"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
         "label": "GenericPoolContractTrait::start_time",
         "mutates": false,
         "payable": false,
@@ -688,25 +581,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 17
         },
         "selector": "0xc48cf63e"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::psp22_contract_address",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 16
-        },
-        "selector": "0x0da3be06"
       },
       {
         "args": [],
@@ -720,9 +597,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 19
+          "type": 18
         },
         "selector": "0xfc6c3a08"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::staking_contract_address",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xb22a7a83"
       },
       {
         "args": [
@@ -747,9 +640,180 @@
             "ink",
             "MessageResult"
           ],
-          "type": 20
+          "type": 19
         },
         "selector": "0x7d91f5c8"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::psp22_contract_address",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0x0da3be06"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_contract",
+            "type": {
+              "displayName": [
+                "genericpoolcontracttrait_external",
+                "SetInwContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::set_inw_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 7
+        },
+        "selector": "0xb89c001e"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::multiplier",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0xfb1ecf6a"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::unstake_fee",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0xc74b547f"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::total_unclaimed_reward",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x16231caf"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::total_staked",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x6d230adf"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xf96ce121"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::is_topup_enough_reward",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x7663de4d"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::max_staking_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x11fd5b2b"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolContractTrait::min_reward_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x57057db9"
       },
       {
         "args": [
@@ -781,66 +845,20 @@
       {
         "args": [],
         "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::total_staked",
-        "mutates": false,
+        "docs": [
+          " Get Azero balance"
+        ],
+        "label": "AdminTrait::get_balance",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 19
+          "type": 23
         },
-        "selector": "0x6d230adf"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::multiplier",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0xfb1ecf6a"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::staking_contract_address",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 16
-        },
-        "selector": "0xb22a7a83"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolContractTrait::min_reward_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0x57057db9"
+        "selector": "0xc4360570"
       },
       {
         "args": [
@@ -931,24 +949,6 @@
         "selector": "0xd9aad284"
       },
       {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Get Azero balance"
-        ],
-        "label": "AdminTrait::get_balance",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0xc4360570"
-      },
-      {
         "args": [
           {
             "label": "code_hash",
@@ -978,6 +978,38 @@
         "selector": "0x9e32fab2"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0x4fa43c8c"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x5e228753"
+      },
+      {
         "args": [
           {
             "label": "new_owner",
@@ -1000,41 +1032,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 25
-        },
-        "selector": "0x11f43efd"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
           "type": 27
         },
-        "selector": "0x4fa43c8c"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 25
-        },
-        "selector": "0x5e228753"
+        "selector": "0x11f43efd"
       }
     ]
   },
@@ -2116,48 +2116,6 @@
               {
                 "fields": [
                   {
-                    "type": 5
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 15
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 5
-          },
-          {
-            "name": "E",
-            "type": 15
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
                     "type": 4
                   }
                 ],
@@ -2192,7 +2150,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 18,
       "type": {
         "def": {
           "variant": {
@@ -2234,7 +2192,7 @@
       }
     },
     {
-      "id": 20,
+      "id": 19,
       "type": {
         "def": {
           "variant": {
@@ -2242,7 +2200,7 @@
               {
                 "fields": [
                   {
-                    "type": 21
+                    "type": 20
                   }
                 ],
                 "index": 0,
@@ -2263,7 +2221,7 @@
         "params": [
           {
             "name": "T",
-            "type": 21
+            "type": 20
           },
           {
             "name": "E",
@@ -2276,7 +2234,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 20,
       "type": {
         "def": {
           "variant": {
@@ -2288,7 +2246,7 @@
               {
                 "fields": [
                   {
-                    "type": 22
+                    "type": 21
                   }
                 ],
                 "index": 1,
@@ -2300,7 +2258,7 @@
         "params": [
           {
             "name": "T",
-            "type": 22
+            "type": 21
           }
         ],
         "path": [
@@ -2309,7 +2267,7 @@
       }
     },
     {
-      "id": 22,
+      "id": 21,
       "type": {
         "def": {
           "composite": {
@@ -2343,6 +2301,48 @@
           "generic_pool_contract",
           "data",
           "StakeInformation"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
         ]
       }
     },
@@ -2479,22 +2479,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 11
+                    "type": 0
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -2502,15 +2497,11 @@
         "params": [
           {
             "name": "T",
-            "type": 6
-          },
-          {
-            "name": "E",
-            "type": 11
+            "type": 0
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -2563,17 +2554,22 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
                 "index": 0,
-                "name": "None"
+                "name": "Ok"
               },
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 11
                   }
                 ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -2581,11 +2577,15 @@
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 11
           }
         ],
         "path": [
-          "Option"
+          "Result"
         ]
       }
     },

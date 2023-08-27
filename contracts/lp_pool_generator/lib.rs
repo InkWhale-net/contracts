@@ -101,11 +101,11 @@ pub mod lp_pool_generator {
             }
             let decimal_staking_contract =
                 Psp22Ref::token_decimals(&lp_contract_address);
-            let calculated_decimal_staking_contract = 10u64.pow(decimal_staking_contract.into());
+            let calculated_decimal_staking_contract = 10u128.pow(decimal_staking_contract.into());
 
             let decimal_reward_contract =
                 Psp22Ref::token_decimals(&psp22_contract_address);
-            let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
+            let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
 
             // Check token balance and allowance
             let min_reward_amount = max_staking_amount
@@ -113,9 +113,9 @@ pub mod lp_pool_generator {
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(multiplier)
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(calculated_decimal_staking_contract.into())
-                .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(24 * 60 * 60 * 1000)
                 .ok_or(Error::CheckedOperations)?;

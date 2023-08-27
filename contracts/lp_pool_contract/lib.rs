@@ -148,10 +148,10 @@ pub mod my_lp_pool {
             }
 
             let decimal_staking_contract = Psp22Ref::token_decimals(&lp_contract_address);
-            let calculated_decimal_staking_contract = 10u64.pow(decimal_staking_contract.into());
+            let calculated_decimal_staking_contract = 10u128.pow(decimal_staking_contract.into());
 
             let decimal_reward_contract = Psp22Ref::token_decimals(&psp22_contract_address);
-            let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
+            let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
 
             // Check token balance and allowance
             let min_reward_amount = max_staking_amount
@@ -159,9 +159,9 @@ pub mod my_lp_pool {
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(multiplier)
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(calculated_decimal_staking_contract.into())
-                .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(24 * 60 * 60 * 1000)
                 .ok_or(Error::CheckedOperations)?;
@@ -222,10 +222,10 @@ pub mod my_lp_pool {
             }
 
             let decimal_staking_contract = Psp22Ref::token_decimals(&self.data.staking_contract_address);
-            let calculated_decimal_staking_contract = 10u64.pow(decimal_staking_contract.into());
+            let calculated_decimal_staking_contract = 10u128.pow(decimal_staking_contract.into());
 
             let decimal_reward_contract = Psp22Ref::token_decimals(&self.data.psp22_contract_address);
-            let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
+            let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
 
             let staker = self.data.stakers.get(&caller);
             if let Some(mut stake_info) = staker {
@@ -236,9 +236,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_div(calculated_decimal_staking_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_mul(calculated_decimal_reward_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_div(calculated_decimal_staking_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
@@ -264,9 +264,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(future_time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_div(calculated_decimal_staking_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_mul(calculated_decimal_reward_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_div(calculated_decimal_staking_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
@@ -303,9 +303,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(future_time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_div(calculated_decimal_staking_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_mul(calculated_decimal_reward_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_div(calculated_decimal_staking_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
@@ -383,10 +383,10 @@ pub mod my_lp_pool {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
             let decimal_staking_contract = Psp22Ref::token_decimals(&self.data.staking_contract_address);
-            let calculated_decimal_staking_contract = 10u64.pow(decimal_staking_contract.into());
+            let calculated_decimal_staking_contract = 10u128.pow(decimal_staking_contract.into());
 
             let decimal_reward_contract = Psp22Ref::token_decimals(&self.data.psp22_contract_address);
-            let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
+            let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
 
             if let Some(mut stake_info) = self.data.stakers.get(&caller) {
                 // Check if amount exceeds the staked value of caller
@@ -434,9 +434,9 @@ pub mod my_lp_pool {
                         .staked_value
                         .checked_mul(time_length as u128)
                         .ok_or(Error::CheckedOperations)?
-                        .checked_div(calculated_decimal_staking_contract.into())
-                        .ok_or(Error::CheckedOperations)?
                         .checked_mul(calculated_decimal_reward_contract.into())
+                        .ok_or(Error::CheckedOperations)?
+                        .checked_div(calculated_decimal_staking_contract.into())
                         .ok_or(Error::CheckedOperations)?
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
@@ -467,9 +467,9 @@ pub mod my_lp_pool {
                         .staked_value
                         .checked_mul(future_time_length as u128)
                         .ok_or(Error::CheckedOperations)?
-                        .checked_div(calculated_decimal_staking_contract.into())
-                        .ok_or(Error::CheckedOperations)?
                         .checked_mul(calculated_decimal_reward_contract.into())
+                        .ok_or(Error::CheckedOperations)?
+                        .checked_div(calculated_decimal_staking_contract.into())
                         .ok_or(Error::CheckedOperations)?
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
@@ -562,10 +562,10 @@ pub mod my_lp_pool {
                 }
                 let decimal_staking_contract = Psp22Ref::token_decimals(&self.data.staking_contract_address);
                 let calculated_decimal_staking_contract =
-                    10u64.pow(decimal_staking_contract.into());
+                    10u128.pow(decimal_staking_contract.into());
 
                 let decimal_reward_contract = Psp22Ref::token_decimals(&self.data.psp22_contract_address);
-                let calculated_decimal_reward_contract = 10u64.pow(decimal_reward_contract.into());
+                let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
                 let time_length = reward_time
                     .checked_sub(stake_info.last_reward_update)
                     .ok_or(Error::CheckedOperations)?; //second
@@ -573,9 +573,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_div(calculated_decimal_staking_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_mul(calculated_decimal_reward_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_div(calculated_decimal_staking_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
