@@ -3,11 +3,11 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@727-ventures/typechain-polkadot": "^0.6.8",
-    "@727-ventures/typechain-types": "^0.0.22",
+    "@727-ventures/typechain-polkadot": "^1.1.1",
+    "@727-ventures/typechain-types": "^1.1.2",
     "@babel/core": "^7.21.4",
     "@babel/register": "^7.18.9",
-    "@polkadot/api": "^9.13.4",
+    "@polkadot/api": "^10.9.1",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",

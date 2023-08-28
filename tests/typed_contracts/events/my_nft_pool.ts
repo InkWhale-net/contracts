@@ -1,12 +1,13 @@
 import type * as EventTypes from '../event-types/my_nft_pool';
 import type {ContractPromise} from "@polkadot/api-contract";
 import type {ApiPromise} from "@polkadot/api";
+import EVENT_DATA_TYPE_DESCRIPTIONS from '../event-data/my_nft_pool.json';
 import {getEventTypeDescription} from "../shared/utils";
 import {handleEventReturn} from "@727-ventures/typechain-types";
 
 export default class EventsClass {
-	private __nativeContract : ContractPromise;
-	private __api : ApiPromise;
+	readonly __nativeContract : ContractPromise;
+	readonly __api : ApiPromise;
 
 	constructor(
 		nativeContract : ContractPromise,
@@ -24,7 +25,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolStakeEvent', 'my_nft_pool')) as EventTypes.NFTPoolStakeEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolStakeEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.NFTPoolStakeEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'NFTPoolStakeEvent');
@@ -38,7 +39,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolUnstakeEvent', 'my_nft_pool')) as EventTypes.NFTPoolUnstakeEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolUnstakeEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.NFTPoolUnstakeEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'NFTPoolUnstakeEvent');
@@ -52,7 +53,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolClaimEvent', 'my_nft_pool')) as EventTypes.NFTPoolClaimEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('NFTPoolClaimEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.NFTPoolClaimEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'NFTPoolClaimEvent');

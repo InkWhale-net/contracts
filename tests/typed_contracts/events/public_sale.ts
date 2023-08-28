@@ -1,12 +1,13 @@
 import type * as EventTypes from '../event-types/public_sale';
 import type {ContractPromise} from "@polkadot/api-contract";
 import type {ApiPromise} from "@polkadot/api";
+import EVENT_DATA_TYPE_DESCRIPTIONS from '../event-data/public_sale.json';
 import {getEventTypeDescription} from "../shared/utils";
 import {handleEventReturn} from "@727-ventures/typechain-types";
 
 export default class EventsClass {
-	private __nativeContract : ContractPromise;
-	private __api : ApiPromise;
+	readonly __nativeContract : ContractPromise;
+	readonly __api : ApiPromise;
 
 	constructor(
 		nativeContract : ContractPromise,
@@ -24,7 +25,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PublicPurchaseEvent', 'public_sale')) as EventTypes.PublicPurchaseEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PublicPurchaseEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PublicPurchaseEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PublicPurchaseEvent');
@@ -38,7 +39,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PublicClaimEvent', 'public_sale')) as EventTypes.PublicClaimEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PublicClaimEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PublicClaimEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PublicClaimEvent');

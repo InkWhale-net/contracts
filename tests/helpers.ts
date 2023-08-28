@@ -53,9 +53,9 @@ export async function showAZBalance(api: any, address: string ) {
 export async function checkAccountsBalance(signers: KeyringPair[], api: any) {
     // console.log('Checking Accounts and Balance');
    
-    for (var i = 0; i < signers.length; i++){
+    for (let i = 0; i < signers.length; i++){
       const balance = await showAZBalance(api, signers[i].address);
-      // console.log(`Account ${i} has address: ${signers[i].address} and balance: ${balance} TZERO`);
+      console.log(`Account ${i} has address: ${signers[i].address} and balance: ${balance} TZERO`);
     }
 }
 
@@ -84,7 +84,7 @@ export const toString = (bytes: number[]) => String.fromCharCode(...bytes);
 export function setGasLimit(api: ApiPromise, refTimeNum: any, proofSizeNum: any): WeightV2 {
   return api.registry.createType('WeightV2', {
     refTime: new BN(refTimeNum),
-    proofSize: new BN(proofSizeNum)
+    proofSize: new BN(proofSizeNum),
   }) as WeightV2;
 }
 

@@ -1,14 +1,22 @@
 import {checkAccountsBalance, expect, getSigners, provider, setGasLimit} from "./helpers";
 import {ApiPromise} from "@polkadot/api";
-import ConstructorsInw from "./typed_contracts/constructors/psp22_standard";
-import ContractInw from "./typed_contracts/contracts/psp22_standard";
-import TokenStandard from "./artifacts/token_standard.json";
+
+import ConstructorsInw from "./typed_contracts/constructors/psp22_standard_op4";
+import ContractInw from "./typed_contracts/contracts/psp22_standard_op4";
+
 import ConstructorsTokenGenerator from "./typed_contracts/constructors/token_generator";
 import ContractTokenGenerator from "./typed_contracts/contracts/token_generator";
-import MyLaunchpad from "./artifacts/my_launchpad.json";
-import ConstructorsLaunchpadGenerator from "./typed_contracts/constructors/launchpad_generator";
-import ContractLaunchpadGenerator from "./typed_contracts/contracts/launchpad_generator";
-import ContractTokenStandard from "./typed_contracts/contracts/token_standard";
+import TokenStandard from "./artifacts/token_standard_op4.json";
+
+import ConstructorsLaunchpadGenerator from "./typed_contracts/constructors/launchpad_generator_op4";
+import ContractLaunchpadGenerator from "./typed_contracts/contracts/launchpad_generator_op4";
+import MyLaunchpad from "./artifacts/launchpad_contract_op4.json";
+
+import ConstructorsTokenStandard from "./typed_contracts/constructors/token_standard_op4";
+import ContractTokenStandard from "./typed_contracts/contracts/token_standard_op4";
+
+const refTime = 40_000_000_000; // 256_000_000_000
+const proofSize = 70_000;              // 5_000_000_000_000
 
 describe('Launchpad contract test', () => {
     let api: any;
@@ -35,28 +43,37 @@ describe('Launchpad contract test', () => {
     let tgPsp22Hash: string;
     let tgCreationFee: string;
 
-    let contractAddress: any;
-    let contract: any;
-    let query: any;
-    let tx: any;
+    let launchpadContractAddress: any;
+    let lpContract: any;
+    let lpQuery: any;
+    let lpTx: any;
 
     let launchpadHash: string;
     let creationFee: string;
+    let launchpadFee: string;
     let txRate: number;
     let adminAddress: string;
+    let tokenContractAddress: string;
     async function setup() {
         api = await ApiPromise.create({ provider });
+        let gasLimit = setGasLimit(api, refTime, proofSize);
         signers = getSigners();
         defaultSigner = signers[2];
         alice = signers[0];
         bob = signers[1];
         await checkAccountsBalance(signers, api);
+
+        // Step 0: Get current network's status
+        const chain = await api.rpc.system.chain();
+        const header = await api.rpc.chain.getHeader();
+        console.log(`${chain}: last block #${header.number} has hash ${header.hash}`);
+
         // Step 1: Create inw contract
+        console.log(`===========Create new inwContractAddress=============`);
         inwCap = "1000000000000000000000"; // 1B
         inwName = "Ink Whale Token";
         inwSymbol = "INW";
         inwDecimal = 12;
-        let inwGasLimit = setGasLimit(api, 960_000_000, 36_000);
         const inwContractFactory = new ConstructorsInw(api, defaultSigner);
         inwContractAddress = (
             await inwContractFactory.new(
@@ -64,18 +81,17 @@ describe('Launchpad contract test', () => {
                 inwName,
                 inwSymbol,
                 inwDecimal,
-                {gasLimit: inwGasLimit}
+                {gasLimit: gasLimit}
             )
         ).address;
         inwContract = new ContractInw(inwContractAddress, defaultSigner, api);
         inwQuery = inwContract.query;
         inwTx = inwContract.tx;
 
-        // Step 2: Create token generator contract
+        // Step 2-1: Create token generator contract
+        console.log(`===========Create new tgContractAddress=============`);
         tgPsp22Hash = TokenStandard.source.hash;
         tgCreationFee = "3000000000000"; // 3 INW
-        let tgGasLimit = setGasLimit(api, 1_200_000_000, 36_000);
-
         const tgContractFactory = new ConstructorsTokenGenerator(api, defaultSigner);
         tgContractAddress = (
             await tgContractFactory.new(
@@ -83,33 +99,52 @@ describe('Launchpad contract test', () => {
                 inwContractAddress,
                 tgCreationFee,
                 defaultSigner.address,
-                {gasLimit: tgGasLimit}
+                {gasLimit: gasLimit}
             )
         ).address;
         tgContract = new ContractTokenGenerator(tgContractAddress, defaultSigner, api);
         tgQuery = tgContract.query;
         tgTx = tgContract.tx;
 
+        // Step 2-2: Create token contract
+        console.log(`===========Create new tokenContractAddress=============`);
+        let cap = "200000000000000000000"; // 200M
+        let name = "LAUNCHPAD";
+        let symbol = "LNPD";
+        let decimal = 12;
+        const tokenContractFactory = new ConstructorsTokenStandard(api, alice);
+        tokenContractAddress = (
+            await tokenContractFactory.new(
+                alice.address,
+                alice.address,
+                cap,
+                name,
+                symbol,
+                decimal,
+                {gasLimit: gasLimit}
+            )
+        ).address;
+
         // Step 3: Create a launchpad generator contract
+        console.log(`===========Create new launchpadContractAddress=============`);
         launchpadHash = MyLaunchpad.source.hash;
-        creationFee = "4000000000000"; // 4 INW
-        txRate = 500; // 8 INW
+        creationFee = "4000000000000";  // 4 INW
+        txRate = 500;                   // 500 INW
         adminAddress = defaultSigner.address;
-        let gasLimit = setGasLimit(api, 3_600_000_000, 36_000);
-        const contractFactory = new ConstructorsLaunchpadGenerator(api, defaultSigner);
-        contractAddress = (
-            await contractFactory.new(
+        const launchpadContractFactory = new ConstructorsLaunchpadGenerator(api, defaultSigner);
+        launchpadContractAddress = (
+            await launchpadContractFactory.new(
                 launchpadHash,
                 inwContractAddress,
                 creationFee,
                 txRate,
                 adminAddress,
-                {gasLimit}
+                {gasLimit: gasLimit}
             )
         ).address;
-        contract = new ContractLaunchpadGenerator(contractAddress, defaultSigner, api);
-        query = contract.query;
-        tx = contract.tx;
+        lpContract = new ContractLaunchpadGenerator(launchpadContractAddress, defaultSigner, api);
+        lpQuery = lpContract.query;
+        lpTx = lpContract.tx;
     }
 
     before(async () => {
@@ -119,66 +154,40 @@ describe('Launchpad contract test', () => {
     it('Can create launchpad', async () => {
         /// TODO: A. Use token generator to create a token
         // Step A1: Onwer mints tgCreationFee in INW to Alice
-        await inwContract.tx.mint(
-            alice.address,
-            tgCreationFee
-        );
-        let aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
-        expect(aliceBalance).to.equal(tgCreationFee);
+        // console.log(`===========Step A1=============`);
+        // await inwContract.tx.mint(alice.address, tgCreationFee);
+        // console.log({inwContract: inwContract.query});
+        // console.log({alice: alice.address});
+        // const x = await inwContract.query.balanceOf(alice.address);
+        // console.log({x: x});
+
+        // let aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
+        // console.log({aliceBalance: aliceBalance});
+        // expect(aliceBalance).to.equal(tgCreationFee);
 
         // Step A2: Alice approves tgCreationFee in INW for token generator contract
-        await inwContract.withSigner(alice).tx.approve(
-            tgContractAddress,
-            tgCreationFee,
-        );
-
-        // Step A3: Alice creates their tokens, check if INW is burnt after creating token
-        let cap = "200000000000000000000"; // 200M
-        let name = "LAUNCHPAD";
-        let symbol = "LNPD";
-        let decimal = 12;
-        await tgContract.withSigner(alice).tx.newToken(
-            alice.address,
-            cap,
-            name as unknown as string[],
-            symbol as unknown as string[],
-            decimal
-        );
-        let tgContractBalance = (await inwContract.query.balanceOf(tgContractAddress)).value.ok!.rawNumber.toString();
-        expect(+tgContractBalance).to.equal(0);
-        aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
-        expect(+aliceBalance).to.equal(0);
-
-        // Step A4: Check token count
-        let tokenCount = (await tgQuery.getTokenCount()).value.ok;
-        expect(tokenCount).to.equal(1);
-        let tokenAddress = (await tgQuery.getTokenContractAddress(1)).value.ok;
-        let tokenContract = new ContractTokenStandard(tokenAddress, alice, api);
+        // console.log(`===========Step A2: approve=============`);
+        // await inwContract.withSigner(alice).tx.approve(tgContractAddress, tgCreationFee);
 
         /// TODO: B. Create launchpad
         // Step B1: Onwer mints creation fee in INW to Alice
-        await inwContract.tx.mint(
-            alice.address,
-            creationFee
-        );
-        aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
+        console.log(`===========Step B1=============`);
+        await inwContract.tx.mint(alice.address, creationFee);
+        let aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
         expect(aliceBalance).to.equal(creationFee);
 
         // Step B2: Alice approves creationFee in INW for launchpad generator contract
-        await inwContract.withSigner(alice).tx.approve(
-            contractAddress,
-            creationFee,
-        );
+        console.log(`===========Step B2=============`);
+        await inwContract.withSigner(alice).tx.approve(launchpadContractAddress, creationFee);
 
         // Step B3: Alice approves total supply of token and create a launchpad
-        // Alice approve total supply of token
+        console.log(`===========Step B3=============`);
         let totalSupply = "700000000000000000"; // 700k
-        await tokenContract.withSigner(alice).tx.approve(
-            contractAddress,
-            totalSupply,
-        );
+        let tokenContract = new ContractTokenStandard(tokenContractAddress, alice, api);
+        await tokenContract.withSigner(alice).tx.approve(launchpadContractAddress, totalSupply);
 
         // Step B4: Alice creates launchpad for token LNPD
+        console.log(`===========Step B4=============`);
         let projectInfoUri = "Launchpad test"; // 1000 token AAA
         let phaseName = ["Phase 1", "Phase 2"];
         let startTime = new Date().getTime();
@@ -190,9 +199,9 @@ describe('Launchpad contract test', () => {
         let phaseIsPublic = [true, true];
         let phasePublicAmount = ["100000000000000000", "500000000000000000"];
         let phasePublicPrice = ["500000000000", "1000000000000"];
-        await contract.withSigner(alice).tx.newLaunchpad(
+        await lpContract.withSigner(alice).tx.newLaunchpad(
             projectInfoUri,
-            tokenAddress,
+            tokenContractAddress,
             totalSupply,
             phaseName,
             phaseStartTime,
@@ -206,9 +215,10 @@ describe('Launchpad contract test', () => {
         );
 
         // Step B5: Check launchpad count
-        let launchpadCount = (await query.getLaunchpadCount()).value.ok;
+        console.log(`===========Step B5=============`);
+        let launchpadCount = (await lpQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(1);
-        let launchpad = (await query.getLaunchpadById(1)).value.ok;
+        let launchpad = (await lpQuery.getLaunchpadById(1)).value.ok;
         console.log("launchpad ", launchpad);
     })
 

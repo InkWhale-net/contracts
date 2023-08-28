@@ -1,12 +1,13 @@
 import type * as EventTypes from '../event-types/my_pool';
 import type {ContractPromise} from "@polkadot/api-contract";
 import type {ApiPromise} from "@polkadot/api";
+import EVENT_DATA_TYPE_DESCRIPTIONS from '../event-data/my_pool.json';
 import {getEventTypeDescription} from "../shared/utils";
 import {handleEventReturn} from "@727-ventures/typechain-types";
 
 export default class EventsClass {
-	private __nativeContract : ContractPromise;
-	private __api : ApiPromise;
+	readonly __nativeContract : ContractPromise;
+	readonly __api : ApiPromise;
 
 	constructor(
 		nativeContract : ContractPromise,
@@ -24,7 +25,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PoolStakeEvent', 'my_pool')) as EventTypes.PoolStakeEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolStakeEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PoolStakeEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolStakeEvent');
@@ -38,7 +39,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PoolUnstakeEvent', 'my_pool')) as EventTypes.PoolUnstakeEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolUnstakeEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PoolUnstakeEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolUnstakeEvent');
@@ -52,7 +53,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PoolClaimEvent', 'my_pool')) as EventTypes.PoolClaimEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PoolClaimEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PoolClaimEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PoolClaimEvent');

@@ -1,12 +1,13 @@
 import type * as EventTypes from '../event-types/my_launchpad';
 import type {ContractPromise} from "@polkadot/api-contract";
 import type {ApiPromise} from "@polkadot/api";
+import EVENT_DATA_TYPE_DESCRIPTIONS from '../event-data/my_launchpad.json';
 import {getEventTypeDescription} from "../shared/utils";
 import {handleEventReturn} from "@727-ventures/typechain-types";
 
 export default class EventsClass {
-	private __nativeContract : ContractPromise;
-	private __api : ApiPromise;
+	readonly __nativeContract : ContractPromise;
+	readonly __api : ApiPromise;
 
 	constructor(
 		nativeContract : ContractPromise,
@@ -24,7 +25,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PublicPurchaseEvent', 'my_launchpad')) as EventTypes.PublicPurchaseEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PublicPurchaseEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PublicPurchaseEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PublicPurchaseEvent');
@@ -38,7 +39,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('PublicClaimEvent', 'my_launchpad')) as EventTypes.PublicClaimEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('PublicClaimEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.PublicClaimEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'PublicClaimEvent');
@@ -52,7 +53,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('WhitelistPurchaseEvent', 'my_launchpad')) as EventTypes.WhitelistPurchaseEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('WhitelistPurchaseEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.WhitelistPurchaseEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'WhitelistPurchaseEvent');
@@ -66,7 +67,7 @@ export default class EventsClass {
 				_event[event.args[i]!.name] = args[i]!.toJSON();
 			}
 
-			callback(handleEventReturn(_event, getEventTypeDescription('WhitelistClaimEvent', 'my_launchpad')) as EventTypes.WhitelistClaimEvent);
+			callback(handleEventReturn(_event, getEventTypeDescription('WhitelistClaimEvent', EVENT_DATA_TYPE_DESCRIPTIONS)) as EventTypes.WhitelistClaimEvent);
 		};
 
 		return this.__subscribeOnEvent(callbackWrapper, (eventName : string) => eventName == 'WhitelistClaimEvent');
