@@ -142,6 +142,7 @@ describe('Launchpad contract test', () => {
                 {gasLimit: gasLimit}
             )
         ).address;
+        console.log({launchpadContractAddress: launchpadContractAddress});
         lpContract = new ContractLaunchpadGenerator(launchpadContractAddress, defaultSigner, api);
         lpQuery = lpContract.query;
         lpTx = lpContract.tx;
@@ -199,7 +200,7 @@ describe('Launchpad contract test', () => {
         let phaseIsPublic = [true, true];
         let phasePublicAmount = ["100000000000000000", "500000000000000000"];
         let phasePublicPrice = ["500000000000", "1000000000000"];
-        await lpContract.withSigner(alice).tx.newLaunchpad(
+        const txNewLaunchpad = await lpContract.withSigner(alice).tx.newLaunchpad(
             projectInfoUri,
             tokenContractAddress,
             totalSupply,
@@ -213,6 +214,7 @@ describe('Launchpad contract test', () => {
             phasePublicAmount,
             phasePublicPrice
         );
+        console.log({txNewLaunchpad: txNewLaunchpad});
 
         // Step B5: Check launchpad count
         console.log(`===========Step B5=============`);
