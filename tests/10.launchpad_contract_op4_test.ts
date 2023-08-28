@@ -10,7 +10,7 @@ import TokenStandard from "./artifacts/token_standard_op4.json";
 
 import ConstructorsLaunchpadGenerator from "./typed_contracts/constructors/launchpad_generator_op4";
 import ContractLaunchpadGenerator from "./typed_contracts/contracts/launchpad_generator_op4";
-import MyLaunchpad from "./artifacts/launchpad_contract_op4.json";
+import MyLaunchpad from "./artifacts/my_launchpad_op4.json";
 
 import ConstructorsTokenStandard from "./typed_contracts/constructors/token_standard_op4";
 import ContractTokenStandard from "./typed_contracts/contracts/token_standard_op4";
