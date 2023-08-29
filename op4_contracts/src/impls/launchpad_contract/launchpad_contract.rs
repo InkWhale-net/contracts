@@ -269,10 +269,9 @@ pub trait LaunchpadContractTrait:
 
             let caller = Self::env().caller();
 
-            let builder = Psp22Ref::transfer_from_builder(
+            let builder = Psp22Ref::transfer_builder(
                 &self.data::<Data>().token_address,
                 caller,
-                Self::env().account_id(),
                 total_changed,
                 Vec::<u8>::new(),
             )
@@ -285,7 +284,7 @@ pub trait LaunchpadContractTrait:
                 Err(ink::env::Error::NotCallable) => Ok(()),
                 _ => Err(Error::CannotTransfer),
             };
-
+                   
             if token_transfer_result.is_err() {
                 return Err(Error::CannotTransfer);
             }
