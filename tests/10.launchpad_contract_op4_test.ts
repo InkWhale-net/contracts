@@ -1,13 +1,13 @@
 import {checkAccountsBalance, expect, getSigners, provider, setGasLimit} from "./helpers";
 import {ApiPromise} from "@polkadot/api";
 
+import { BN } from '@polkadot/util';
+
 import ConstructorsInw from "./typed_contracts/constructors/psp22_standard_op4";
 import ContractInw from "./typed_contracts/contracts/psp22_standard_op4";
 
 import ConstructorsTokenGenerator from "./typed_contracts/constructors/token_generator";
 import ContractTokenGenerator from "./typed_contracts/contracts/token_generator";
-
-import TokenStandard from "./artifacts/token_standard_op4.json";
 
 import ConstructorsLaunchpadGenerator from "./typed_contracts/constructors/launchpad_generator_op4";
 import ContractLaunchpadGenerator from "./typed_contracts/contracts/launchpad_generator_op4";
@@ -15,11 +15,12 @@ import ContractLaunchpadGenerator from "./typed_contracts/contracts/launchpad_ge
 import MyLaunchpad from "./artifacts/my_launchpad_op4.json";
 import ContractMyLaunchpad from "./typed_contracts/contracts/my_launchpad_op4";
 
+import TokenStandard from "./artifacts/token_standard_op4.json";
 import ConstructorsTokenStandard from "./typed_contracts/constructors/token_standard_op4";
 import ContractTokenStandard from "./typed_contracts/contracts/token_standard_op4";
 
-const refTime = 40_000_000_000; // 256_000_000_000
-const proofSize = 70_000;              // 5_000_000_000_000
+// const refTime = 40_000_000_000; // 256_000_000_000
+// const proofSize = 70_000;              // 5_000_000_000_000
 
 describe('Launchpad contract test', () => {
     let api: any;
@@ -53,7 +54,11 @@ describe('Launchpad contract test', () => {
     let launchpadFee: string;
     let txRate: number;
     let adminAddress: string;
+
     let tokenContractAddress: string;
+    let tokenContract: any;
+    let tokenQuery: any;
+    let tokenTx: any;
 
     let projectInfoUri;
     let phaseName;
@@ -69,7 +74,6 @@ describe('Launchpad contract test', () => {
 
     async function setup() {
         api = await ApiPromise.create({ provider });
-        let gasLimit = setGasLimit(api, refTime, proofSize);
         signers = getSigners();
         defaultSigner = signers[2];
         alice = signers[0];
@@ -87,6 +91,10 @@ describe('Launchpad contract test', () => {
         inwName = "Ink Whale Token";
         inwSymbol = "INW";
         inwDecimal = 12;
+
+        // "refTime: 1051644047" "proofSize: 22528"
+        let inwGasLimit = setGasLimit(api, 2_000_000_000, 44_000);
+
         const inwContractFactory = new ConstructorsInw(api, defaultSigner);
         inwContractAddress = (
             await inwContractFactory.new(
@@ -94,7 +102,7 @@ describe('Launchpad contract test', () => {
                 inwName,
                 inwSymbol,
                 inwDecimal,
-                {gasLimit: gasLimit}
+                {gasLimit: inwGasLimit}
             )
         ).address;
         inwContract = new ContractInw(inwContractAddress, defaultSigner, api);
@@ -107,6 +115,10 @@ describe('Launchpad contract test', () => {
         let name = "LAUNCHPAD";
         let symbol = "LNPD";
         let decimal = 12;
+
+        // "refTime: 2096906375" "proofSize: 28688"
+        let tokenGasLimit = setGasLimit(api, 4_000_000_000, 56_000);
+        
         const tokenContractFactory = new ConstructorsTokenStandard(api, alice);
         tokenContractAddress = (
             await tokenContractFactory.new(
@@ -116,16 +128,23 @@ describe('Launchpad contract test', () => {
                 name,
                 symbol,
                 decimal,
-                {gasLimit: gasLimit}
+                {gasLimit: tokenGasLimit}
             )
-        ).address;
-
+        ).address;   
+        tokenContract = new ContractTokenStandard(tokenContractAddress, alice, api);
+        tokenQuery = tokenContract.query;
+        tokenTx = tokenContract.tx;   
+        
         // Step 3: Create a launchpad generator contract
         console.log(`===========Create new launchpadContractAddress=============`);
         launchpadHash = MyLaunchpad.source.hash;
         creationFee = "4000000000000";  // 4 INW
         txRate = 500;                   // 500 INW
         adminAddress = defaultSigner.address;
+        
+        // "refTime: 2344630275" "proofSize: 34881"
+        let lpgGasLimit = setGasLimit(api, 4_600_000_000, 68_000);
+        
         const lpgContractFactory = new ConstructorsLaunchpadGenerator(api, defaultSigner);
         lpgContractAddress = (
             await lpgContractFactory.new(
@@ -134,10 +153,10 @@ describe('Launchpad contract test', () => {
                 creationFee,
                 txRate,
                 adminAddress,
-                {gasLimit: gasLimit}
+                {gasLimit: lpgGasLimit}
             )
         ).address;
-        console.log({lpgContractAddress: lpgContractAddress});
+        // console.log({lpgContractAddress: lpgContractAddress});
         lpgContract = new ContractLaunchpadGenerator(lpgContractAddress, defaultSigner, api);
         lpgQuery = lpgContract.query;
         lpgTx = lpgContract.tx;
@@ -160,11 +179,10 @@ describe('Launchpad contract test', () => {
         await inwContract.withSigner(alice).tx.approve(lpgContractAddress, creationFee);
 
         // Step B3: Alice approves total supply of token and create a launchpad
-        console.log(`===========Step B3=============`);
+        console.log(`===========Step B3=============`);    
         let totalSupply = "700000000000000000"; // 700k
-        let tokenContract = new ContractTokenStandard(tokenContractAddress, alice, api);
         await tokenContract.withSigner(alice).tx.approve(lpgContractAddress, totalSupply);
-
+        
         // Step B4: Alice creates launchpad for token LNPD
         console.log(`===========Step B4=============`);
         projectInfoUri = "Launchpad test"; // 1000 token AAA
@@ -198,8 +216,8 @@ describe('Launchpad contract test', () => {
         console.log(`===========Step B5=============`);
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(1);
-        let lpContractAddress = (await lpgQuery.getLaunchpadById(1)).value.ok;
-        console.log({lpContractAddress: lpContractAddress});
+        lpContractAddress = (await lpgQuery.getLaunchpadById(1)).value.ok;
+        // console.log({lpContractAddress: lpContractAddress});
 
         // Step B6: Get contract and active launchpad
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
@@ -215,33 +233,39 @@ describe('Launchpad contract test', () => {
     })
 
     it('Can change launchpad total supply', async () => {      
-        // Case 1: newTotalSupply is 500k -> will fail because public sale uses 600k 
-        // let newTotalSupply = "500000000000000000"; 
-
-        // Case 2: newTotalSupply is 650k < the original 700k, don't need to approve 
-        let receivedOwner = (await lpQuery.owner()).value.ok;
-        console.log({receivedOwner: receivedOwner});
-
-        let receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
-        console.log({receivedTotalSupply: receivedTotalSupply.toString()});
-
-        let receivedAvailableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({receivedAvailableTokenAmount: receivedAvailableTokenAmount.toString()});
-
-        let receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
-        console.log({receivedProjectStartTime: receivedProjectStartTime.toString()});
-
-        console.log({currentTime: new Date().getTime()});
+        let currentTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
+        // console.log({currentTotalSupply: currentTotalSupply.toString()});
         
-        let newTotalSupply = "650000000000000000"; 
-        await lpContract.tx.setTotalSupply(newTotalSupply);        
-        // .withSigner(alice)
-        // let receivedNewTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
-        // console.log({receivedNewTotalSupply: receivedNewTotalSupply.toString()});
+        // Case 1: newTotalSupply is 500k -> will fail because public sale uses 600k 
+        let newTotalSupply = "500000000000000000"; 
+        try {
+            await lpContract.tx.setTotalSupply(newTotalSupply);    
+        } catch (error: any) {
 
-        // Case 3: newTotalSupply is 700k
-        // newTotalSupply = "700000000000000000";        
+        }         
+        
+        let receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
+        // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
+        expect(receivedTotalSupply.toString()).to.equal(currentTotalSupply.toString());
+                
+        // Case 2: newTotalSupply is 650k < the current supply 700k, don't need to approve      
+        newTotalSupply = "650000000000000000"; 
+        await lpContract.tx.setTotalSupply(newTotalSupply); 
+        
+        receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
+        // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
+        expect(receivedTotalSupply.toString()).to.equal(newTotalSupply);
 
+        // Case 3: newTotalSupply is 700k > the current supply 650k, need to approve token to lp
+        newTotalSupply = "700000000000000000";    
+        
+        await tokenContract.withSigner(alice).tx.approve(lpContractAddress, new BN(newTotalSupply).sub(new BN(receivedTotalSupply.toString())));
+        
+        await lpContract.tx.setTotalSupply(newTotalSupply); 
+        
+        receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
+        // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
+        expect(receivedTotalSupply.toString()).to.equal(newTotalSupply);
     })
 
     after(async () => {
