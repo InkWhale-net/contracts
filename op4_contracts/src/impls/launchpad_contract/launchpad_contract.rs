@@ -749,6 +749,10 @@ pub trait LaunchpadContractTrait:
     #[modifiers(only_role(ADMINER))]
     fn set_public_sale_price(&mut self, phase_id: u8, price: Balance) -> Result<(), Error> {
         if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+            if !public_sale_info.is_public {
+                return Err(Error::PhaseNotPublic);
+            }
+
             public_sale_info.price = price;
             self.data::<Data>()
                 .public_sale_info
@@ -806,19 +810,23 @@ pub trait LaunchpadContractTrait:
             return set_vesting_unit_result;
         }
 
-        let set_is_public_result = self.set_is_public(phase_id, is_public);
-        if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
-            return set_is_public_result;
-        }
+        if is_active {
+            let set_is_public_result = self.set_is_public(phase_id, is_public);
+            if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
+                return set_is_public_result;
+            }
 
-        let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
-        if set_public_total_amount_result.is_err() {
-            return set_public_total_amount_result;
-        }
+            if is_public {
+                let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
+                if set_public_total_amount_result.is_err() {
+                    return set_public_total_amount_result;
+                }
 
-        let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
-        if set_public_sale_price_result.is_err() {
-            return set_public_sale_price_result;
+                let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
+                if set_public_sale_price_result.is_err() {
+                    return set_public_sale_price_result;
+                }
+            }
         }
 
         Ok(())
