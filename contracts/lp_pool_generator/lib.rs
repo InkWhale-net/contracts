@@ -111,12 +111,13 @@ pub mod lp_pool_generator {
             let min_reward_amount = max_staking_amount
                 .checked_mul(duration as u128)
                 .ok_or(Error::CheckedOperations)?
+                .checked_div(calculated_decimal_staking_contract.into())
+                .ok_or(Error::CheckedOperations)?
                 .checked_mul(multiplier)
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(calculated_decimal_staking_contract.into())
-                .ok_or(Error::CheckedOperations)?
+                
                 .checked_div(24 * 60 * 60 * 1000)
                 .ok_or(Error::CheckedOperations)?;
 

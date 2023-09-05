@@ -157,11 +157,11 @@ pub mod my_lp_pool {
             let min_reward_amount = max_staking_amount
                 .checked_mul(duration as u128)
                 .ok_or(Error::CheckedOperations)?
+                .checked_div(calculated_decimal_staking_contract.into())
+                .ok_or(Error::CheckedOperations)?
                 .checked_mul(multiplier)
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
-                .ok_or(Error::CheckedOperations)?
-                .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(24 * 60 * 60 * 1000)
                 .ok_or(Error::CheckedOperations)?;
@@ -236,11 +236,11 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_mul(calculated_decimal_reward_contract.into())
+                    .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?
                     .checked_div(calculated_decimal_staking_contract.into())
                     .ok_or(Error::CheckedOperations)?
-                    .checked_mul(self.data.multiplier)
+                    .checked_mul(calculated_decimal_reward_contract.into())
                     .ok_or(Error::CheckedOperations)?;
                 let unclaimed_reward = unclaimed_reward_365
                     .checked_div(24 * 60 * 60 * 1000)
@@ -264,9 +264,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(future_time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_mul(calculated_decimal_reward_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_div(calculated_decimal_staking_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_mul(calculated_decimal_reward_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
@@ -303,9 +303,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(future_time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_mul(calculated_decimal_reward_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_div(calculated_decimal_staking_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_mul(calculated_decimal_reward_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
@@ -434,9 +434,9 @@ pub mod my_lp_pool {
                         .staked_value
                         .checked_mul(time_length as u128)
                         .ok_or(Error::CheckedOperations)?
-                        .checked_mul(calculated_decimal_reward_contract.into())
-                        .ok_or(Error::CheckedOperations)?
                         .checked_div(calculated_decimal_staking_contract.into())
+                        .ok_or(Error::CheckedOperations)?
+                        .checked_mul(calculated_decimal_reward_contract.into())
                         .ok_or(Error::CheckedOperations)?
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
@@ -467,9 +467,9 @@ pub mod my_lp_pool {
                         .staked_value
                         .checked_mul(future_time_length as u128)
                         .ok_or(Error::CheckedOperations)?
-                        .checked_mul(calculated_decimal_reward_contract.into())
-                        .ok_or(Error::CheckedOperations)?
                         .checked_div(calculated_decimal_staking_contract.into())
+                        .ok_or(Error::CheckedOperations)?
+                        .checked_mul(calculated_decimal_reward_contract.into())
                         .ok_or(Error::CheckedOperations)?
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
@@ -573,9 +573,9 @@ pub mod my_lp_pool {
                     .staked_value
                     .checked_mul(time_length as u128)
                     .ok_or(Error::CheckedOperations)?
-                    .checked_mul(calculated_decimal_reward_contract.into())
-                    .ok_or(Error::CheckedOperations)?
                     .checked_div(calculated_decimal_staking_contract.into())
+                    .ok_or(Error::CheckedOperations)?
+                    .checked_mul(calculated_decimal_reward_contract.into())
                     .ok_or(Error::CheckedOperations)?
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
