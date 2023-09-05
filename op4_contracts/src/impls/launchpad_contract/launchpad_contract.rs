@@ -783,51 +783,55 @@ pub trait LaunchpadContractTrait:
             return set_is_active_result;
         }
 
-        let set_name_result = self.set_name(phase_id, name);
-        if set_name_result.is_err() {
-            return set_name_result;
-        }
-
-        let set_start_and_end_time_result =
-            self.set_start_and_end_time(phase_id, start_time, end_time);
-        if set_start_and_end_time_result.is_err() {
-            return set_start_and_end_time_result;
-        }
-
-        let set_immediate_release_rate_result =
-            self.set_immediate_release_rate(phase_id, immediate_release_rate);
-        if set_immediate_release_rate_result.is_err() {
-            return set_immediate_release_rate_result;
-        }
-
-        let set_vesting_duration_result = self.set_vesting_duration(phase_id, vesting_duration);
-        if set_vesting_duration_result.is_err() {
-            return set_vesting_duration_result;
-        }
-
-        let set_vesting_unit_result = self.set_vesting_unit(phase_id, vesting_unit);
-        if set_vesting_unit_result.is_err() {
-            return set_vesting_unit_result;
-        }
-
-        if is_active {
-            let set_is_public_result = self.set_is_public(phase_id, is_public);
-            if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
-                return set_is_public_result;
-            }
-
-            if is_public {
-                let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
-                if set_public_total_amount_result.is_err() {
-                    return set_public_total_amount_result;
+        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+            if phase.is_active {
+                let set_name_result = self.set_name(phase_id, name);
+                if set_name_result.is_err() {
+                    return set_name_result;
                 }
 
-                let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
-                if set_public_sale_price_result.is_err() {
-                    return set_public_sale_price_result;
+                let set_start_and_end_time_result =
+                    self.set_start_and_end_time(phase_id, start_time, end_time);
+                if set_start_and_end_time_result.is_err() {
+                    return set_start_and_end_time_result;
                 }
-            }
-        }
+
+                let set_immediate_release_rate_result =
+                    self.set_immediate_release_rate(phase_id, immediate_release_rate);
+                if set_immediate_release_rate_result.is_err() {
+                    return set_immediate_release_rate_result;
+                }
+
+                let set_vesting_duration_result = self.set_vesting_duration(phase_id, vesting_duration);
+                if set_vesting_duration_result.is_err() {
+                    return set_vesting_duration_result;
+                }
+
+                let set_vesting_unit_result = self.set_vesting_unit(phase_id, vesting_unit);
+                if set_vesting_unit_result.is_err() {
+                    return set_vesting_unit_result;
+                }
+
+                let set_is_public_result = self.set_is_public(phase_id, is_public);
+                if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
+                    return set_is_public_result;
+                }
+
+                if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                    if public_sale_info.is_public {                    
+                        let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
+                        if set_public_total_amount_result.is_err() {
+                            return set_public_total_amount_result;
+                        }
+
+                        let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
+                        if set_public_sale_price_result.is_err() {
+                            return set_public_sale_price_result;
+                        }
+                    } 
+                }   
+            } 
+        }       
 
         Ok(())
     }
