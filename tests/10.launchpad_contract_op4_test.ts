@@ -1,5 +1,5 @@
-import {checkAccountsBalance, delay, expect, getSigners, provider, setGasLimit} from "./helpers";
-import {ApiPromise} from "@polkadot/api";
+import { checkAccountsBalance, delay, expect, getSigners, provider, setGasLimit } from "./helpers";
+import { ApiPromise } from "@polkadot/api";
 
 import { BN } from '@polkadot/util';
 
@@ -40,7 +40,7 @@ describe('Launchpad contract test', () => {
     let inwSymbol;
     let inwDecimal;
 
-    let lpgContractAddress: any; 
+    let lpgContractAddress: any;
     let lpgContract: any;
     let lpgQuery: any;
     let lpgTx: any;
@@ -103,7 +103,7 @@ describe('Launchpad contract test', () => {
                 inwName,
                 inwSymbol,
                 inwDecimal,
-                {gasLimit: inwGasLimit}
+                { gasLimit: inwGasLimit }
             )
         ).address;
         inwContract = new ContractInw(inwContractAddress, defaultSigner, api);
@@ -119,7 +119,7 @@ describe('Launchpad contract test', () => {
 
         // "refTime: 2096906375" "proofSize: 28688"
         let tokenGasLimit = setGasLimit(api, 4_000_000_000, 56_000);
-        
+
         const tokenContractFactory = new ConstructorsTokenStandard(api, alice);
         tokenContractAddress = (
             await tokenContractFactory.new(
@@ -129,23 +129,23 @@ describe('Launchpad contract test', () => {
                 name,
                 symbol,
                 decimal,
-                {gasLimit: tokenGasLimit}
+                { gasLimit: tokenGasLimit }
             )
-        ).address;   
+        ).address;
         tokenContract = new ContractTokenStandard(tokenContractAddress, alice, api);
         tokenQuery = tokenContract.query;
-        tokenTx = tokenContract.tx;   
-        
+        tokenTx = tokenContract.tx;
+
         // Step 3: Create a launchpad generator contract
         console.log(`===========Create new launchpadContractAddress=============`);
         launchpadHash = MyLaunchpad.source.hash;
         creationFee = "4000000000000";  // 4 INW
         txRate = 500;                   // 500 INW
         adminAddress = defaultSigner.address;
-        
+
         // "refTime: 2344630275" "proofSize: 34881"
         let lpgGasLimit = setGasLimit(api, 4_600_000_000, 68_000);
-        
+
         const lpgContractFactory = new ConstructorsLaunchpadGenerator(api, defaultSigner);
         lpgContractAddress = (
             await lpgContractFactory.new(
@@ -154,7 +154,7 @@ describe('Launchpad contract test', () => {
                 creationFee,
                 txRate,
                 adminAddress,
-                {gasLimit: lpgGasLimit}
+                { gasLimit: lpgGasLimit }
             )
         ).address;
         // console.log({lpgContractAddress: lpgContractAddress});
@@ -167,7 +167,7 @@ describe('Launchpad contract test', () => {
         await setup();
     });
 
-    it('Can create launchpad', async () => {      
+    it('Can create launchpad', async () => {
         /// TODO: B. Create launchpad
         // Step B1: Onwer mints creation fee in INW to Alice
         console.log(`===========Step B1=============`);
@@ -180,10 +180,10 @@ describe('Launchpad contract test', () => {
         await inwContract.withSigner(alice).tx.approve(lpgContractAddress, creationFee);
 
         // Step B3: Alice approves total supply of token and create a launchpad
-        console.log(`===========Step B3=============`);    
+        console.log(`===========Step B3=============`);
         let totalSupply = "700000000000000000"; // 700k
         await tokenContract.withSigner(alice).tx.approve(lpgContractAddress, totalSupply);
-        
+
         // Step B4: Alice creates launchpad for token LNPD
         console.log(`===========Step B4=============`);
         projectInfoUri = "Launchpad test"; // 1000 token AAA
@@ -192,7 +192,7 @@ describe('Launchpad contract test', () => {
         phaseStartTime = [startTime, startTime + 4 * 86400000]; // 86400000 ~ 1 day
         phaseEndTime = [startTime + 3 * 86400000, startTime + 5 * 86400000];
         phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
-        phaseVestingDuration = [1800000, 1800000]; 
+        phaseVestingDuration = [1800000, 1800000];
         phaseVestingUnit = [300000, 300000];
         phaseIsPublic = [true, true];
         phasePublicAmount = ["100000000000000000", "500000000000000000"]; // 100k - 500k
@@ -224,7 +224,7 @@ describe('Launchpad contract test', () => {
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
         lpQuery = lpContract.query;
         lpTx = lpContract.tx;
-        
+
         let isActiveLaunchpad = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
         expect(isActiveLaunchpad).to.equal(false);
 
@@ -233,44 +233,44 @@ describe('Launchpad contract test', () => {
         expect(isActiveLaunchpad).to.equal(true);
     })
 
-    it('Can change launchpad total supply', async () => {      
+    it('Can change launchpad total supply', async () => {
         let currentTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
         // console.log({currentTotalSupply: currentTotalSupply.toString()});
-        
+
         // Case 1: newTotalSupply is 500k -> will fail because public sale uses 600k 
         console.log(`===========Change total supply - Case 1=============`);
-        let newTotalSupply = "500000000000000000"; 
+        let newTotalSupply = "500000000000000000";
         try {
-            await lpContract.tx.setTotalSupply(newTotalSupply);    
+            await lpContract.tx.setTotalSupply(newTotalSupply);
         } catch (error: any) {
 
-        }         
-        
+        }
+
         let receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
         // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
         expect(receivedTotalSupply.toString()).to.equal(currentTotalSupply.toString());
 
         // Case 2: newTotalSupply is 650k < the current supply 700k, don't need to approve      
         console.log(`===========Change total supply - Case 2=============`);
-        newTotalSupply = "650000000000000000"; 
-        await lpContract.tx.setTotalSupply(newTotalSupply); 
-        
+        newTotalSupply = "650000000000000000";
+        await lpContract.tx.setTotalSupply(newTotalSupply);
+
         receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
         // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
         expect(receivedTotalSupply.toString()).to.equal(newTotalSupply);
 
         // Case 3: newTotalSupply is 700k > the current supply 650k, need to approve token to lp
         console.log(`===========Change total supply - Case 3=============`);
-        newTotalSupply = "700000000000000000";    
-        
+        newTotalSupply = "700000000000000000";
+
         await tokenContract.withSigner(alice).tx.approve(lpContractAddress, new BN(newTotalSupply).sub(new BN(receivedTotalSupply.toString())));
-        
-        await lpContract.tx.setTotalSupply(newTotalSupply); 
-        
+
+        await lpContract.tx.setTotalSupply(newTotalSupply);
+
         receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
         // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
         expect(receivedTotalSupply.toString()).to.equal(newTotalSupply);
-    
+
     })
 
     it('Can change immediate release rate', async () => {      
@@ -294,7 +294,7 @@ describe('Launchpad contract test', () => {
         phaseId = 1;
 
         await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);    
-     
+
         receivedImmediateReleaseRate = (await lpQuery.getImmediateReleaseRate(phaseId)).value.ok;
         // console.log({receivedImmediateReleaseRate: receivedImmediateReleaseRate});
         expect(receivedImmediateReleaseRate).to.equal(newImmediateReleaseRate);
@@ -304,7 +304,7 @@ describe('Launchpad contract test', () => {
         // newImmediateReleaseRate = phaseImmediateReleaseRate[phaseId];        
 
         // await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);    
-     
+
         // receivedImmediateReleaseRate = (await lpQuery.getImmediateReleaseRate(phaseId)).value.ok;
         // console.log({receivedImmediateReleaseRate: receivedImmediateReleaseRate});
         // expect(receivedImmediateReleaseRate).to.equal(newImmediateReleaseRate);        
@@ -315,37 +315,37 @@ describe('Launchpad contract test', () => {
         console.log(`===========Change public total amount - Case 1=============`);
         let publicAmount = "300000000000000000";
         let phaseId = 0;
-        
+
         let publicSaleTotalAmount = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
 
         try {
             await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
         } catch (error) {
-            
+
         }
 
         let receivedPublicSaleTotalAmount = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         expect(receivedPublicSaleTotalAmount).to.equal(publicSaleTotalAmount.toString());
-        
+
         // Case 2: set publicAmount "200000000000000000" -> success increasement = avail amount
         console.log(`===========Change public total amount - Case 2=============`);
         publicAmount = "200000000000000000";
         await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
-  
+
         let receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         receivedPublicSaleTotalAmount = (new BN(receivedPublicSaleTotalAmountHex.substring(2), 16)).toString(10);
-       
+
         // console.log({receivedPublicSaleTotalAmount: receivedPublicSaleTotalAmount});
         expect(receivedPublicSaleTotalAmount.toString()).to.equal(publicAmount);
-        
+
         // Case 3: back to original publicAmount "100000000000000000" -> 
         console.log(`===========Change public total amount - Case 3=============`);
         publicAmount = "100000000000000000";
         await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
-  
+
         receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         receivedPublicSaleTotalAmount = (new BN(receivedPublicSaleTotalAmountHex.substring(2), 16)).toString(10);
-       
+
         // console.log({receivedPublicSaleTotalAmount: receivedPublicSaleTotalAmount});
         expect(receivedPublicSaleTotalAmount.toString()).to.equal(publicAmount);
     })
@@ -364,7 +364,7 @@ describe('Launchpad contract test', () => {
         try {
             await lpContract.tx.setIsPublic(phaseId, isPublic);    
         } catch (error) {
-            
+
         }
 
         let receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
@@ -381,7 +381,7 @@ describe('Launchpad contract test', () => {
 
         isPublic = false;  
         await lpContract.tx.setIsPublic(phaseId, isPublic);    
- 
+
         receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
         // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
         expect(receivedPublicSaleInfo.isPublic).to.equal(false);
@@ -390,7 +390,7 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set public - Case 3=============`);
         isPublic = true;  
         await lpContract.tx.setIsPublic(phaseId, isPublic);    
- 
+
         receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
         // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
         expect(receivedPublicSaleInfo.isPublic).to.equal(true);
@@ -411,7 +411,7 @@ describe('Launchpad contract test', () => {
         let newPhaseIsPublic = false;
         let newPhasePublicAmount = "200000000000000000"; // 200k - avail amount = 100k = public amount increasement from 100k to 200k
         let newPhasePublicPrice = "500000000000"; // 0.5 - 1A
-        
+
         await lpContract.tx.setPhase(
             phaseId,
             newIsActive,
@@ -425,7 +425,7 @@ describe('Launchpad contract test', () => {
             newPhasePublicAmount,
             newPhasePublicPrice
         );  
-        
+
         let receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
         // console.log({receivedPublicInfo: receivedPublicInfo});
         expect(receivedPublicInfo.isActive).to.equal(true);
@@ -469,7 +469,7 @@ describe('Launchpad contract test', () => {
         let newPhaseIsPublic = [true, true];
         let newPhasePublicAmount = ["150000000000000000", "550000000000000000"]; // equal balance of Alice
         let newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-        
+
         await lpContract.tx.setMultiPhases(
             phaseId,
             newIsActive,
@@ -491,7 +491,7 @@ describe('Launchpad contract test', () => {
         let receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
         // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
         expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);
-    
+
         availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         console.log({availableTokenAmount: availableTokenAmount.toString()});
         // Case 2: Set new data but total newPhasePublicAmount is > Alice balance -> Fail
@@ -508,7 +508,7 @@ describe('Launchpad contract test', () => {
         newPhaseIsPublic = [true, true];
         let newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
         newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-        
+
         try {
             await lpContract.tx.setMultiPhases(
                 phaseId,
@@ -524,7 +524,7 @@ describe('Launchpad contract test', () => {
                 newPhasePublicPrice
             );    
         } catch (error) {
-            
+
         }        
 
         let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
@@ -553,7 +553,7 @@ describe('Launchpad contract test', () => {
         newPhaseIsPublic = [false, true];
         newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
         newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-       
+
         await lpContract.tx.setMultiPhases(
             phaseId,
             newIsActive,
@@ -577,20 +577,20 @@ describe('Launchpad contract test', () => {
         receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
         // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
         expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
-        
+
         // availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         // console.log({availableTokenAmount: availableTokenAmount.toString()});
-        
+
         // let tokenBalance = (await tokenQuery.balanceOf(lpContractAddress)).value.ok;
         // console.log({tokenBalance: tokenBalance.toString()});
-        
+
         // Case 4: Set back to origin but with new phase start end time
         console.log(`===========Set multi phases - Case 4=============`);
         try {
             newStartTime = new Date().getTime() + 5000; // now + 5000s
             newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
             newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-  
+
             await lpContract.tx.setMultiPhases(
                 [0, 1],
                 [true, true],
@@ -607,7 +607,7 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             console.log("error", error);
         }
-          
+
         receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
         // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
         expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
@@ -656,9 +656,9 @@ describe('Launchpad contract test', () => {
         try {
             await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);    
         } catch (error) {
-            
+
         }
-        
+
         let receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
         // console.log({receivedVestingUnit: receivedVestingUnit});     
         expect(receivedVestingUnit).to.gt(newPhaseVestingUnit);
@@ -680,7 +680,7 @@ describe('Launchpad contract test', () => {
 
     it('Can set transaction rate ', async () => {
         let currentReceivedTxRate = (await lpQuery.getTxRate()).value.ok;
-        
+
         // Case 1: Set to new tx rate 
         let newTxRate = 200; // 2%
         await lpContract.tx.setTxRate(newTxRate);  
@@ -705,7 +705,7 @@ describe('Launchpad contract test', () => {
         let currentPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
         let currentPublicInfoPhase1 = (await lpQuery.getPhase(phaseId)).value.ok;
         console.log({startTime: currentPublicInfoPhase0.startTime, endTime: currentPublicInfoPhase0.endTime, currentTime: currentTime}); 
-  
+
         // Case 1: Set new start_time > current start time -> failed
         let newPhaseStartTime = currentTime + 2000; // Current time + 2s
         let newPhaseEndTime = currentPublicInfoPhase0.endTime;
@@ -715,10 +715,10 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             // console.log(error);
         }
-        
+
         let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
         // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-        
+
         expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
         expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);
 
@@ -731,13 +731,13 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             // console.log(error);
         }
-        
+
         receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
         // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-        
+
         expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
         expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);         
-      
+
         // Case 3: Set a new data for phase -> success 
         newPhaseStartTime = currentPublicInfoPhase0.startTime; //
         newPhaseEndTime = currentPublicInfoPhase0.endTime + 2000; // +2s
@@ -747,13 +747,13 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             console.log(error);
         }
-        
+
         receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
         console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-        
+
         expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
         expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
-        
+
         // Case 4: Set back to origin
         newPhaseStartTime = currentPublicInfoPhase0.startTime;
         newPhaseEndTime = currentPublicInfoPhase0.endTime;
@@ -763,10 +763,10 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             console.log(error);
         }
-        
+
         receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
         console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-        
+
         expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
         expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
     })
@@ -779,27 +779,256 @@ describe('Launchpad contract test', () => {
         let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
         let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         let currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
-    
+
         let currentPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         let currentPublicSaleTotalAmount0 = Number(new BN(currentPublicSaleTotalAmountHex0.substring(2), 16));
-        
+
         console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
 
         let currentPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
         console.log({currentPublicInfoPhase1StartTime: currentPublicInfoPhase1.startTime, currentPublicInfoPhase1EndTime: currentPublicInfoPhase1.endTime}); 
-                
+
         await lpContract.tx.setIsActive(phaseId, newIsActive);
-        
+
         let receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
         let receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         let receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
 
         console.log({receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
-    
+
         // expect(receivedProjectStartTime).to.equal(currentPublicInfoPhase1.startTime);
         // expect(receivedProjectEndTime).to.equal(currentPublicInfoPhase1.endTime);
         // expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
     })
+
+    it('can add multi whitelists', async () => {
+        let phaseId = 0;
+        let accounts = [signers.address, bob.address]; // 2 account
+        let whitelistAmounts = ['10000000000000', '20000000000000']; // 10 20
+        let whitelistPrices = ['1000000000000', '2000000000000'];  // 1 2
+
+        await lpTx.addMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
+
+        // Check Whitelist Account Count
+        let whitelistAccountCount = (await lpQuery.getWhitelistAccountCount(phaseId)).value.ok;
+        expect(whitelistAccountCount).to.equal(accounts.length);
+
+        // Check whitelist info
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
+        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmounts[1]);
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
+    })
+
+    it('can update multi whitelists', async () => {
+        // case 1:  whitelistAmount < availableTokenAmount
+        let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+        let phaseId = 0;
+        let accounts = [signers.address, bob.address]; // 2 account
+        let whitelistAmounts = ['20000000000000', '30000000000000']; // 20 30
+        let whitelistPrices = ['2000000000000', '3000000000000'];  // 2 3
+
+        await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
+
+        // Check whitelist info
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
+        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmounts[1]);
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
+
+        // case 2:  whitelistAmount > availableTokenAmount => fail
+        whitelistAmounts = [availableTokenAmount + 1, availableTokenAmount + 2];
+
+        try {
+            await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
+        } catch (error) {
+
+        }
+
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
+    })
+
+    it('Can public purchase', async () => {
+        // startTime < currentTime < endTime
+        let currentTime = new Date();
+        currentTime.setMilliseconds(86400000); // now + 1 day
+        let phaseId = 0;
+        let amount;
+        let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+        let decimal = 12;
+        let price;
+        let value;
+        let totalAmount = parseInt(publicSaleInfo.totalAmount);
+        let totalPurchasedAmount = publicSaleInfo.totalPurchasedAmount;
+        let publicSaleTotalClaimedAmountBefor = (await lpQuery.getPublicSaleTotalClaimedAmount(phaseId)).value.ok;
+        let publicSaleTotalPurchasedAmountBefor = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
+
+        console.log('===============================public Sale Total Befor=================================');
+        console.log('publicSaleTotalClaimedAmount', publicSaleTotalClaimedAmountBefor);
+        console.log('publicSaleTotalPurchasedAmount', publicSaleTotalPurchasedAmountBefor);
+
+        // case 1: amount + totalPurchasedAmount < totalAmount && value < price => fail
+        amount = 2000000000000 + totalPurchasedAmount // 2A
+        price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
+        value = price - 500000000000; // + 0.5A
+
+        try {
+            await lpTx.publicPurchase(phaseId, amount, { value });
+        } catch (error) {
+        }
+
+        let publicSaleTotalClaimedAmountAfter = (await lpQuery.getPublicSaleTotalClaimedAmount(phaseId)).value.ok;
+        let publicSaleTotalPurchasedAmountAfter = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
+        expect(publicSaleTotalPurchasedAmountBefor).to.equal(publicSaleTotalPurchasedAmountAfter);
+        expect(publicSaleTotalClaimedAmountBefor).to.equal(publicSaleTotalClaimedAmountAfter);
+
+        // case 2: amount + totalPurchasedAmount  > totalAmount && value < price => fail
+        amount = totalAmount + totalPurchasedAmount + 1
+        price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
+        value = price + 500000000000 // + 0.5A
+
+        try {
+            await lpTx.publicPurchase(phaseId, amount, { value });
+        } catch (error) {
+        }
+
+        publicSaleTotalClaimedAmountAfter = (await lpQuery.getPublicSaleTotalClaimedAmount(phaseId)).value.ok;
+        publicSaleTotalPurchasedAmountAfter = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
+        expect(publicSaleTotalPurchasedAmountBefor).to.equal(publicSaleTotalPurchasedAmountAfter);
+        expect(publicSaleTotalClaimedAmountBefor).to.equal(publicSaleTotalClaimedAmountAfter);
+
+
+        // case 3: amount + totalPurchasedAmount < totalAmount && value < price => success
+        amount = 2000000000000 + totalPurchasedAmount // 2A
+        price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
+        value = price + 500000000000 // + 0.5A
+
+        await lpTx.publicPurchase(phaseId, amount, { value });
+
+        publicSaleTotalClaimedAmountAfter = (await lpQuery.getPublicSaleTotalClaimedAmount(phaseId)).value.ok;
+        publicSaleTotalPurchasedAmountAfter = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
+        console.log('===============================public Sale Total After=================================');
+        console.log('publicSaleTotalClaimedAmount', publicSaleTotalClaimedAmountAfter);
+        console.log('publicSaleTotalPurchasedAmount', publicSaleTotalPurchasedAmountAfter);
+    })
+
+    it('Can whitelist purchase', async () => {
+        // startTime < currentTime < endTime
+        let currentTime = new Date();
+        currentTime.setMilliseconds(86400000); // now + 1 day
+        let phaseId = 0;
+        let amount;
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok;
+        let decimal = 12;
+        let price;
+        let value;
+        let Amount = whitelistBuyer.amount;
+        let purchasedAmount = whitelistBuyer.purchasedAmount;
+        let whitelistSaleTotalAmountBefor = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
+        let whitelistSaleTotalClaimedAmountBefor = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
+
+        console.log('===============================public Sale Total Befor=================================');
+        console.log('whitelistSaleTotalAmount', whitelistSaleTotalAmountBefor);
+        console.log('whitelistSaleTotalClaimedAmount', whitelistSaleTotalClaimedAmountBefor);
+
+        // case 1: amount + purchasedAmount < Amount && value < price => fail
+        amount = 2000000000000 + purchasedAmount
+        price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
+        value = price - 500000000000; // + 0.5A
+
+        try {
+            await lpContract.withSigner(bob).tx.whitelistPurchase(phaseId, amount, { value });
+        } catch (error) {
+
+        }
+
+        let whitelistSaleTotalAmountAfter = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
+        let whitelistSaleTotalClaimedAmountAfter = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
+        expect(whitelistSaleTotalAmountBefor).to.equal(whitelistSaleTotalAmountAfter);
+        expect(whitelistSaleTotalClaimedAmountBefor).to.equal(whitelistSaleTotalClaimedAmountAfter);
+
+        // case 2: amount + purchasedAmount > Amount && value > price => fail
+        amount = 2000000000000 + purchasedAmount + Amount;
+        price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
+        value = price + 500000000000; // + 0.5A
+
+        try {
+            await lpContract.withSigner(bob).tx.whitelistPurchase(phaseId, amount, { value });
+        } catch (error) {
+
+        }
+
+        whitelistSaleTotalAmountAfter = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
+        whitelistSaleTotalClaimedAmountAfter = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
+        expect(whitelistSaleTotalAmountBefor).to.equal(whitelistSaleTotalAmountAfter);
+        expect(whitelistSaleTotalClaimedAmountBefor).to.equal(whitelistSaleTotalClaimedAmountAfter);
+
+        // case 3:  amount + purchasedAmount < Amount && value > price => success
+        amount = 2000000000000 + purchasedAmount 
+        price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
+        value = price + 500000000000 // + 0.5A
+
+        await lpContract.withSigner(bob).tx.whitelistPurchase(phaseId, amount, { value });
+
+        whitelistSaleTotalAmountAfter = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
+        whitelistSaleTotalClaimedAmountAfter = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
+        console.log('===============================public Sale Total After=================================');
+        console.log('whitelistSaleTotalAmount', whitelistSaleTotalAmountAfter);
+        console.log('whitelistSaleTotalClaimedAmount', whitelistSaleTotalClaimedAmountAfter);
+    })
+
+    it('Can public claim', async () => {
+        // endTime < currentTime
+        let phaseId = 0;
+        let currentTime = new Date();
+        currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+
+        await lpTx.publicClaim(phaseId);
+
+    })
+
+    it('Can whitelist claim', async () => {
+        // endTime < currentTime
+        let phaseId = 0;
+        let currentTime = new Date();
+        currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+
+        await lpContract.withSigner(bob).tx.publicClaim(phaseId);
+    })
+
+    // it('Can burn unsold tokens', async () => {
+    //     // endTime < currentTime
+    //     let currentTime = new Date();
+    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+
+    //     await lpTx.burnUnsoldTokens();
+    // })
+
+    // it('Can withdraw unsold tokens', async () => {
+    //     // endTime < currentTime
+    //     let currentTime = new Date();
+    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+
+    //     let receiver;
+    //     await lpTx.withdraw(receiver);
+    // })
+
+    // it('Can withdraw', async () => {\
+    //     // endTime < currentTime
+    //     let currentTime = new Date();
+    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+    //     let receiver;
+    //     let value;
+
+    //     await lpTx.withdraw(receiver, value);
+    // })
 
     after(async () => {
     });
