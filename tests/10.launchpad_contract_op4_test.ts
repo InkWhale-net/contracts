@@ -231,6 +231,16 @@ describe('Launchpad contract test', () => {
         await lpgTx.setIsActiveLaunchpad(lpContractAddress, true);
         isActiveLaunchpad = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
         expect(isActiveLaunchpad).to.equal(true);
+
+        let receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        let receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        
+        let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
     })
 
     it('Can change launchpad total supply', async () => {      
@@ -430,6 +440,16 @@ describe('Launchpad contract test', () => {
         // console.log({receivedPublicInfo: receivedPublicInfo});
         expect(receivedPublicInfo.isActive).to.equal(true);
 
+        // let receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        // let receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
+
         // Case 2: Set back to origin
         console.log(`===========Set phase - Case 2=============`);
         await lpContract.tx.setPhase(
@@ -449,6 +469,16 @@ describe('Launchpad contract test', () => {
         receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
         // console.log({receivedPublicInfo: receivedPublicInfo});
         expect(receivedPublicInfo.endTime).to.equal(phaseEndTime[phaseId]);
+
+        // receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        // receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        
+        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
     })
 
     it('Can set multi phases', async () => {
@@ -484,13 +514,13 @@ describe('Launchpad contract test', () => {
             newPhasePublicPrice
         );  
 
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
-        // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
+        let receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        // console.log({receivedPhaseInfo0: receivedPhaseInfo0});
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime[0]);
 
-        let receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
-        expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);
+        let receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        // console.log({receivedPhaseInfo1: receivedPhaseInfo1});
+        expect(receivedPhaseInfo1.endTime).to.equal(newPhaseEndTime[1]);
     
         availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         console.log({availableTokenAmount: availableTokenAmount.toString()});
@@ -608,13 +638,13 @@ describe('Launchpad contract test', () => {
             console.log("error", error);
         }
           
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
-        // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
+        receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        // console.log({receivedPhaseInfo0: receivedPhaseInfo0});
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime[0]);
 
-        receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
-        expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);         
+        receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        // console.log({receivedPhaseInfo1: receivedPhaseInfo1});
+        expect(receivedPhaseInfo1.endTime).to.equal(newPhaseEndTime[1]);         
     })
 
     it('Can set vesting duration', async () => {
@@ -622,15 +652,16 @@ describe('Launchpad contract test', () => {
         let phaseId = 0;
 
         let currentTime = new Date().getTime();
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({receivedPublicInfoPhase0StartTime: receivedPublicInfoPhase0.startTime});       
+        let receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        // console.log({receivedPhaseInfo0StartTime: receivedPhaseInfo0.startTime});       
 
-        if (receivedPublicInfoPhase0.startTime > currentTime) { 
-            await delay(receivedPublicInfoPhase0.startTime - currentTime + 2000); // Delay + 2s
-            console.log({delayTime: receivedPublicInfoPhase0.startTime - currentTime + 2000});    
+        if (receivedPhaseInfo0.startTime > currentTime) { 
+            await delay(receivedPhaseInfo0.startTime - currentTime + 2000); // Delay + 2s
+            console.log({delayTime: receivedPhaseInfo0.startTime - currentTime + 2000});    
         }
 
         // Case 1: Set new vesting duration for phase 0
+        console.log(`===========Set vesting duration - Case 1=============`);
         let newPhaseVestingDuration = 1200000;
         await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
 
@@ -639,6 +670,7 @@ describe('Launchpad contract test', () => {
         expect(receivedVestingDuration).to.equal(newPhaseVestingDuration);
 
         // Case 2: Set back to origin
+        console.log(`===========Set vesting duration - Case 2=============`);
         newPhaseVestingDuration = phaseVestingDuration[phaseId];
         await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
 
@@ -651,6 +683,7 @@ describe('Launchpad contract test', () => {
         let phaseId = 1;
 
         // Case 1: Set to 0 -> fail
+        console.log(`===========Set vesting unit - Case 1=============`);
         let newPhaseVestingUnit = 0;
 
         try {
@@ -664,6 +697,7 @@ describe('Launchpad contract test', () => {
         expect(receivedVestingUnit).to.gt(newPhaseVestingUnit);
 
         // Case 2: Set to > 0 -> sucess
+        console.log(`===========Set vesting unit - Case 2=============`);
         newPhaseVestingUnit = 100000;        
         await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);
         receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
@@ -671,6 +705,7 @@ describe('Launchpad contract test', () => {
         expect(receivedVestingUnit).to.equal(newPhaseVestingUnit);
 
         // Case 3: Set back to origin
+        console.log(`===========Set vesting unit - Case 3=============`);
         newPhaseVestingUnit = phaseVestingUnit[phaseId];
         await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);       
         receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
@@ -682,6 +717,7 @@ describe('Launchpad contract test', () => {
         let currentReceivedTxRate = (await lpQuery.getTxRate()).value.ok;
         
         // Case 1: Set to new tx rate 
+        console.log(`===========Set transaction rate - Case 1=============`);
         let newTxRate = 200; // 2%
         await lpContract.tx.setTxRate(newTxRate);  
 
@@ -690,6 +726,7 @@ describe('Launchpad contract test', () => {
         expect(receivedTxRate).to.equal(newTxRate);
 
         // Case 2: Set back to origin
+        console.log(`===========Set transaction rate - Case 2=============`);
         newTxRate = currentReceivedTxRate; 
         await lpContract.tx.setTxRate(newTxRate);  
 
@@ -698,17 +735,23 @@ describe('Launchpad contract test', () => {
         expect(receivedTxRate).to.equal(newTxRate);
     })
 
-    it('Can set start and end time', async () => {
+    it('Can set start and end time', async () => {        
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
         let phaseId = 0;
 
         let currentTime = new Date().getTime();  
-        let currentPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        let currentPublicInfoPhase1 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: currentPublicInfoPhase0.startTime, endTime: currentPublicInfoPhase0.endTime, currentTime: currentTime}); 
+        let currentPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        let currentPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        // console.log({startTime: currentPhaseInfo0.startTime, endTime: currentPhaseInfo0.endTime, currentTime: currentTime}); 
+        // console.log({startTimeP1: currentPhaseInfo1.startTime, endTimeP1: currentPhaseInfo1.endTime}); 
   
         // Case 1: Set new start_time > current start time -> failed
+        console.log(`===========Set start and end time - Case 1=============`);
         let newPhaseStartTime = currentTime + 2000; // Current time + 2s
-        let newPhaseEndTime = currentPublicInfoPhase0.endTime;
+        let newPhaseEndTime = currentPhaseInfo0.endTime;
 
         try {
             await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
@@ -716,15 +759,23 @@ describe('Launchpad contract test', () => {
             // console.log(error);
         }
         
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+        let receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        let receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         
-        expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);
+        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime}); 
+  
+        expect(receivedPhaseInfo0.startTime).to.equal(currentPhaseInfo0.startTime);       
+        expect(receivedPhaseInfo0.endTime).to.equal(currentPhaseInfo0.endTime);
 
         // Case 2: Set phase 1 overlap with phase 2 -> failed
-        newPhaseStartTime = currentPublicInfoPhase0.startTime;
-        newPhaseEndTime = currentPublicInfoPhase1.startTime + 2000; // 2s
+        console.log(`===========Set start and end time - Case 2=============`);
+        newPhaseStartTime = currentPhaseInfo0.startTime;
+        newPhaseEndTime = currentPhaseInfo1.startTime + 2000; // 2s
 
         try {
             await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
@@ -732,15 +783,23 @@ describe('Launchpad contract test', () => {
             // console.log(error);
         }
         
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+        receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         
-        expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);         
+        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
+        
+        expect(receivedPhaseInfo0.startTime).to.equal(currentPhaseInfo0.startTime);       
+        expect(receivedPhaseInfo0.endTime).to.equal(currentPhaseInfo0.endTime);         
       
         // Case 3: Set a new data for phase -> success 
-        newPhaseStartTime = currentPublicInfoPhase0.startTime; //
-        newPhaseEndTime = currentPublicInfoPhase0.endTime + 2000; // +2s
+        console.log(`===========Set start and end time - Case 3=============`);
+        newPhaseStartTime = currentPhaseInfo0.startTime; //
+        newPhaseEndTime = currentPhaseInfo0.endTime + 2000; // +2s
 
         try {
             await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
@@ -748,15 +807,23 @@ describe('Launchpad contract test', () => {
             console.log(error);
         }
         
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+        receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         
-        expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
+        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
+
+        expect(receivedPhaseInfo0.startTime).to.equal(newPhaseStartTime);       
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime);
         
         // Case 4: Set back to origin
-        newPhaseStartTime = currentPublicInfoPhase0.startTime;
-        newPhaseEndTime = currentPublicInfoPhase0.endTime;
+        console.log(`===========Set start and end time - Case 4=============`);
+        newPhaseStartTime = currentPhaseInfo0.startTime;
+        newPhaseEndTime = currentPhaseInfo0.endTime;
 
         try {
             await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
@@ -764,41 +831,140 @@ describe('Launchpad contract test', () => {
             console.log(error);
         }
         
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+        receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         
-        expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
+        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
+        
+        expect(receivedPhaseInfo0.startTime).to.equal(newPhaseStartTime);       
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime);
     })
 
     it('Can set active', async () => {
         // Case 1: Set phase 1 inactive
+        console.log(`===========Set active - Case 1=============`);
         let phaseId = 0;
         let newIsActive = false;
 
-        let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
-        let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         let currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
     
         let currentPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         let currentPublicSaleTotalAmount0 = Number(new BN(currentPublicSaleTotalAmountHex0.substring(2), 16));
         
-        console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
 
-        let currentPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        console.log({currentPublicInfoPhase1StartTime: currentPublicInfoPhase1.startTime, currentPublicInfoPhase1EndTime: currentPublicInfoPhase1.endTime}); 
+        // let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        let currentPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        // console.log({currentPhaseInfo0StartTime: currentPhaseInfo0.startTime, currentPhaseInfo0EndTime: currentPhaseInfo0.endTime, currentPhaseInfo1StartTime: currentPhaseInfo1.startTime, currentPhaseInfo1EndTime: currentPhaseInfo1.endTime}); 
                 
         await lpContract.tx.setIsActive(phaseId, newIsActive);
         
+        let receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
         let receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
         let receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         let receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
 
-        console.log({receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
+        // console.log({isActive: receivedPhaseInfo0.isActive, receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
     
-        // expect(receivedProjectStartTime).to.equal(currentPublicInfoPhase1.startTime);
-        // expect(receivedProjectEndTime).to.equal(currentPublicInfoPhase1.endTime);
-        // expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
+        expect(receivedPhaseInfo0.isActive).to.equal(newIsActive);
+        expect(receivedProjectStartTime).to.equal(currentPhaseInfo1.startTime);
+        expect(receivedProjectEndTime).to.equal(currentPhaseInfo1.endTime);
+        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
+
+        // Case 2: Set phase 1 back to origin (true)
+        console.log(`===========Set active - Case 2=============`);
+        phaseId = 0;
+        newIsActive = true;
+
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount}); 
+        currentPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+                  
+        await lpContract.tx.setIsActive(phaseId, newIsActive);
+
+        let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
+        let receivedPublicSaleTotalAmount0 = Number(new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16));
+                     
+        receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
+
+        // console.log({isActive: receivedPhaseInfo0.isActive, receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
+    
+        expect(receivedPhaseInfo0.isActive).to.equal(newIsActive);
+        expect(receivedProjectStartTime).to.equal(receivedPhaseInfo0.startTime);
+        expect(receivedProjectEndTime).to.equal(currentPhaseInfo1.endTime);
+        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedPublicSaleTotalAmount0);
+
+        // Case 3: Set phase 2 inactive
+        console.log(`===========Set active - Case 3=============`);
+        phaseId = 1;
+        newIsActive = false;
+
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
+    
+        let currentPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
+        let currentPublicSaleTotalAmount1 = Number(new BN(currentPublicSaleTotalAmountHex1.substring(2), 16));
+        
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
+
+        // let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        // console.log({currentPhaseInfo0StartTime: currentPhaseInfo0.startTime, currentPhaseInfo0EndTime: currentPhaseInfo0.endTime, currentPhaseInfo1StartTime: currentPhaseInfo1.startTime, currentPhaseInfo1EndTime: currentPhaseInfo1.endTime}); 
+                
+        await lpContract.tx.setIsActive(phaseId, newIsActive);
+        
+        let receivedPhaseInfo1 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
+
+        // console.log({isActive: receivedPhaseInfo0.isActive, receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
+    
+        expect(receivedPhaseInfo1.isActive).to.equal(newIsActive);
+        expect(receivedProjectStartTime).to.equal(currentPhaseInfo0.startTime);
+        expect(receivedProjectEndTime).to.equal(currentPhaseInfo0.endTime);
+        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount1);
+
+        // Case 4: Set phase 2 back to origin (true)
+        console.log(`===========Set active - Case 4=============`);
+        phaseId = 1;
+        newIsActive = true;
+
+        // let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount}); 
+        currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+                  
+        await lpContract.tx.setIsActive(phaseId, newIsActive);
+
+        let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
+        let receivedPublicSaleTotalAmount1 = Number(new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16));
+                     
+        receivedPhaseInfo1 = (await lpQuery.getPhase(phaseId)).value.ok;
+        receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
+
+        // console.log({isActive: receivedPhaseInfo0.isActive, receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
+    
+        expect(receivedPhaseInfo1.isActive).to.equal(newIsActive);
+        expect(receivedProjectStartTime).to.equal(currentPhaseInfo0.startTime);
+        expect(receivedProjectEndTime).to.equal(receivedPhaseInfo1.endTime);
+        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedPublicSaleTotalAmount1);
     })
 
     after(async () => {

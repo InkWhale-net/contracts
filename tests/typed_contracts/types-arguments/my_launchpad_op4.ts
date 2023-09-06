@@ -545,18 +545,6 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type PhaseInfo = {
-	isActive: boolean,
-	name: string,
-	startTime: (number | string | BN),
-	endTime: (number | string | BN),
-	immediateReleaseRate: (number | string | BN),
-	vestingDuration: (number | string | BN),
-	endVestingTime: (number | string | BN),
-	vestingUnit: (number | string | BN),
-	totalVestingUnits: (number | string | BN)
-}
-
 export type WhitelistSaleInfo = {
 	totalAmount: (string | number | BN),
 	totalPurchasedAmount: (string | number | BN),
@@ -574,6 +562,25 @@ export type WhitelistBuyerInfo = {
 	lastUpdatedTime: (number | string | BN)
 }
 
+export type BuyerInformation = {
+	purchasedAmount: (string | number | BN),
+	vestingAmount: (string | number | BN),
+	claimedAmount: (string | number | BN),
+	lastUpdatedTime: (number | string | BN)
+}
+
+export type PhaseInfo = {
+	isActive: boolean,
+	name: string,
+	startTime: (number | string | BN),
+	endTime: (number | string | BN),
+	immediateReleaseRate: (number | string | BN),
+	vestingDuration: (number | string | BN),
+	endVestingTime: (number | string | BN),
+	vestingUnit: (number | string | BN),
+	totalVestingUnits: (number | string | BN)
+}
+
 export type PublicSaleInfo = {
 	isPublic: boolean,
 	totalAmount: (string | number | BN),
@@ -582,12 +589,5 @@ export type PublicSaleInfo = {
 	totalClaimedAmount: (string | number | BN),
 	isBurned: boolean,
 	isWithdrawn: boolean
-}
-
-export type BuyerInformation = {
-	purchasedAmount: (string | number | BN),
-	vestingAmount: (string | number | BN),
-	claimedAmount: (string | number | BN),
-	lastUpdatedTime: (number | string | BN)
 }
 

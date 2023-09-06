@@ -495,21 +495,29 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
+            let mut min_time = start_time;
+            let mut max_time = end_time;
+
             // Check if it is overlapped
             for i in 0..self.data::<Data>().total_phase {
                 if i != phase_id {
                     if let Some(phase_info) = self.data::<Data>().phase.get(&i) {
-                        if phase_info.is_active
-                            && ((phase_info.start_time <= start_time
-                                && start_time <= phase_info.end_time)
-                                || (phase_info.start_time <= end_time
-                                    && end_time <= phase_info.end_time)
-                                || (start_time <= phase_info.start_time
-                                    && phase_info.start_time <= end_time)
-                                || (start_time <= phase_info.end_time
-                                    && phase_info.end_time <= end_time))
-                        {
-                            return Err(Error::InvalidTime);
+                        if phase_info.is_active { 
+                            if  (phase_info.start_time <= start_time && start_time <= phase_info.end_time) ||
+                                (phase_info.start_time <= end_time && end_time <= phase_info.end_time) || 
+                                (start_time <= phase_info.start_time && phase_info.start_time <= end_time) ||
+                                (start_time <= phase_info.end_time && phase_info.end_time <= end_time)  
+                            {
+                                return Err(Error::InvalidTime);
+                            }  
+
+                            if phase.is_active && min_time > phase_info.start_time {
+                                min_time = phase_info.start_time;
+                            }
+
+                            if phase.is_active && max_time < phase_info.end_time {
+                                max_time = phase_info.end_time;
+                            }
                         }
                     }
                 }
@@ -517,13 +525,8 @@ pub trait LaunchpadContractTrait:
 
             // Update project_start_time and project_end_time if phase is active
             if phase.is_active {
-                if self.data::<Data>().project_start_time > start_time {
-                    self.data::<Data>().project_start_time = start_time;
-                }
-
-                if self.data::<Data>().project_end_time < end_time {
-                    self.data::<Data>().project_end_time = end_time;
-                }
+                self.data::<Data>().project_start_time = min_time; 
+                self.data::<Data>().project_end_time = max_time;  
             }
 
             phase.start_time = start_time;
@@ -783,7 +786,7 @@ pub trait LaunchpadContractTrait:
             return set_is_active_result;
         }
 
-        if let Some(mut phase) = self.data::<Data>().phase.get(&phase_id) {
+        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
             if phase.is_active {
                 let set_name_result = self.set_name(phase_id, name);
                 if set_name_result.is_err() {
@@ -817,7 +820,7 @@ pub trait LaunchpadContractTrait:
                     return set_is_public_result;
                 }
 
-                if let Some(mut public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
                     if public_sale_info.is_public {                    
                         let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
                         if set_public_total_amount_result.is_err() {
