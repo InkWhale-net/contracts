@@ -273,16 +273,16 @@ describe('Launchpad contract test', () => {
 
     })
 
-    it('Can change immediate release rate', async () => {      
+    it('Can change immediate release rate', async () => {
         // Case 1: Set > 10000 -> failed
         console.log(`===========Change immediate release rate - Case 1=============`);
         let newImmediateReleaseRate = 10001;
         let phaseId = 0;
         try {
-            await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);    
+            await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);
         } catch (error: any) {
 
-        }         
+        }
 
         let receivedImmediateReleaseRate = (await lpQuery.getImmediateReleaseRate(phaseId)).value.ok;
         // console.log({receivedImmediateReleaseRate: receivedImmediateReleaseRate});
@@ -293,7 +293,7 @@ describe('Launchpad contract test', () => {
         newImmediateReleaseRate = 800;
         phaseId = 1;
 
-        await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);    
+        await lpContract.tx.setImmediateReleaseRate(phaseId, newImmediateReleaseRate);
 
         receivedImmediateReleaseRate = (await lpQuery.getImmediateReleaseRate(phaseId)).value.ok;
         // console.log({receivedImmediateReleaseRate: receivedImmediateReleaseRate});
@@ -319,7 +319,7 @@ describe('Launchpad contract test', () => {
         let publicSaleTotalAmount = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
 
         try {
-            await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
+            await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);
         } catch (error) {
 
         }
@@ -330,7 +330,7 @@ describe('Launchpad contract test', () => {
         // Case 2: set publicAmount "200000000000000000" -> success increasement = avail amount
         console.log(`===========Change public total amount - Case 2=============`);
         publicAmount = "200000000000000000";
-        await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
+        await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);
 
         let receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         receivedPublicSaleTotalAmount = (new BN(receivedPublicSaleTotalAmountHex.substring(2), 16)).toString(10);
@@ -341,7 +341,7 @@ describe('Launchpad contract test', () => {
         // Case 3: back to original publicAmount "100000000000000000" -> 
         console.log(`===========Change public total amount - Case 3=============`);
         publicAmount = "100000000000000000";
-        await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);    
+        await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);
 
         receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
         receivedPublicSaleTotalAmount = (new BN(receivedPublicSaleTotalAmountHex.substring(2), 16)).toString(10);
@@ -350,462 +350,468 @@ describe('Launchpad contract test', () => {
         expect(receivedPublicSaleTotalAmount.toString()).to.equal(publicAmount);
     })
 
-    it('Can set public', async () => {
-        // Case 1: Phase is set not active, cannot set public -> still the same: public is true 
-        console.log(`===========Set public - Case 1=============`);
-        let phaseId = 0;
-        let isActive = false;        
-        await lpContract.tx.setIsActive(phaseId, isActive);
-
-        let receivedIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
-        // console.log({receivedIsActive: receivedIsActive});
-
-        let isPublic = false;  
-        try {
-            await lpContract.tx.setIsPublic(phaseId, isPublic);    
-        } catch (error) {
-
-        }
-
-        let receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
-        // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
-        expect(receivedPublicSaleInfo.isPublic).to.equal(true);
-
-        // Case 2: Phase is set active, can set public to false
-        console.log(`===========Set public - Case 2=============`);   
-        isActive = true;        
-        await lpContract.tx.setIsActive(phaseId, isActive);
-
-        receivedIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
-        // console.log({receivedIsActive: receivedIsActive});
-
-        isPublic = false;  
-        await lpContract.tx.setIsPublic(phaseId, isPublic);    
-
-        receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
-        // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
-        expect(receivedPublicSaleInfo.isPublic).to.equal(false);
-
-        // Case 3: Phase is active, set back public to original (true)
-        console.log(`===========Set public - Case 3=============`);
-        isPublic = true;  
-        await lpContract.tx.setIsPublic(phaseId, isPublic);    
-
-        receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
-        // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
-        expect(receivedPublicSaleInfo.isPublic).to.equal(true);
-    })
-
-    it('Can set phase', async () => {
-        // Case 1: Set phase 0 to new phase data
-        console.log(`===========Set phase - Case 1=============`);
-        let phaseId = 0;
-        let newIsActive = true;
-        let newPhaseName = "New phase 1";
-        let newStartTime = new Date().getTime() + 20000; // now + 20s
-        let newPhaseStartTime = newStartTime; 
-        let newPhaseEndTime = newStartTime + 3 * 86400000;
-        let newPhaseImmediateReleaseRate = 600;
-        let newPhaseVestingDuration = 2400000; 
-        let newPhaseVestingUnit = 600000;
-        let newPhaseIsPublic = false;
-        let newPhasePublicAmount = "200000000000000000"; // 200k - avail amount = 100k = public amount increasement from 100k to 200k
-        let newPhasePublicPrice = "500000000000"; // 0.5 - 1A
-
-        await lpContract.tx.setPhase(
-            phaseId,
-            newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount,
-            newPhasePublicPrice
-        );  
-
-        let receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({receivedPublicInfo: receivedPublicInfo});
-        expect(receivedPublicInfo.isActive).to.equal(true);
-
-        // Case 2: Set back to origin
-        console.log(`===========Set phase - Case 2=============`);
-        await lpContract.tx.setPhase(
-            phaseId,
-            newIsActive,
-            phaseName[phaseId],
-            phaseStartTime[phaseId],
-            phaseEndTime[phaseId],
-            phaseImmediateReleaseRate[phaseId],
-            phaseVestingDuration[phaseId],
-            phaseVestingUnit[phaseId],
-            phaseIsPublic[phaseId],
-            phasePublicAmount[phaseId],
-            phasePublicPrice[phaseId]
-        );
-
-        receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({receivedPublicInfo: receivedPublicInfo});
-        expect(receivedPublicInfo.endTime).to.equal(phaseEndTime[phaseId]);
-    })
-
-    it('Can set multi phases', async () => {
-        let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({availableTokenAmount: availableTokenAmount.toString()});
-
-        // Case 1: Set new data for 2 phases
-        console.log(`===========Set multi phases - Case 1=============`);
-        let phaseId = [0, 1];
-        let newIsActive = [true, true];
-        let newPhaseName = ["New phase 1", "New phase 2"];
-        let newStartTime = new Date().getTime() + 20000; // now + 20s
-        let newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        let newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        let newPhaseImmediateReleaseRate = [600, 1600];
-        let newPhaseVestingDuration = [2400000, 2400000]; 
-        let newPhaseVestingUnit = [600000, 600000];
-        let newPhaseIsPublic = [true, true];
-        let newPhasePublicAmount = ["150000000000000000", "550000000000000000"]; // equal balance of Alice
-        let newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-
-        await lpContract.tx.setMultiPhases(
-            phaseId,
-            newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount,
-            newPhasePublicPrice
-        );  
-
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
-        // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
-
-        let receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
-        expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);
-
-        availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({availableTokenAmount: availableTokenAmount.toString()});
-        // Case 2: Set new data but total newPhasePublicAmount is > Alice balance -> Fail
-        console.log(`===========Set multi phases - Case 2=============`);
-        phaseId = [0, 1];
-        newIsActive = [true, true];
-        newPhaseName = ["New phase 1", "New phase 2"];
-        newStartTime = new Date().getTime() + 20000; // now + 20s
-        newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        newPhaseImmediateReleaseRate = [600, 1600];
-        newPhaseVestingDuration = [2400000, 2400000]; 
-        newPhaseVestingUnit = [600000, 600000];
-        newPhaseIsPublic = [true, true];
-        let newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
-        newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-
-        try {
-            await lpContract.tx.setMultiPhases(
-                phaseId,
-                newIsActive,
-                newPhaseName,
-                newPhaseStartTime,
-                newPhaseEndTime,
-                newPhaseImmediateReleaseRate,
-                newPhaseVestingDuration,
-                newPhaseVestingUnit,
-                newPhaseIsPublic,
-                newPhasePublicAmount1,
-                newPhasePublicPrice
-            );    
-        } catch (error) {
-
-        }        
-
-        let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
-        let receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
-        expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
-
-        let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
-        let receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
-        expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
-
-        availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({availableTokenAmount: availableTokenAmount.toString()});
-        // Case 3: Phase 1 set not public Phase 2 inactive total newPhasePublicAmount is > Alice balance -> success
-        console.log(`===========Set multi phases - Case 3=============`);
-        phaseId = [0, 1];
-        newIsActive = [true, false];
-        newPhaseName = ["New phase 1", "New phase 2"];
-        newStartTime = new Date().getTime() + 20000; // now + 20s
-        newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        newPhaseImmediateReleaseRate = [600, 1600];
-        newPhaseVestingDuration = [2400000, 2400000]; 
-        newPhaseVestingUnit = [600000, 600000];
-        newPhaseIsPublic = [false, true];
-        newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
-        newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
-
-        await lpContract.tx.setMultiPhases(
-            phaseId,
-            newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount1,
-            newPhasePublicPrice
-        );  
-
-        receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
-        receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
-        expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
-
-        receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
-        receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
-        expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
-
-        // availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        // console.log({availableTokenAmount: availableTokenAmount.toString()});
-
-        // let tokenBalance = (await tokenQuery.balanceOf(lpContractAddress)).value.ok;
-        // console.log({tokenBalance: tokenBalance.toString()});
-
-        // Case 4: Set back to origin but with new phase start end time
-        console.log(`===========Set multi phases - Case 4=============`);
-        try {
-            newStartTime = new Date().getTime() + 5000; // now + 5000s
-            newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-            newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-
-            await lpContract.tx.setMultiPhases(
-                [0, 1],
-                [true, true],
-                phaseName,
-                newPhaseStartTime,
-                newPhaseEndTime,
-                phaseImmediateReleaseRate,
-                phaseVestingDuration,
-                phaseVestingUnit,
-                phaseIsPublic,
-                phasePublicAmount,
-                phasePublicPrice
-            );    
-        } catch (error) {
-            console.log("error", error);
-        }
-
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
-        // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
-
-        receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
-        expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);         
-    })
-
-    it('Can set vesting duration', async () => {
-        // Wait to the phase 0 starting time       
-        let phaseId = 0;
-
-        let currentTime = new Date().getTime();
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({receivedPublicInfoPhase0StartTime: receivedPublicInfoPhase0.startTime});       
-
-        if (receivedPublicInfoPhase0.startTime > currentTime) { 
-            await delay(receivedPublicInfoPhase0.startTime - currentTime + 2000); // Delay + 2s
-            console.log({delayTime: receivedPublicInfoPhase0.startTime - currentTime + 2000});    
-        }
-
-        // Case 1: Set new vesting duration for phase 0
-        let newPhaseVestingDuration = 1200000;
-        await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
-
-        let receivedVestingDuration = (await lpQuery.getVestingDuration(phaseId)).value.ok;
-        // console.log({receivedVestingDuration: receivedVestingDuration});     
-        expect(receivedVestingDuration).to.equal(newPhaseVestingDuration);
-
-        // Case 2: Set back to origin
-        newPhaseVestingDuration = phaseVestingDuration[phaseId];
-        await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
-
-        receivedVestingDuration = (await lpQuery.getVestingDuration(phaseId)).value.ok;
-        // console.log({receivedVestingDuration: receivedVestingDuration});     
-        expect(receivedVestingDuration).to.equal(newPhaseVestingDuration);
-    })
-
-    it('Can set vesting unit', async () => {
-        let phaseId = 1;
-
-        // Case 1: Set to 0 -> fail
-        let newPhaseVestingUnit = 0;
-
-        try {
-            await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);    
-        } catch (error) {
-
-        }
-
-        let receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
-        // console.log({receivedVestingUnit: receivedVestingUnit});     
-        expect(receivedVestingUnit).to.gt(newPhaseVestingUnit);
-
-        // Case 2: Set to > 0 -> sucess
-        newPhaseVestingUnit = 100000;        
-        await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);
-        receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
-        // console.log({receivedVestingUnit: receivedVestingUnit});     
-        expect(receivedVestingUnit).to.equal(newPhaseVestingUnit);
-
-        // Case 3: Set back to origin
-        newPhaseVestingUnit = phaseVestingUnit[phaseId];
-        await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);       
-        receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
-        // console.log({receivedVestingUnit: receivedVestingUnit});     
-        expect(receivedVestingUnit).to.equal(newPhaseVestingUnit);
-    }) 
-
-    it('Can set transaction rate ', async () => {
-        let currentReceivedTxRate = (await lpQuery.getTxRate()).value.ok;
-
-        // Case 1: Set to new tx rate 
-        let newTxRate = 200; // 2%
-        await lpContract.tx.setTxRate(newTxRate);  
-
-        let receivedTxRate = (await lpQuery.getTxRate()).value.ok;
-        // console.log({receivedVestingUnit: receivedVestingUnit});     
-        expect(receivedTxRate).to.equal(newTxRate);
-
-        // Case 2: Set back to origin
-        newTxRate = currentReceivedTxRate; 
-        await lpContract.tx.setTxRate(newTxRate);  
-
-        receivedTxRate = (await lpQuery.getTxRate()).value.ok;
-        // console.log({receivedVestingUnit: receivedVestingUnit});     
-        expect(receivedTxRate).to.equal(newTxRate);
-    })
-
-    it('Can set start and end time', async () => {
-        let phaseId = 0;
-
-        let currentTime = new Date().getTime();  
-        let currentPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        let currentPublicInfoPhase1 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: currentPublicInfoPhase0.startTime, endTime: currentPublicInfoPhase0.endTime, currentTime: currentTime}); 
-
-        // Case 1: Set new start_time > current start time -> failed
-        let newPhaseStartTime = currentTime + 2000; // Current time + 2s
-        let newPhaseEndTime = currentPublicInfoPhase0.endTime;
-
-        try {
-            await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
-        } catch (error) {
-            // console.log(error);
-        }
-
-        let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-
-        expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);
-
-        // Case 2: Set phase 1 overlap with phase 2 -> failed
-        newPhaseStartTime = currentPublicInfoPhase0.startTime;
-        newPhaseEndTime = currentPublicInfoPhase1.startTime + 2000; // 2s
-
-        try {
-            await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
-        } catch (error) {
-            // console.log(error);
-        }
-
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-
-        expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);         
-
-        // Case 3: Set a new data for phase -> success 
-        newPhaseStartTime = currentPublicInfoPhase0.startTime; //
-        newPhaseEndTime = currentPublicInfoPhase0.endTime + 2000; // +2s
-
-        try {
-            await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
-        } catch (error) {
-            console.log(error);
-        }
-
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-
-        expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
-
-        // Case 4: Set back to origin
-        newPhaseStartTime = currentPublicInfoPhase0.startTime;
-        newPhaseEndTime = currentPublicInfoPhase0.endTime;
-
-        try {
-            await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
-        } catch (error) {
-            console.log(error);
-        }
-
-        receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
-
-        expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
-        expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
-    })
-
-    it('Can set active', async () => {
-        // Case 1: Set phase 1 inactive
-        let phaseId = 0;
-        let newIsActive = false;
-
-        let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
-        let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
-        let currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
-
-        let currentPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
-        let currentPublicSaleTotalAmount0 = Number(new BN(currentPublicSaleTotalAmountHex0.substring(2), 16));
-
-        console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
-
-        let currentPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
-        console.log({currentPublicInfoPhase1StartTime: currentPublicInfoPhase1.startTime, currentPublicInfoPhase1EndTime: currentPublicInfoPhase1.endTime}); 
-
-        await lpContract.tx.setIsActive(phaseId, newIsActive);
-
-        let receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
-        let receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
-        let receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
-
-        console.log({receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
-
-        // expect(receivedProjectStartTime).to.equal(currentPublicInfoPhase1.startTime);
-        // expect(receivedProjectEndTime).to.equal(currentPublicInfoPhase1.endTime);
-        // expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
-    })
+    // it('Can set public', async () => {
+    //     // Case 1: Phase is set not active, cannot set public -> still the same: public is true 
+    //     console.log(`===========Set public - Case 1=============`);
+    //     let phaseId = 0;
+    //     let isActive = false;        
+    //     await lpContract.tx.setIsActive(phaseId, isActive);
+
+    //     let receivedIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+    //     // console.log({receivedIsActive: receivedIsActive});
+
+    //     let isPublic = false;  
+    //     try {
+    //         await lpContract.tx.setIsPublic(phaseId, isPublic);    
+    //     } catch (error) {
+
+    //     }
+
+    //     let receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+    //     // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
+    //     expect(receivedPublicSaleInfo.isPublic).to.equal(true);
+
+    //     // Case 2: Phase is set active, can set public to false
+    //     console.log(`===========Set public - Case 2=============`);   
+    //     isActive = true;        
+    //     await lpContract.tx.setIsActive(phaseId, isActive);
+
+    //     receivedIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+    //     // console.log({receivedIsActive: receivedIsActive});
+
+    //     isPublic = false;  
+    //     await lpContract.tx.setIsPublic(phaseId, isPublic);    
+
+    //     receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+    //     // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
+    //     expect(receivedPublicSaleInfo.isPublic).to.equal(false);
+
+    //     // Case 3: Phase is active, set back public to original (true)
+    //     console.log(`===========Set public - Case 3=============`);
+    //     isPublic = true;  
+    //     await lpContract.tx.setIsPublic(phaseId, isPublic);    
+
+    //     receivedPublicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+    //     // console.log({receivedPublicSaleInfo: receivedPublicSaleInfo});
+    //     expect(receivedPublicSaleInfo.isPublic).to.equal(true);
+    // })
+
+    // it('Can set phase', async () => {
+    //     // Case 1: Set phase 0 to new phase data
+    //     console.log(`===========Set phase - Case 1=============`);
+    //     let phaseId = 0;
+    //     let newIsActive = true;
+    //     let newPhaseName = "New phase 1";
+    //     let newStartTime = new Date().getTime() + 20000; // now + 20s
+    //     let newPhaseStartTime = newStartTime; 
+    //     let newPhaseEndTime = newStartTime + 3 * 86400000;
+    //     let newPhaseImmediateReleaseRate = 600;
+    //     let newPhaseVestingDuration = 2400000; 
+    //     let newPhaseVestingUnit = 600000;
+    //     let newPhaseIsPublic = false;
+    //     let newPhasePublicAmount = "200000000000000000"; // 200k - avail amount = 100k = public amount increasement from 100k to 200k
+    //     let newPhasePublicPrice = "500000000000"; // 0.5 - 1A
+
+    //     await lpContract.tx.setPhase(
+    //         phaseId,
+    //         newIsActive,
+    //         newPhaseName,
+    //         newPhaseStartTime,
+    //         newPhaseEndTime,
+    //         newPhaseImmediateReleaseRate,
+    //         newPhaseVestingDuration,
+    //         newPhaseVestingUnit,
+    //         newPhaseIsPublic,
+    //         newPhasePublicAmount,
+    //         newPhasePublicPrice
+    //     );  
+
+    //     let receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     // console.log({receivedPublicInfo: receivedPublicInfo});
+    //     expect(receivedPublicInfo.isActive).to.equal(true);
+
+    //     // Case 2: Set back to origin
+    //     console.log(`===========Set phase - Case 2=============`);
+    //     await lpContract.tx.setPhase(
+    //         phaseId,
+    //         newIsActive,
+    //         phaseName[phaseId],
+    //         phaseStartTime[phaseId],
+    //         phaseEndTime[phaseId],
+    //         phaseImmediateReleaseRate[phaseId],
+    //         phaseVestingDuration[phaseId],
+    //         phaseVestingUnit[phaseId],
+    //         phaseIsPublic[phaseId],
+    //         phasePublicAmount[phaseId],
+    //         phasePublicPrice[phaseId]
+    //     );
+
+    //     receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     // console.log({receivedPublicInfo: receivedPublicInfo});
+    //     expect(receivedPublicInfo.endTime).to.equal(phaseEndTime[phaseId]);
+    // })
+
+    // it('Can set multi phases', async () => {
+    //     let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+    //     console.log({availableTokenAmount: availableTokenAmount.toString()});
+
+    //     // Case 1: Set new data for 2 phases
+    //     console.log(`===========Set multi phases - Case 1=============`);
+    //     let phaseId = [0, 1];
+    //     let newIsActive = [true, true];
+    //     let newPhaseName = ["New phase 1", "New phase 2"];
+    //     let newStartTime = new Date().getTime() + 20000; // now + 20s
+    //     let newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
+    //     let newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
+    //     let newPhaseImmediateReleaseRate = [600, 1600];
+    //     let newPhaseVestingDuration = [2400000, 2400000]; 
+    //     let newPhaseVestingUnit = [600000, 600000];
+    //     let newPhaseIsPublic = [true, true];
+    //     let newPhasePublicAmount = ["150000000000000000", "550000000000000000"]; // equal balance of Alice
+    //     let newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+
+    //     await lpContract.tx.setMultiPhases(
+    //         phaseId,
+    //         newIsActive,
+    //         newPhaseName,
+    //         newPhaseStartTime,
+    //         newPhaseEndTime,
+    //         newPhaseImmediateReleaseRate,
+    //         newPhaseVestingDuration,
+    //         newPhaseVestingUnit,
+    //         newPhaseIsPublic,
+    //         newPhasePublicAmount,
+    //         newPhasePublicPrice
+    //     );  
+
+    //     let receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
+    //     // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
+
+    //     let receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
+    //     // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
+    //     expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);
+
+    //     availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+    //     console.log({availableTokenAmount: availableTokenAmount.toString()});
+    //     // Case 2: Set new data but total newPhasePublicAmount is > Alice balance -> Fail
+    //     console.log(`===========Set multi phases - Case 2=============`);
+    //     phaseId = [0, 1];
+    //     newIsActive = [true, true];
+    //     newPhaseName = ["New phase 1", "New phase 2"];
+    //     newStartTime = new Date().getTime() + 20000; // now + 20s
+    //     newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
+    //     newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
+    //     newPhaseImmediateReleaseRate = [600, 1600];
+    //     newPhaseVestingDuration = [2400000, 2400000]; 
+    //     newPhaseVestingUnit = [600000, 600000];
+    //     newPhaseIsPublic = [true, true];
+    //     let newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
+    //     newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+
+    //     try {
+    //         await lpContract.tx.setMultiPhases(
+    //             phaseId,
+    //             newIsActive,
+    //             newPhaseName,
+    //             newPhaseStartTime,
+    //             newPhaseEndTime,
+    //             newPhaseImmediateReleaseRate,
+    //             newPhaseVestingDuration,
+    //             newPhaseVestingUnit,
+    //             newPhaseIsPublic,
+    //             newPhasePublicAmount1,
+    //             newPhasePublicPrice
+    //         );    
+    //     } catch (error) {
+
+    //     }        
+
+    //     let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
+    //     let receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
+    //     // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
+    //     expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
+
+    //     let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
+    //     let receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
+    //     // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
+    //     expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
+
+    //     availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+    //     console.log({availableTokenAmount: availableTokenAmount.toString()});
+    //     // Case 3: Phase 1 set not public Phase 2 inactive total newPhasePublicAmount is > Alice balance -> success
+    //     console.log(`===========Set multi phases - Case 3=============`);
+    //     phaseId = [0, 1];
+    //     newIsActive = [true, false];
+    //     newPhaseName = ["New phase 1", "New phase 2"];
+    //     newStartTime = new Date().getTime() + 20000; // now + 20s
+    //     newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
+    //     newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
+    //     newPhaseImmediateReleaseRate = [600, 1600];
+    //     newPhaseVestingDuration = [2400000, 2400000]; 
+    //     newPhaseVestingUnit = [600000, 600000];
+    //     newPhaseIsPublic = [false, true];
+    //     newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
+    //     newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+
+    //     await lpContract.tx.setMultiPhases(
+    //         phaseId,
+    //         newIsActive,
+    //         newPhaseName,
+    //         newPhaseStartTime,
+    //         newPhaseEndTime,
+    //         newPhaseImmediateReleaseRate,
+    //         newPhaseVestingDuration,
+    //         newPhaseVestingUnit,
+    //         newPhaseIsPublic,
+    //         newPhasePublicAmount1,
+    //         newPhasePublicPrice
+    //     );  
+
+    //     receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
+    //     receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
+    //     // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
+    //     expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
+
+    //     receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
+    //     receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
+    //     // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
+    //     expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
+
+    //     // availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+    //     // console.log({availableTokenAmount: availableTokenAmount.toString()});
+
+    //     // let tokenBalance = (await tokenQuery.balanceOf(lpContractAddress)).value.ok;
+    //     // console.log({tokenBalance: tokenBalance.toString()});
+
+    //     // Case 4: Set back to origin but with new phase start end time
+    //     console.log(`===========Set multi phases - Case 4=============`);
+    //     try {
+    //         newStartTime = new Date().getTime() + 5000; // now + 5000s
+    //         newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
+    //         newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
+
+    //         await lpContract.tx.setMultiPhases(
+    //             [0, 1],
+    //             [true, true],
+    //             phaseName,
+    //             newPhaseStartTime,
+    //             newPhaseEndTime,
+    //             phaseImmediateReleaseRate,
+    //             phaseVestingDuration,
+    //             phaseVestingUnit,
+    //             phaseIsPublic,
+    //             phasePublicAmount,
+    //             phasePublicPrice
+    //         );    
+    //     } catch (error) {
+    //         console.log("error", error);
+    //     }
+
+    //     receivedPublicInfoPhase0 = (await lpQuery.getPhase(0)).value.ok;
+    //     // console.log({receivedPublicInfoPhase0: receivedPublicInfoPhase0});
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime[0]);
+
+    //     receivedPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
+    //     // console.log({receivedPublicInfoPhase1: receivedPublicInfoPhase1});
+    //     expect(receivedPublicInfoPhase1.endTime).to.equal(newPhaseEndTime[1]);         
+    // })
+
+    // it('Can set vesting duration', async () => {
+    //     // Wait to the phase 0 starting time       
+    //     let phaseId = 0;
+
+    //     let currentTime = new Date().getTime();
+    //     let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     // console.log({receivedPublicInfoPhase0StartTime: receivedPublicInfoPhase0.startTime});       
+
+    //     if (receivedPublicInfoPhase0.startTime > currentTime) { 
+    //         await delay(receivedPublicInfoPhase0.startTime - currentTime + 2000); // Delay + 2s
+    //         console.log({delayTime: receivedPublicInfoPhase0.startTime - currentTime + 2000});    
+    //     }
+
+    //     // Case 1: Set new vesting duration for phase 0
+    //     let newPhaseVestingDuration = 1200000;
+    //     await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
+
+    //     let receivedVestingDuration = (await lpQuery.getVestingDuration(phaseId)).value.ok;
+    //     // console.log({receivedVestingDuration: receivedVestingDuration});     
+    //     expect(receivedVestingDuration).to.equal(newPhaseVestingDuration);
+
+    //     // Case 2: Set back to origin
+    //     newPhaseVestingDuration = phaseVestingDuration[phaseId];
+    //     await lpContract.tx.setVestingDuration(phaseId, newPhaseVestingDuration);
+
+    //     receivedVestingDuration = (await lpQuery.getVestingDuration(phaseId)).value.ok;
+    //     // console.log({receivedVestingDuration: receivedVestingDuration});     
+    //     expect(receivedVestingDuration).to.equal(newPhaseVestingDuration);
+    // })
+
+    // it('Can set vesting unit', async () => {
+    //     let phaseId = 1;
+
+    //     // Case 1: Set to 0 -> fail
+    //     let newPhaseVestingUnit = 0;
+
+    //     try {
+    //         await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);    
+    //     } catch (error) {
+
+    //     }
+
+    //     let receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
+    //     // console.log({receivedVestingUnit: receivedVestingUnit});     
+    //     expect(receivedVestingUnit).to.gt(newPhaseVestingUnit);
+
+    //     // Case 2: Set to > 0 -> sucess
+    //     newPhaseVestingUnit = 100000;        
+    //     await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);
+    //     receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
+    //     // console.log({receivedVestingUnit: receivedVestingUnit});     
+    //     expect(receivedVestingUnit).to.equal(newPhaseVestingUnit);
+
+    //     // Case 3: Set back to origin
+    //     newPhaseVestingUnit = phaseVestingUnit[phaseId];
+    //     await lpContract.tx.setVestingUnit(phaseId, newPhaseVestingUnit);       
+    //     receivedVestingUnit = (await lpQuery.getVestingUnit(phaseId)).value.ok;
+    //     // console.log({receivedVestingUnit: receivedVestingUnit});     
+    //     expect(receivedVestingUnit).to.equal(newPhaseVestingUnit);
+    // }) 
+
+    // it('Can set transaction rate ', async () => {
+    //     let currentReceivedTxRate = (await lpQuery.getTxRate()).value.ok;
+
+    //     // Case 1: Set to new tx rate 
+    //     let newTxRate = 200; // 2%
+    //     await lpContract.tx.setTxRate(newTxRate);  
+
+    //     let receivedTxRate = (await lpQuery.getTxRate()).value.ok;
+    //     // console.log({receivedVestingUnit: receivedVestingUnit});     
+    //     expect(receivedTxRate).to.equal(newTxRate);
+
+    //     // Case 2: Set back to origin
+    //     newTxRate = currentReceivedTxRate; 
+    //     await lpContract.tx.setTxRate(newTxRate);  
+
+    //     receivedTxRate = (await lpQuery.getTxRate()).value.ok;
+    //     // console.log({receivedVestingUnit: receivedVestingUnit});     
+    //     expect(receivedTxRate).to.equal(newTxRate);
+    // })
+
+    // it('Can set start and end time', async () => {
+    //     let phaseId = 0;
+
+    //     let currentTime = new Date().getTime();  
+    //     let currentPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     let currentPublicInfoPhase1 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     console.log({startTime: currentPublicInfoPhase0.startTime, endTime: currentPublicInfoPhase0.endTime, currentTime: currentTime}); 
+
+    //     // Case 1: Set new start_time > current start time -> failed
+    //     let newPhaseStartTime = currentTime + 2000; // Current time + 2s
+    //     let newPhaseEndTime = currentPublicInfoPhase0.endTime;
+
+    //     try {
+    //         await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
+    //     } catch (error) {
+    //         // console.log(error);
+    //     }
+
+    //     let receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+
+    //     expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);
+
+    //     // Case 2: Set phase 1 overlap with phase 2 -> failed
+    //     newPhaseStartTime = currentPublicInfoPhase0.startTime;
+    //     newPhaseEndTime = currentPublicInfoPhase1.startTime + 2000; // 2s
+
+    //     try {
+    //         await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
+    //     } catch (error) {
+    //         // console.log(error);
+    //     }
+
+    //     receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     // console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+
+    //     expect(receivedPublicInfoPhase0.startTime).to.equal(currentPublicInfoPhase0.startTime);       
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(currentPublicInfoPhase0.endTime);         
+
+    //     // Case 3: Set a new data for phase -> success 
+    //     newPhaseStartTime = currentPublicInfoPhase0.startTime; //
+    //     newPhaseEndTime = currentPublicInfoPhase0.endTime + 2000; // +2s
+
+    //     try {
+    //         await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+
+    //     receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+
+    //     expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
+
+    //     // Case 4: Set back to origin
+    //     newPhaseStartTime = currentPublicInfoPhase0.startTime;
+    //     newPhaseEndTime = currentPublicInfoPhase0.endTime;
+
+    //     try {
+    //         await lpContract.tx.setStartAndEndTime(phaseId, newPhaseStartTime, newPhaseEndTime);    
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+
+    //     receivedPublicInfoPhase0 = (await lpQuery.getPhase(phaseId)).value.ok;
+    //     console.log({startTime: receivedPublicInfoPhase0.startTime, endTime: receivedPublicInfoPhase0.endTime}); 
+
+    //     expect(receivedPublicInfoPhase0.startTime).to.equal(newPhaseStartTime);       
+    //     expect(receivedPublicInfoPhase0.endTime).to.equal(newPhaseEndTime);
+    // })
+
+    // it('Can set active', async () => {
+    //     // Case 1: Set phase 1 inactive
+    //     let phaseId = 0;
+    //     let newIsActive = false;
+
+    //     let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+    //     let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+    //     let currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
+
+    //     let currentPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
+    //     let currentPublicSaleTotalAmount0 = Number(new BN(currentPublicSaleTotalAmountHex0.substring(2), 16));
+
+    //     console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
+
+    //     let currentPublicInfoPhase1 = (await lpQuery.getPhase(1)).value.ok;
+    //     console.log({currentPublicInfoPhase1StartTime: currentPublicInfoPhase1.startTime, currentPublicInfoPhase1EndTime: currentPublicInfoPhase1.endTime}); 
+
+    //     await lpContract.tx.setIsActive(phaseId, newIsActive);
+
+    //     let receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+    //     let receivedProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+    //     let receivedAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok); 
+
+    //     console.log({receivedProjectStartTime: receivedProjectStartTime, receivedProjectEndTime: receivedProjectEndTime, receivedAvailableTokenAmount: receivedAvailableTokenAmount}); 
+
+    //     // expect(receivedProjectStartTime).to.equal(currentPublicInfoPhase1.startTime);
+    //     // expect(receivedProjectEndTime).to.equal(currentPublicInfoPhase1.endTime);
+    //     // expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
+    // })
 
     it('can add multi whitelists', async () => {
         let phaseId = 0;
         let accounts = [signers.address, bob.address]; // 2 account
         let whitelistAmounts = ['10000000000000', '20000000000000']; // 10 20
         let whitelistPrices = ['1000000000000', '2000000000000'];  // 1 2
+
+        // check phase isActive
+        let phaseIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+        if (!phaseIsActive) {
+            await lpContract.tx.setIsActive(phaseId, true);
+        }
 
         await lpTx.addMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
 
@@ -857,9 +863,14 @@ describe('Launchpad contract test', () => {
 
     it('Can public purchase', async () => {
         // startTime < currentTime < endTime
-        let currentTime = new Date();
-        currentTime.setMilliseconds(86400000); // now + 1 day
         let phaseId = 0;
+        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        let startTime = (await lpQuery.getStartTime(phaseId)).value.ok;
+        const blockHash = await api.rpc.chain.getBlockHash();
+        const blockHashHex = blockHash.toHex();
+        const blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        console.log('Start time:', startTime, 'Current timestamp:', Number(blockTimestamp), 'End Time:', endTime);
+
         let amount;
         let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
         let decimal = 12;
@@ -871,11 +882,12 @@ describe('Launchpad contract test', () => {
         let publicSaleTotalPurchasedAmountBefor = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
 
         console.log('===============================public Sale Total Befor=================================');
-        console.log('publicSaleTotalClaimedAmount', publicSaleTotalClaimedAmountBefor);
-        console.log('publicSaleTotalPurchasedAmount', publicSaleTotalPurchasedAmountBefor);
+        console.log('publicSaleTotalClaimedAmount:', publicSaleTotalClaimedAmountBefor);
+        console.log('publicSaleTotalPurchasedAmount:', publicSaleTotalPurchasedAmountBefor);
 
         // case 1: amount + totalPurchasedAmount < totalAmount && value < price => fail
         amount = 2000000000000 + totalPurchasedAmount // 2A
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -890,7 +902,8 @@ describe('Launchpad contract test', () => {
         expect(publicSaleTotalClaimedAmountBefor).to.equal(publicSaleTotalClaimedAmountAfter);
 
         // case 2: amount + totalPurchasedAmount  > totalAmount && value < price => fail
-        amount = totalAmount + totalPurchasedAmount + 1
+        amount = totalAmount + totalPurchasedAmount + 1;
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(false);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000 // + 0.5A
 
@@ -907,6 +920,7 @@ describe('Launchpad contract test', () => {
 
         // case 3: amount + totalPurchasedAmount < totalAmount && value < price => success
         amount = 2000000000000 + totalPurchasedAmount // 2A
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000 // + 0.5A
 
@@ -915,17 +929,24 @@ describe('Launchpad contract test', () => {
         publicSaleTotalClaimedAmountAfter = (await lpQuery.getPublicSaleTotalClaimedAmount(phaseId)).value.ok;
         publicSaleTotalPurchasedAmountAfter = (await lpQuery.getPublicSaleTotalPurchasedAmount(phaseId)).value.ok;
         console.log('===============================public Sale Total After=================================');
-        console.log('publicSaleTotalClaimedAmount', publicSaleTotalClaimedAmountAfter);
-        console.log('publicSaleTotalPurchasedAmount', publicSaleTotalPurchasedAmountAfter);
+        console.log('publicSaleTotalClaimedAmount:', publicSaleTotalClaimedAmountAfter);
+        console.log('publicSaleTotalPurchasedAmount:', publicSaleTotalPurchasedAmountAfter);
     })
 
     it('Can whitelist purchase', async () => {
         // startTime < currentTime < endTime
-        let currentTime = new Date();
-        currentTime.setMilliseconds(86400000); // now + 1 day
         let phaseId = 0;
+        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        let startTime = (await lpQuery.getStartTime(phaseId)).value.ok;
+        // let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
+        // const now = await api.query.timestamp.now();
+        const blockHash = await api.rpc.chain.getBlockHash();
+        const blockHashHex = blockHash.toHex();
+        const blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        console.log('Start time:', startTime, 'Current timestamp:', Number(blockTimestamp), 'End Time:', endTime);
+
         let amount;
-        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok;
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
         let decimal = 12;
         let price;
         let value;
@@ -934,12 +955,13 @@ describe('Launchpad contract test', () => {
         let whitelistSaleTotalAmountBefor = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
         let whitelistSaleTotalClaimedAmountBefor = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
 
-        console.log('===============================public Sale Total Befor=================================');
-        console.log('whitelistSaleTotalAmount', whitelistSaleTotalAmountBefor);
-        console.log('whitelistSaleTotalClaimedAmount', whitelistSaleTotalClaimedAmountBefor);
+        console.log('===============================whitelist Sale Total Befor=================================');
+        console.log('whitelistSaleTotalAmount:', whitelistSaleTotalAmountBefor);
+        console.log('whitelistSaleTotalClaimedAmount:', whitelistSaleTotalClaimedAmountBefor);
 
         // case 1: amount + purchasedAmount < Amount && value < price => fail
-        amount = 2000000000000 + purchasedAmount
+        amount = 2000000000000 + purchasedAmount;
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -956,6 +978,7 @@ describe('Launchpad contract test', () => {
 
         // case 2: amount + purchasedAmount > Amount && value > price => fail
         amount = 2000000000000 + purchasedAmount + Amount;
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(false);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000; // + 0.5A
 
@@ -971,7 +994,8 @@ describe('Launchpad contract test', () => {
         expect(whitelistSaleTotalClaimedAmountBefor).to.equal(whitelistSaleTotalClaimedAmountAfter);
 
         // case 3:  amount + purchasedAmount < Amount && value > price => success
-        amount = 2000000000000 + purchasedAmount 
+        amount = 2000000000000 + purchasedAmount;
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000 // + 0.5A
 
@@ -979,18 +1003,23 @@ describe('Launchpad contract test', () => {
 
         whitelistSaleTotalAmountAfter = (await lpQuery.getWhitelistSaleTotalAmount(phaseId)).value.ok;
         whitelistSaleTotalClaimedAmountAfter = (await lpQuery.getWhitelistSaleTotalClaimedAmount(phaseId)).value.ok;
-        console.log('===============================public Sale Total After=================================');
-        console.log('whitelistSaleTotalAmount', whitelistSaleTotalAmountAfter);
-        console.log('whitelistSaleTotalClaimedAmount', whitelistSaleTotalClaimedAmountAfter);
+        console.log('===============================whitelist Sale Total After=================================');
+        console.log('whitelistSaleTotalAmount:', whitelistSaleTotalAmountAfter);
+        console.log('whitelistSaleTotalClaimedAmount:', whitelistSaleTotalClaimedAmountAfter);
     })
 
     it('Can public claim', async () => {
         // endTime < currentTime
         let phaseId = 0;
-        let currentTime = new Date();
-        currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        let startTime = (await lpQuery.getStartTime(phaseId)).value.ok;
+        const blockHash = await api.rpc.chain.getBlockHash();
+        const blockHashHex = blockHash.toHex();
+        const blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        // const now = await api.query.timestamp.now();
+        console.log('Start time:', startTime, 'Current timestamp:', Number(blockTimestamp), 'End Time:', endTime);
 
-        await lpTx.publicClaim(phaseId);
+        // await lpContract.withSigner(defaultSigner).tx.publicClaim(phaseId);
 
     })
 
@@ -998,37 +1027,37 @@ describe('Launchpad contract test', () => {
         // endTime < currentTime
         let phaseId = 0;
         let currentTime = new Date();
-        currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+        currentTime.setMilliseconds(86400000 * 7); // now + 7 day
 
-        await lpContract.withSigner(bob).tx.publicClaim(phaseId);
+        await lpContract.withSigner(bob).tx.whitelistClaim(phaseId);
     })
 
-    // it('Can burn unsold tokens', async () => {
-    //     // endTime < currentTime
-    //     let currentTime = new Date();
-    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+    it('Can burn unsold tokens', async () => {
+        // endTime < currentTime
+        let currentTime = new Date();
+        currentTime.setMilliseconds(86400000 * 7); // now + 7 day
 
-    //     await lpTx.burnUnsoldTokens();
-    // })
+        await lpTx.burnUnsoldTokens();
+    })
 
-    // it('Can withdraw unsold tokens', async () => {
-    //     // endTime < currentTime
-    //     let currentTime = new Date();
-    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
+    it('Can withdraw unsold tokens', async () => {
+        // endTime < currentTime
+        let phaseId = 0;
+        let currentTime = new Date();
+        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
+        currentTime.setMilliseconds(86400000 * 7); // now + 7 day
+        let receiver = bob.address;
+        await lpTx.withdrawUnsoldTokens(receiver);
+    })
 
-    //     let receiver;
-    //     await lpTx.withdraw(receiver);
-    // })
 
-    // it('Can withdraw', async () => {\
-    //     // endTime < currentTime
-    //     let currentTime = new Date();
-    //     currentTime.setMilliseconds(86400000 * 6); // now + 6 day
-    //     let receiver;
-    //     let value;
+    it('Can withdraw', async () => {
+        let receiver = bob.address;
+        let value = new BN(1);
 
-    //     await lpTx.withdraw(receiver, value);
-    // })
+        await lpTx.withdraw(value, receiver);
+    })
 
     after(async () => {
     });
