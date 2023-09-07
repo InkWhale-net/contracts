@@ -967,6 +967,28 @@ describe('Launchpad contract test', () => {
         expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedPublicSaleTotalAmount1);
     })
 
+    it('Can set public sale price', async () => {
+        // Case 1: Set to new price for phase 1
+        let phaseId = 0;
+        let newPhasePublicPrice = "600000000000";
+
+        await lpContract.tx.setPublicSalePrice(phaseId, newPhasePublicPrice);
+        
+        let receivedPublicSalePrice = (await lpQuery.getPublicSalePrice()).value.ok;
+        console.log({receivedPublicSalePrice: receivedPublicSalePrice.toString()});
+        expect(receivedPublicSalePrice.toString()).to.equal(newPhasePublicPrice);
+                
+        // Case 2: Set to origin for phase 1
+        phaseId = 0;
+        newPhasePublicPrice = phasePublicPrice[phaseId];
+
+        await lpContract.tx.setPublicSalePrice(phaseId, newPhasePublicPrice);
+        
+        receivedPublicSalePrice = (await lpQuery.getPublicSalePrice()).value.ok;
+        console.log({receivedPublicSalePrice: receivedPublicSalePrice.toString()});
+        expect(receivedPublicSalePrice.toString()).to.equal(newPhasePublicPrice);
+    })
+
     after(async () => {
     });
 })
