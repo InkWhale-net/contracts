@@ -188,7 +188,8 @@ describe('Launchpad contract test', () => {
         console.log(`===========Step B4=============`);
         projectInfoUri = "Launchpad test"; // 1000 token AAA
         phaseName = ["Phase 1", "Phase 2"];
-        startTime = new Date().getTime() + 20000; // now + 20s
+        startTime = new Date().getTime() + 60000; // now + 20s
+        // startTime = new Date().getTime() + 20000; // now + 20s
         phaseStartTime = [startTime, startTime + 4 * 86400000]; // 86400000 ~ 1 day
         phaseEndTime = [startTime + 3 * 86400000, startTime + 5 * 86400000];
         phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
@@ -218,7 +219,7 @@ describe('Launchpad contract test', () => {
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(1);
         lpContractAddress = (await lpgQuery.getLaunchpadById(1)).value.ok;
-        // console.log({lpContractAddress: lpContractAddress});
+        console.log({lpContractAddress: lpContractAddress});
 
         // Step B6: Get contract and active launchpad
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
@@ -340,6 +341,7 @@ describe('Launchpad contract test', () => {
         // Case 2: set publicAmount "200000000000000000" -> success increasement = avail amount
         console.log(`===========Change public total amount - Case 2=============`);
         publicAmount = "200000000000000000";
+
         await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);
 
         let receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
@@ -1226,9 +1228,9 @@ describe('Launchpad contract test', () => {
         let startTime = (await lpQuery.getStartTime(phaseId)).value.ok;
         let currentTime = new Date().getTime();
         if (currentTime < startTime) {
-            let deyTime = startTime - currentTime + 10000; // delay + 10s
-            console.log('Await', deyTime, 'to get to the start time ...')
-            await delay(deyTime); // delay + 2s;
+            let delayTime = startTime - currentTime + 10000; // delay + 10s
+            console.log('Await', delayTime, 'to get to the start time ...')
+            await delay(delayTime); // delay + 2s;
         }
         const blockHash = await api.rpc.chain.getBlockHash();
         const blockHashHex = blockHash.toHex();
@@ -1311,7 +1313,7 @@ describe('Launchpad contract test', () => {
         if (currentTime < endTime) {
             // curentTime > endVestingTime
             let delayTime = phaseInfo.endVestingTime - currentTime + 10000;
-            console.log('Await', delayTime, 'to get to the end vesting time ...');
+            console.log('Await', delayTime, 'to get to the end time ...');
             await delay(delayTime); // delay + 10s;
         }
         const blockHash = await api.rpc.chain.getBlockHash();
