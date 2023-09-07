@@ -194,7 +194,7 @@ describe('Launchpad contract test', () => {
         phaseStartTime = [startTime, startTime + 4 * 86400000]; // 86400000 ~ 1 day
         phaseEndTime = [startTime + 3 * 86400000, startTime + 5 * 86400000];
         phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
-        phaseVestingDuration = [1800000, 1800000];
+        phaseVestingDuration = [1800000, 1800000]; 
         phaseVestingUnit = [300000, 300000];
         phaseIsPublic = [true, true];
         phasePublicAmount = ["100000000000000000", "500000000000000000"]; // 100k - 500k
@@ -220,7 +220,7 @@ describe('Launchpad contract test', () => {
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(1);
         lpContractAddress = (await lpgQuery.getLaunchpadById(1)).value.ok;
-        // console.log({lpContractAddress: lpContractAddress});
+        console.log({ lpContractAddress: lpContractAddress });
 
         // Step B6: Get contract and active launchpad
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
@@ -850,8 +850,8 @@ describe('Launchpad contract test', () => {
     })
 
     it('can add multi whitelists', async () => {
-        let phaseId = 0;
-        let accounts = [signers.address, bob.address]; // 2 account
+        let phaseId = 1;
+        let accounts = [alice.address, bob.address]; // 2 account
         let whitelistAmounts = ['10000000000000', '20000000000000']; // 10 20
         let whitelistPrices = ['1000000000000', '2000000000000'];  // 1 2
 
@@ -868,7 +868,7 @@ describe('Launchpad contract test', () => {
         expect(whitelistAccountCount).to.equal(accounts.length);
 
         // Check whitelist info
-        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // signer
         expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
@@ -879,15 +879,15 @@ describe('Launchpad contract test', () => {
     it('can update multi whitelists', async () => {
         // case 1:  whitelistAmount < availableTokenAmount
         let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        let phaseId = 0;
-        let accounts = [signers.address, bob.address]; // 2 account
+        let phaseId = 1;
+        let accounts = [alice.address, bob.address]; // 2 account
         let whitelistAmounts = ['20000000000000', '30000000000000']; // 20 30
         let whitelistPrices = ['2000000000000', '3000000000000'];  // 2 3
 
         await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
 
         // Check whitelist info
-        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // signer
         expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
@@ -903,7 +903,7 @@ describe('Launchpad contract test', () => {
 
         }
 
-        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, signers.address)).value.ok; // signer
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // signer
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
@@ -983,9 +983,25 @@ describe('Launchpad contract test', () => {
         console.log('publicSaleTotalPurchasedAmount:', publicSaleTotalPurchasedAmountAfter);
     })
 
+    it('Can public claim', async () => {
+        // endTime < currentTime
+        let phaseId = 0;
+        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        const blockHash = await api.rpc.chain.getBlockHash();
+        const blockHashHex = blockHash.toHex();
+        let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        if (blockTimestamp < endTime)
+            await delay(endTime - blockTimestamp + 2000); // delay + 2s;
+        blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', endTime);
+
+        await lpQuery.publicClaim(phaseId);
+    })
+
     it('Can whitelist purchase', async () => {
         // startTime < currentTime < endTime
-        let phaseId = 0;
+        let phaseId = 1;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
         let startTime = (await lpQuery.getStartTime(phaseId)).value.ok;
         // let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
@@ -1058,41 +1074,23 @@ describe('Launchpad contract test', () => {
         console.log('===============================whitelist Sale Total After=================================');
         console.log('whitelistSaleTotalAmount:', whitelistSaleTotalAmountAfter);
         console.log('whitelistSaleTotalClaimedAmount:', whitelistSaleTotalClaimedAmountAfter);
-    })
 
-    it('Can public claim', async () => {
-        // endTime < currentTime
-
-        let phaseId = 0;
-        let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
-        const blockHash = await api.rpc.chain.getBlockHash();
-        const blockHashHex = blockHash.toHex();
-        let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
-        if (blockTimestamp < endTime)
-            await delay(endTime - blockTimestamp + 2000); // delay + 2s;
-        blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
-        endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
-        console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', endTime);
-
-        await lpQuery.publicClaim(phaseId);
-
-        // let publicBuyer = (await lpQuery.getPublicBuyer(phaseId, defaultSigner.address)).value.ok
-        // console.log(publicBuyer);
     })
 
     it('Can whitelist claim', async () => {
         // endTime < currentTime
-        let phaseId = 0;
+        let phaseId = 1;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+        let currentTime = new Date().getTime();
+        if (currentTime < endTime) {
+            await delay((endTime - currentTime) + 10000); // delay + 10s;
+        }
         const blockHash = await api.rpc.chain.getBlockHash();
         const blockHashHex = blockHash.toHex();
         let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
-        if (blockTimestamp < endTime)
-            await delay(endTime - blockTimestamp + 2000); // delay + 2s;
-        blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
         console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', endTime);
 
-        await lpContract.withSigner(alice).tx.whitelistClaim(phaseId);
+        await lpContract.withSigner(bob).tx.whitelistClaim(phaseId);
     })
 
     // it('Can burn unsold tokens', async () => {
@@ -1110,10 +1108,14 @@ describe('Launchpad contract test', () => {
     //     console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', projectEndTime);
 
     //     await lpTx.burnUnsoldTokens();
+
+    //     let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+    //     expect(publicSaleInfo.isBurned).equal(true);
     // })
 
     it('Can withdraw unsold tokens', async () => {
         // endTime < currentTime
+        let phaseId = 0;
         let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
         const blockHash = await api.rpc.chain.getBlockHash();
         const blockHashHex = blockHash.toHex();
@@ -1128,6 +1130,9 @@ describe('Launchpad contract test', () => {
 
         let receiver = defaultSigner.address;
         await lpTx.withdrawUnsoldTokens(receiver);
+
+        let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+        expect(publicSaleInfo.isWithdrawn).equal(true);
     })
 
     it('Can withdraw', async () => {
