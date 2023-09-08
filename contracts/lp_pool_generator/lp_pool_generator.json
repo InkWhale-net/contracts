@@ -1,10 +1,10 @@
 {
   "source": {
-    "hash": "0x4673365721c3ca4a74223388e64a656015c3d828fc5f7eabf31c41ef0b91cde3",
+    "hash": "0x9d41c579c303026153cd3d3cefd12ceebe4ca8fb00c26157afef3b3d2774506a",
     "language": "ink! 4.2.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Debug",
+      "build_mode": "Release",
       "cargo_contract_version": "2.2.1",
       "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
@@ -270,7 +270,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "GenericPoolGeneratorTrait::get_unstake_fee",
+        "label": "GenericPoolGeneratorTrait::get_inw_contract",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -280,13 +280,13 @@
           ],
           "type": 17
         },
-        "selector": "0xa4395f88"
+        "selector": "0xd6b47e7a"
       },
       {
         "args": [],
         "default": false,
         "docs": [],
-        "label": "GenericPoolGeneratorTrait::get_inw_contract",
+        "label": "GenericPoolGeneratorTrait::get_creation_fee",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -296,7 +296,34 @@
           ],
           "type": 18
         },
-        "selector": "0xd6b47e7a"
+        "selector": "0xea416566"
+      },
+      {
+        "args": [
+          {
+            "label": "creation_fee",
+            "type": {
+              "displayName": [
+                "genericpoolgeneratortrait_external",
+                "SetCreationFeeInput1"
+              ],
+              "type": 5
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolGeneratorTrait::set_creation_fee",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 9
+        },
+        "selector": "0x3cd3873c"
       },
       {
         "args": [
@@ -326,21 +353,80 @@
         "selector": "0xa4cef8cd"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolGeneratorTrait::get_pool_hash",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x79f903bb"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolGeneratorTrait::get_unstake_fee",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0xa4395f88"
+      },
+      {
         "args": [
           {
-            "label": "creation_fee",
+            "label": "index",
             "type": {
               "displayName": [
                 "genericpoolgeneratortrait_external",
-                "SetCreationFeeInput1"
+                "GetPoolInput1"
               ],
-              "type": 5
+              "type": 4
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "GenericPoolGeneratorTrait::set_creation_fee",
+        "label": "GenericPoolGeneratorTrait::get_pool",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0xd8207f36"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_contract",
+            "type": {
+              "displayName": [
+                "genericpoolgeneratortrait_external",
+                "SetInwContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "GenericPoolGeneratorTrait::set_inw_contract",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -350,7 +436,7 @@
           ],
           "type": 9
         },
-        "selector": "0x3cd3873c"
+        "selector": "0xf71a1217"
       },
       {
         "args": [
@@ -383,49 +469,6 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "GenericPoolGeneratorTrait::get_creation_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 17
-        },
-        "selector": "0xea416566"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "genericpoolgeneratortrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolGeneratorTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 9
-        },
-        "selector": "0xf71a1217"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
         "label": "GenericPoolGeneratorTrait::get_pool_count",
         "mutates": false,
         "payable": false,
@@ -437,76 +480,6 @@
           "type": 19
         },
         "selector": "0x38b09ecb"
-      },
-      {
-        "args": [
-          {
-            "label": "pool_hash",
-            "type": {
-              "displayName": [
-                "genericpoolgeneratortrait_external",
-                "SetPoolHashInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolGeneratorTrait::set_pool_hash",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 9
-        },
-        "selector": "0xc49c451f"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolGeneratorTrait::get_pool_hash",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 20
-        },
-        "selector": "0x79f903bb"
-      },
-      {
-        "args": [
-          {
-            "label": "index",
-            "type": {
-              "displayName": [
-                "genericpoolgeneratortrait_external",
-                "GetPoolInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "GenericPoolGeneratorTrait::get_pool",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0xd8207f36"
       },
       {
         "args": [
@@ -548,31 +521,19 @@
       {
         "args": [
           {
-            "label": "value",
+            "label": "pool_hash",
             "type": {
               "displayName": [
-                "admintrait_external",
-                "WithdrawFeeInput1"
+                "genericpoolgeneratortrait_external",
+                "SetPoolHashInput1"
               ],
-              "type": 5
-            }
-          },
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "WithdrawFeeInput2"
-              ],
-              "type": 0
+              "type": 3
             }
           }
         ],
         "default": false,
-        "docs": [
-          " This function allows contract owner to withdraw contract balance to his account."
-        ],
-        "label": "AdminTrait::withdraw_fee",
+        "docs": [],
+        "label": "GenericPoolGeneratorTrait::set_pool_hash",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -582,7 +543,7 @@
           ],
           "type": 9
         },
-        "selector": "0x07573e99"
+        "selector": "0xc49c451f"
       },
       {
         "args": [],
@@ -654,6 +615,45 @@
       {
         "args": [
           {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "WithdrawFeeInput1"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "WithdrawFeeInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " This function allows contract owner to withdraw contract balance to his account."
+        ],
+        "label": "AdminTrait::withdraw_fee",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 9
+        },
+        "selector": "0x07573e99"
+      },
+      {
+        "args": [
+          {
             "label": "code_hash",
             "type": {
               "displayName": [
@@ -679,6 +679,33 @@
           "type": 9
         },
         "selector": "0x9e32fab2"
+      },
+      {
+        "args": [
+          {
+            "label": "new_owner",
+            "type": {
+              "displayName": [
+                "ownable_external",
+                "TransferOwnershipInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::transfer_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x11f43efd"
       },
       {
         "args": [],
@@ -711,33 +738,6 @@
           "type": 27
         },
         "selector": "0x5e228753"
-      },
-      {
-        "args": [
-          {
-            "label": "new_owner",
-            "type": {
-              "displayName": [
-                "ownable_external",
-                "TransferOwnershipInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::transfer_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 27
-        },
-        "selector": "0x11f43efd"
       }
     ]
   },
@@ -1750,48 +1750,6 @@
               {
                 "fields": [
                   {
-                    "type": 5
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 8
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 5
-          },
-          {
-            "name": "E",
-            "type": 8
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
                     "type": 0
                   }
                 ],
@@ -1814,6 +1772,48 @@
           {
             "name": "T",
             "type": 0
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
           },
           {
             "name": "E",
