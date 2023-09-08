@@ -1214,9 +1214,6 @@ describe('Launchpad contract test', () => {
 
         await lpQuery.publicClaim(phaseId);
 
-        let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId, alice.address)).value.ok;
-        console.log('publicSaleInfo after whitelist claim', publicSaleInfo);
-
         let publicBuyer = (await lpQuery.getPublicBuyer(phaseId, alice.address)).value.ok;
         console.log('publicBuyer after whitelist claim', publicBuyer);
     })
@@ -1308,7 +1305,7 @@ describe('Launchpad contract test', () => {
         let phaseId = 1;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
         let currentTime = new Date().getTime();
-        let phaseInfo = (await lpQuery.getPhase(phaseId, alice.address)).value.ok;
+        let phaseInfo = (await lpQuery.getPhase(phaseId, bob.address)).value.ok;
         // console.log('phaseInfo', phaseInfo);
         if (currentTime < endTime) {
             // curentTime > endVestingTime
@@ -1323,10 +1320,7 @@ describe('Launchpad contract test', () => {
 
         await lpContract.withSigner(bob).tx.whitelistClaim(phaseId);
 
-        let whitelistSaleInfo = (await lpQuery.getWhitelistSaleInfo(phaseId, alice.address)).value.ok;
-        console.log('whitelistSaleInfo after whitelist claim', whitelistSaleInfo);
-
-        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok;
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok;
         console.log('whitelistBuyer after whitelist claim', whitelistBuyer);
     })
 
