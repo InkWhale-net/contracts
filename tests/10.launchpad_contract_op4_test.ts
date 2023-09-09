@@ -1,4 +1,4 @@
-import { checkAccountsBalance, delay, expect, getSigners, provider, setGasLimit } from "./helpers";
+import { showAZBalance, checkAccountsBalance, delay, expect, getSigners, provider, setGasLimit } from "./helpers";
 import { ApiPromise } from "@polkadot/api";
 
 import { BN } from '@polkadot/util';
@@ -110,6 +110,8 @@ describe('Launchpad contract test', () => {
         inwQuery = inwContract.query;
         inwTx = inwContract.tx;
 
+        console.log({ inwContractAddress: inwContractAddress })
+
         // Step 2: Create token contract
         console.log(`===========Create new tokenContractAddress=============`);
         let cap = "200000000000000000000"; // 200M
@@ -135,6 +137,8 @@ describe('Launchpad contract test', () => {
         tokenContract = new ContractTokenStandard(tokenContractAddress, alice, api);
         tokenQuery = tokenContract.query;
         tokenTx = tokenContract.tx;
+
+        console.log({ tokenContractAddress: tokenContractAddress })
 
         // Step 3: Create a launchpad generator contract
         console.log(`===========Create new launchpadContractAddress=============`);
@@ -1013,11 +1017,11 @@ describe('Launchpad contract test', () => {
         projectInfoUri = "Launchpad test 2"; // 1000 token AAA
         phaseName = ["Phase 1", "Phase 2"];
         startTime = new Date().getTime() + 20000; // now + 20s
-        phaseStartTime = [startTime, startTime + 80000]; 
-        phaseEndTime = [startTime + 60000, startTime + 120000];
+        phaseStartTime = [startTime, startTime + 100000];
+        phaseEndTime = [startTime + 40000, startTime + 180000];
         phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
-        phaseVestingDuration = [60000, 60000];
-        phaseVestingUnit = [30000, 30000];
+        phaseVestingDuration = [50000, 50000];
+        phaseVestingUnit = [20000, 20000];
         phaseIsPublic = [true, true];
         phasePublicAmount = ["100000000000000", "500000000000000"]; // 100 - 500
         phasePublicPrice = ["500000000000", "1000000000000"]; // 0.5 - 1A
@@ -1035,14 +1039,14 @@ describe('Launchpad contract test', () => {
             phasePublicAmount,
             phasePublicPrice
         );
-        // console.log({txNewLaunchpad: txNewLaunchpad});
+        // console.log({ txNewLaunchpad: txNewLaunchpad });
 
         // Step B5: Check launchpad count and set active
         console.log(`===========Step B5=============`);
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(2);
         lpContractAddress = (await lpgQuery.getLaunchpadById(2)).value.ok;
-        // console.log({lpContractAddress: lpContractAddress});
+        console.log({ lpContractAddress: lpContractAddress });
 
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
         lpQuery = lpContract.query;
@@ -1149,10 +1153,10 @@ describe('Launchpad contract test', () => {
         console.log('publicSaleTotalClaimedAmount:', publicSaleTotalClaimedAmountBefor);
         console.log('publicSaleTotalPurchasedAmount:', publicSaleTotalPurchasedAmountBefor);
 
-        // case 1: amount + totalPurchasedAmount < totalAmount && value < price => fail
+        // case 1: amount < totalAmount && value < price => fail
         console.log('===========Public purchase - Case 1=============');
-        amount = 2000000000000 + totalPurchasedAmount // 2A
-        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
+        amount = 2000000000000;
+        expect((totalAmount - amount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -1166,10 +1170,10 @@ describe('Launchpad contract test', () => {
         expect(publicSaleTotalPurchasedAmountBefor).to.equal(publicSaleTotalPurchasedAmountAfter);
         expect(publicSaleTotalClaimedAmountBefor).to.equal(publicSaleTotalClaimedAmountAfter);
 
-        // case 2: amount + totalPurchasedAmount  > totalAmount && value < price => fail
+        // case 2: amount > totalAmount && value < price => fail
         console.log('===========Public purchase - Case 2=============');
-        amount = totalAmount + totalPurchasedAmount + 1;
-        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(false);
+        amount = totalAmount + 1;
+        expect((totalAmount - amount) > 0).to.equal(false);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000 // + 0.5A
 
@@ -1184,12 +1188,12 @@ describe('Launchpad contract test', () => {
         expect(publicSaleTotalClaimedAmountBefor).to.equal(publicSaleTotalClaimedAmountAfter);
 
 
-        // case 3: amount + totalPurchasedAmount < totalAmount && value < price => success
+        // case 3: amount < totalAmount && value <= price => success
         console.log('===========Public purchase - Case 3=============');
-        amount = 2000000000000 + totalPurchasedAmount // 2A
-        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
+        amount = 2000000000000;
+        expect((totalAmount - amount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
-        value = price + 500000000000 // + 0.5A
+        value = price;
 
         await lpTx.publicPurchase(phaseId, amount, { value });
 
@@ -1203,23 +1207,61 @@ describe('Launchpad contract test', () => {
     it('Can public claim', async () => {
         // endTime < currentTime
         let phaseId = 0;
+        let phaseInfo = (await lpQuery.getPhase(phaseId, alice.address)).value.ok;
+        let vestingUnit = phaseInfo.vestingUnit;
+        let vestingDuration = phaseInfo.vestingDuration;
+        let balance = (await tokenQuery.balanceOf(alice.address)).value.ok;
+        let delayTime;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+
+        // is_active_launchpad = false || phase_info.is_active => claim success
+        await lpTx.setIsActive(phaseId, false);
+        let phaseIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+        expect(phaseIsActive).to.equal(false);
+        await lpgTx.setIsActiveLaunchpad(lpContractAddress, false);
+        let lpIsActive = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
+        expect(lpIsActive).to.equal(false)
+
         let currentTime = new Date().getTime();
         if (currentTime < endTime) {
-            let delayTime = endTime - currentTime + 10000; // delay + 10s
+            delayTime = endTime - currentTime + 2000; // delay + 10s
             console.log('Await', delayTime, 'to get to the end time ...');
             await delay(delayTime); // delay + 2s;
         }
+
         const blockHash = await api.rpc.chain.getBlockHash();
         const blockHashHex = blockHash.toHex();
         let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
         endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
         console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', endTime);
 
-        await lpQuery.publicClaim(phaseId);
+        // Case 1: await vestingUnit => claim => balance alice changed
+        console.log('===========Public claim - Case 1=============');
+        delayTime = vestingUnit + 2000;
+        console.log('Await', delayTime);
+        await delay(delayTime); // delay + 2s;
+
+        await lpTx.publicClaim(phaseId);
+
+        let balanceAfer = (await tokenQuery.balanceOf(alice.address)).value.ok;
+        expect(balanceAfer - balance > 0).to.equal(true);
+
+        // Case 2: await vestingduration => purchased_amount = claimed_amount
+        console.log('===========Public claim - Case 2=============');
+        delayTime = vestingDuration + 2000;
+        console.log('Await', delayTime);
+        await delay(delayTime); // delay + 2s;
+
+        await lpTx.publicClaim(phaseId);
 
         let publicBuyer = (await lpQuery.getPublicBuyer(phaseId, alice.address)).value.ok;
+        expect(publicBuyer.purchasedAmount).to.equal(publicBuyer.claimedAmount);
         console.log('publicBuyer after whitelist claim', publicBuyer);
+
+        // back
+        await lpgTx.setIsActiveLaunchpad(lpContractAddress, true);
+        lpIsActive = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
+        expect(lpIsActive).to.equal(true)
     })
 
     it('Can whitelist purchase', async () => {
@@ -1252,10 +1294,10 @@ describe('Launchpad contract test', () => {
         console.log('whitelistSaleTotalAmount:', whitelistSaleTotalAmountBefor);
         console.log('whitelistSaleTotalClaimedAmount:', whitelistSaleTotalClaimedAmountBefor);
 
-        // case 1: amount + purchasedAmount < Amount && value < price => fail
+        // case 1: amount < Amount && value < price => fail
         console.log('===========whitelist purchase - Case 1=============');
-        amount = 2000000000000 + purchasedAmount;
-        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
+        amount = 2000000000000;
+        expect((Amount - amount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -1270,10 +1312,10 @@ describe('Launchpad contract test', () => {
         expect(whitelistSaleTotalAmountBefor).to.equal(whitelistSaleTotalAmountAfter);
         expect(whitelistSaleTotalClaimedAmountBefor).to.equal(whitelistSaleTotalClaimedAmountAfter);
 
-        // case 2: amount + purchasedAmount > Amount && value > price => fail
+        // case 2: amount > Amount && value > price => fail
         console.log('===========whitelist purchase - Case 2=============');
-        amount = 2000000000000 + purchasedAmount + Amount;
-        expect(Amount - (amount + purchasedAmount) > 0).to.equal(false);
+        amount = 2000000000000 + Amount;
+        expect((Amount - amount) > 0).to.equal(false);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000; // + 0.5A
 
@@ -1288,12 +1330,12 @@ describe('Launchpad contract test', () => {
         expect(whitelistSaleTotalAmountBefor).to.equal(whitelistSaleTotalAmountAfter);
         expect(whitelistSaleTotalClaimedAmountBefor).to.equal(whitelistSaleTotalClaimedAmountAfter);
 
-        // case 3:  amount + purchasedAmount < Amount && value > price => success
+        // case 3:  amount < Amount && value > price => success
         console.log('===========whitelist purchase - Case 3=============');
-        amount = 2000000000000 + purchasedAmount;
-        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
+        amount = 2000000000000;
+        expect((Amount - amount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
-        value = price + 500000000000 // + 0.5A
+        value = price;
 
         await lpContract.withSigner(bob).tx.whitelistPurchase(phaseId, amount, { value }); //
 
@@ -1307,13 +1349,24 @@ describe('Launchpad contract test', () => {
     it('Can whitelist claim', async () => {
         // endTime < currentTime
         let phaseId = 1;
+        let phaseInfo = (await lpQuery.getPhase(phaseId, alice.address)).value.ok;
+        let vestingUnit = phaseInfo.vestingUnit;
+        let vestingDuration = phaseInfo.vestingDuration;
+        let balance = (await tokenQuery.balanceOf(bob.address)).value.ok;
+        let delayTime;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
+
+        // is_active_launchpad = false || phase_info.is_active => claim success
+        // try { await lpContract.tx.setIsActive(phaseId, false); } catch (error) { console.log(error) }
+        // let phaseIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+        // expect(phaseIsActive).to.equal(false);
+        try { await lpgTx.setIsActiveLaunchpad(lpContractAddress, false); } catch (error) { console.log(error) }
+        let lpIsActive = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
+        expect(lpIsActive).to.equal(false)
+
         let currentTime = new Date().getTime();
-        let phaseInfo = (await lpQuery.getPhase(phaseId, bob.address)).value.ok;
-        // console.log('phaseInfo', phaseInfo);
         if (currentTime < endTime) {
-            // curentTime > endVestingTime
-            let delayTime = phaseInfo.endVestingTime - currentTime + 10000;
+            delayTime = phaseInfo.endTime - currentTime + 2000;
             console.log('Await', delayTime, 'to get to the end time ...');
             await delay(delayTime); // delay + 10s;
         }
@@ -1322,41 +1375,51 @@ describe('Launchpad contract test', () => {
         let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
         console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', endTime, 'endVestingTime', phaseInfo.endVestingTime);
 
+        // Case 1: await vestingUnit => claim => balance alice changed
+        console.log('===========Whitelist claim - Case 1=============');
+        delayTime = vestingUnit + 2000;
+        console.log('Await', delayTime);
+        await delay(delayTime); // delay + 2s;
+
         await lpContract.withSigner(bob).tx.whitelistClaim(phaseId);
 
+        let balanceAfer = (await tokenQuery.balanceOf(bob.address)).value.ok;
+        expect(balanceAfer - balance > 0).to.equal(true);
+
+        // Case 2: await vestingduration => purchased_amount = claimed_amount
+        console.log('===========Whitelist claim - Case 2=============');
+        delayTime = vestingDuration + 2000;
+        console.log('Await', delayTime);
+        await delay(delayTime); // delay + 2s;
+
+        await lpContract.withSigner(bob).tx.whitelistClaim(phaseId);
+
+        balanceAfer = (await tokenQuery.balanceOf(bob.address)).value.ok;
+        expect(balanceAfer - balance > 0).to.equal(true);
+
         let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok;
+        expect(whitelistBuyer.purchasedAmount).to.equal(whitelistBuyer.claimedAmount);
         console.log('whitelistBuyer after whitelist claim', whitelistBuyer);
-    })
 
-    it('Can burn unsold tokens', async () => {
-        // endTime < currentTime
-        let phaseId = 0;
-        let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
-        let currentTime = new Date().getTime();
-        if (currentTime < projectEndTime) {
-            let delayTime = projectEndTime - currentTime + 10000; // delay + 10s
-            console.log('Await', delayTime, 'to get to the project end time ...');
-            await delay(delayTime);
-        }
-        const blockHash = await api.rpc.chain.getBlockHash();
-        const blockHashHex = blockHash.toHex();
-        const blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
-        console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', projectEndTime);
-
-        await lpTx.burnUnsoldTokens();
-
-        let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
-        expect(publicSaleInfo.isBurned).equal(true);
+        // back lp active
+        await lpgTx.setIsActiveLaunchpad(lpContractAddress, true);
+        lpIsActive = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
+        expect(lpIsActive).to.equal(true)
     })
 
     it('Can withdraw', async () => {
         let receiver = bob.address;
-        let value = new BN(1);
+        let value = new BN(1000000000000); // 1A
+        let balanceContract = await showAZBalance(api, lpContractAddress);
+        console.log({ balanceContract: balanceContract });
 
         await lpTx.withdraw(value, receiver);
+        let balanceContractAfter = await showAZBalance(api, lpContractAddress);
+        console.log({ balanceContractAfter: balanceContractAfter });
+        expect(balanceContract - balanceContractAfter > 0).to.equal(true);
     })
 
-    it('Can withdraw unsold tokens', async () => {
+    it('Can burn unsold tokens', async () => {
         console.log(`===========Create launchpad 3=============`);
         // Step B1: Onwer mints creation fee in INW to alice
         console.log(`===========Step B1=============`);
@@ -1376,6 +1439,98 @@ describe('Launchpad contract test', () => {
         // Step B4: alice creates launchpad for token LNPD
         console.log(`===========Step B4=============`);
         projectInfoUri = "Launchpad test 3"; //
+        startTime = new Date().getTime() + 20000; // now + 20s
+        phaseName = ["Phase 1", "Phase 2"];
+        startTime = new Date().getTime() + 20000; // now + 20s
+        phaseStartTime = [startTime, startTime + 40000];
+        phaseEndTime = [startTime + 20000, startTime + 60000];
+        phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
+        phaseVestingDuration = [40000, 40000];
+        phaseVestingUnit = [20000, 20000];
+        phaseIsPublic = [true, true];
+        phasePublicAmount = ["100000000000000", "200000000000000"]; // 100 - 200
+        phasePublicPrice = ["1000000000000", "1000000000000"]; // 1A
+        await lpgContract.withSigner(alice).tx.newLaunchpad(
+            projectInfoUri,
+            tokenContractAddress,
+            totalSupply,
+            phaseName,
+            phaseStartTime,
+            phaseEndTime,
+            phaseImmediateReleaseRate,
+            phaseVestingDuration,
+            phaseVestingUnit,
+            phaseIsPublic,
+            phasePublicAmount,
+            phasePublicPrice
+        );
+
+        // Step B5: Check launchpad count
+        console.log(`===========Step B5=============`);
+        let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
+        expect(launchpadCount).to.equal(3);
+        lpContractAddress = (await lpgQuery.getLaunchpadById(3)).value.ok;
+        // console.log({ lpContractAddress: lpContractAddress });
+
+        // Step B6: Get contract and active launchpad 4
+        console.log(`===========Step B6=============`);
+        lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
+        lpQuery = lpContract.query;
+        lpTx = lpContract.tx;
+
+        await lpgTx.setIsActiveLaunchpad(lpContractAddress, true);
+        let isActiveLaunchpad = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
+        expect(isActiveLaunchpad).to.equal(true);
+
+        // endTime < currentTime
+        console.log('===========Burn unsold tokens=============')
+        let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
+        let currentTime = new Date().getTime();
+        if (currentTime < projectEndTime) {
+            let delayTime = projectEndTime - currentTime + 10000; // delay + 10s
+            console.log('Await', delayTime, 'to get to the project end time ...');
+            await delay(delayTime);
+        }
+        const blockHash = await api.rpc.chain.getBlockHash();
+        const blockHashHex = blockHash.toHex();
+        const blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
+        console.log('timeStamp: ', Number(blockTimestamp), 'endTime: ', projectEndTime);
+
+        await lpTx.burnUnsoldTokens();
+
+        let phaseId = 0;
+
+        let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+        expect(publicSaleInfo.isBurned).equal(true);
+        expect(publicSaleInfo.isWithdrawn).equal(false);
+
+        phaseId = 1;
+
+        publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
+        expect(publicSaleInfo.isBurned).equal(true);
+        expect(publicSaleInfo.isWithdrawn).equal(false);
+    })
+
+    it('Can withdraw unsold tokens', async () => {
+        console.log(`===========Create launchpad 4=============`);
+        // Step B1: Onwer mints creation fee in INW to alice
+        console.log(`===========Step B1=============`);
+        await inwContract.tx.mint(alice.address, creationFee);
+        let aliceBalance = (await inwContract.query.balanceOf(alice.address)).value.ok!.rawNumber.toString();
+        expect(aliceBalance).to.equal(creationFee);
+
+        // Step B2: alice approves creationFee in INW for launchpad generator contract
+        console.log(`===========Step B2=============`);
+        await inwContract.withSigner(alice).tx.approve(lpgContractAddress, creationFee);
+
+        // Step B3: alice approves total supply of token and create a launchpad 4
+        console.log(`===========Step B3=============`);
+        let totalSupply = "700000000000000"; // 700
+        await tokenContract.withSigner(alice).tx.approve(lpgContractAddress, totalSupply);
+
+        // Step B4: alice creates launchpad for token LNPD
+        console.log(`===========Step B4=============`);
+        projectInfoUri = "Launchpad test 4"; //
         phaseName = ["Phase 1"];
         startTime = new Date().getTime() + 20000; // now + 20s
         phaseStartTime = [startTime];
@@ -1404,11 +1559,11 @@ describe('Launchpad contract test', () => {
         // Step B5: Check launchpad count
         console.log(`===========Step B5=============`);
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
-        expect(launchpadCount).to.equal(3);
-        lpContractAddress = (await lpgQuery.getLaunchpadById(3)).value.ok;
+        expect(launchpadCount).to.equal(4);
+        lpContractAddress = (await lpgQuery.getLaunchpadById(4)).value.ok;
         // console.log({ lpContractAddress: lpContractAddress });
 
-        // Step B6: Get contract and active launchpad 3
+        // Step B6: Get contract and active launchpad 4
         console.log(`===========Step B6=============`);
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
         lpQuery = lpContract.query;
@@ -1439,6 +1594,7 @@ describe('Launchpad contract test', () => {
 
         let publicSaleInfo = (await lpQuery.getPublicSaleInfo(phaseId)).value.ok;
         expect(publicSaleInfo.isWithdrawn).equal(true);
+        expect(publicSaleInfo.isBurned).equal(false);
     })
 
     after(async () => {
