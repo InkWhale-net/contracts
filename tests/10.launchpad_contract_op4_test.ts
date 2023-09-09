@@ -188,7 +188,7 @@ describe('Launchpad contract test', () => {
         console.log(`===========Step B4=============`);
         projectInfoUri = "Launchpad test"; // 1000 token AAA
         phaseName = ["Phase 1", "Phase 2"];
-        startTime = new Date().getTime() + 60000; // now + 20s
+        startTime = new Date().getTime() + 70000; // now + 20s
         // startTime = new Date().getTime() + 20000; // now + 20s
         phaseStartTime = [startTime, startTime + 4 * 86400000]; // 86400000 ~ 1 day
         phaseEndTime = [startTime + 3 * 86400000, startTime + 5 * 86400000];
@@ -219,7 +219,7 @@ describe('Launchpad contract test', () => {
         let launchpadCount = (await lpgQuery.getLaunchpadCount()).value.ok;
         expect(launchpadCount).to.equal(1);
         lpContractAddress = (await lpgQuery.getLaunchpadById(1)).value.ok;
-        console.log({lpContractAddress: lpContractAddress});
+        console.log({ lpContractAddress: lpContractAddress });
 
         // Step B6: Get contract and active launchpad
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
@@ -1101,17 +1101,21 @@ describe('Launchpad contract test', () => {
 
         // case 2:  whitelistAmount > availableTokenAmount => fail
         console.log('===========Update multi whitelists - Case 2=============')
-        whitelistAmounts = [availableTokenAmount + 1, availableTokenAmount + 2];
+        let whitelistAmountsNew = [availableTokenAmount + 1, availableTokenAmount + 2];
+        let whitelistPricesNew = ['5000000000000', '6000000000000'];
 
         try {
-            await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
+            await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmountsNew, whitelistPricesNew);
         } catch (error) {
 
         }
 
-        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // 
+        // Check whitelist info
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // alice
+        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
+        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmounts[1]);
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
     })
 
