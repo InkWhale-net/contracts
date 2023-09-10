@@ -1156,7 +1156,7 @@ describe('Launchpad contract test', () => {
         // case 1: amount < totalAmount && value < price => fail
         console.log('===========Public purchase - Case 1=============');
         amount = 2000000000000;
-        expect((totalAmount - amount) > 0).to.equal(true);
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -1173,7 +1173,7 @@ describe('Launchpad contract test', () => {
         // case 2: amount > totalAmount && value < price => fail
         console.log('===========Public purchase - Case 2=============');
         amount = totalAmount + 1;
-        expect((totalAmount - amount) > 0).to.equal(false);
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(false);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000 // + 0.5A
 
@@ -1191,7 +1191,7 @@ describe('Launchpad contract test', () => {
         // case 3: amount < totalAmount && value <= price => success
         console.log('===========Public purchase - Case 3=============');
         amount = 2000000000000;
-        expect((totalAmount - amount) > 0).to.equal(true);
+        expect(totalAmount - (amount + totalPurchasedAmount) > 0).to.equal(true);
         price = publicSaleInfo.price * amount / (Number(new BN(10)) ** decimal);
         value = price;
 
@@ -1297,7 +1297,7 @@ describe('Launchpad contract test', () => {
         // case 1: amount < Amount && value < price => fail
         console.log('===========whitelist purchase - Case 1=============');
         amount = 2000000000000;
-        expect((Amount - amount) > 0).to.equal(true);
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price - 500000000000; // + 0.5A
 
@@ -1315,7 +1315,7 @@ describe('Launchpad contract test', () => {
         // case 2: amount > Amount && value > price => fail
         console.log('===========whitelist purchase - Case 2=============');
         amount = 2000000000000 + Amount;
-        expect((Amount - amount) > 0).to.equal(false);
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(false);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price + 500000000000; // + 0.5A
 
@@ -1333,7 +1333,7 @@ describe('Launchpad contract test', () => {
         // case 3:  amount < Amount && value > price => success
         console.log('===========whitelist purchase - Case 3=============');
         amount = 2000000000000;
-        expect((Amount - amount) > 0).to.equal(true);
+        expect(Amount - (amount + purchasedAmount) > 0).to.equal(true);
         price = whitelistBuyer.price * amount / (Number(new BN(10)) ** decimal);
         value = price;
 
@@ -1472,7 +1472,7 @@ describe('Launchpad contract test', () => {
         lpContractAddress = (await lpgQuery.getLaunchpadById(3)).value.ok;
         // console.log({ lpContractAddress: lpContractAddress });
 
-        // Step B6: Get contract and active launchpad 4
+        // Step B6: Get contract and active launchpad 3
         console.log(`===========Step B6=============`);
         lpContract = new ContractMyLaunchpad(lpContractAddress, alice, api);
         lpQuery = lpContract.query;
