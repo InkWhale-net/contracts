@@ -1442,11 +1442,11 @@ describe('Launchpad contract test', () => {
         startTime = new Date().getTime() + 20000; // now + 20s
         phaseName = ["Phase 1", "Phase 2"];
         startTime = new Date().getTime() + 20000; // now + 20s
-        phaseStartTime = [startTime, startTime + 40000];
-        phaseEndTime = [startTime + 20000, startTime + 60000];
+        phaseStartTime = [startTime, startTime + 20000];
+        phaseEndTime = [startTime + 10000, startTime + 30000];
         phaseImmediateReleaseRate = [500, 1500]; // 5%; 15%
-        phaseVestingDuration = [40000, 40000];
-        phaseVestingUnit = [20000, 20000];
+        phaseVestingDuration = [20000, 20000];
+        phaseVestingUnit = [10000, 10000];
         phaseIsPublic = [true, true];
         phasePublicAmount = ["100000000000000", "200000000000000"]; // 100 - 200
         phasePublicPrice = ["1000000000000", "1000000000000"]; // 1A
@@ -1487,7 +1487,7 @@ describe('Launchpad contract test', () => {
         let projectEndTime = (await lpQuery.getProjectEndTime()).value.ok;
         let currentTime = new Date().getTime();
         if (currentTime < projectEndTime) {
-            let delayTime = projectEndTime - currentTime + 10000; // delay + 10s
+            let delayTime = projectEndTime - currentTime + 3000; // delay + 3s
             console.log('Await', delayTime, 'to get to the project end time ...');
             await delay(delayTime);
         }
@@ -1534,10 +1534,10 @@ describe('Launchpad contract test', () => {
         phaseName = ["Phase 1"];
         startTime = new Date().getTime() + 20000; // now + 20s
         phaseStartTime = [startTime];
-        phaseEndTime = [startTime + 60000];
+        phaseEndTime = [startTime + 20000];
         phaseImmediateReleaseRate = [500]; // 5%
-        phaseVestingDuration = [1800000];
-        phaseVestingUnit = [300000];
+        phaseVestingDuration = [20000];
+        phaseVestingUnit = [10000];
         phaseIsPublic = [true];
         phasePublicAmount = ["100000000000000"]; // 100 
         phasePublicPrice = ["1000000000000"]; // 1A
