@@ -397,11 +397,10 @@ pub trait LaunchpadContractTrait:
                         }
                     }
 
-                    if project_start_time == 0 {
-                        return Err(Error::NoPhaseActive);
-                    }
-
-                    self.data::<Data>().project_start_time = project_start_time;
+                    if project_start_time != 0 {
+                        // return Err(Error::NoPhaseActive);
+                        self.data::<Data>().project_start_time = project_start_time;
+                    }                    
                 }
 
                 if self.data::<Data>().project_end_time == phase.end_time {
@@ -417,11 +416,10 @@ pub trait LaunchpadContractTrait:
                         }
                     }
 
-                    if project_end_time == 0 {
-                        return Err(Error::NoPhaseActive);
-                    }
-
-                    self.data::<Data>().project_end_time = project_end_time;
+                    if project_end_time != 0 {
+                        // return Err(Error::NoPhaseActive);
+                        self.data::<Data>().project_end_time = project_end_time;
+                    }                    
                 }
 
                 // Update available_token_amount

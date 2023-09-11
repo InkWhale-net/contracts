@@ -1355,11 +1355,13 @@ describe('Launchpad contract test', () => {
         let balance = (await tokenQuery.balanceOf(bob.address)).value.ok;
         let delayTime;
         let endTime = (await lpQuery.getEndTime(phaseId)).value.ok;
-
+       
         // is_active_launchpad = false || phase_info.is_active => claim success
-        // try { await lpContract.tx.setIsActive(phaseId, false); } catch (error) { console.log(error) }
-        // let phaseIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
-        // expect(phaseIsActive).to.equal(false);
+        // let isActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+        // console.log("isActive =", isActive);
+        try { await lpContract.tx.setIsActive(phaseId, false); } catch (error) { console.log(error) }
+        let phaseIsActive = (await lpQuery.getIsActive(phaseId)).value.ok;
+        expect(phaseIsActive).to.equal(false);
         try { await lpgTx.setIsActiveLaunchpad(lpContractAddress, false); } catch (error) { console.log(error) }
         let lpIsActive = (await lpgQuery.getIsActiveLaunchpad(lpContractAddress)).value.ok;
         expect(lpIsActive).to.equal(false)
@@ -1369,7 +1371,8 @@ describe('Launchpad contract test', () => {
             delayTime = phaseInfo.endTime - currentTime + 2000;
             console.log('Await', delayTime, 'to get to the end time ...');
             await delay(delayTime); // delay + 10s;
-        }
+        }     
+        
         const blockHash = await api.rpc.chain.getBlockHash();
         const blockHashHex = blockHash.toHex();
         let blockTimestamp = await api.query.timestamp.now.at(blockHashHex);
