@@ -17,12 +17,6 @@ my_launchpad = { path = "../launchpad_contract", default-features = false, featu
 [lib]
 name = "launchpad_generator"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-    # Used for ABI generation and for unit test.
-    "rlib"
-]
 
 [features]
 default = ["std"]

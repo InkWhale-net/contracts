@@ -16,10 +16,6 @@ inkwhale_project = { path = "../..", default-features = false }
 [lib]
 name = "psp22_standard"
 path = "lib.rs"
-crate-type = [
-    "cdylib",
-    "rlib"
-]
 
 [features]
 default = ["std"]

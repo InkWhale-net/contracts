@@ -16,12 +16,6 @@ openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-c
 [lib]
 name = "my_launchpad"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-    # Used for ABI generation and for unit test.
-    "rlib"
-]
 
 [features]
 default = ["std"]

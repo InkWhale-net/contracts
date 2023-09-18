@@ -558,6 +558,15 @@ export type PhaseInfo = {
 	totalVestingUnits: number
 }
 
+export type WhitelistBuyerInfo = {
+	amount: ReturnNumber,
+	price: ReturnNumber,
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
+}
+
 export type WhitelistSaleInfo = {
 	totalAmount: ReturnNumber,
 	totalPurchasedAmount: ReturnNumber,
@@ -566,9 +575,7 @@ export type WhitelistSaleInfo = {
 	isWithdrawn: boolean
 }
 
-export type WhitelistBuyerInfo = {
-	amount: ReturnNumber,
-	price: ReturnNumber,
+export type BuyerInformation = {
 	purchasedAmount: ReturnNumber,
 	vestingAmount: ReturnNumber,
 	claimedAmount: ReturnNumber,
@@ -583,12 +590,5 @@ export type PublicSaleInfo = {
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
 	isWithdrawn: boolean
-}
-
-export type BuyerInformation = {
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
 }
 

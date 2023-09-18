@@ -16,10 +16,6 @@ openbrush = {  tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-
 [lib]
 name = "token_standard"
 path = "lib.rs"
-crate-type = [
-    "cdylib",
-    "rlib"
-]
 
 [features]
 default = ["std"]
