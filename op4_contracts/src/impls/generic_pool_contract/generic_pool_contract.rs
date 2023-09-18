@@ -3,13 +3,13 @@ pub use crate::{
     traits::{error::Error, generic_pool_contract::*},
 };
 
-use ink::prelude::{string::String, vec::Vec};
+use ink::prelude::{vec::Vec};
 
 use ink::storage::traits::{AutoStorableHint, ManualKey, Storable, StorableHint};
 
 use ink::env::CallFlags;
 use openbrush::{
-    contracts::{access_control::*, ownable::*},
+    contracts::{ownable::*},
     modifiers,
     traits::{AccountId, Balance, Storage},
 };

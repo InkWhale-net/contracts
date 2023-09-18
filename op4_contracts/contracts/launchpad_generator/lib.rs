@@ -1,7 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
-#![allow(clippy::large_enum_variant)]
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
 pub mod launchpad_generator {

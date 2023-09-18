@@ -1,5 +1,3 @@
-#![allow(clippy::uninlined_format_args)]
-
 pub use crate::{
     impls::upgradeable::{data, data::Data, data::*},
     traits::{error::Error, upgradeable::*},

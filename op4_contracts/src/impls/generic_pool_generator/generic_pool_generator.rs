@@ -3,8 +3,6 @@ pub use crate::{
     traits::{error::Error, generic_pool_generator::*},
 };
 
-use ink::prelude::{string::String, vec::Vec};
-
 use ink::storage::traits::{AutoStorableHint, ManualKey, Storable, StorableHint};
 
 use openbrush::{

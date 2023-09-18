@@ -1,16 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-// #![feature(min_specialization)]
 pub use self::token_standard::{TokenStandard, TokenStandardRef};
 
-#[allow(clippy::let_unit_value)]
-#[allow(clippy::inline_fn_without_body)]
-#[allow(clippy::too_many_arguments)]
 #[openbrush::implementation(
     PSP22,
     PSP22Capped,
     PSP22Metadata,
     PSP22Mintable,
-    // PSP22Burnable,
     Ownable
 )]
 #[openbrush::contract]
@@ -24,11 +19,9 @@ pub mod token_standard {
         contracts::ownable::*,
         contracts::psp22::extensions::{
             burnable::*,
-            // mintable::*,
             capped::*,
             metadata::*,
         },
-        modifiers,
         traits::{DefaultEnv, Storage, String},
     };
 

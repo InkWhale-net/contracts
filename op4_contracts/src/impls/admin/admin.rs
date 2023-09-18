@@ -36,14 +36,12 @@ pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
             Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new())
                 .call_flags(CallFlags::default().set_allow_reentry(true));
 
-        let result = match builder.try_invoke() {
+        match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
             Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
             Err(ink::env::Error::NotCallable) => Ok(()),
             _ => Err(Error::CannotTransfer),
-        };
-
-        result
+        }
     }
 }

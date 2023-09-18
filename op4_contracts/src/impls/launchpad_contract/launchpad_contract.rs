@@ -66,59 +66,52 @@ pub trait LaunchpadContractTrait:
     }
 
     fn get_is_active(&self, phase_id: u8) -> Option<bool> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.is_active);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.is_active)
     }
 
     fn get_name(&self, phase_id: u8) -> Option<String> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.name);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.name)
     }
 
     fn get_start_time(&self, phase_id: u8) -> Option<u64> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.start_time);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.start_time)
     }
 
     fn get_end_time(&self, phase_id: u8) -> Option<u64> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.end_time);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.end_time)
     }
 
     fn get_immediate_release_rate(&self, phase_id: u8) -> Option<u32> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.immediate_release_rate);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.immediate_release_rate)
     }
 
     fn get_vesting_duration(&self, phase_id: u8) -> Option<u64> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.vesting_duration);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.vesting_duration)
     }
 
     fn get_vesting_unit(&self, phase_id: u8) -> Option<u64> {
-        if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
-            return Some(phase.vesting_unit);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .phase
+            .get(&phase_id)
+            .map(|phase| phase.vesting_unit)
     }
 
     fn get_public_sale_info(&self, phase_id: u8) -> Option<PublicSaleInfo> {
@@ -126,35 +119,31 @@ pub trait LaunchpadContractTrait:
     }
 
     fn get_public_sale_total_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-            return Some(public_sale_info.total_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .public_sale_info
+            .get(&phase_id)
+            .map(|public_sale_info| public_sale_info.total_amount)
     }
 
     fn get_public_sale_price(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-            return Some(public_sale_info.price);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .public_sale_info
+            .get(&phase_id)
+            .map(|public_sale_info| public_sale_info.price)
     }
 
     fn get_public_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-            return Some(public_sale_info.total_purchased_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .public_sale_info
+            .get(&phase_id)
+            .map(|public_sale_info| public_sale_info.total_purchased_amount)
     }
 
     fn get_public_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-            return Some(public_sale_info.total_claimed_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .public_sale_info
+            .get(&phase_id)
+            .map(|public_sale_info| public_sale_info.total_claimed_amount)
     }
 
     fn get_public_buyer(&self, phase_id: u8, account: AccountId) -> Option<BuyerInformation> {
@@ -166,27 +155,24 @@ pub trait LaunchpadContractTrait:
     }
 
     fn get_whitelist_sale_total_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
-            return Some(whitelist_sale_info.total_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .whitelist_sale_info
+            .get(&phase_id)
+            .map(|whitelist_sale_info| whitelist_sale_info.total_amount)
     }
 
     fn get_whitelist_sale_total_purchased_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
-            return Some(whitelist_sale_info.total_purchased_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .whitelist_sale_info
+            .get(&phase_id)
+            .map(|whitelist_sale_info| whitelist_sale_info.total_purchased_amount)
     }
 
     fn get_whitelist_sale_total_claimed_amount(&self, phase_id: u8) -> Option<Balance> {
-        if let Some(whitelist_sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
-            return Some(whitelist_sale_info.total_claimed_amount);
-        } else {
-            return None;
-        }
+        self.data::<Data>()
+            .whitelist_sale_info
+            .get(&phase_id)
+            .map(|whitelist_sale_info| whitelist_sale_info.total_claimed_amount)
     }
 
     fn get_whitelist_account(&self, phase_id: u8, account_index: u64) -> Option<AccountId> {
@@ -458,7 +444,7 @@ pub trait LaunchpadContractTrait:
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -469,7 +455,7 @@ pub trait LaunchpadContractTrait:
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -540,7 +526,7 @@ pub trait LaunchpadContractTrait:
 
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -566,7 +552,7 @@ pub trait LaunchpadContractTrait:
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -605,7 +591,7 @@ pub trait LaunchpadContractTrait:
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -644,7 +630,7 @@ pub trait LaunchpadContractTrait:
             self.data::<Data>().phase.insert(&phase_id, &phase);
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -693,7 +679,7 @@ pub trait LaunchpadContractTrait:
 
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -743,7 +729,7 @@ pub trait LaunchpadContractTrait:
 
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -760,7 +746,7 @@ pub trait LaunchpadContractTrait:
                 .insert(&phase_id, &public_sale_info);
             Ok(())
         } else {
-            return Err(Error::PublicSaleInfoNotExist);
+            Err(Error::PublicSaleInfoNotExist)
         }
     }
 
@@ -786,49 +772,21 @@ pub trait LaunchpadContractTrait:
 
         if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
             if phase.is_active {
-                let set_name_result = self.set_name(phase_id, name);
-                if set_name_result.is_err() {
-                    return set_name_result;
-                }
-
-                let set_start_and_end_time_result =
-                    self.set_start_and_end_time(phase_id, start_time, end_time);
-                if set_start_and_end_time_result.is_err() {
-                    return set_start_and_end_time_result;
-                }
-
-                let set_immediate_release_rate_result =
-                    self.set_immediate_release_rate(phase_id, immediate_release_rate);
-                if set_immediate_release_rate_result.is_err() {
-                    return set_immediate_release_rate_result;
-                }
-
-                let set_vesting_duration_result = self.set_vesting_duration(phase_id, vesting_duration);
-                if set_vesting_duration_result.is_err() {
-                    return set_vesting_duration_result;
-                }
-
-                let set_vesting_unit_result = self.set_vesting_unit(phase_id, vesting_unit);
-                if set_vesting_unit_result.is_err() {
-                    return set_vesting_unit_result;
-                }
-
+                self.set_name(phase_id, name)?;              
+                self.set_start_and_end_time(phase_id, start_time, end_time)?;
+                self.set_immediate_release_rate(phase_id, immediate_release_rate)?;
+                self.set_vesting_duration(phase_id, vesting_duration)?;
+                self.set_vesting_unit(phase_id, vesting_unit)?;
+        
                 let set_is_public_result = self.set_is_public(phase_id, is_public);
                 if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
                     return set_is_public_result;
                 }
 
                 if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
-                    if public_sale_info.is_public {                    
-                        let set_public_total_amount_result = self.set_public_total_amount(phase_id, total_amount);
-                        if set_public_total_amount_result.is_err() {
-                            return set_public_total_amount_result;
-                        }
-
-                        let set_public_sale_price_result = self.set_public_sale_price(phase_id, price);
-                        if set_public_sale_price_result.is_err() {
-                            return set_public_sale_price_result;
-                        }
+                    if public_sale_info.is_public {                 
+                        self.set_public_total_amount(phase_id, total_amount)?;
+                        self.set_public_sale_price(phase_id, price)?;                        
                     } 
                 }   
             } 
@@ -870,7 +828,7 @@ pub trait LaunchpadContractTrait:
         }
 
         for i in 0..len {
-            let set_phase_result = self.set_phase(
+            self.set_phase(
                 phase_id[i],
                 is_active[i],
                 name[i].clone(),
@@ -882,11 +840,7 @@ pub trait LaunchpadContractTrait:
                 is_public[i],
                 total_amount[i],
                 price[i],
-            );
-
-            if set_phase_result.is_err() {
-                return set_phase_result;
-            }
+            )?;            
         }
 
         Ok(())
@@ -1022,7 +976,7 @@ pub trait LaunchpadContractTrait:
 
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -1111,7 +1065,7 @@ pub trait LaunchpadContractTrait:
 
             Ok(())
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
     }
 
@@ -1247,18 +1201,13 @@ pub trait LaunchpadContractTrait:
                     )
                     .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                    let result = match builder.try_invoke() {
+                    match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
                         Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
                         Err(ink::env::Error::NotCallable) => Ok(()),
                         _ => Err(Error::CannotTransfer),
-                    };
-
-                    if result.is_err() {
-                        return result;
-                        // return Err(Error::CannotTransfer);
-                    }
+                    }?;                    
 
                     // Save data
                     let buyer_data = self.data::<Data>().public_buyer.get(&(&phase_id, &caller));
@@ -1302,7 +1251,7 @@ pub trait LaunchpadContractTrait:
                         .public_sale_info
                         .insert(&phase_id, &public_sale_info);
 
-                    let token_address = self.data::<Data>().token_address.clone();
+                    let token_address = self.data::<Data>().token_address;
                     self._emit_public_purchase_event(
                         Self::env().account_id(),
                         token_address,
@@ -1319,13 +1268,13 @@ pub trait LaunchpadContractTrait:
 
                     Ok(())
                 } else {
-                    return Err(Error::PublicSaleInfoNotExist);
+                    Err(Error::PublicSaleInfoNotExist)
                 }
             } else {
-                return Err(Error::PhaseNotExist);
+                Err(Error::PhaseNotExist)
             }
         } else {
-            return Err(Error::ActiveLaunchpadStatusNotFound);
+            Err(Error::ActiveLaunchpadStatusNotFound)
         }
     }
 
@@ -1427,18 +1376,13 @@ pub trait LaunchpadContractTrait:
                     )
                     .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                    let result = match builder.try_invoke() {
+                    match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
                         Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
                         Err(ink::env::Error::NotCallable) => Ok(()),
                         _ => Err(Error::CannotTransfer),
-                    };
-
-                    if result.is_err() {
-                        return result;
-                        // return Err(Error::CannotTransfer);
-                    }
+                    }?;
 
                     // Save data
                     buy_info.claimed_amount = buy_info
@@ -1464,7 +1408,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::PublicSaleInfoNotExist);
                     }
 
-                    let token_address = self.data::<Data>().token_address.clone();
+                    let token_address = self.data::<Data>().token_address;
                     self._emit_public_claim_event(
                         Self::env().account_id(),
                         token_address,
@@ -1477,10 +1421,10 @@ pub trait LaunchpadContractTrait:
 
                 Ok(())
             } else {
-                return Err(Error::NoTokenPurchased);
+                Err(Error::NoTokenPurchased)
             }
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
         // } else {
         //     return Err(Error::ActiveLaunchpadStatusNotFound);
@@ -1582,18 +1526,13 @@ pub trait LaunchpadContractTrait:
                     )
                     .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                    let result = match builder.try_invoke() {
+                    match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
                         Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
                         Err(ink::env::Error::NotCallable) => Ok(()),
                         _ => Err(Error::CannotTransfer),
-                    };
-
-                    if result.is_err() {
-                        return result;
-                        // return Err(Error::CannotTransfer);
-                    }
+                    }?;                    
 
                     // Save data
                     buy_info.purchased_amount = buy_info
@@ -1628,7 +1567,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::WhitelistSaleInfoNotExist);
                     }
 
-                    let token_address = self.data::<Data>().token_address.clone();
+                    let token_address = self.data::<Data>().token_address;
                     self._emit_whitelist_purchase_event(
                         Self::env().account_id(),
                         token_address,
@@ -1645,13 +1584,13 @@ pub trait LaunchpadContractTrait:
 
                     Ok(())
                 } else {
-                    return Err(Error::WhitelistPhaseAccountNotExist);
+                    Err(Error::WhitelistPhaseAccountNotExist)
                 }
             } else {
-                return Err(Error::PhaseNotExist);
+                Err(Error::PhaseNotExist)
             }
         } else {
-            return Err(Error::ActiveLaunchpadStatusNotFound);
+            Err(Error::ActiveLaunchpadStatusNotFound)
         }
     }
 
@@ -1756,18 +1695,13 @@ pub trait LaunchpadContractTrait:
                     )
                     .call_flags(CallFlags::default().set_allow_reentry(true));
 
-                    let result = match builder.try_invoke() {
+                    match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
                         Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
                         Err(ink::env::Error::NotCallable) => Ok(()),
                         _ => Err(Error::CannotTransfer),
-                    };
-
-                    if result.is_err() {
-                        return result;
-                        // return Err(Error::CannotTransfer);
-                    }
+                    }?;
 
                     // Save data
                     buy_info.claimed_amount = buy_info
@@ -1793,7 +1727,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::WhitelistSaleInfoNotExist);
                     }
 
-                    let token_address = self.data::<Data>().token_address.clone();
+                    let token_address = self.data::<Data>().token_address;
                     self._emit_whitelist_claim_event(
                         Self::env().account_id(),
                         token_address,
@@ -1806,10 +1740,10 @@ pub trait LaunchpadContractTrait:
 
                 Ok(())
             } else {
-                return Err(Error::WhitelistPhaseAccountNotExist);
+                Err(Error::WhitelistPhaseAccountNotExist)
             }
         } else {
-            return Err(Error::PhaseNotExist);
+            Err(Error::PhaseNotExist)
         }
         // } else {
         //     return Err(Error::ActiveLaunchpadStatusNotFound);
@@ -1886,16 +1820,14 @@ pub trait LaunchpadContractTrait:
             .ok_or(Error::CheckedOperations)?;
 
         // Burn the unsold token
-        if total_burned > 0 {
-            if Psp22Ref::burn(
-                &self.data::<Data>().token_address,
-                Self::env().account_id(),
-                total_burned,
-            )
-            .is_err()
-            {
-                return Err(Error::CannotBurn);
-            }
+        if total_burned > 0 && Psp22Ref::burn (
+            &self.data::<Data>().token_address,
+            Self::env().account_id(),
+            total_burned,
+        )
+        .is_err()
+        {
+            return Err(Error::CannotBurn);
         }
 
         Ok(())

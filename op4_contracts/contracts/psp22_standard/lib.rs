@@ -1,16 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-// #![feature(min_specialization)]
 pub use self::psp22_standard::{Psp22Nft, Psp22NftRef};
 
-#[allow(clippy::let_unit_value)]
-#[allow(clippy::inline_fn_without_body)]
-#[allow(clippy::too_many_arguments)]
 #[openbrush::implementation(
     PSP22,
     PSP22Capped,
     PSP22Metadata,
     PSP22Mintable,
-    // PSP22Burnable,
     Ownable
 )]
 #[openbrush::contract]
@@ -109,7 +104,7 @@ pub mod psp22_standard {
         _amount: &Balance,
     ) -> Result<(), PSP22Error> {
         if from.is_none() && self._is_cap_exceeded(amount) {
-            return Err(PSP22Error::Custom(String::from("Cap exceeded").into()));
+            return Err(PSP22Error::Custom(String::from("Cap exceeded")));
         }
         Ok(())
     }
@@ -137,8 +132,8 @@ pub mod psp22_standard {
             let caller = <Self as DefaultEnv>::env().caller();
             ownable::Internal::_init_with_owner(&mut instance, caller);
             assert!(instance._init_cap(cap).is_ok());
-            instance.metadata.name.set(&Some(name.into()));
-            instance.metadata.symbol.set(&Some(symbol.into()));
+            instance.metadata.name.set(&Some(name));
+            instance.metadata.symbol.set(&Some(symbol));
             instance.metadata.decimals.set(&decimal);
             instance
         }

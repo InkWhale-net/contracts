@@ -1,8 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
-#![allow(clippy::large_enum_variant)]
-#![allow(clippy::question_mark)]
 
 pub use self::my_launchpad::{MyLaunchpad, MyLaunchpadRef};
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
@@ -291,7 +288,7 @@ pub mod my_launchpad {
             }
 
             for i in 0..phase_length {
-                let result = self.add_new_phase(
+                self.add_new_phase(
                     phase_name[i].clone(),
                     phase_start_time[i],
                     phase_end_time[i],
@@ -301,11 +298,7 @@ pub mod my_launchpad {
                     phase_is_public[i],
                     phase_public_amount[i],
                     phase_public_price[i],
-                );
-
-                if result.is_err() {
-                    return result;
-                }
+                )?;
             }
 
             Ok(())
