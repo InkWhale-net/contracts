@@ -79,6 +79,9 @@ pub enum Error {
     InvalidTotalSupply,
     PhaseNotPublic,
     InvalidSetPublic,
+    InvalidMinStakingAmount,
+    InvalidMaxWaitingTime,
+    InvalidUnstakingFee
 }
 
 impl From<OwnableError> for Error {
