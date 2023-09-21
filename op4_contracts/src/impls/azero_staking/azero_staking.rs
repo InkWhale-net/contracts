@@ -19,6 +19,50 @@ pub trait AzeroStakingTrait:
     + Storage<Data>
     + Storage<ownable::Data>
 {
+    // Main funcs
+    fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
+        if amount < self.data::<Data>().min_staking_amount {
+            return Err(Error::BelowMinStakingMount);
+        }
+
+        if amount > Self::env().transferred_value() {
+            return Err(Error::InvalidTransferAmount)
+        }
+
+        let staker = Self::env().caller();
+        let current_time = Self::env().block_timestamp();
+
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
+            stake_info.staking_amount = stake_info.staking_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
+            
+            if stake_info.staking_amount > self.data::<Data>().max_total_staking_amount {
+                return Err(Error::ExceedMaxTotalStakingMount);
+            }
+            
+            stake_info.last_updated = current_time;
+            self.data::<Data>().stake_info_by_staker
+                .insert(&staker, &stake_info);
+        } else { // First time staking
+            if amount > self.data::<Data>().max_total_staking_amount {
+                return Err(Error::ExceedMaxTotalStakingMount);
+            }
+
+            let stake_info = StakeInformation{
+                staking_amount: amount,
+                unclaimed_azero_reward: 0,				
+                claimed_azero_reward: 0,
+                unclaimed_inw_reward: 0,	
+                claimed_inw_reward: 0,						
+                last_updated: current_time
+            };
+
+            self.data::<Data>().stake_info_by_staker
+                .insert(&staker, &stake_info);
+        }
+
+        Ok(())
+    }
+
     // Getters
     fn get_min_staking_amount(&self) -> Balance {
         self.data::<Data>().min_staking_amount

@@ -81,7 +81,9 @@ pub enum Error {
     InvalidSetPublic,
     InvalidMinStakingAmount,
     InvalidMaxWaitingTime,
-    InvalidUnstakingFee
+    InvalidUnstakingFee,
+    BelowMinStakingMount,
+    ExceedMaxTotalStakingMount
 }
 
 impl From<OwnableError> for Error {
