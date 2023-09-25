@@ -26,6 +26,7 @@ pub struct WithdrawalRequestInformation {
     pub user: AccountId,
     pub amount: Balance,
     pub azero_reward: Balance,
+    pub total_azero: Balance,
     pub inw_reward: Balance,
     pub request_time: u64,
     pub status: u8 // 0: waiting, 1: is claimable, 2: claimed
@@ -36,15 +37,16 @@ pub struct WithdrawalRequestInformation {
 pub struct Data {
     pub min_staking_amount: Balance,
     pub max_total_staking_amount: Balance,
-    pub apy: Balance,
+    pub apy: Balance, // scaled 10000
     pub max_waiting_time: u64,
 
     pub inw_contract: AccountId,
-    pub inw_multiplier: Balance,
+    pub inw_multiplier: Balance, // number of inw per day
     pub unstaking_fee: Balance, // By inw
 
     pub stake_info_by_staker: Mapping<AccountId, StakeInformation>,
     
+    pub withdrawal_request_count: u64,
     pub withdrawal_request_list: Mapping<u64, WithdrawalRequestInformation>,
     pub withdrawal_request_by_user: MultiMapping<AccountId, u64, ValueGuard<AccountId>>,
     pub withdrawal_waiting_list: MultiMapping<u8, u64, ValueGuard<u8>>, // request with waiting status
@@ -73,6 +75,7 @@ impl Default for Data {
 
             stake_info_by_staker: Default::default(),
 
+            withdrawal_request_count: Default::default(),
             withdrawal_request_list: Default::default(),
             withdrawal_request_by_user: Default::default(),
             withdrawal_waiting_list: Default::default(),

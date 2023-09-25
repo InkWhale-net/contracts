@@ -83,7 +83,16 @@ pub enum Error {
     InvalidMaxWaitingTime,
     InvalidUnstakingFee,
     BelowMinStakingMount,
-    ExceedMaxTotalStakingMount
+    ExceedMaxTotalStakingMount,
+    WithdrawalRequestIsNotClaimable,
+    WithdrawError,
+    RequestNotForClaimer,
+    NoWithdrawalRequestInfo,
+    NoStakeInfoFound,
+    CannotGetWaitingList,
+    CannotGetWithdrawableAmount,
+    InvalidWithdrawalAmount,
+    CannotUpdateUnclaimedRewards
 }
 
 impl From<OwnableError> for Error {
