@@ -29,15 +29,7 @@ export default class Constructors {
 	* @param { (string | number | BN) } totalSupply,
 	* @param { ArgumentTypes.AccountId } generatorContract,
 	* @param { (number | string | BN) } txRate,
-	* @param { Array<string> } phaseName,
-	* @param { Array<(number | string | BN)> } phaseStartTime,
-	* @param { Array<(number | string | BN)> } phaseEndTime,
-	* @param { Array<(number | string | BN)> } phaseImmediateReleaseRate,
-	* @param { Array<(number | string | BN)> } phaseVestingDuration,
-	* @param { Array<(number | string | BN)> } phaseVestingUnit,
-	* @param { Array<boolean> } phaseIsPublic,
-	* @param { Array<(string | number | BN)> } phasePublicAmount,
-	* @param { Array<(string | number | BN)> } phasePublicPrice,
+	* @param { Array<ArgumentTypes.PhaseInput> } phases,
 	*/
    	async "new" (
 		contractOwner: ArgumentTypes.AccountId,
@@ -46,15 +38,7 @@ export default class Constructors {
 		totalSupply: (string | number | BN),
 		generatorContract: ArgumentTypes.AccountId,
 		txRate: (number | string | BN),
-		phaseName: Array<string>,
-		phaseStartTime: Array<(number | string | BN)>,
-		phaseEndTime: Array<(number | string | BN)>,
-		phaseImmediateReleaseRate: Array<(number | string | BN)>,
-		phaseVestingDuration: Array<(number | string | BN)>,
-		phaseVestingUnit: Array<(number | string | BN)>,
-		phaseIsPublic: Array<boolean>,
-		phasePublicAmount: Array<(string | number | BN)>,
-		phasePublicPrice: Array<(string | number | BN)>,
+		phases: Array<ArgumentTypes.PhaseInput>,
 		__options ? : ConstructorOptions,
    	) {
    		const __contract = JSON.parse(ContractFile);
@@ -62,7 +46,7 @@ export default class Constructors {
 		const gasLimit = (await _genValidGasLimitAndValue(this.nativeAPI, __options)).gasLimit as WeightV2;
 
 		const storageDepositLimit = __options?.storageDepositLimit;
-			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, projectInfoUri, tokenAddress, totalSupply, generatorContract, txRate, phaseName, phaseStartTime, phaseEndTime, phaseImmediateReleaseRate, phaseVestingDuration, phaseVestingUnit, phaseIsPublic, phasePublicAmount, phasePublicPrice);
+			const tx = code.tx["new"]!({ gasLimit, storageDepositLimit, value: __options?.value }, contractOwner, projectInfoUri, tokenAddress, totalSupply, generatorContract, txRate, phases);
 			let response;
 
 			try {

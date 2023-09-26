@@ -2,6 +2,18 @@ import type BN from 'bn.js';
 
 export type AccountId = string | number[]
 
+export type PhaseInput = {
+	name: string,
+	startTime: (number | string | BN),
+	endTime: (number | string | BN),
+	immediateReleaseRate: (number | string | BN),
+	vestingDuration: (number | string | BN),
+	vestingUnit: (number | string | BN),
+	isPublic: boolean,
+	publicAmount: (string | number | BN),
+	publicPrice: (string | number | BN)
+}
+
 export interface Error {
 	custom ? : string,
 	ownableError ? : OwnableError,
@@ -545,6 +557,13 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
+export type BuyerInformation = {
+	purchasedAmount: (string | number | BN),
+	vestingAmount: (string | number | BN),
+	claimedAmount: (string | number | BN),
+	lastUpdatedTime: (number | string | BN)
+}
+
 export type PhaseInfo = {
 	isActive: boolean,
 	name: string,
@@ -572,13 +591,6 @@ export type WhitelistSaleInfo = {
 	totalClaimedAmount: (string | number | BN),
 	isBurned: boolean,
 	isWithdrawn: boolean
-}
-
-export type BuyerInformation = {
-	purchasedAmount: (string | number | BN),
-	vestingAmount: (string | number | BN),
-	claimedAmount: (string | number | BN),
-	lastUpdatedTime: (number | string | BN)
 }
 
 export type PublicSaleInfo = {

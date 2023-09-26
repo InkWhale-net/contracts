@@ -3,6 +3,18 @@ import type {ReturnNumber} from '@727-ventures/typechain-types';
 
 export type AccountId = string | number[]
 
+export type PhaseInput = {
+	name: string,
+	startTime: number,
+	endTime: number,
+	immediateReleaseRate: number,
+	vestingDuration: number,
+	vestingUnit: number,
+	isPublic: boolean,
+	publicAmount: ReturnNumber,
+	publicPrice: ReturnNumber
+}
+
 export interface Error {
 	custom ? : string,
 	ownableError ? : OwnableError,
@@ -546,6 +558,13 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
+export type BuyerInformation = {
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
+}
+
 export type PhaseInfo = {
 	isActive: boolean,
 	name: string,
@@ -573,13 +592,6 @@ export type WhitelistSaleInfo = {
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
 	isWithdrawn: boolean
-}
-
-export type BuyerInformation = {
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
 }
 
 export type PublicSaleInfo = {

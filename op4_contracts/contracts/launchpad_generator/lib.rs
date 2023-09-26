@@ -18,6 +18,7 @@ pub mod launchpad_generator {
     use inkwhale_project::traits::launchpad_generator::Psp22Ref;
 
     use inkwhale_project::impls::{admin::*, launchpad_generator::*, upgradeable::*};
+    use inkwhale_project::impls::launchpad_contract::PhaseInput;
 
     #[derive(Default, Storage)]
     #[ink(storage)]
@@ -118,16 +119,7 @@ pub mod launchpad_generator {
             token_address: AccountId,
             total_supply: Balance,
 
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>,
+            phases: Vec<PhaseInput>
         ) -> Result<(), Error> {
             let caller = self.env().caller();
 
@@ -208,15 +200,7 @@ pub mod launchpad_generator {
                 total_supply,
                 self.env().account_id(),
                 self.manager.tx_rate,
-                phase_name,
-                phase_start_time,
-                phase_end_time,
-                phase_immediate_release_rate,
-                phase_vesting_duration,
-                phase_vesting_unit,
-                phase_is_public,
-                phase_public_amount,
-                phase_public_price,
+                phases
             )
             .endowment(0)
             .code_hash(self.manager.launchpad_hash)

@@ -547,3 +547,15 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
+export type PhaseInput = {
+	name: string,
+	startTime: (number | string | BN),
+	endTime: (number | string | BN),
+	immediateReleaseRate: (number | string | BN),
+	vestingDuration: (number | string | BN),
+	vestingUnit: (number | string | BN),
+	isPublic: boolean,
+	publicAmount: (string | number | BN),
+	publicPrice: (string | number | BN)
+}
+
