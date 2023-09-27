@@ -69,9 +69,8 @@ pub mod launchpad_generator {
             }
         }
 
-        #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(
+        fn initialize(
             &mut self,
             launchpad_hash: Hash,
             inw_contract: AccountId,
