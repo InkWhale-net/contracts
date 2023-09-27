@@ -82,7 +82,6 @@ pub struct WhitelistBuyerInfo {
 // ADMINER RoleType = 3739740293
 pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
-pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]
 #[openbrush::storage_item]
 pub struct Data {

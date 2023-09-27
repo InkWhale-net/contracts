@@ -5,8 +5,6 @@ pub use crate::{
 
 use ink::prelude::{string::String, vec::Vec};
 
-use ink::storage::traits::{AutoStorableHint, ManualKey, Storable, StorableHint};
-
 use ink::env::CallFlags;
 use openbrush::{
     contracts::{access_control::*, ownable::*},
@@ -17,9 +15,6 @@ use openbrush::{
 pub trait LaunchpadContractTrait:
     access_control::Internal
     + access_control::MembersManager
-    + Storable
-    + StorableHint<ManualKey<{ STORAGE_KEY }>>
-    + AutoStorableHint<ManualKey<3218979580, ManualKey<{ STORAGE_KEY }>>>
     + Storage<access_control::Data>
     + Storage<Data>
     + Storage<ownable::Data>
