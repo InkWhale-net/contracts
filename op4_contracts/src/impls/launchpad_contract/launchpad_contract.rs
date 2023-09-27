@@ -186,8 +186,7 @@ pub trait LaunchpadContractTrait:
             .get(&(&phase_id, &account))
     }
 
-    #[modifiers(only_owner)]
-    fn get_balance(&mut self) -> Result<Balance, Error> {
+    fn get_balance(&self) -> Result<Balance, Error> {
         Ok(Self::env().balance())
     }
 

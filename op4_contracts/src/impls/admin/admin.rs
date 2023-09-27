@@ -20,8 +20,7 @@ pub trait AdminTrait: Storage<ownable::Data> {
         Ok(())
     }
 
-    #[modifiers(only_owner)]
-    fn get_balance(&mut self) -> Result<Balance, Error> {
+    fn get_balance(&self) -> Result<Balance, Error> {
         Ok(Self::env().balance())
     }
 
