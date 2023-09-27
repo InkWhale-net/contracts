@@ -1,6 +1,5 @@
 use crate::traits::error::Error;
 pub use crate::{traits::admin::*};
-use ink::env::CallFlags;
 use ink::prelude::vec::Vec;
 use openbrush::{
     contracts::ownable::*,
@@ -32,8 +31,7 @@ pub trait AdminTrait: Storage<ownable::Data> {
         receiver: AccountId,
     ) -> Result<(), Error> {
         let builder =
-            Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new())
-                .call_flags(CallFlags::default().set_allow_reentry(true));
+            Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new());                
 
         match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),

@@ -3,7 +3,6 @@
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
 pub mod launchpad_generator {
-    use ink::env::CallFlags;
     use ink::prelude::{string::String, vec, vec::Vec};
     use ink::ToAccountId;
 
@@ -151,8 +150,7 @@ pub mod launchpad_generator {
                 self.env().account_id(),
                 fees,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
+            );            
 
             let result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
@@ -173,9 +171,8 @@ pub mod launchpad_generator {
                 self.env().account_id(),
                 total_supply,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
-
+            );
+            
             let token_transfer_result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
                 Ok(Ok(Err(e))) => Err(e.into()),

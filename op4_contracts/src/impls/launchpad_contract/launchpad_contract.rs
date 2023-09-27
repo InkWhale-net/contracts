@@ -5,7 +5,6 @@ pub use crate::{
 
 use ink::prelude::{string::String, vec::Vec};
 
-use ink::env::CallFlags;
 use openbrush::{
     contracts::{access_control::*, ownable::*},
     modifiers,
@@ -254,8 +253,7 @@ pub trait LaunchpadContractTrait:
                 caller,
                 total_changed,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
+            );            
 
             let token_transfer_result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
@@ -866,8 +864,7 @@ pub trait LaunchpadContractTrait:
             amount,
             Vec::<u8>::new(),
         );
-        // .call_flags(CallFlags::default().set_allow_reentry(true));
-
+        
         match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
@@ -1192,9 +1189,8 @@ pub trait LaunchpadContractTrait:
                         caller,
                         claim,
                         Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
-
+                    );
+                    
                     match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
@@ -1367,9 +1363,8 @@ pub trait LaunchpadContractTrait:
                         caller,
                         claim,
                         Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
-
+                    );
+                    
                     match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
@@ -1517,8 +1512,7 @@ pub trait LaunchpadContractTrait:
                         caller,
                         claim,
                         Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
+                    );                    
 
                     match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
@@ -1686,9 +1680,8 @@ pub trait LaunchpadContractTrait:
                         caller,
                         claim,
                         Vec::<u8>::new(),
-                    )
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
-
+                    );
+                    
                     match builder.try_invoke() {
                         Ok(Ok(Ok(_))) => Ok(()),
                         Ok(Ok(Err(e))) => Err(e.into()),
@@ -1903,9 +1896,8 @@ pub trait LaunchpadContractTrait:
                 receiver,
                 total_withdraw,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
-
+            );
+            
             let result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
                 Ok(Ok(Err(e))) => Err(e.into()),
