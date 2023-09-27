@@ -1,5 +1,5 @@
 use crate::traits::error::Error;
-pub use crate::{impls::admin::data, traits::admin::*};
+pub use crate::{traits::admin::*};
 use ink::env::CallFlags;
 use ink::prelude::vec::Vec;
 use openbrush::{
@@ -8,7 +8,7 @@ use openbrush::{
     traits::{AccountId, Balance, Storage},
 };
 
-pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
+pub trait AdminTrait: Storage<ownable::Data> {
     #[modifiers(only_owner)]
     fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
         if value > Self::env().balance() {

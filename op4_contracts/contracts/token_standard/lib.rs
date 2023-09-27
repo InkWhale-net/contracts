@@ -54,8 +54,6 @@ pub mod token_standard {
         ownable: ownable::Data,
         #[storage_field]
         cap: capped::Data,
-        #[storage_field]
-        admin_data: admin::data::Data,
     }
 
     pub type Event = <TokenStandard as ContractEventBase>::Type;

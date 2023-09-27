@@ -24,8 +24,6 @@ pub mod my_launchpad {
         #[storage_field]
         data: launchpad_contract::data::Data,
         #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
-        #[storage_field]
         access: access_control::Data,
         #[storage_field]
         enumerable: enumerable::Data,

@@ -28,10 +28,6 @@ pub mod launchpad_generator {
         #[storage_field]
         manager: launchpad_generator::data::Data,
         #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
-        #[storage_field]
         access: access_control::Data,
         #[storage_field]
         enumerable: enumerable::Data,

@@ -54,9 +54,7 @@ pub mod psp22_standard {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        cap: capped::Data,
-        #[storage_field]
-        admin_data: admin::data::Data,
+        cap: capped::Data
     }
 
     pub type Event = <Psp22Nft as ContractEventBase>::Type;
