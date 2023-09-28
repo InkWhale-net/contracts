@@ -13,7 +13,7 @@ pub mod launchpad_generator {
         traits::Storage,
     };
 
-    use inkwhale_project::traits::launchpad_contract::LaunchpadContractRef;
+    // use inkwhale_project::traits::launchpad_contract::LaunchpadContractRef;
     use inkwhale_project::traits::launchpad_generator::Psp22Ref;
 
     use inkwhale_project::impls::{admin::*, launchpad_generator::*, upgradeable::*};
@@ -129,20 +129,6 @@ pub mod launchpad_generator {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
 
-            if total_supply == 0 {
-                return Err(Error::InvalidTotalSupply);
-            }
-
-            // Check token balance and allowance
-            let token_allowance =
-                Psp22Ref::allowance(&token_address, caller, self.env().account_id());
-
-            let token_balance = Psp22Ref::balance_of(&token_address, caller);
-
-            if token_allowance < total_supply || token_balance < total_supply {
-                return Err(Error::InvalidTokenBalanceAndAllowance);
-            }
-
             // Collect INW as transaction Fees
             let builder = Psp22Ref::transfer_from_builder(
                 &self.manager.inw_contract,
@@ -164,27 +150,20 @@ pub mod launchpad_generator {
                 return Err(Error::CannotTransfer);
             }
 
-            // Collect total supply of token
-            let builder = Psp22Ref::transfer_from_builder(
-                &token_address,
-                caller,
-                self.env().account_id(),
-                total_supply,
-                Vec::<u8>::new(),
-            );
-            
-            let token_transfer_result = match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => Err(Error::CannotTransfer),
-            };
-
-            if token_transfer_result.is_err() {
-                return Err(Error::CannotTransfer);
+            // Check token balance and allowance
+            if total_supply == 0 {
+                return Err(Error::InvalidTotalSupply);
             }
 
+            let token_allowance =
+                Psp22Ref::allowance(&token_address, caller, self.env().account_id());
+
+            let token_balance = Psp22Ref::balance_of(&token_address, caller);
+
+            if token_allowance < total_supply || token_balance < total_supply {
+                return Err(Error::InvalidTokenBalanceAndAllowance);
+            }          
+           
             let launchpad_creation_result = MyLaunchpadRef::new(
                 caller,
                 project_info_uri,
@@ -234,17 +213,26 @@ pub mod launchpad_generator {
                     return Err(Error::CannotBurn);
                 }
 
-                // Launchpad generator approves for launchpad contract the token amount
-                if Psp22Ref::approve(&token_address, contract_account, total_supply).is_err() {
-                    return Err(Error::CannotApprove);
-                }
+                // Transfer total supply of token from caller to the launchpad contract              
+                let builder = Psp22Ref::transfer_from_builder(
+                    &token_address,
+                    caller,
+                    contract_account,
+                    total_supply,
+                    Vec::<u8>::new(),
+                );
+                
+                let token_transfer_result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => Err(Error::CannotTransfer),
+                };
 
-                // Launchpad generator tops up token for launchpad
-                let topup_result = LaunchpadContractRef::topup(&contract_account, total_supply);
-
-                if topup_result.is_err() {
-                    return Err(Error::CannotTopupToken);
-                }
+                if token_transfer_result.is_err() {
+                    return Err(Error::CannotTransfer);
+                }                
 
                 // Emit event
                 // self.env().emit_event(AddNewLaunchpadEvent {
