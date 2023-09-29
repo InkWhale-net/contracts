@@ -420,33 +420,37 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set phase - Case 1=============`);
         let phaseId = 0;
         let newIsActive = true;
-        let newPhaseName = "New phase 1";
-        let newStartTime = new Date().getTime() + 20000; // now + 20s
-        let newPhaseStartTime = newStartTime;
-        let newPhaseEndTime = newStartTime + 3 * 86400000;
-        let newPhaseImmediateReleaseRate = 600;
-        let newPhaseVestingDuration = 2400000;
-        let newPhaseVestingUnit = 600000;
-        let newPhaseIsPublic = false;
-        let newPhasePublicAmount = "200000000000000000"; // 200k - avail amount = 100k = public amount increasement from 100k to 200k
-        let newPhasePublicPrice = "500000000000"; // 0.5 - 1A
+        // let newPhaseName = "New phase 1";
+        // let newStartTime = new Date().getTime() + 20000; // now + 20s
+        // let newPhaseStartTime = newStartTime;
+        // let newPhaseEndTime = newStartTime + 3 * 86400000;
+        // let newPhaseImmediateReleaseRate = 600;
+        // let newPhaseVestingDuration = 2400000;
+        // let newPhaseVestingUnit = 600000;
+        // let newPhaseIsPublic = false;
+        // let newPhasePublicAmount = "200000000000000000"; // 200k - avail amount = 100k = public amount increasement from 100k to 200k
+        // let newPhasePublicPrice = "500000000000"; // 0.5 - 1A
+
+        let newPhase: PhaseInput = {
+            name: "New phase 1",
+            startTime: new Date().getTime() + 20000, // now + 20s
+            endTime: startTime + 3 * 86400000,
+            immediateReleaseRate: 600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: false,
+            publicAmount: "200000000000000000", // 200k - avail amount = 100k = public amount increasement from 100k to 200k
+            publicPrice: "500000000000" // 0.5A 
+        };
 
         await lpContract.tx.setPhase(
             phaseId,
             newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount,
-            newPhasePublicPrice
+            newPhase
         );
 
         let receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
-        console.log({receivedPublicInfo: receivedPublicInfo});
+        // console.log({receivedPublicInfo: receivedPublicInfo});
         expect(receivedPublicInfo.isActive).to.equal(true);
 
         let receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
@@ -464,15 +468,7 @@ describe('Launchpad contract test', () => {
         await lpContract.tx.setPhase(
             phaseId,
             newIsActive,
-            phases[phaseId].name,
-            phases[phaseId].startTime,
-            phases[phaseId].endTime,
-            phases[phaseId].immediateReleaseRate,
-            phases[phaseId].vestingDuration,
-            phases[phaseId].vestingUnit,
-            phases[phaseId].isPublic,
-            phases[phaseId].publicAmount,
-            phases[phaseId].publicPrice
+            phases[phaseId]
         );
 
         receivedPublicInfo = (await lpQuery.getPhase(phaseId)).value.ok;
@@ -498,38 +494,47 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set multi phases - Case 1=============`);
         let phaseId = [0, 1];
         let newIsActive = [true, true];
-        let newPhaseName = ["New phase 1", "New phase 2"];
         let newStartTime = new Date().getTime() + 20000; // now + 20s
-        let newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        let newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        let newPhaseImmediateReleaseRate = [600, 1600];
-        let newPhaseVestingDuration = [2400000, 2400000];
-        let newPhaseVestingUnit = [600000, 600000];
-        let newPhaseIsPublic = [true, true];
-        let newPhasePublicAmount = ["150000000000000000", "550000000000000000"]; // equal balance of Alice
-        let newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+        
+        let phase1: PhaseInput = {
+            name: "New phase 1",
+            startTime: newStartTime,
+            endTime: newStartTime + 3 * 86400000,
+            immediateReleaseRate: 600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: true,
+            publicAmount: "150000000000000000",
+            publicPrice: "600000000000" // 0.6A
+        };
+
+        let phase2: PhaseInput = {
+            name: "New phase 2",
+            startTime: newStartTime + 4 * 86400000,
+            endTime: newStartTime + 5 * 86400000,
+            immediateReleaseRate: 1600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: true,
+            publicAmount: "550000000000000000",
+            publicPrice: "1200000000000" // 1.2A
+        };
+        
+        let newPhases = [phase1, phase2];
 
         await lpContract.tx.setMultiPhases(
             phaseId,
             newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount,
-            newPhasePublicPrice
+            newPhases
         );
 
         let receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
         // console.log({receivedPhaseInfo0: receivedPhaseInfo0});
-        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime[0]);
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhases[0].endTime);
 
         let receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         // console.log({receivedPhaseInfo1: receivedPhaseInfo1});
-        expect(receivedPhaseInfo1.endTime).to.equal(newPhaseEndTime[1]);
+        expect(receivedPhaseInfo1.endTime).to.equal(newPhases[1].endTime);
 
         availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         console.log({ availableTokenAmount: availableTokenAmount.toString() });
@@ -537,44 +542,54 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set multi phases - Case 2=============`);
         phaseId = [0, 1];
         newIsActive = [true, true];
-        newPhaseName = ["New phase 1", "New phase 2"];
         newStartTime = new Date().getTime() + 20000; // now + 20s
-        newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        newPhaseImmediateReleaseRate = [600, 1600];
-        newPhaseVestingDuration = [2400000, 2400000];
-        newPhaseVestingUnit = [600000, 600000];
-        newPhaseIsPublic = [true, true];
-        let newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
-        newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+
+        let currentPhasePublicAmount = [newPhases[0].publicAmount, newPhases[1].publicAmount]; // Over balance of Alice
+        
+        phase1 = {
+            name: "New phase 1",
+            startTime: newStartTime,
+            endTime: newStartTime + 3 * 86400000,
+            immediateReleaseRate: 600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: true,
+            publicAmount: "160000000000000000",
+            publicPrice: "600000000000" // 0.6A
+        };
+
+        phase2 = {
+            name: "New phase 2",
+            startTime: newStartTime + 4 * 86400000,
+            endTime: newStartTime + 5 * 86400000,
+            immediateReleaseRate: 1600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: true,
+            publicAmount: "600000000000000000",
+            publicPrice: "1200000000000" // 1.2A
+        };
+        
+        newPhases = [phase1, phase2];           
 
         try {
             await lpContract.tx.setMultiPhases(
                 phaseId,
                 newIsActive,
-                newPhaseName,
-                newPhaseStartTime,
-                newPhaseEndTime,
-                newPhaseImmediateReleaseRate,
-                newPhaseVestingDuration,
-                newPhaseVestingUnit,
-                newPhaseIsPublic,
-                newPhasePublicAmount1,
-                newPhasePublicPrice
+                newPhases
             );
         } catch (error) {
-
         }
 
         let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
         let receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
         // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
-        expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
+        expect(receivedPublicSaleTotalAmount0).to.equal(currentPhasePublicAmount[0]);
 
         let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
         let receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
         // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
-        expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
+        expect(receivedPublicSaleTotalAmount1).to.equal(currentPhasePublicAmount[1]);
 
         availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         console.log({ availableTokenAmount: availableTokenAmount.toString() });
@@ -582,40 +597,49 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set multi phases - Case 3=============`);
         phaseId = [0, 1];
         newIsActive = [true, false];
-        newPhaseName = ["New phase 1", "New phase 2"];
         newStartTime = new Date().getTime() + 20000; // now + 20s
-        newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-        newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
-        newPhaseImmediateReleaseRate = [600, 1600];
-        newPhaseVestingDuration = [2400000, 2400000];
-        newPhaseVestingUnit = [600000, 600000];
-        newPhaseIsPublic = [false, true];
-        newPhasePublicAmount1 = ["160000000000000000", "600000000000000000"]; // Over balance of Alice
-        newPhasePublicPrice = ["600000000000", "1200000000000"]; // 0.6 - 1.2A
+        
+        phase1 = {
+            name: "New phase 1",
+            startTime: newStartTime,
+            endTime: newStartTime + 3 * 86400000,
+            immediateReleaseRate: 600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: false,
+            publicAmount: "160000000000000000",
+            publicPrice: "600000000000" // 0.6A
+        };
+
+        phase2 = {
+            name: "New phase 2",
+            startTime: newStartTime + 4 * 86400000,
+            endTime: newStartTime + 5 * 86400000,
+            immediateReleaseRate: 1600,
+            vestingDuration: 2400000, 
+            vestingUnit: 600000,
+            isPublic: true,
+            publicAmount: "600000000000000000",
+            publicPrice: "1200000000000" // 1.2A
+        };
+        
+        newPhases = [phase1, phase2]; 
 
         await lpContract.tx.setMultiPhases(
             phaseId,
             newIsActive,
-            newPhaseName,
-            newPhaseStartTime,
-            newPhaseEndTime,
-            newPhaseImmediateReleaseRate,
-            newPhaseVestingDuration,
-            newPhaseVestingUnit,
-            newPhaseIsPublic,
-            newPhasePublicAmount1,
-            newPhasePublicPrice
+            newPhases,
         );
 
         receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
         receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
         // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
-        expect(receivedPublicSaleTotalAmount0).to.equal(newPhasePublicAmount[0]);
+        expect(receivedPublicSaleTotalAmount0).to.equal(currentPhasePublicAmount[0]);
 
         receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
         receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
         // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
-        expect(receivedPublicSaleTotalAmount1).to.equal(newPhasePublicAmount[1]);
+        expect(receivedPublicSaleTotalAmount1).to.equal(currentPhasePublicAmount[1]);
 
         // availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         // console.log({availableTokenAmount: availableTokenAmount.toString()});
@@ -627,21 +651,21 @@ describe('Launchpad contract test', () => {
         console.log(`===========Set multi phases - Case 4=============`);
         try {
             newStartTime = new Date().getTime() + 5000; // now + 5000s
-            newPhaseStartTime = [newStartTime, newStartTime + 4 * 86400000]; // 86400000 ~ 1 day 
-            newPhaseEndTime = [newStartTime + 3 * 86400000, newStartTime + 5 * 86400000];
+            
+            phase1 = phases[0];
+            phase1.startTime = newStartTime;
+            phase1.endTime = newStartTime + 3 * 86400000;
+
+            phase2 = phases[1];
+            phase2.startTime = newStartTime + 4 * 86400000;
+            phase2.endTime = newStartTime + 5 * 86400000;            
+            
+            newPhases = [phase1, phase2]; 
 
             await lpContract.tx.setMultiPhases(
                 [0, 1],
                 [true, true],
-                [phases[0].name, phases[1].name],
-                newPhaseStartTime,
-                newPhaseEndTime,
-                [phases[0].immediateReleaseRate, phases[1].immediateReleaseRate],
-                [phases[0].vestingDuration, phases[1].vestingDuration],
-                [phases[0].vestingUnit, phases[1].vestingUnit],
-                [phases[0].isPublic, phases[1].isPublic],
-                [phases[0].publicAmount, phases[1].publicAmount],
-                [phases[0].publicPrice, phases[1].publicPrice]
+                newPhases                
             );
         } catch (error) {
             console.log("error", error);
@@ -649,11 +673,11 @@ describe('Launchpad contract test', () => {
 
         receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
         // console.log({receivedPhaseInfo0: receivedPhaseInfo0});
-        expect(receivedPhaseInfo0.endTime).to.equal(newPhaseEndTime[0]);
+        expect(receivedPhaseInfo0.endTime).to.equal(newPhases[0].endTime);
 
         receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
         // console.log({receivedPhaseInfo1: receivedPhaseInfo1});
-        expect(receivedPhaseInfo1.endTime).to.equal(newPhaseEndTime[1]);
+        expect(receivedPhaseInfo1.endTime).to.equal(newPhases[1].endTime);
     })
 
     it('Can set vesting duration', async () => {

@@ -747,15 +747,7 @@ pub trait LaunchpadContractTrait:
         &mut self,
         phase_id: u8,
         is_active: bool,
-        name: String,
-        start_time: u64,
-        end_time: u64,
-        immediate_release_rate: u32,
-        vesting_duration: u64,
-        vesting_unit: u64,
-        is_public: bool,
-        total_amount: Balance,
-        price: Balance,
+        phase_input: PhaseInput
     ) -> Result<(), Error> {
         let set_is_active_result = self.set_is_active(phase_id, is_active);
         if set_is_active_result.is_err() && set_is_active_result != Err(Error::InvalidSetActive) {
@@ -764,21 +756,21 @@ pub trait LaunchpadContractTrait:
 
         if let Some(phase) = self.data::<Data>().phase.get(&phase_id) {
             if phase.is_active {
-                self.set_name(phase_id, name)?;              
-                self.set_start_and_end_time(phase_id, start_time, end_time)?;
-                self.set_immediate_release_rate(phase_id, immediate_release_rate)?;
-                self.set_vesting_duration(phase_id, vesting_duration)?;
-                self.set_vesting_unit(phase_id, vesting_unit)?;
+                self.set_name(phase_id, phase_input.name)?;              
+                self.set_start_and_end_time(phase_id, phase_input.start_time, phase_input.end_time)?;
+                self.set_immediate_release_rate(phase_id, phase_input.immediate_release_rate)?;
+                self.set_vesting_duration(phase_id, phase_input.vesting_duration)?;
+                self.set_vesting_unit(phase_id, phase_input.vesting_unit)?;
         
-                let set_is_public_result = self.set_is_public(phase_id, is_public);
+                let set_is_public_result = self.set_is_public(phase_id, phase_input.is_public);
                 if set_is_public_result.is_err() && set_is_public_result != Err(Error::InvalidSetPublic) {
                     return set_is_public_result;
                 }
 
                 if let Some(public_sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
                     if public_sale_info.is_public {                 
-                        self.set_public_total_amount(phase_id, total_amount)?;
-                        self.set_public_sale_price(phase_id, price)?;                        
+                        self.set_public_total_amount(phase_id, phase_input.public_amount)?;
+                        self.set_public_sale_price(phase_id, phase_input.public_price)?;                        
                     } 
                 }   
             } 
@@ -792,29 +784,13 @@ pub trait LaunchpadContractTrait:
         &mut self,
         phase_id: Vec<u8>,
         is_active: Vec<bool>,
-        name: Vec<String>,
-        start_time: Vec<u64>,
-        end_time: Vec<u64>,
-        immediate_release_rate: Vec<u32>,
-        vesting_duration: Vec<u64>,
-        vesting_unit: Vec<u64>,
-        is_public: Vec<bool>,
-        total_amount: Vec<Balance>,
-        price: Vec<Balance>,
+        phases: Vec<PhaseInput>
     ) -> Result<(), Error> {
         let len = phase_id.len();
 
         if len == 0
             || len != is_active.len()
-            || len != name.len()
-            || len != start_time.len()
-            || len != end_time.len()
-            || len != immediate_release_rate.len()
-            || len != vesting_duration.len()
-            || len != vesting_unit.len()
-            || len != is_public.len()
-            || len != total_amount.len()
-            || len != price.len()
+            || len != phases.len()           
         {
             return Err(Error::InvalidPhaseData);
         }
@@ -823,15 +799,7 @@ pub trait LaunchpadContractTrait:
             self.set_phase(
                 phase_id[i],
                 is_active[i],
-                name[i].clone(),
-                start_time[i],
-                end_time[i],
-                immediate_release_rate[i],
-                vesting_duration[i],
-                vesting_unit[i],
-                is_public[i],
-                total_amount[i],
-                price[i],
+                phases[i].clone()
             )?;            
         }
 
