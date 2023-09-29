@@ -7,7 +7,7 @@ pub use self::my_launchpad::{MyLaunchpad, MyLaunchpadRef};
 pub mod my_launchpad {
     use ink::prelude::{string::String, vec::Vec};
 
-    use openbrush::{contracts::ownable::*, modifiers, traits::Storage};
+    use openbrush::{contracts::ownable::*, traits::Storage};
 
     use inkwhale_project::impls::{launchpad_contract::*, upgradeable::*};
 
@@ -173,35 +173,7 @@ pub mod my_launchpad {
                 Ok(()) => Ok(instance),
                 Err(e) => Err(e),
             }
-        }
-
-        #[ink(message)]
-        #[modifiers(only_owner)]
-        pub fn initialize(
-            &mut self,
-            project_info_uri: String,
-            token_address: AccountId,
-            total_supply: Balance,
-            generator_contract: AccountId,
-            tx_rate: u32,
-            phases: Vec<PhaseInput>
-        ) -> Result<(), Error> {
-            access_control::Internal::_init_with_admin(self, Some(self.env().caller()));
-            AccessControl::grant_role(self, ADMINER, Some(self.env().caller()))
-                .expect("Should grant ADMINER role");
-
-            match self.create_pool(
-                project_info_uri,
-                token_address,
-                total_supply,
-                generator_contract,
-                tx_rate,
-                phases
-            ) {
-                Ok(()) => Ok(()),
-                Err(e) => Err(e),
-            }
-        }
+        }        
 
         fn create_pool(
             &mut self,
