@@ -1,10 +1,7 @@
 use openbrush::{
-    contracts::access_control::*,
-    storage::{Mapping, MultiMapping, TypeGuard, ValueGuard},
+    storage::{Mapping, MultiMapping, ValueGuard},
     traits::{AccountId, Balance},
 };
-
-use ink::prelude::string::String;
 
 #[cfg(feature = "std")]
 use ink::storage::traits::StorageLayout;
@@ -57,8 +54,6 @@ pub struct Data {
     pub total_inw_for_waiting_withdrawals: Balance,
     pub total_azero_reserved_for_withdrawals: Balance,
     pub total_inw_reserved_for_withdrawals: Balance,
-
-    pub _reserved: Option<()> 
 }
 
 impl Default for Data {
@@ -86,8 +81,6 @@ impl Default for Data {
             total_inw_for_waiting_withdrawals: Default::default(),
             total_azero_reserved_for_withdrawals: Default::default(),
             total_inw_reserved_for_withdrawals: Default::default(),
-
-            _reserved: Default::default(),
         }
     }
 }

@@ -9,7 +9,7 @@ use openbrush::{
     traits::{AccountId, Balance},
 };
 
-use ink::prelude::{string::String, vec::Vec};
+use ink::prelude::{vec::Vec};
 
 use crate::impls::azero_staking::data::{
     StakeInformation, 
@@ -35,13 +35,62 @@ pub type Psp22Ref = dyn PSP22 + PSP22Burnable + PSP22Metadata;
 pub type AzeroStakingRef = dyn AzeroStakingTrait;
 
 #[openbrush::trait_definition]
-pub trait AzeroStakingTrait {
+pub trait AzeroStakingTrait {   
+    // Emit funcs
+    fn _emit_stake_event(
+        &self,
+        _staker: AccountId,
+        _amount: Balance,
+        _time: u64
+    );
+
+    fn _emit_withrawal_request_event(
+        &self,
+        _request_id: u64,
+        _user: AccountId,        
+        _amount: Balance,
+        _azero_reward: Balance,
+        _inw_reward: Balance, 
+        _time: u64
+    );
+
+    fn _emit_claim_event(
+        &self,
+        _request_id: u64,
+        _user: AccountId,  
+        _azero_amount: Balance,
+        _inw_amount: Balance,
+        _time: u64  
+    );
+
+    fn _emit_withdraw_azero_to_stake_event(
+        &self,
+        _caller: AccountId, 
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    );
+
+    fn _emit_withdraw_azero_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    );
+
+    fn _emit_withdraw_inw_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance,
+        _time: u64 
+    );
+    
     // Main funcs
-    #[ink(message)]
+    #[ink(message, payable)]
     fn stake(&mut self, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]
-    fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64);
+    fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error>;
     
     #[ink(message)]
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
@@ -139,5 +188,5 @@ pub trait AzeroStakingTrait {
     fn set_inw_multiplier(&mut self, inw_multiplier: Balance) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_unstaking_fee(&mut self, unstaking_fee: Balance) -> Result<(), Error>;   
+    fn set_unstaking_fee(&mut self, unstaking_fee: Balance) -> Result<(), Error>;
 }

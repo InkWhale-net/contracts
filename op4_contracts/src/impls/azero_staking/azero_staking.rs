@@ -3,9 +3,8 @@ pub use crate::{
     traits::{error::Error, azero_staking::*},
 };
 
-use ink::prelude::{string::String, vec::Vec};
+use ink::prelude::{vec::Vec};
 
-use ink::env::CallFlags;
 use openbrush::{
     contracts::{access_control::*, ownable::*},
     modifiers,
@@ -19,7 +18,7 @@ pub trait AzeroStakingTrait:
     + Storage<Data>
     + Storage<ownable::Data>
 {
-    // Emit func
+    // Emit funcs
     fn _emit_stake_event(
         &self,
         _staker: AccountId,
@@ -73,7 +72,7 @@ pub trait AzeroStakingTrait:
         _time: u64 
     ) {        
     }
-
+    
     // Main funcs
     fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
         if amount < self.data::<Data>().min_staking_amount {
@@ -386,9 +385,8 @@ pub trait AzeroStakingTrait:
                         &self.data::<Data>().inw_contract, 
                         claimer, 
                         withdrawal_request_info.inw_reward, 
-                        Vec::<u8>::new())
-                    .call_flags(CallFlags::default().set_allow_reentry(true));
-
+                        Vec::<u8>::new());
+                    
                 let result = match builder.try_invoke() {
                     Ok(Ok(Ok(_))) => Ok(()),
                     Ok(Ok(Err(e))) => Err(e.into()),
@@ -485,9 +483,8 @@ pub trait AzeroStakingTrait:
                     &self.data::<Data>().inw_contract, 
                     receiver, 
                     amount, 
-                    Vec::<u8>::new())
-                .call_flags(CallFlags::default().set_allow_reentry(true));
-
+                    Vec::<u8>::new());
+                
             let result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
                 Ok(Ok(Err(e))) => Err(e.into()),
@@ -634,5 +631,5 @@ pub trait AzeroStakingTrait:
 
         self.data::<Data>().unstaking_fee = unstaking_fee;
         Ok(())
-    }  
+    }    
 }

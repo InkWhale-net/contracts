@@ -1,15 +1,16 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-pub use self::azero_staking::{AzeroStaking, AzeroStakingRef};
+pub use self::my_azero_staking::{MyAzeroStaking, MyAzeroStakingRef};
 
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
-pub mod azero_staking {
-    use ink::prelude::{string::String, vec::Vec};
-
+pub mod my_azero_staking {
     use openbrush::{contracts::ownable::*, modifiers, traits::Storage};
 
-    use inkwhale_project::impls::{azero_staking::*, upgradeable::*};
+    use inkwhale_project::impls::{
+        azero_staking::*, 
+        upgradeable::*
+    };
 
     use ink::{
         codegen::{EmitEvent, Env},
@@ -18,182 +19,180 @@ pub mod azero_staking {
 
     #[ink(storage)]
     #[derive(Default, Storage)]
-    pub struct AzeroStaking {
+    pub struct MyAzeroStaking {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
         data: azero_staking::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
         #[storage_field]
         access: access_control::Data,
         #[storage_field]
         enumerable: enumerable::Data,
     }
 
-    // #[ink(event)]
-    // pub struct StakeEvent {
-    //     staker: AccountId,
-    //     amount: Balance,
-    //     time: u64,
-    // }
+    #[ink(event)]
+    pub struct StakeEvent {
+        staker: AccountId,
+        amount: Balance,
+        time: u64,
+    }
 
-    // #[ink(event)]
-    // pub struct WithrawalRequestEvent {
-    //     request_id: u64,
-    //     user: AccountId,        
-    //     amount: Balance,
-    //     azero_reward: Balance,
-    //     inw_reward: Balance, 
-    //     time: u64
-    // }
+    #[ink(event)]
+    pub struct WithrawalRequestEvent {
+        request_id: u64,
+        user: AccountId,        
+        amount: Balance,
+        azero_reward: Balance,
+        inw_reward: Balance, 
+        time: u64
+    }
 
-    // #[ink(event)]
-    // pub struct ClaimEvent {
-    //     request_id: u64,
-    //     user: AccountId,  
-    //     azero_amount: Balance,
-    //     inw_amount: Balance,
-    //     time: u64  
-    // }
+    #[ink(event)]
+    pub struct ClaimEvent {
+        request_id: u64,
+        user: AccountId,  
+        azero_amount: Balance,
+        inw_amount: Balance,
+        time: u64  
+    }
 
-    // #[ink(event)]
-    // pub struct WithdrawAzeroToStakeEvent {
-    //     caller: AccountId, 
-    //     receiver: AccountId,
-    //     amount: Balance, 
-    //     time: u64 
-    // }
+    #[ink(event)]
+    pub struct WithdrawAzeroToStakeEvent {
+        caller: AccountId, 
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64 
+    }
 
-    // #[ink(event)]
-    // pub struct WithdrawAzeroEvent {
-    //     receiver: AccountId,
-    //     amount: Balance, 
-    //     time: u64      
-    // }
+    #[ink(event)]
+    pub struct WithdrawAzeroEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
 
-    // #[ink(event)]
-    // pub struct WithdrawInwEvent {
-    //     receiver: AccountId,
-    //     amount: Balance, 
-    //     time: u64      
-    // }
+    #[ink(event)]
+    pub struct WithdrawInwEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
 
-    pub type Event = <AzeroStaking as ContractEventBase>::Type;
+    pub type Event = <MyAzeroStaking as ContractEventBase>::Type;
 
-    // impl AzeroStakingTrait for AzeroStaking {
-    //     fn _emit_stake_event(
-    //         &self,
-    //         _staker: AccountId,
-    //         _amount: Balance,
-    //         _time: u64
-    //     ) {        
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::StakeEvent(StakeEvent {
-    //                 staker: _staker,
-    //                 amount: _amount,
-    //                 time: _time
-    //             }),
-    //         );
-    //     }
+    impl AzeroStakingTrait for MyAzeroStaking {
+        fn _emit_stake_event(
+            &self,
+            _staker: AccountId,
+            _amount: Balance,
+            _time: u64
+        ) {        
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::StakeEvent(StakeEvent {
+                    staker: _staker,
+                    amount: _amount,
+                    time: _time
+                }),
+            );
+        }
 
-    //     fn _emit_withrawal_request_event(
-    //         &self,
-    //         _request_id: u64,
-    //         _user: AccountId,        
-    //         _amount: Balance,
-    //         _azero_reward: Balance,
-    //         _inw_reward: Balance, 
-    //         _time: u64
-    //     ) {
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::WithrawalRequestEvent(WithrawalRequestEvent {
-    //                 request_id: _request_id,
-    //                 user: _user,        
-    //                 amount: _amount,
-    //                 azero_reward: _azero_reward,
-    //                 inw_reward: _inw_reward, 
-    //                 time: _time
-    //             }),
-    //         );
-    //     }
+        fn _emit_withrawal_request_event(
+            &self,
+            _request_id: u64,
+            _user: AccountId,        
+            _amount: Balance,
+            _azero_reward: Balance,
+            _inw_reward: Balance, 
+            _time: u64
+        ) {
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithrawalRequestEvent(WithrawalRequestEvent {
+                    request_id: _request_id,
+                    user: _user,        
+                    amount: _amount,
+                    azero_reward: _azero_reward,
+                    inw_reward: _inw_reward, 
+                    time: _time
+                }),
+            );
+        }
 
-    //     fn _emit_claim_event(
-    //         &self,
-    //         _request_id: u64,
-    //         _user: AccountId,  
-    //         _azero_amount: Balance,
-    //         _inw_amount: Balance,
-    //         _time: u64  
-    //     ) { 
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::ClaimEvent(ClaimEvent {
-    //                 request_id: _request_id,
-    //                 user: _user,  
-    //                 azero_amount: _azero_amount,
-    //                 inw_amount: _inw_amount,
-    //                 time: _time  
-    //             }),
-    //         );
-    //     }
+        fn _emit_claim_event(
+            &self,
+            _request_id: u64,
+            _user: AccountId,  
+            _azero_amount: Balance,
+            _inw_amount: Balance,
+            _time: u64  
+        ) { 
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::ClaimEvent(ClaimEvent {
+                    request_id: _request_id,
+                    user: _user,  
+                    azero_amount: _azero_amount,
+                    inw_amount: _inw_amount,
+                    time: _time  
+                }),
+            );
+        }
 
-    //     fn _emit_withdraw_azero_to_stake_event(
-    //         &self,
-    //         _caller: AccountId, 
-    //         _receiver: AccountId,
-    //         _amount: Balance, 
-    //         _time: u64 
-    //     ) {     
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::WithdrawAzeroToStakeEvent(WithdrawAzeroToStakeEvent {
-    //                 caller: _caller, 
-    //                 receiver: _receiver,
-    //                 amount: _amount, 
-    //                 time: _time 
-    //             }),
-    //         );       
-    //     }
+        fn _emit_withdraw_azero_to_stake_event(
+            &self,
+            _caller: AccountId, 
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {     
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawAzeroToStakeEvent(WithdrawAzeroToStakeEvent {
+                    caller: _caller, 
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );       
+        }
 
-    //     fn _emit_withdraw_azero_event(
-    //         &self,
-    //         _receiver: AccountId,
-    //         _amount: Balance, 
-    //         _time: u64 
-    //     ) {    
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::WithdrawAzeroEvent(WithdrawAzeroEvent {
-    //                 receiver: _receiver,
-    //                 amount: _amount, 
-    //                 time: _time 
-    //             }),
-    //         );         
-    //     }
+        fn _emit_withdraw_azero_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {    
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawAzeroEvent(WithdrawAzeroEvent {
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );         
+        }
 
-    //     fn _emit_withdraw_inw_event(
-    //         &self,
-    //         _receiver: AccountId,
-    //         _amount: Balance, 
-    //         _time: u64 
-    //     ) {  
-    //         AzeroStaking::emit_event(
-    //             self.env(),
-    //             Event::WithdrawInwEvent(WithdrawInwEvent {
-    //                 receiver: _receiver,
-    //                 amount: _amount, 
-    //                 time: _time 
-    //             }),
-    //         );   
-    //     }
-    // }
+        fn _emit_withdraw_inw_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {  
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawInwEvent(WithdrawInwEvent {
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );   
+        }
+    }
 
-    impl UpgradeableTrait for AzeroStaking {}
+    impl UpgradeableTrait for MyAzeroStaking {}
 
-    impl AzeroStaking {
+    impl MyAzeroStaking {
         #[ink(constructor)]
         pub fn new(
             min_staking_amount: Balance,
@@ -284,8 +283,8 @@ pub mod azero_staking {
             Ok(())          
         }
 
-        // pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
-        //     emitter.emit_event(event);
-        // }
+        pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
+            emitter.emit_event(event);
+        }
     }
 }
