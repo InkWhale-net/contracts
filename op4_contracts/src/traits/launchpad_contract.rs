@@ -182,15 +182,6 @@ pub trait LaunchpadContractTrait {
         phase_id: u8,
         is_active: bool,
         phase_input: PhaseInput
-        // name: String,
-        // start_time: u64,
-        // end_time: u64,
-        // immediate_release_rate: u32,
-        // vesting_duration: u64,
-        // vesting_unit: u64,
-        // is_public: bool,
-        // total_amount: Balance,
-        // price: Balance,
     ) -> Result<(), Error>;
 
     #[ink(message)]
@@ -199,15 +190,6 @@ pub trait LaunchpadContractTrait {
         phase_id: Vec<u8>,
         is_active: Vec<bool>,
         phases: Vec<PhaseInput>
-        // name: Vec<String>,
-        // start_time: Vec<u64>,
-        // end_time: Vec<u64>,
-        // immediate_release_rate: Vec<u32>,
-        // vesting_duration: Vec<u64>,
-        // vesting_unit: Vec<u64>,
-        // is_public: Vec<bool>,
-        // total_amount: Vec<Balance>,
-        // price: Vec<Balance>,
     ) -> Result<(), Error>;
 
     // Funcs
