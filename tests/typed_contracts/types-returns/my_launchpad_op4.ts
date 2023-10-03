@@ -3,6 +3,18 @@ import type {ReturnNumber} from '@727-ventures/typechain-types';
 
 export type AccountId = string | number[]
 
+export type PhaseInput = {
+	name: string,
+	startTime: number,
+	endTime: number,
+	immediateReleaseRate: number,
+	vestingDuration: number,
+	vestingUnit: number,
+	isPublic: boolean,
+	publicAmount: ReturnNumber,
+	publicPrice: ReturnNumber
+}
+
 export interface Error {
 	custom ? : string,
 	ownableError ? : OwnableError,
@@ -449,7 +461,7 @@ export class ErrorBuilder {
 
 export enum OwnableError {
 	callerIsNotOwner = 'CallerIsNotOwner',
-	newOwnerIsZero = 'NewOwnerIsZero'
+	newOwnerIsNotSet = 'NewOwnerIsNotSet'
 }
 
 export enum AccessControlError {
@@ -462,9 +474,12 @@ export interface PSP22Error {
 	custom ? : string,
 	insufficientBalance ? : null,
 	insufficientAllowance ? : null,
-	zeroRecipientAddress ? : null,
-	zeroSenderAddress ? : null,
-	safeTransferCheckFailed ? : string
+	recipientIsNotSet ? : null,
+	senderIsNotSet ? : null,
+	safeTransferCheckFailed ? : string,
+	permitInvalidSignature ? : null,
+	permitExpired ? : null,
+	noncesError ? : NoncesError
 }
 
 export class PSP22ErrorBuilder {
@@ -483,19 +498,52 @@ export class PSP22ErrorBuilder {
 			insufficientAllowance: null,
 		};
 	}
-	static ZeroRecipientAddress(): PSP22Error {
+	static RecipientIsNotSet(): PSP22Error {
 		return {
-			zeroRecipientAddress: null,
+			recipientIsNotSet: null,
 		};
 	}
-	static ZeroSenderAddress(): PSP22Error {
+	static SenderIsNotSet(): PSP22Error {
 		return {
-			zeroSenderAddress: null,
+			senderIsNotSet: null,
 		};
 	}
 	static SafeTransferCheckFailed(value: string): PSP22Error {
 		return {
 			safeTransferCheckFailed: value,
+		};
+	}
+	static PermitInvalidSignature(): PSP22Error {
+		return {
+			permitInvalidSignature: null,
+		};
+	}
+	static PermitExpired(): PSP22Error {
+		return {
+			permitExpired: null,
+		};
+	}
+	static NoncesError(value: NoncesError): PSP22Error {
+		return {
+			noncesError: value,
+		};
+	}
+}
+
+export interface NoncesError {
+	invalidAccountNonce ? : AccountId,
+	nonceOverflow ? : null
+}
+
+export class NoncesErrorBuilder {
+	static InvalidAccountNonce(value: AccountId): NoncesError {
+		return {
+			invalidAccountNonce: value,
+		};
+	}
+	static NonceOverflow(): NoncesError {
+		return {
+			nonceOverflow: null,
 		};
 	}
 }
@@ -558,6 +606,16 @@ export type PhaseInfo = {
 	totalVestingUnits: number
 }
 
+export type PublicSaleInfo = {
+	isPublic: boolean,
+	totalAmount: ReturnNumber,
+	price: ReturnNumber,
+	totalPurchasedAmount: ReturnNumber,
+	totalClaimedAmount: ReturnNumber,
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
 export type WhitelistBuyerInfo = {
 	amount: ReturnNumber,
 	price: ReturnNumber,
@@ -567,14 +625,6 @@ export type WhitelistBuyerInfo = {
 	lastUpdatedTime: number
 }
 
-export type WhitelistSaleInfo = {
-	totalAmount: ReturnNumber,
-	totalPurchasedAmount: ReturnNumber,
-	totalClaimedAmount: ReturnNumber,
-	isBurned: boolean,
-	isWithdrawn: boolean
-}
-
 export type BuyerInformation = {
 	purchasedAmount: ReturnNumber,
 	vestingAmount: ReturnNumber,
@@ -582,10 +632,8 @@ export type BuyerInformation = {
 	lastUpdatedTime: number
 }
 
-export type PublicSaleInfo = {
-	isPublic: boolean,
+export type WhitelistSaleInfo = {
 	totalAmount: ReturnNumber,
-	price: ReturnNumber,
 	totalPurchasedAmount: ReturnNumber,
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,

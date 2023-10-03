@@ -3,7 +3,6 @@
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
 pub mod launchpad_generator {
-    use ink::env::CallFlags;
     use ink::prelude::{string::String, vec, vec::Vec};
     use ink::ToAccountId;
 
@@ -14,10 +13,11 @@ pub mod launchpad_generator {
         traits::Storage,
     };
 
-    use inkwhale_project::traits::launchpad_contract::LaunchpadContractRef;
+    // use inkwhale_project::traits::launchpad_contract::LaunchpadContractRef;
     use inkwhale_project::traits::launchpad_generator::Psp22Ref;
 
     use inkwhale_project::impls::{admin::*, launchpad_generator::*, upgradeable::*};
+    use inkwhale_project::impls::launchpad_contract::PhaseInput;
 
     #[derive(Default, Storage)]
     #[ink(storage)]
@@ -26,10 +26,6 @@ pub mod launchpad_generator {
         ownable: ownable::Data,
         #[storage_field]
         manager: launchpad_generator::data::Data,
-        #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
         #[storage_field]
         access: access_control::Data,
         #[storage_field]
@@ -72,9 +68,8 @@ pub mod launchpad_generator {
             }
         }
 
-        #[ink(message)]
         #[modifiers(only_owner)]
-        pub fn initialize(
+        fn initialize(
             &mut self,
             launchpad_hash: Hash,
             inw_contract: AccountId,
@@ -118,16 +113,7 @@ pub mod launchpad_generator {
             token_address: AccountId,
             total_supply: Balance,
 
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>,
+            phases: Vec<PhaseInput>
         ) -> Result<(), Error> {
             let caller = self.env().caller();
 
@@ -143,20 +129,6 @@ pub mod launchpad_generator {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
 
-            if total_supply == 0 {
-                return Err(Error::InvalidTotalSupply);
-            }
-
-            // Check token balance and allowance
-            let token_allowance =
-                Psp22Ref::allowance(&token_address, caller, self.env().account_id());
-
-            let token_balance = Psp22Ref::balance_of(&token_address, caller);
-
-            if token_allowance < total_supply || token_balance < total_supply {
-                return Err(Error::InvalidTokenBalanceAndAllowance);
-            }
-
             // Collect INW as transaction Fees
             let builder = Psp22Ref::transfer_from_builder(
                 &self.manager.inw_contract,
@@ -164,8 +136,7 @@ pub mod launchpad_generator {
                 self.env().account_id(),
                 fees,
                 Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
+            );            
 
             let result = match builder.try_invoke() {
                 Ok(Ok(Ok(_))) => Ok(()),
@@ -179,28 +150,20 @@ pub mod launchpad_generator {
                 return Err(Error::CannotTransfer);
             }
 
-            // Collect total supply of token
-            let builder = Psp22Ref::transfer_from_builder(
-                &token_address,
-                caller,
-                self.env().account_id(),
-                total_supply,
-                Vec::<u8>::new(),
-            )
-            .call_flags(CallFlags::default().set_allow_reentry(true));
-
-            let token_transfer_result = match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => Err(Error::CannotTransfer),
-            };
-
-            if token_transfer_result.is_err() {
-                return Err(Error::CannotTransfer);
+            // Check token balance and allowance
+            if total_supply == 0 {
+                return Err(Error::InvalidTotalSupply);
             }
 
+            let token_allowance =
+                Psp22Ref::allowance(&token_address, caller, self.env().account_id());
+
+            let token_balance = Psp22Ref::balance_of(&token_address, caller);
+
+            if token_allowance < total_supply || token_balance < total_supply {
+                return Err(Error::InvalidTokenBalanceAndAllowance);
+            }          
+           
             let launchpad_creation_result = MyLaunchpadRef::new(
                 caller,
                 project_info_uri,
@@ -208,15 +171,7 @@ pub mod launchpad_generator {
                 total_supply,
                 self.env().account_id(),
                 self.manager.tx_rate,
-                phase_name,
-                phase_start_time,
-                phase_end_time,
-                phase_immediate_release_rate,
-                phase_vesting_duration,
-                phase_vesting_unit,
-                phase_is_public,
-                phase_public_amount,
-                phase_public_price,
+                phases
             )
             .endowment(0)
             .code_hash(self.manager.launchpad_hash)
@@ -258,17 +213,26 @@ pub mod launchpad_generator {
                     return Err(Error::CannotBurn);
                 }
 
-                // Launchpad generator approves for launchpad contract the token amount
-                if Psp22Ref::approve(&token_address, contract_account, total_supply).is_err() {
-                    return Err(Error::CannotApprove);
-                }
+                // Transfer total supply of token from caller to the launchpad contract              
+                let builder = Psp22Ref::transfer_from_builder(
+                    &token_address,
+                    caller,
+                    contract_account,
+                    total_supply,
+                    Vec::<u8>::new(),
+                );
+                
+                let token_transfer_result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => Err(Error::CannotTransfer),
+                };
 
-                // Launchpad generator tops up token for launchpad
-                let topup_result = LaunchpadContractRef::topup(&contract_account, total_supply);
-
-                if topup_result.is_err() {
-                    return Err(Error::CannotTopupToken);
-                }
+                if token_transfer_result.is_err() {
+                    return Err(Error::CannotTransfer);
+                }                
 
                 // Emit event
                 // self.env().emit_event(AddNewLaunchpadEvent {

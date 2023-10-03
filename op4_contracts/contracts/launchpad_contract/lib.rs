@@ -7,7 +7,7 @@ pub use self::my_launchpad::{MyLaunchpad, MyLaunchpadRef};
 pub mod my_launchpad {
     use ink::prelude::{string::String, vec::Vec};
 
-    use openbrush::{contracts::ownable::*, modifiers, traits::Storage};
+    use openbrush::{contracts::ownable::*, traits::Storage};
 
     use inkwhale_project::impls::{launchpad_contract::*, upgradeable::*};
 
@@ -23,8 +23,6 @@ pub mod my_launchpad {
         ownable: ownable::Data,
         #[storage_field]
         data: launchpad_contract::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
         #[storage_field]
         access: access_control::Data,
         #[storage_field]
@@ -153,17 +151,7 @@ pub mod my_launchpad {
             total_supply: Balance,
             generator_contract: AccountId,
             tx_rate: u32,
-
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>,
+            phases: Vec<PhaseInput>
         ) -> Result<Self, Error> {
             let mut instance = Self::default();
 
@@ -180,66 +168,12 @@ pub mod my_launchpad {
                 total_supply,
                 generator_contract,
                 tx_rate,
-                phase_name,
-                phase_start_time,
-                phase_end_time,
-                phase_immediate_release_rate,
-                phase_vesting_duration,
-                phase_vesting_unit,
-                phase_is_public,
-                phase_public_amount,
-                phase_public_price,
+                phases
             ) {
                 Ok(()) => Ok(instance),
                 Err(e) => Err(e),
             }
-        }
-
-        #[ink(message)]
-        #[modifiers(only_owner)]
-        pub fn initialize(
-            &mut self,
-            project_info_uri: String,
-            token_address: AccountId,
-            total_supply: Balance,
-            generator_contract: AccountId,
-            tx_rate: u32,
-
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>,
-        ) -> Result<(), Error> {
-            access_control::Internal::_init_with_admin(self, Some(self.env().caller()));
-            AccessControl::grant_role(self, ADMINER, Some(self.env().caller()))
-                .expect("Should grant ADMINER role");
-
-            match self.create_pool(
-                project_info_uri,
-                token_address,
-                total_supply,
-                generator_contract,
-                tx_rate,
-                phase_name,
-                phase_start_time,
-                phase_end_time,
-                phase_immediate_release_rate,
-                phase_vesting_duration,
-                phase_vesting_unit,
-                phase_is_public,
-                phase_public_amount,
-                phase_public_price,
-            ) {
-                Ok(()) => Ok(()),
-                Err(e) => Err(e),
-            }
-        }
+        }        
 
         fn create_pool(
             &mut self,
@@ -248,17 +182,7 @@ pub mod my_launchpad {
             total_supply: Balance,
             generator_contract: AccountId,
             tx_rate: u32,
-
-            phase_name: Vec<String>,
-            phase_start_time: Vec<u64>,
-            phase_end_time: Vec<u64>,
-            phase_immediate_release_rate: Vec<u32>,
-            phase_vesting_duration: Vec<u64>,
-            phase_vesting_unit: Vec<u64>,
-
-            phase_is_public: Vec<bool>,
-            phase_public_amount: Vec<Balance>,
-            phase_public_price: Vec<Balance>,
+            phases: Vec<PhaseInput>
         ) -> Result<(), Error> {
             if self.data.generator_contract != [0u8; 32].into() {
                 return Err(Error::AlreadyInit);
@@ -271,34 +195,8 @@ pub mod my_launchpad {
             self.data.generator_contract = generator_contract;
             self.data.tx_rate = tx_rate;
 
-            // Check length of data in phase
-            let phase_length = phase_name.len();
-            if phase_length == 0
-                || phase_length != phase_start_time.len()
-                || phase_length != phase_end_time.len()
-                || phase_length != phase_immediate_release_rate.len()
-                || phase_length != phase_vesting_duration.len()
-                || phase_length != phase_vesting_unit.len()
-                || phase_length != phase_vesting_unit.len()
-                || phase_length != phase_is_public.len()
-                || phase_length != phase_public_amount.len()
-                || phase_length != phase_public_price.len()
-            {
-                return Err(Error::InvalidPhaseData);
-            }
-
-            for i in 0..phase_length {
-                self.add_new_phase(
-                    phase_name[i].clone(),
-                    phase_start_time[i],
-                    phase_end_time[i],
-                    phase_immediate_release_rate[i],
-                    phase_vesting_duration[i],
-                    phase_vesting_unit[i],
-                    phase_is_public[i],
-                    phase_public_amount[i],
-                    phase_public_price[i],
-                )?;
+            for i in 0..phases.len() {
+                self.add_new_phase(phases[i].clone())?;
             }
 
             Ok(())
@@ -307,16 +205,7 @@ pub mod my_launchpad {
         #[ink(message)]
         pub fn add_new_phase(
             &mut self,
-            name: String,
-            start_time: u64,
-            end_time: u64,
-            immediate_release_rate: u32,
-            vesting_duration: u64,
-            vesting_unit: u64,
-
-            is_public: bool,
-            public_amount: Balance,
-            public_price: Balance,
+            phase: PhaseInput
         ) -> Result<(), Error> {
             if !AccessControl::has_role(self, ADMINER, Some(self.env().caller()))
                 && !AccessControl::has_role(
@@ -329,60 +218,60 @@ pub mod my_launchpad {
                 return Err(Error::InvalidCaller);
             }
 
-            if !self.validate_phase_schedule(&start_time, &end_time) {
+            if !self.validate_phase_schedule(&phase.start_time, &phase.end_time) {
                 return Err(Error::InvalidStartTimeAndEndTime);
             }
 
-            if immediate_release_rate > 10000 {
+            if phase.immediate_release_rate > 10000 {
                 return Err(Error::InvalidPercentage);
             }
 
-            if vesting_unit == 0 {
+            if phase.vesting_unit == 0 {
                 return Err(Error::InvalidDuration);
             }
 
-            if self.data.project_start_time == 0 || start_time < self.data.project_start_time {
-                self.data.project_start_time = start_time;
+            if self.data.project_start_time == 0 || phase.start_time < self.data.project_start_time {
+                self.data.project_start_time = phase.start_time;
             }
 
-            if end_time > self.data.project_end_time {
-                self.data.project_end_time = end_time;
+            if phase.end_time > self.data.project_end_time {
+                self.data.project_end_time = phase.end_time;
             }
 
-            let end_vesting_time = end_time
-                .checked_add(vesting_duration)
+            let end_vesting_time = phase.end_time
+                .checked_add(phase.vesting_duration)
                 .ok_or(Error::CheckedOperations)?;
 
-            let mut total_vesting_units = vesting_duration
-                .checked_div(vesting_unit)
+            let mut total_vesting_units = phase.vesting_duration
+                .checked_div(phase.vesting_unit)
                 .ok_or(Error::CheckedOperations)?;
             if total_vesting_units
-                .checked_mul(vesting_unit)
+                .checked_mul(phase.vesting_unit)
                 .ok_or(Error::CheckedOperations)?
-                < vesting_duration
+                < phase.vesting_duration
             {
                 total_vesting_units = total_vesting_units
                     .checked_add(1)
                     .ok_or(Error::CheckedOperations)?;
             }
 
-            let phase = PhaseInfo {
+            let phase_info = PhaseInfo {
                 is_active: true,
-                name,
-                start_time,
-                end_time,
-                immediate_release_rate,
-                vesting_duration,
+                name: phase.name,
+                start_time: phase.start_time,
+                end_time: phase.end_time,
+                immediate_release_rate: phase.immediate_release_rate,
+                vesting_duration: phase.vesting_duration,
                 end_vesting_time,
-                vesting_unit,
+                vesting_unit: phase.vesting_unit,
                 total_vesting_units,
             };
-            self.data.phase.insert(&self.data.total_phase, &phase);
+            self.data.phase.insert(&self.data.total_phase, &phase_info);
 
             let public_sale = PublicSaleInfo {
-                is_public,
-                total_amount: public_amount,
-                price: public_price,
+                is_public: phase.is_public,
+                total_amount: phase.public_amount,
+                price: phase.public_price,
                 total_purchased_amount: 0,
                 total_claimed_amount: 0,
                 is_burned: false,
@@ -393,11 +282,11 @@ pub mod my_launchpad {
                 .insert(&self.data.total_phase, &public_sale);
 
             // Check if has public sale
-            if is_public {
+            if phase.is_public {
                 self.data.available_token_amount = self
                     .data
                     .available_token_amount
-                    .checked_sub(public_amount)
+                    .checked_sub(phase.public_amount)
                     .ok_or(Error::CheckedOperations)?;
             }
 

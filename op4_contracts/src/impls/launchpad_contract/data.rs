@@ -11,6 +11,20 @@ use ink::storage::traits::StorageLayout;
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
+pub struct PhaseInput {
+    pub name: String,
+    pub start_time: u64,
+    pub end_time: u64,
+    pub immediate_release_rate: u32, // scaled 10000
+    pub vesting_duration: u64,
+    pub vesting_unit: u64,
+    pub is_public: bool,
+    pub public_amount: Balance,
+    pub public_price: Balance
+}
+
+#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct PhaseInfo {
     pub is_active: bool,
     pub name: String,
@@ -68,7 +82,6 @@ pub struct WhitelistBuyerInfo {
 // ADMINER RoleType = 3739740293
 pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
-pub const STORAGE_KEY: u32 = openbrush::storage_unique_key!(Data);
 #[derive(Debug)]
 #[openbrush::storage_item]
 pub struct Data {

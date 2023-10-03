@@ -1,6 +1,5 @@
 use crate::traits::error::Error;
-pub use crate::{impls::admin::data, traits::admin::*};
-use ink::env::CallFlags;
+pub use crate::{traits::admin::*};
 use ink::prelude::vec::Vec;
 use openbrush::{
     contracts::ownable::*,
@@ -8,7 +7,7 @@ use openbrush::{
     traits::{AccountId, Balance, Storage},
 };
 
-pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
+pub trait AdminTrait: Storage<ownable::Data> {
     #[modifiers(only_owner)]
     fn withdraw_fee(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error> {
         if value > Self::env().balance() {
@@ -20,8 +19,7 @@ pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
         Ok(())
     }
 
-    #[modifiers(only_owner)]
-    fn get_balance(&mut self) -> Result<Balance, Error> {
+    fn get_balance(&self) -> Result<Balance, Error> {
         Ok(Self::env().balance())
     }
 
@@ -33,8 +31,7 @@ pub trait AdminTrait: Storage<data::Data> + Storage<ownable::Data> {
         receiver: AccountId,
     ) -> Result<(), Error> {
         let builder =
-            Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new())
-                .call_flags(CallFlags::default().set_allow_reentry(true));
+            Psp22Ref::transfer_builder(&psp22_contract_address, receiver, amount, Vec::<u8>::new());                
 
         match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),

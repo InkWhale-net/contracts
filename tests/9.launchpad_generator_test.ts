@@ -1,8 +1,8 @@
 import { provider, expect, getSigners, checkAccountsBalance, setGasLimit} from './helpers';
 import { ApiPromise } from '@polkadot/api';
 
-import ConstructorsLaunchpadGenerator from './typed_contracts/constructors/launchpad_generator';
-import ContractLaunchpadGenerator from './typed_contracts/contracts/launchpad_generator';
+import ConstructorsLaunchpadGenerator from './typed_contracts/constructors/launchpad_generator_op4';
+import ContractLaunchpadGenerator from './typed_contracts/contracts/launchpad_generator_op4';
 
 import ConstructorsTokenGenerator from './typed_contracts/constructors/token_generator';
 import ContractTokenGenerator from './typed_contracts/contracts/token_generator';
@@ -13,7 +13,8 @@ import ConstructorsInw from './typed_contracts/constructors/psp22_standard';
 import ContractInw from './typed_contracts/contracts/psp22_standard';
 
 import TokenStandard from './artifacts/token_standard.json';
-import MyLaunchpad from './artifacts/my_launchpad.json';
+import MyLaunchpad from './artifacts/my_launchpad_op4.json';
+import { PhaseInput } from './typed_contracts/types-arguments/launchpad_generator_op4';
 
 describe('Launchpad generator test', () => {
     let api: any;
@@ -219,43 +220,47 @@ describe('Launchpad generator test', () => {
         );
                 
         // Step B3: Alice approves total supply of token and create a launchpad
-        // console.log("Create launchpad...");
+        console.log("Create launchpad...");
         // Alice approve total supply of token
         let totalSupply = "700000000000000000"; // 700k        
         await tokenContract.withSigner(alice).tx.approve(
             contractAddress,
             totalSupply,
         );
-        
-        // Alice creates launchpad for token LNPD
+  
+        // Alice creates launchpad for token LNPD    
         let projectInfoUri = "Launchpad test"; // 1000 token AAA
-        let phaseName = ["Phase 1", "Phase 2"];
         let startTime = new Date().getTime();
-        let phaseStartTime = [startTime, startTime + 4 * 86400000];
-        let phaseEndTime = [startTime + 3 * 86400000, startTime + 5 * 86400000];
-        let phaseImmediateReleaseRate = [500, 1500];
-        let phaseVestingDuration = [1800000, 1800000];
-        let phaseVestingUnit = [300000, 300000];
+                
+        let phase1: PhaseInput = {
+            name: "Phase 1",
+            startTime: startTime,
+            endTime: startTime + 3 * 86400000,
+            immediateReleaseRate: 500,
+            vestingDuration: 1800000, 
+            vestingUnit: 300000,
+            isPublic: true,
+            publicAmount: "100000000000000000",
+            publicPrice: "500000000000"
+        };
 
-        let phaseIsPublic = [true, true];
-        let phasePublicAmount = ["100000000000000000", "500000000000000000"];
-        let phasePublicPrice = ["500000000000", "1000000000000"];
-   
+        let phase2: PhaseInput = {
+            name: "Phase 2",
+            startTime: startTime + 4 * 86400000,
+            endTime: startTime + 5 * 86400000,
+            immediateReleaseRate: 1500,
+            vestingDuration: 1800000, 
+            vestingUnit: 300000,
+            isPublic: true,
+            publicAmount: "500000000000000000",
+            publicPrice: "1000000000000"
+        };
+
         await contract.withSigner(alice).tx.newLaunchpad(
             projectInfoUri,
             tokenAddress,
             totalSupply,
-
-            phaseName,
-            phaseStartTime,
-            phaseEndTime,
-            phaseImmediateReleaseRate,
-            phaseVestingDuration,
-            phaseVestingUnit,
-
-            phaseIsPublic,
-            phasePublicAmount,
-            phasePublicPrice
+            [phase1, phase2]
         );
         
         // Step B5: Check launchpad count

@@ -2,6 +2,18 @@ import type BN from 'bn.js';
 
 export type AccountId = string | number[]
 
+export type PhaseInput = {
+	name: string,
+	startTime: (number | string | BN),
+	endTime: (number | string | BN),
+	immediateReleaseRate: (number | string | BN),
+	vestingDuration: (number | string | BN),
+	vestingUnit: (number | string | BN),
+	isPublic: boolean,
+	publicAmount: (string | number | BN),
+	publicPrice: (string | number | BN)
+}
+
 export interface Error {
 	custom ? : string,
 	ownableError ? : OwnableError,
@@ -448,7 +460,7 @@ export class ErrorBuilder {
 
 export enum OwnableError {
 	callerIsNotOwner = 'CallerIsNotOwner',
-	newOwnerIsZero = 'NewOwnerIsZero'
+	newOwnerIsNotSet = 'NewOwnerIsNotSet'
 }
 
 export enum AccessControlError {
@@ -461,9 +473,12 @@ export interface PSP22Error {
 	custom ? : string,
 	insufficientBalance ? : null,
 	insufficientAllowance ? : null,
-	zeroRecipientAddress ? : null,
-	zeroSenderAddress ? : null,
-	safeTransferCheckFailed ? : string
+	recipientIsNotSet ? : null,
+	senderIsNotSet ? : null,
+	safeTransferCheckFailed ? : string,
+	permitInvalidSignature ? : null,
+	permitExpired ? : null,
+	noncesError ? : NoncesError
 }
 
 export class PSP22ErrorBuilder {
@@ -482,19 +497,52 @@ export class PSP22ErrorBuilder {
 			insufficientAllowance: null,
 		};
 	}
-	static ZeroRecipientAddress(): PSP22Error {
+	static RecipientIsNotSet(): PSP22Error {
 		return {
-			zeroRecipientAddress: null,
+			recipientIsNotSet: null,
 		};
 	}
-	static ZeroSenderAddress(): PSP22Error {
+	static SenderIsNotSet(): PSP22Error {
 		return {
-			zeroSenderAddress: null,
+			senderIsNotSet: null,
 		};
 	}
 	static SafeTransferCheckFailed(value: string): PSP22Error {
 		return {
 			safeTransferCheckFailed: value,
+		};
+	}
+	static PermitInvalidSignature(): PSP22Error {
+		return {
+			permitInvalidSignature: null,
+		};
+	}
+	static PermitExpired(): PSP22Error {
+		return {
+			permitExpired: null,
+		};
+	}
+	static NoncesError(value: NoncesError): PSP22Error {
+		return {
+			noncesError: value,
+		};
+	}
+}
+
+export interface NoncesError {
+	invalidAccountNonce ? : AccountId,
+	nonceOverflow ? : null
+}
+
+export class NoncesErrorBuilder {
+	static InvalidAccountNonce(value: AccountId): NoncesError {
+		return {
+			invalidAccountNonce: value,
+		};
+	}
+	static NonceOverflow(): NoncesError {
+		return {
+			nonceOverflow: null,
 		};
 	}
 }
@@ -557,6 +605,16 @@ export type PhaseInfo = {
 	totalVestingUnits: (number | string | BN)
 }
 
+export type PublicSaleInfo = {
+	isPublic: boolean,
+	totalAmount: (string | number | BN),
+	price: (string | number | BN),
+	totalPurchasedAmount: (string | number | BN),
+	totalClaimedAmount: (string | number | BN),
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
 export type WhitelistBuyerInfo = {
 	amount: (string | number | BN),
 	price: (string | number | BN),
@@ -566,14 +624,6 @@ export type WhitelistBuyerInfo = {
 	lastUpdatedTime: (number | string | BN)
 }
 
-export type WhitelistSaleInfo = {
-	totalAmount: (string | number | BN),
-	totalPurchasedAmount: (string | number | BN),
-	totalClaimedAmount: (string | number | BN),
-	isBurned: boolean,
-	isWithdrawn: boolean
-}
-
 export type BuyerInformation = {
 	purchasedAmount: (string | number | BN),
 	vestingAmount: (string | number | BN),
@@ -581,10 +631,8 @@ export type BuyerInformation = {
 	lastUpdatedTime: (number | string | BN)
 }
 
-export type PublicSaleInfo = {
-	isPublic: boolean,
+export type WhitelistSaleInfo = {
 	totalAmount: (string | number | BN),
-	price: (string | number | BN),
 	totalPurchasedAmount: (string | number | BN),
 	totalClaimedAmount: (string | number | BN),
 	isBurned: boolean,

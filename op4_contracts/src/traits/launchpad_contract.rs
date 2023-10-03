@@ -11,7 +11,7 @@ use openbrush::{
 use ink::prelude::{string::String, vec::Vec};
 
 use crate::impls::launchpad_contract::data::{
-    BuyerInformation, PhaseInfo, PublicSaleInfo, WhitelistBuyerInfo, WhitelistSaleInfo,
+    BuyerInformation, PhaseInput, PhaseInfo, PublicSaleInfo, WhitelistBuyerInfo, WhitelistSaleInfo,
 };
 
 use crate::traits::error::Error;
@@ -181,15 +181,7 @@ pub trait LaunchpadContractTrait {
         &mut self,
         phase_id: u8,
         is_active: bool,
-        name: String,
-        start_time: u64,
-        end_time: u64,
-        immediate_release_rate: u32,
-        vesting_duration: u64,
-        vesting_unit: u64,
-        is_public: bool,
-        total_amount: Balance,
-        price: Balance,
+        phase_input: PhaseInput
     ) -> Result<(), Error>;
 
     #[ink(message)]
@@ -197,15 +189,7 @@ pub trait LaunchpadContractTrait {
         &mut self,
         phase_id: Vec<u8>,
         is_active: Vec<bool>,
-        name: Vec<String>,
-        start_time: Vec<u64>,
-        end_time: Vec<u64>,
-        immediate_release_rate: Vec<u32>,
-        vesting_duration: Vec<u64>,
-        vesting_unit: Vec<u64>,
-        is_public: Vec<bool>,
-        total_amount: Vec<Balance>,
-        price: Vec<Balance>,
+        phases: Vec<PhaseInput>
     ) -> Result<(), Error>;
 
     // Funcs
