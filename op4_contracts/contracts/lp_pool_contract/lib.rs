@@ -159,7 +159,7 @@ pub mod my_lp_pool {
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(24 * 60 * 60 * 1000 * 10000)
+                .checked_div(24 * 60 * 60 * 1000 * 1000000)
                 .ok_or(Error::CheckedOperations)?;
 
             // Add data
@@ -239,7 +239,7 @@ pub mod my_lp_pool {
                     .checked_mul(calculated_decimal_reward_contract.into())
                     .ok_or(Error::CheckedOperations)?;
                 let unclaimed_reward = unclaimed_reward_365
-                    .checked_div(24 * 60 * 60 * 1000 * 10000)
+                    .checked_div(24 * 60 * 60 * 1000 * 1000000)
                     .ok_or(Error::CheckedOperations)?;
 
                 stake_info.staked_value = stake_info
@@ -267,7 +267,7 @@ pub mod my_lp_pool {
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
                 let future_reward = future_reward_365
-                    .checked_div(24 * 60 * 60 * 1000 * 10000)
+                    .checked_div(24 * 60 * 60 * 1000 * 1000000)
                     .ok_or(Error::CheckedOperations)?;
 
                 // Recalculate total unclaimed amount
@@ -306,7 +306,7 @@ pub mod my_lp_pool {
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
                 let future_reward = future_reward_365
-                    .checked_div(24 * 60 * 60 * 1000 * 10000)
+                    .checked_div(24 * 60 * 60 * 1000 * 1000000)
                     .ok_or(Error::CheckedOperations)?;
 
                 // Calculate total unclaimed amount
@@ -437,7 +437,7 @@ pub mod my_lp_pool {
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
                     let unclaimed_reward = unclaimed_reward_365
-                        .checked_div(24 * 60 * 60 * 1000 * 10000)
+                        .checked_div(24 * 60 * 60 * 1000 * 1000000)
                         .ok_or(Error::CheckedOperations)?;
 
                     stake_info.staked_value = stake_info
@@ -470,7 +470,7 @@ pub mod my_lp_pool {
                         .checked_mul(self.data.multiplier)
                         .ok_or(Error::CheckedOperations)?;
                     let future_reward = future_reward_365
-                        .checked_div(24 * 60 * 60 * 1000 * 10000)
+                        .checked_div(24 * 60 * 60 * 1000 * 1000000)
                         .ok_or(Error::CheckedOperations)?;
 
                     // Recalculate total unclaimed amount
@@ -576,7 +576,7 @@ pub mod my_lp_pool {
                     .checked_mul(self.data.multiplier)
                     .ok_or(Error::CheckedOperations)?;
                 let unclaimed_reward = unclaimed_reward_365
-                    .checked_div(24 * 60 * 60 * 1000 * 10000)
+                    .checked_div(24 * 60 * 60 * 1000 * 1000000)
                     .ok_or(Error::CheckedOperations)?;
                 let to_claim = stake_info
                     .unclaimed_reward
