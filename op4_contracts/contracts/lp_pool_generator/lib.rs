@@ -117,8 +117,7 @@ pub mod lp_pool_generator {
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                
-                .checked_div(24 * 60 * 60 * 1000)
+                .checked_div(24 * 60 * 60 * 1000 * 1000000)
                 .ok_or(Error::CheckedOperations)?;
 
             let token_allowance =
