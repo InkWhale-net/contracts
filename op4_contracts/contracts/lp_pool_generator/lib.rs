@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::large_enum_variant)]
@@ -28,10 +28,6 @@ pub mod lp_pool_generator {
         ownable: ownable::Data,
         #[storage_field]
         manager: generic_pool_generator::data::Data,
-        #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
     }
 
     impl GenericPoolGeneratorTrait for LPPoolGenerator {}

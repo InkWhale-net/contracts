@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 #![allow(clippy::inline_fn_without_body)]
 #![allow(clippy::too_many_arguments)]
 
@@ -21,11 +21,7 @@ pub mod my_lp_pool {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        data: generic_pool_contract::data::Data,
-        #[storage_field]
-        admin_data: admin::data::Data,
-        #[storage_field]
-        upgradeable_data: upgradeable::data::Data,
+        data: generic_pool_contract::data::Data
     }
 
     #[ink(event)]

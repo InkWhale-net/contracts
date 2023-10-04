@@ -17,12 +17,6 @@ my_lp_pool = { path = "../lp_pool_contract", default-features = false, features 
 [lib]
 name = "lp_pool_generator"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-    # Used for ABI generation and for unit test.
-    "lib"
-]
 
 [features]
 default = ["std"]
