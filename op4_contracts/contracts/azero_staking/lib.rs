@@ -1,4 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
+#![allow(clippy::too_many_arguments)]
 
 pub use self::my_azero_staking::{MyAzeroStaking, MyAzeroStakingRef};
 
@@ -201,7 +202,7 @@ pub mod my_azero_staking {
             max_waiting_time: u64,
             inw_contract: AccountId,
             inw_multiplier: Balance,
-            unstaking_fee: Balance
+            unstaking_fee: Balance // in inw to claim 
         ) -> Result<Self, Error> {
             let mut instance = Self::default();
 

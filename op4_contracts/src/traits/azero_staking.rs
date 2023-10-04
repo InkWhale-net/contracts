@@ -89,8 +89,8 @@ pub trait AzeroStakingTrait {
     #[ink(message, payable)]
     fn stake(&mut self, amount: Balance) -> Result<(), Error>;
 
-    #[ink(message)]
-    fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error>;
+    // #[ink(message)]
+    // fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error>;
     
     #[ink(message)]
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
