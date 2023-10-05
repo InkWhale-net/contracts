@@ -1137,12 +1137,12 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::CannotTransferTxFee);
                     };
 
-                    // Return immediately tokens within release rate
+                    // Calculate the immediate tokens returned to user within release rate
                     let claim = amount
                         .checked_mul(phase_info.immediate_release_rate as u128)
                         .ok_or(Error::CheckedOperations)?
                         .checked_div(10000)
-                        .ok_or(Error::CheckedOperations)?;
+                        .ok_or(Error::CheckedOperations)?;                    
 
                     // Check if contract has enough token to transfer
                     let balance = Psp22Ref::balance_of(
@@ -1153,25 +1153,9 @@ pub trait LaunchpadContractTrait:
                     if balance < claim {
                         return Err(Error::NotEnoughBalance);
                     }
-
-                    // Transfer token to caller
-                    let caller = Self::env().caller();
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );
-                    
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;                    
-
+                                      
                     // Save data
+                    let caller = Self::env().caller();
                     let buyer_data = self.data::<Data>().public_buyer.get(&(&phase_id, &caller));
 
                     if let Some(mut buy_info) = buyer_data {
@@ -1211,8 +1195,32 @@ pub trait LaunchpadContractTrait:
                         .ok_or(Error::CheckedOperations)?;
                     self.data::<Data>()
                         .public_sale_info
-                        .insert(&phase_id, &public_sale_info);
+                        .insert(&phase_id, &public_sale_info);                    
 
+                    // Transfer immediate tokens to caller                    
+                    let builder = Psp22Ref::transfer_builder(
+                        &self.data::<Data>().token_address,
+                        caller,
+                        claim,
+                        Vec::<u8>::new(),
+                    );
+                    
+                    match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => Err(Error::CannotTransfer),
+                    }?; 
+
+                    // Transfer surplus native tokens to caller
+                    let surplus_amount = Self::env().transferred_value().checked_sub(price).ok_or(Error::CheckedOperations)?;
+
+                    if surplus_amount > 0 && Self::env().transfer(caller, surplus_amount).is_err() {
+                        return Err(Error::CannotTransfer);
+                    }
+
+                    // Emit events
                     let token_address = self.data::<Data>().token_address;
                     self._emit_public_purchase_event(
                         Self::env().account_id(),
@@ -1461,7 +1469,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::CannotTransferTxFee);
                     };
 
-                    // Return immediately tokens within release rate
+                    // Calculate the immediate tokens returned to user within release rate
                     let claim = amount
                         .checked_mul(phase_info.immediate_release_rate as u128)
                         .ok_or(Error::CheckedOperations)?
@@ -1477,23 +1485,7 @@ pub trait LaunchpadContractTrait:
                     if balance < claim {
                         return Err(Error::NotEnoughBalance);
                     }
-
-                    // Transfer token to caller
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );                    
-
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;                    
-
+                               
                     // Save data
                     buy_info.purchased_amount = buy_info
                         .purchased_amount
@@ -1527,6 +1519,30 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::WhitelistSaleInfoNotExist);
                     }
 
+                    // Transfer immediate tokens to caller
+                    let builder = Psp22Ref::transfer_builder(
+                        &self.data::<Data>().token_address,
+                        caller,
+                        claim,
+                        Vec::<u8>::new(),
+                    );                    
+
+                    match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => Err(Error::CannotTransfer),
+                    }?;   
+
+                    // Transfer surplus native tokens to caller
+                    let surplus_amount = Self::env().transferred_value().checked_sub(price).ok_or(Error::CheckedOperations)?;
+
+                    if surplus_amount > 0 && Self::env().transfer(caller, surplus_amount).is_err() {
+                        return Err(Error::CannotTransfer);
+                    }
+
+                    // Emit events
                     let token_address = self.data::<Data>().token_address;
                     self._emit_whitelist_purchase_event(
                         Self::env().account_id(),
