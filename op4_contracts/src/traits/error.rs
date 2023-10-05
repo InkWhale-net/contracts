@@ -48,6 +48,7 @@ pub enum Error {
     InvalidTime,
     InvalidPercentage,
     InvalidDuration,
+    InvalidVestingUnit,
     InvalidTopupAmount,
     LaunchpadNotExist,
     InvalidIsActiveInput,

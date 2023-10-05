@@ -226,8 +226,12 @@ pub mod my_launchpad {
                 return Err(Error::InvalidPercentage);
             }
 
-            if phase.vesting_unit == 0 {
+            if (phase.immediate_release_rate == 10000 && phase.vesting_duration != 0) || (phase.immediate_release_rate < 10000 && phase.vesting_duration == 0) {
                 return Err(Error::InvalidDuration);
+            }
+
+            if phase.vesting_unit == 0 {
+                return Err(Error::InvalidVestingUnit);
             }
 
             if self.data.project_start_time == 0 || phase.start_time < self.data.project_start_time {

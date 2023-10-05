@@ -558,6 +558,10 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
+            if (phase.immediate_release_rate == 10000 && vesting_duration != 0) || (phase.immediate_release_rate < 10000 && vesting_duration == 0) {
+                return Err(Error::InvalidDuration);
+            }
+
             phase.vesting_duration = vesting_duration;
             phase.end_vesting_time = phase
                 .end_time
