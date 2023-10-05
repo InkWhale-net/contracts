@@ -563,15 +563,19 @@ pub trait LaunchpadContractTrait:
             }
 
             phase.vesting_duration = vesting_duration;
+
             phase.end_vesting_time = phase
                 .end_time
                 .checked_add(phase.vesting_duration)
                 .ok_or(Error::CheckedOperations)?;
 
-            phase.total_vesting_units = phase
-                .vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            if phase.vesting_unit > 0 {
+                phase.total_vesting_units = phase
+                    .vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+
             if phase
                 .total_vesting_units
                 .checked_mul(phase.vesting_unit)
@@ -601,16 +605,19 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
-            if vesting_unit == 0 {
-                return Err(Error::InvalidDuration);
+            if phase.immediate_release_rate < 10000 && vesting_unit == 0 {
+                return Err(Error::InvalidVestingUnit);
             }
 
             phase.vesting_unit = vesting_unit;
 
-            phase.total_vesting_units = phase
-                .vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            if phase.vesting_unit > 0 {
+                phase.total_vesting_units = phase
+                    .vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+
             if phase
                 .total_vesting_units
                 .checked_mul(phase.vesting_unit)
@@ -1306,7 +1313,7 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // If still have unclaimed token
-                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 {
+                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 && phase_info.vesting_unit > 0 {
                         let units = (current_time
                             .checked_sub(buy_info.last_updated_time)
                             .ok_or(Error::CheckedOperations)?)
@@ -1631,7 +1638,7 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // If still have unclaimed token
-                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 {
+                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 && phase_info.vesting_unit > 0 {
                         let units = (current_time
                             .checked_sub(buy_info.last_updated_time)
                             .ok_or(Error::CheckedOperations)?)

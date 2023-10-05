@@ -230,7 +230,8 @@ pub mod my_launchpad {
                 return Err(Error::InvalidDuration);
             }
 
-            if phase.vesting_unit == 0 {
+            // vesting unit = 0 only happens when immediate_release_rate = 10000 and vesting duration = 0; 
+            if phase.immediate_release_rate < 10000 && phase.vesting_unit == 0 {
                 return Err(Error::InvalidVestingUnit);
             }
 
@@ -246,9 +247,14 @@ pub mod my_launchpad {
                 .checked_add(phase.vesting_duration)
                 .ok_or(Error::CheckedOperations)?;
 
-            let mut total_vesting_units = phase.vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            let mut total_vesting_units = 0;
+            
+            if phase.vesting_unit > 0 {
+                total_vesting_units = phase.vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+            
             if total_vesting_units
                 .checked_mul(phase.vesting_unit)
                 .ok_or(Error::CheckedOperations)?

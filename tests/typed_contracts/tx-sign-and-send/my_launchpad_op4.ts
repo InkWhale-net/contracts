@@ -43,239 +43,31 @@ export default class Methods {
 	}
 
 	/**
-	* getGeneratorContract
+	* getTxRate
 	*
 	*/
-	"getGeneratorContract" (
+	"getTxRate" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getGeneratorContract", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTxRate", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
 
 	/**
-	* whitelistClaim
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"whitelistClaim" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistClaim", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getPublicSaleTotalClaimedAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalClaimedAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* withdrawUnsoldTokens
-	*
-	* @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"withdrawUnsoldTokens" (
-		receiver: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::withdrawUnsoldTokens", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [receiver], __options);
-	}
-
-	/**
-	* getName
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getName" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getName", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* setVestingDuration
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } vestingDuration,
-	*/
-	"setVestingDuration" (
-		phaseId: (number | string | BN),
-		vestingDuration: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingDuration", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, vestingDuration], __options);
-	}
-
-	/**
-	* getIsActive
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getIsActive" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getIsActive", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getAvailableTokenAmount
-	*
-	*/
-	"getAvailableTokenAmount" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getAvailableTokenAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getVestingDuration
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getVestingDuration" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getVestingDuration", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getWhitelistSaleInfo
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleInfo" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleInfo", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getPublicBuyer
+	* getWhitelistBuyer
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @param { ArgumentTypes.AccountId } account,
 	*/
-	"getPublicBuyer" (
+	"getWhitelistBuyer" (
 		phaseId: (number | string | BN),
 		account: ArgumentTypes.AccountId,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicBuyer", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistBuyer", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [phaseId, account], __options);
-	}
-
-	/**
-	* burnUnsoldTokens
-	*
-	*/
-	"burnUnsoldTokens" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::burnUnsoldTokens", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* setPublicSalePrice
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } price,
-	*/
-	"setPublicSalePrice" (
-		phaseId: (number | string | BN),
-		price: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicSalePrice", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, price], __options);
-	}
-
-	/**
-	* setTokenAddress
-	*
-	* @param { ArgumentTypes.AccountId } tokenAddress,
-	*/
-	"setTokenAddress" (
-		tokenAddress: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTokenAddress", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [tokenAddress], __options);
-	}
-
-	/**
-	* getTotalSupply
-	*
-	*/
-	"getTotalSupply" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTotalSupply", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getWhitelistSaleTotalAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleTotalAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getImmediateReleaseRate
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getImmediateReleaseRate" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getImmediateReleaseRate", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
 	}
 
 	/**
@@ -295,50 +87,6 @@ export default class Methods {
 	}
 
 	/**
-	* setIsPublic
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { boolean } isPublic,
-	*/
-	"setIsPublic" (
-		phaseId: (number | string | BN),
-		isPublic: boolean,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsPublic", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, isPublic], __options);
-	}
-
-	/**
-	* getWhitelistSaleTotalPurchasedAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleTotalPurchasedAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getWhitelistAccountCount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistAccountCount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistAccountCount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
 	* getPublicSaleInfo
 	*
 	* @param { (number | string | BN) } phaseId,
@@ -353,58 +101,6 @@ export default class Methods {
 	}
 
 	/**
-	* getVestingUnit
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getVestingUnit" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getVestingUnit", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* setPhase
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { boolean } isActive,
-	* @param { ArgumentTypes.PhaseInput } phaseInput,
-	*/
-	"setPhase" (
-		phaseId: (number | string | BN),
-		isActive: boolean,
-		phaseInput: ArgumentTypes.PhaseInput,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPhase", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, isActive, phaseInput], __options);
-	}
-
-	/**
-	* addMultiWhitelists
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { Array<ArgumentTypes.AccountId> } accounts,
-	* @param { Array<(string | number | BN)> } whitelistAmounts,
-	* @param { Array<(string | number | BN)> } whitelistPrices,
-	*/
-	"addMultiWhitelists" (
-		phaseId: (number | string | BN),
-		accounts: Array<ArgumentTypes.AccountId>,
-		whitelistAmounts: Array<(string | number | BN)>,
-		whitelistPrices: Array<(string | number | BN)>,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::addMultiWhitelists", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
-	}
-
-	/**
 	* getPublicSalePrice
 	*
 	* @param { (number | string | BN) } phaseId,
@@ -414,6 +110,20 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSalePrice", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* getWhitelistSaleTotalPurchasedAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalPurchasedAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [phaseId], __options);
 	}
@@ -433,75 +143,89 @@ export default class Methods {
 	}
 
 	/**
-	* setProjectInfoUri
+	* topup
 	*
-	* @param { string } projectInfoUri,
+	* @param { (string | number | BN) } amount,
 	*/
-	"setProjectInfoUri" (
-		projectInfoUri: string,
+	"topup" (
+		amount: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setProjectInfoUri", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::topup", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [projectInfoUri], __options);
+		}, [amount], __options);
 	}
 
 	/**
-	* setName
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { string } name,
-	*/
-	"setName" (
-		phaseId: (number | string | BN),
-		name: string,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setName", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, name], __options);
-	}
-
-	/**
-	* publicClaim
+	* getStartTime
 	*
 	* @param { (number | string | BN) } phaseId,
 	*/
-	"publicClaim" (
+	"getStartTime" (
 		phaseId: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicClaim", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getStartTime", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [phaseId], __options);
 	}
 
 	/**
-	* getProjectInfoUri
+	* setTotalSupply
 	*
+	* @param { (string | number | BN) } totalSupply,
 	*/
-	"getProjectInfoUri" (
+	"setTotalSupply" (
+		totalSupply: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getProjectInfoUri", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTotalSupply", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
+		}, [totalSupply], __options);
 	}
 
 	/**
-	* setImmediateReleaseRate
+	* setVestingDuration
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } immediateReleaseRate,
+	* @param { (number | string | BN) } vestingDuration,
 	*/
-	"setImmediateReleaseRate" (
+	"setVestingDuration" (
 		phaseId: (number | string | BN),
-		immediateReleaseRate: (number | string | BN),
+		vestingDuration: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setImmediateReleaseRate", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingDuration", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, immediateReleaseRate], __options);
+		}, [phaseId, vestingDuration], __options);
+	}
+
+	/**
+	* getWhitelistSaleTotalAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* getEndTime
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getEndTime" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getEndTime", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
 	}
 
 	/**
@@ -521,227 +245,19 @@ export default class Methods {
 	}
 
 	/**
-	* setTotalSupply
-	*
-	* @param { (string | number | BN) } totalSupply,
-	*/
-	"setTotalSupply" (
-		totalSupply: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTotalSupply", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [totalSupply], __options);
-	}
-
-	/**
-	* whitelistPurchase
+	* setName
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } amount,
+	* @param { string } name,
 	*/
-	"whitelistPurchase" (
+	"setName" (
 		phaseId: (number | string | BN),
-		amount: (string | number | BN),
-		__options ? : GasLimitAndRequiredValue,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistPurchase", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, amount], __options);
-	}
-
-	/**
-	* getProjectStartTime
-	*
-	*/
-	"getProjectStartTime" (
+		name: string,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getProjectStartTime", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setName", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getWhitelistSaleTotalClaimedAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleTotalClaimedAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getStartTime
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getStartTime" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getStartTime", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* publicPurchase
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } amount,
-	*/
-	"publicPurchase" (
-		phaseId: (number | string | BN),
-		amount: (string | number | BN),
-		__options ? : GasLimitAndRequiredValue,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicPurchase", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, amount], __options);
-	}
-
-	/**
-	* getTokenAddress
-	*
-	*/
-	"getTokenAddress" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTokenAddress", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getPublicSaleTotalAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getTxRate
-	*
-	*/
-	"getTxRate" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTxRate", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* topup
-	*
-	* @param { (string | number | BN) } amount,
-	*/
-	"topup" (
-		amount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::topup", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [amount], __options);
-	}
-
-	/**
-	* getEndTime
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getEndTime" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getEndTime", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* setGeneratorContract
-	*
-	* @param { ArgumentTypes.AccountId } generatorContract,
-	*/
-	"setGeneratorContract" (
-		generatorContract: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setGeneratorContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [generatorContract], __options);
-	}
-
-	/**
-	* setPublicTotalAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } totalAmount,
-	*/
-	"setPublicTotalAmount" (
-		phaseId: (number | string | BN),
-		totalAmount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicTotalAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, totalAmount], __options);
-	}
-
-	/**
-	* getPublicSaleTotalPurchasedAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalPurchasedAmount" (
-		phaseId: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
-	}
-
-	/**
-	* getWhitelistAccount
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } accountIndex,
-	*/
-	"getWhitelistAccount" (
-		phaseId: (number | string | BN),
-		accountIndex: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistAccount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, accountIndex], __options);
-	}
-
-	/**
-	* getBalance
-	*
-	*/
-	"getBalance" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getBalance", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
+		}, [phaseId, name], __options);
 	}
 
 	/**
@@ -777,49 +293,61 @@ export default class Methods {
 	}
 
 	/**
-	* setVestingUnit
+	* getTotalSupply
 	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } vestingUnit,
 	*/
-	"setVestingUnit" (
-		phaseId: (number | string | BN),
-		vestingUnit: (number | string | BN),
+	"getTotalSupply" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingUnit", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTotalSupply", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, vestingUnit], __options);
+		}, [], __options);
 	}
 
 	/**
-	* getWhitelistBuyer
+	* setImmediateReleaseRate
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @param { ArgumentTypes.AccountId } account,
+	* @param { (number | string | BN) } immediateReleaseRate,
 	*/
-	"getWhitelistBuyer" (
+	"setImmediateReleaseRate" (
 		phaseId: (number | string | BN),
-		account: ArgumentTypes.AccountId,
+		immediateReleaseRate: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistBuyer", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setImmediateReleaseRate", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, account], __options);
+		}, [phaseId, immediateReleaseRate], __options);
 	}
 
 	/**
-	* setTxRate
+	* getWhitelistAccount
 	*
-	* @param { (number | string | BN) } txRate,
+	* @param { (number | string | BN) } phaseId,
+	* @param { (number | string | BN) } accountIndex,
 	*/
-	"setTxRate" (
-		txRate: (number | string | BN),
+	"getWhitelistAccount" (
+		phaseId: (number | string | BN),
+		accountIndex: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTxRate", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistAccount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [txRate], __options);
+		}, [phaseId, accountIndex], __options);
+	}
+
+	/**
+	* withdrawUnsoldTokens
+	*
+	* @param { ArgumentTypes.AccountId } receiver,
+	*/
+	"withdrawUnsoldTokens" (
+		receiver: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::withdrawUnsoldTokens", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [receiver], __options);
 	}
 
 	/**
@@ -841,6 +369,50 @@ export default class Methods {
 	}
 
 	/**
+	* setPublicSalePrice
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } price,
+	*/
+	"setPublicSalePrice" (
+		phaseId: (number | string | BN),
+		price: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicSalePrice", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, price], __options);
+	}
+
+	/**
+	* getVestingDuration
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getVestingDuration" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getVestingDuration", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* getWhitelistSaleInfo
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleInfo" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleInfo", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
 	* getTotalPhase
 	*
 	*/
@@ -850,6 +422,152 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTotalPhase", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
+	}
+
+	/**
+	* getPublicSaleTotalAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleTotalAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setIsPublic
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { boolean } isPublic,
+	*/
+	"setIsPublic" (
+		phaseId: (number | string | BN),
+		isPublic: boolean,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsPublic", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, isPublic], __options);
+	}
+
+	/**
+	* getWhitelistAccountCount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistAccountCount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistAccountCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* whitelistClaim
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"whitelistClaim" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistClaim", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setVestingUnit
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (number | string | BN) } vestingUnit,
+	*/
+	"setVestingUnit" (
+		phaseId: (number | string | BN),
+		vestingUnit: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingUnit", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, vestingUnit], __options);
+	}
+
+	/**
+	* getProjectStartTime
+	*
+	*/
+	"getProjectStartTime" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getProjectStartTime", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* publicPurchase
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } amount,
+	*/
+	"publicPurchase" (
+		phaseId: (number | string | BN),
+		amount: (string | number | BN),
+		__options ? : GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicPurchase", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, amount], __options);
+	}
+
+	/**
+	* getPublicSaleTotalPurchasedAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleTotalPurchasedAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* burnUnsoldTokens
+	*
+	*/
+	"burnUnsoldTokens" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::burnUnsoldTokens", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* setPhase
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { boolean } isActive,
+	* @param { ArgumentTypes.PhaseInput } phaseInput,
+	*/
+	"setPhase" (
+		phaseId: (number | string | BN),
+		isActive: boolean,
+		phaseInput: ArgumentTypes.PhaseInput,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPhase", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, isActive, phaseInput], __options);
 	}
 
 	/**
@@ -871,6 +589,288 @@ export default class Methods {
 	}
 
 	/**
+	* getVestingUnit
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getVestingUnit" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getVestingUnit", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setTokenAddress
+	*
+	* @param { ArgumentTypes.AccountId } tokenAddress,
+	*/
+	"setTokenAddress" (
+		tokenAddress: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTokenAddress", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [tokenAddress], __options);
+	}
+
+	/**
+	* getBalance
+	*
+	*/
+	"getBalance" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getProjectInfoUri
+	*
+	*/
+	"getProjectInfoUri" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getProjectInfoUri", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getWhitelistSaleTotalClaimedAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalClaimedAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* getIsActive
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getIsActive" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getIsActive", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* publicClaim
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"publicClaim" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicClaim", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* whitelistPurchase
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } amount,
+	*/
+	"whitelistPurchase" (
+		phaseId: (number | string | BN),
+		amount: (string | number | BN),
+		__options ? : GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistPurchase", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, amount], __options);
+	}
+
+	/**
+	* addMultiWhitelists
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { Array<ArgumentTypes.AccountId> } accounts,
+	* @param { Array<(string | number | BN)> } whitelistAmounts,
+	* @param { Array<(string | number | BN)> } whitelistPrices,
+	*/
+	"addMultiWhitelists" (
+		phaseId: (number | string | BN),
+		accounts: Array<ArgumentTypes.AccountId>,
+		whitelistAmounts: Array<(string | number | BN)>,
+		whitelistPrices: Array<(string | number | BN)>,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::addMultiWhitelists", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
+	}
+
+	/**
+	* getTokenAddress
+	*
+	*/
+	"getTokenAddress" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getTokenAddress", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getAvailableTokenAmount
+	*
+	*/
+	"getAvailableTokenAmount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getAvailableTokenAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getPublicBuyer
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { ArgumentTypes.AccountId } account,
+	*/
+	"getPublicBuyer" (
+		phaseId: (number | string | BN),
+		account: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicBuyer", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, account], __options);
+	}
+
+	/**
+	* setProjectInfoUri
+	*
+	* @param { string } projectInfoUri,
+	*/
+	"setProjectInfoUri" (
+		projectInfoUri: string,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setProjectInfoUri", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [projectInfoUri], __options);
+	}
+
+	/**
+	* getPublicSaleTotalClaimedAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleTotalClaimedAmount" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setGeneratorContract
+	*
+	* @param { ArgumentTypes.AccountId } generatorContract,
+	*/
+	"setGeneratorContract" (
+		generatorContract: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setGeneratorContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [generatorContract], __options);
+	}
+
+	/**
+	* getImmediateReleaseRate
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getImmediateReleaseRate" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getImmediateReleaseRate", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setPublicTotalAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } totalAmount,
+	*/
+	"setPublicTotalAmount" (
+		phaseId: (number | string | BN),
+		totalAmount: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicTotalAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, totalAmount], __options);
+	}
+
+	/**
+	* getGeneratorContract
+	*
+	*/
+	"getGeneratorContract" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getGeneratorContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getName
+	*
+	* @param { (number | string | BN) } phaseId,
+	*/
+	"getName" (
+		phaseId: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getName", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* setTxRate
+	*
+	* @param { (number | string | BN) } txRate,
+	*/
+	"setTxRate" (
+		txRate: (number | string | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTxRate", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [txRate], __options);
+	}
+
+	/**
 	* setCode
 	*
 	* @param { Array<(number | string | BN)> } codeHash,
@@ -882,22 +882,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "upgradeableTrait::setCode", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [codeHash], __options);
-	}
-
-	/**
-	* grantRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"grantRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::grantRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, account], __options);
 	}
 
 	/**
@@ -914,22 +898,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::hasRole", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [role, address], __options);
-	}
-
-	/**
-	* renounceRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"renounceRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::renounceRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, account], __options);
 	}
 
 	/**
@@ -963,19 +931,35 @@ export default class Methods {
 	}
 
 	/**
-	* getRoleMember
+	* grantRole
 	*
 	* @param { (number | string | BN) } role,
-	* @param { (number | string | BN) } index,
+	* @param { ArgumentTypes.AccountId | null } account,
 	*/
-	"getRoleMember" (
+	"grantRole" (
 		role: (number | string | BN),
-		index: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMember", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::grantRole", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, index], __options);
+		}, [role, account], __options);
+	}
+
+	/**
+	* renounceRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId | null } account,
+	*/
+	"renounceRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::renounceRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [role, account], __options);
 	}
 
 	/**
@@ -993,13 +977,29 @@ export default class Methods {
 	}
 
 	/**
-	* owner
+	* getRoleMember
 	*
+	* @param { (number | string | BN) } role,
+	* @param { (number | string | BN) } index,
 	*/
-	"owner" (
+	"getRoleMember" (
+		role: (number | string | BN),
+		index: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMember", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [role, index], __options);
+	}
+
+	/**
+	* renounceOwnership
+	*
+	*/
+	"renounceOwnership" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
@@ -1019,13 +1019,13 @@ export default class Methods {
 	}
 
 	/**
-	* renounceOwnership
+	* owner
 	*
 	*/
-	"renounceOwnership" (
+	"owner" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::renounceOwnership", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}

@@ -47,6 +47,7 @@ export interface Error {
 	invalidTime ? : null,
 	invalidPercentage ? : null,
 	invalidDuration ? : null,
+	invalidVestingUnit ? : null,
 	invalidTopupAmount ? : null,
 	launchpadNotExist ? : null,
 	invalidIsActiveInput ? : null,
@@ -289,6 +290,11 @@ export class ErrorBuilder {
 	static InvalidDuration(): Error {
 		return {
 			invalidDuration: null,
+		};
+	}
+	static InvalidVestingUnit(): Error {
+		return {
+			invalidVestingUnit: null,
 		};
 	}
 	static InvalidTopupAmount(): Error {
