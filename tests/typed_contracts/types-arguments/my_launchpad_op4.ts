@@ -57,6 +57,7 @@ export interface Error {
 	invalidTime ? : null,
 	invalidPercentage ? : null,
 	invalidDuration ? : null,
+	invalidVestingUnit ? : null,
 	invalidTopupAmount ? : null,
 	launchpadNotExist ? : null,
 	invalidIsActiveInput ? : null,
@@ -299,6 +300,11 @@ export class ErrorBuilder {
 	static InvalidDuration(): Error {
 		return {
 			invalidDuration: null,
+		};
+	}
+	static InvalidVestingUnit(): Error {
+		return {
+			invalidVestingUnit: null,
 		};
 	}
 	static InvalidTopupAmount(): Error {
@@ -593,16 +599,19 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type PhaseInfo = {
-	isActive: boolean,
-	name: string,
-	startTime: (number | string | BN),
-	endTime: (number | string | BN),
-	immediateReleaseRate: (number | string | BN),
-	vestingDuration: (number | string | BN),
-	endVestingTime: (number | string | BN),
-	vestingUnit: (number | string | BN),
-	totalVestingUnits: (number | string | BN)
+export type WhitelistSaleInfo = {
+	totalAmount: (string | number | BN),
+	totalPurchasedAmount: (string | number | BN),
+	totalClaimedAmount: (string | number | BN),
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
+export type BuyerInformation = {
+	purchasedAmount: (string | number | BN),
+	vestingAmount: (string | number | BN),
+	claimedAmount: (string | number | BN),
+	lastUpdatedTime: (number | string | BN)
 }
 
 export type PublicSaleInfo = {
@@ -615,6 +624,18 @@ export type PublicSaleInfo = {
 	isWithdrawn: boolean
 }
 
+export type PhaseInfo = {
+	isActive: boolean,
+	name: string,
+	startTime: (number | string | BN),
+	endTime: (number | string | BN),
+	immediateReleaseRate: (number | string | BN),
+	vestingDuration: (number | string | BN),
+	endVestingTime: (number | string | BN),
+	vestingUnit: (number | string | BN),
+	totalVestingUnits: (number | string | BN)
+}
+
 export type WhitelistBuyerInfo = {
 	amount: (string | number | BN),
 	price: (string | number | BN),
@@ -622,20 +643,5 @@ export type WhitelistBuyerInfo = {
 	vestingAmount: (string | number | BN),
 	claimedAmount: (string | number | BN),
 	lastUpdatedTime: (number | string | BN)
-}
-
-export type BuyerInformation = {
-	purchasedAmount: (string | number | BN),
-	vestingAmount: (string | number | BN),
-	claimedAmount: (string | number | BN),
-	lastUpdatedTime: (number | string | BN)
-}
-
-export type WhitelistSaleInfo = {
-	totalAmount: (string | number | BN),
-	totalPurchasedAmount: (string | number | BN),
-	totalClaimedAmount: (string | number | BN),
-	isBurned: boolean,
-	isWithdrawn: boolean
 }
 

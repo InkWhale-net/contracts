@@ -1249,6 +1249,11 @@ pub trait LaunchpadContractTrait:
     }
 
     // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
+    // fn claim(&mut self, type: u8, phase_id: u8) -> Result<(), Error> {
+        
+    // }
+
+    // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
     fn public_claim(&mut self, phase_id: u8) -> Result<(), Error> {
         // if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
         //                                         &self.data::<Data>().generator_contract,

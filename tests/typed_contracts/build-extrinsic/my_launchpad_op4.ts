@@ -33,31 +33,297 @@ export default class Methods {
 	}
 
 	/**
-	 * getPhase
+	 * getGeneratorContract
 	 *
-	 * @param { (number | string | BN) } phaseId,
 	*/
-	"getPhase" (
-		phaseId: (number | string | BN),
+	"getGeneratorContract" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPhase", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getGeneratorContract", [], __options);
 	}
 
 	/**
-	 * setStartAndEndTime
+	 * whitelistClaim
 	 *
 	 * @param { (number | string | BN) } phaseId,
-	 * @param { (number | string | BN) } startTime,
-	 * @param { (number | string | BN) } endTime,
 	*/
-	"setStartAndEndTime" (
+	"whitelistClaim" (
 		phaseId: (number | string | BN),
-		startTime: (number | string | BN),
-		endTime: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setStartAndEndTime", [phaseId, startTime, endTime], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::whitelistClaim", [phaseId], __options);
+	}
+
+	/**
+	 * getPublicSaleTotalClaimedAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleTotalClaimedAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", [phaseId], __options);
+	}
+
+	/**
+	 * withdrawUnsoldTokens
+	 *
+	 * @param { ArgumentTypes.AccountId } receiver,
+	*/
+	"withdrawUnsoldTokens" (
+		receiver: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::withdrawUnsoldTokens", [receiver], __options);
+	}
+
+	/**
+	 * getName
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getName" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getName", [phaseId], __options);
+	}
+
+	/**
+	 * setVestingDuration
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } vestingDuration,
+	*/
+	"setVestingDuration" (
+		phaseId: (number | string | BN),
+		vestingDuration: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setVestingDuration", [phaseId, vestingDuration], __options);
+	}
+
+	/**
+	 * getIsActive
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getIsActive" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getIsActive", [phaseId], __options);
+	}
+
+	/**
+	 * getAvailableTokenAmount
+	 *
+	*/
+	"getAvailableTokenAmount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getAvailableTokenAmount", [], __options);
+	}
+
+	/**
+	 * getVestingDuration
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getVestingDuration" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getVestingDuration", [phaseId], __options);
+	}
+
+	/**
+	 * getWhitelistSaleInfo
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleInfo" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleInfo", [phaseId], __options);
+	}
+
+	/**
+	 * getPublicBuyer
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { ArgumentTypes.AccountId } account,
+	*/
+	"getPublicBuyer" (
+		phaseId: (number | string | BN),
+		account: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicBuyer", [phaseId, account], __options);
+	}
+
+	/**
+	 * burnUnsoldTokens
+	 *
+	*/
+	"burnUnsoldTokens" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::burnUnsoldTokens", [], __options);
+	}
+
+	/**
+	 * setPublicSalePrice
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (string | number | BN) } price,
+	*/
+	"setPublicSalePrice" (
+		phaseId: (number | string | BN),
+		price: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPublicSalePrice", [phaseId, price], __options);
+	}
+
+	/**
+	 * setTokenAddress
+	 *
+	 * @param { ArgumentTypes.AccountId } tokenAddress,
+	*/
+	"setTokenAddress" (
+		tokenAddress: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTokenAddress", [tokenAddress], __options);
+	}
+
+	/**
+	 * getTotalSupply
+	 *
+	*/
+	"getTotalSupply" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTotalSupply", [], __options);
+	}
+
+	/**
+	 * getWhitelistSaleTotalAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalAmount", [phaseId], __options);
+	}
+
+	/**
+	 * getImmediateReleaseRate
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getImmediateReleaseRate" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getImmediateReleaseRate", [phaseId], __options);
+	}
+
+	/**
+	 * withdraw
+	 *
+	 * @param { (string | number | BN) } value,
+	 * @param { ArgumentTypes.AccountId } receiver,
+	*/
+	"withdraw" (
+		value: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::withdraw", [value, receiver], __options);
+	}
+
+	/**
+	 * setIsPublic
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { boolean } isPublic,
+	*/
+	"setIsPublic" (
+		phaseId: (number | string | BN),
+		isPublic: boolean,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setIsPublic", [phaseId, isPublic], __options);
+	}
+
+	/**
+	 * getWhitelistSaleTotalPurchasedAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalPurchasedAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", [phaseId], __options);
+	}
+
+	/**
+	 * getWhitelistAccountCount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistAccountCount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistAccountCount", [phaseId], __options);
+	}
+
+	/**
+	 * getPublicSaleInfo
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleInfo" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleInfo", [phaseId], __options);
+	}
+
+	/**
+	 * getVestingUnit
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getVestingUnit" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getVestingUnit", [phaseId], __options);
+	}
+
+	/**
+	 * setPhase
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { boolean } isActive,
+	 * @param { ArgumentTypes.PhaseInput } phaseInput,
+	*/
+	"setPhase" (
+		phaseId: (number | string | BN),
+		isActive: boolean,
+		phaseInput: ArgumentTypes.PhaseInput,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPhase", [phaseId, isActive, phaseInput], __options);
 	}
 
 	/**
@@ -79,177 +345,39 @@ export default class Methods {
 	}
 
 	/**
-	 * publicPurchase
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (string | number | BN) } amount,
-	*/
-	"publicPurchase" (
-		phaseId: (number | string | BN),
-		amount: (string | number | BN),
-		__options: GasLimitAndRequiredValue,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::publicPurchase", [phaseId, amount], __options);
-	}
-
-	/**
-	 * setTxRate
-	 *
-	 * @param { (number | string | BN) } txRate,
-	*/
-	"setTxRate" (
-		txRate: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTxRate", [txRate], __options);
-	}
-
-	/**
-	 * getGeneratorContract
-	 *
-	*/
-	"getGeneratorContract" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getGeneratorContract", [], __options);
-	}
-
-	/**
-	 * whitelistPurchase
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (string | number | BN) } amount,
-	*/
-	"whitelistPurchase" (
-		phaseId: (number | string | BN),
-		amount: (string | number | BN),
-		__options: GasLimitAndRequiredValue,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::whitelistPurchase", [phaseId, amount], __options);
-	}
-
-	/**
-	 * withdraw
-	 *
-	 * @param { (string | number | BN) } value,
-	 * @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"withdraw" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::withdraw", [value, receiver], __options);
-	}
-
-	/**
-	 * setImmediateReleaseRate
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (number | string | BN) } immediateReleaseRate,
-	*/
-	"setImmediateReleaseRate" (
-		phaseId: (number | string | BN),
-		immediateReleaseRate: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setImmediateReleaseRate", [phaseId, immediateReleaseRate], __options);
-	}
-
-	/**
-	 * setVestingDuration
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (number | string | BN) } vestingDuration,
-	*/
-	"setVestingDuration" (
-		phaseId: (number | string | BN),
-		vestingDuration: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setVestingDuration", [phaseId, vestingDuration], __options);
-	}
-
-	/**
-	 * setIsPublic
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { boolean } isPublic,
-	*/
-	"setIsPublic" (
-		phaseId: (number | string | BN),
-		isPublic: boolean,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setIsPublic", [phaseId, isPublic], __options);
-	}
-
-	/**
-	 * setPhase
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { boolean } isActive,
-	 * @param { ArgumentTypes.PhaseInput } phaseInput,
-	*/
-	"setPhase" (
-		phaseId: (number | string | BN),
-		isActive: boolean,
-		phaseInput: ArgumentTypes.PhaseInput,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPhase", [phaseId, isActive, phaseInput], __options);
-	}
-
-	/**
-	 * getVestingDuration
+	 * getPublicSalePrice
 	 *
 	 * @param { (number | string | BN) } phaseId,
 	*/
-	"getVestingDuration" (
+	"getPublicSalePrice" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getVestingDuration", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSalePrice", [phaseId], __options);
 	}
 
 	/**
-	 * getVestingUnit
+	 * getPhase
 	 *
 	 * @param { (number | string | BN) } phaseId,
 	*/
-	"getVestingUnit" (
+	"getPhase" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getVestingUnit", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPhase", [phaseId], __options);
 	}
 
 	/**
-	 * setPublicSalePrice
+	 * setProjectInfoUri
 	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (string | number | BN) } price,
+	 * @param { string } projectInfoUri,
 	*/
-	"setPublicSalePrice" (
-		phaseId: (number | string | BN),
-		price: (string | number | BN),
+	"setProjectInfoUri" (
+		projectInfoUri: string,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPublicSalePrice", [phaseId, price], __options);
-	}
-
-	/**
-	 * setPublicTotalAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (string | number | BN) } totalAmount,
-	*/
-	"setPublicTotalAmount" (
-		phaseId: (number | string | BN),
-		totalAmount: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPublicTotalAmount", [phaseId, totalAmount], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setProjectInfoUri", [projectInfoUri], __options);
 	}
 
 	/**
@@ -267,6 +395,82 @@ export default class Methods {
 	}
 
 	/**
+	 * publicClaim
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"publicClaim" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::publicClaim", [phaseId], __options);
+	}
+
+	/**
+	 * getProjectInfoUri
+	 *
+	*/
+	"getProjectInfoUri" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getProjectInfoUri", [], __options);
+	}
+
+	/**
+	 * setImmediateReleaseRate
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } immediateReleaseRate,
+	*/
+	"setImmediateReleaseRate" (
+		phaseId: (number | string | BN),
+		immediateReleaseRate: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setImmediateReleaseRate", [phaseId, immediateReleaseRate], __options);
+	}
+
+	/**
+	 * setIsActive
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { boolean } isActive,
+	*/
+	"setIsActive" (
+		phaseId: (number | string | BN),
+		isActive: boolean,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setIsActive", [phaseId, isActive], __options);
+	}
+
+	/**
+	 * setTotalSupply
+	 *
+	 * @param { (string | number | BN) } totalSupply,
+	*/
+	"setTotalSupply" (
+		totalSupply: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTotalSupply", [totalSupply], __options);
+	}
+
+	/**
+	 * whitelistPurchase
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (string | number | BN) } amount,
+	*/
+	"whitelistPurchase" (
+		phaseId: (number | string | BN),
+		amount: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::whitelistPurchase", [phaseId, amount], __options);
+	}
+
+	/**
 	 * getProjectStartTime
 	 *
 	*/
@@ -274,6 +478,44 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getProjectStartTime", [], __options);
+	}
+
+	/**
+	 * getWhitelistSaleTotalClaimedAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getWhitelistSaleTotalClaimedAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", [phaseId], __options);
+	}
+
+	/**
+	 * getStartTime
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getStartTime" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getStartTime", [phaseId], __options);
+	}
+
+	/**
+	 * publicPurchase
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (string | number | BN) } amount,
+	*/
+	"publicPurchase" (
+		phaseId: (number | string | BN),
+		amount: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::publicPurchase", [phaseId, amount], __options);
 	}
 
 	/**
@@ -287,39 +529,49 @@ export default class Methods {
 	}
 
 	/**
-	 * getName
+	 * getPublicSaleTotalAmount
 	 *
 	 * @param { (number | string | BN) } phaseId,
 	*/
-	"getName" (
+	"getPublicSaleTotalAmount" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getName", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalAmount", [phaseId], __options);
 	}
 
 	/**
-	 * getPublicSaleInfo
+	 * getTxRate
+	 *
+	*/
+	"getTxRate" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTxRate", [], __options);
+	}
+
+	/**
+	 * topup
+	 *
+	 * @param { (string | number | BN) } amount,
+	*/
+	"topup" (
+		amount: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::topup", [amount], __options);
+	}
+
+	/**
+	 * getEndTime
 	 *
 	 * @param { (number | string | BN) } phaseId,
 	*/
-	"getPublicSaleInfo" (
+	"getEndTime" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleInfo", [phaseId], __options);
-	}
-
-	/**
-	 * setProjectInfoUri
-	 *
-	 * @param { string } projectInfoUri,
-	*/
-	"setProjectInfoUri" (
-		projectInfoUri: string,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setProjectInfoUri", [projectInfoUri], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getEndTime", [phaseId], __options);
 	}
 
 	/**
@@ -332,6 +584,56 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setGeneratorContract", [generatorContract], __options);
+	}
+
+	/**
+	 * setPublicTotalAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (string | number | BN) } totalAmount,
+	*/
+	"setPublicTotalAmount" (
+		phaseId: (number | string | BN),
+		totalAmount: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setPublicTotalAmount", [phaseId, totalAmount], __options);
+	}
+
+	/**
+	 * getPublicSaleTotalPurchasedAmount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	*/
+	"getPublicSaleTotalPurchasedAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", [phaseId], __options);
+	}
+
+	/**
+	 * getWhitelistAccount
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } accountIndex,
+	*/
+	"getWhitelistAccount" (
+		phaseId: (number | string | BN),
+		accountIndex: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistAccount", [phaseId, accountIndex], __options);
+	}
+
+	/**
+	 * getBalance
+	 *
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getBalance", [], __options);
 	}
 
 	/**
@@ -353,13 +655,27 @@ export default class Methods {
 	}
 
 	/**
-	 * getBalance
+	 * getProjectEndTime
 	 *
 	*/
-	"getBalance" (
+	"getProjectEndTime" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getBalance", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getProjectEndTime", [], __options);
+	}
+
+	/**
+	 * setVestingUnit
+	 *
+	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } vestingUnit,
+	*/
+	"setVestingUnit" (
+		phaseId: (number | string | BN),
+		vestingUnit: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setVestingUnit", [phaseId, vestingUnit], __options);
 	}
 
 	/**
@@ -377,103 +693,41 @@ export default class Methods {
 	}
 
 	/**
-	 * getWhitelistSaleTotalPurchasedAmount
+	 * setTxRate
 	 *
-	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } txRate,
 	*/
-	"getWhitelistSaleTotalPurchasedAmount" (
-		phaseId: (number | string | BN),
+	"setTxRate" (
+		txRate: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTxRate", [txRate], __options);
 	}
 
 	/**
-	 * getStartTime
+	 * setStartAndEndTime
 	 *
 	 * @param { (number | string | BN) } phaseId,
+	 * @param { (number | string | BN) } startTime,
+	 * @param { (number | string | BN) } endTime,
 	*/
-	"getStartTime" (
+	"setStartAndEndTime" (
 		phaseId: (number | string | BN),
+		startTime: (number | string | BN),
+		endTime: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getStartTime", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setStartAndEndTime", [phaseId, startTime, endTime], __options);
 	}
 
 	/**
-	 * getPublicBuyer
+	 * getTotalPhase
 	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { ArgumentTypes.AccountId } account,
 	*/
-	"getPublicBuyer" (
-		phaseId: (number | string | BN),
-		account: ArgumentTypes.AccountId,
+	"getTotalPhase" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicBuyer", [phaseId, account], __options);
-	}
-
-	/**
-	 * getWhitelistAccount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (number | string | BN) } accountIndex,
-	*/
-	"getWhitelistAccount" (
-		phaseId: (number | string | BN),
-		accountIndex: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistAccount", [phaseId, accountIndex], __options);
-	}
-
-	/**
-	 * publicClaim
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"publicClaim" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::publicClaim", [phaseId], __options);
-	}
-
-	/**
-	 * getPublicSaleTotalPurchasedAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalPurchasedAmount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", [phaseId], __options);
-	}
-
-	/**
-	 * getPublicSaleTotalClaimedAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalClaimedAmount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", [phaseId], __options);
-	}
-
-	/**
-	 * getPublicSalePrice
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSalePrice" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSalePrice", [phaseId], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTotalPhase", [], __options);
 	}
 
 	/**
@@ -493,260 +747,6 @@ export default class Methods {
 	}
 
 	/**
-	 * getWhitelistSaleTotalClaimedAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleTotalClaimedAmount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", [phaseId], __options);
-	}
-
-	/**
-	 * getTotalPhase
-	 *
-	*/
-	"getTotalPhase" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTotalPhase", [], __options);
-	}
-
-	/**
-	 * setTotalSupply
-	 *
-	 * @param { (string | number | BN) } totalSupply,
-	*/
-	"setTotalSupply" (
-		totalSupply: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTotalSupply", [totalSupply], __options);
-	}
-
-	/**
-	 * getImmediateReleaseRate
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getImmediateReleaseRate" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getImmediateReleaseRate", [phaseId], __options);
-	}
-
-	/**
-	 * getEndTime
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getEndTime" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getEndTime", [phaseId], __options);
-	}
-
-	/**
-	 * getIsActive
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getIsActive" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getIsActive", [phaseId], __options);
-	}
-
-	/**
-	 * getWhitelistSaleInfo
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleInfo" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleInfo", [phaseId], __options);
-	}
-
-	/**
-	 * getProjectEndTime
-	 *
-	*/
-	"getProjectEndTime" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getProjectEndTime", [], __options);
-	}
-
-	/**
-	 * getProjectInfoUri
-	 *
-	*/
-	"getProjectInfoUri" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getProjectInfoUri", [], __options);
-	}
-
-	/**
-	 * topup
-	 *
-	 * @param { (string | number | BN) } amount,
-	*/
-	"topup" (
-		amount: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::topup", [amount], __options);
-	}
-
-	/**
-	 * burnUnsoldTokens
-	 *
-	*/
-	"burnUnsoldTokens" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::burnUnsoldTokens", [], __options);
-	}
-
-	/**
-	 * setVestingUnit
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { (number | string | BN) } vestingUnit,
-	*/
-	"setVestingUnit" (
-		phaseId: (number | string | BN),
-		vestingUnit: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setVestingUnit", [phaseId, vestingUnit], __options);
-	}
-
-	/**
-	 * getTotalSupply
-	 *
-	*/
-	"getTotalSupply" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTotalSupply", [], __options);
-	}
-
-	/**
-	 * getAvailableTokenAmount
-	 *
-	*/
-	"getAvailableTokenAmount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getAvailableTokenAmount", [], __options);
-	}
-
-	/**
-	 * setIsActive
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	 * @param { boolean } isActive,
-	*/
-	"setIsActive" (
-		phaseId: (number | string | BN),
-		isActive: boolean,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setIsActive", [phaseId, isActive], __options);
-	}
-
-	/**
-	 * getTxRate
-	 *
-	*/
-	"getTxRate" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getTxRate", [], __options);
-	}
-
-	/**
-	 * getPublicSaleTotalAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getPublicSaleTotalAmount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getPublicSaleTotalAmount", [phaseId], __options);
-	}
-
-	/**
-	 * getWhitelistAccountCount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistAccountCount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistAccountCount", [phaseId], __options);
-	}
-
-	/**
-	 * whitelistClaim
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"whitelistClaim" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::whitelistClaim", [phaseId], __options);
-	}
-
-	/**
-	 * withdrawUnsoldTokens
-	 *
-	 * @param { ArgumentTypes.AccountId } receiver,
-	*/
-	"withdrawUnsoldTokens" (
-		receiver: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::withdrawUnsoldTokens", [receiver], __options);
-	}
-
-	/**
-	 * getWhitelistSaleTotalAmount
-	 *
-	 * @param { (number | string | BN) } phaseId,
-	*/
-	"getWhitelistSaleTotalAmount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::getWhitelistSaleTotalAmount", [phaseId], __options);
-	}
-
-	/**
-	 * setTokenAddress
-	 *
-	 * @param { ArgumentTypes.AccountId } tokenAddress,
-	*/
-	"setTokenAddress" (
-		tokenAddress: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadContractTrait::setTokenAddress", [tokenAddress], __options);
-	}
-
-	/**
 	 * setCode
 	 *
 	 * @param { Array<(number | string | BN)> } codeHash,
@@ -756,46 +756,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "upgradeableTrait::setCode", [codeHash], __options);
-	}
-
-	/**
-	 * revokeRole
-	 *
-	 * @param { (number | string | BN) } role,
-	 * @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"revokeRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::revokeRole", [role, account], __options);
-	}
-
-	/**
-	 * hasRole
-	 *
-	 * @param { (number | string | BN) } role,
-	 * @param { ArgumentTypes.AccountId | null } address,
-	*/
-	"hasRole" (
-		role: (number | string | BN),
-		address: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::hasRole", [role, address], __options);
-	}
-
-	/**
-	 * getRoleAdmin
-	 *
-	 * @param { (number | string | BN) } role,
-	*/
-	"getRoleAdmin" (
-		role: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::getRoleAdmin", [role], __options);
 	}
 
 	/**
@@ -813,6 +773,20 @@ export default class Methods {
 	}
 
 	/**
+	 * hasRole
+	 *
+	 * @param { (number | string | BN) } role,
+	 * @param { ArgumentTypes.AccountId | null } address,
+	*/
+	"hasRole" (
+		role: (number | string | BN),
+		address: ArgumentTypes.AccountId | null,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::hasRole", [role, address], __options);
+	}
+
+	/**
 	 * renounceRole
 	 *
 	 * @param { (number | string | BN) } role,
@@ -824,6 +798,32 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::renounceRole", [role, account], __options);
+	}
+
+	/**
+	 * revokeRole
+	 *
+	 * @param { (number | string | BN) } role,
+	 * @param { ArgumentTypes.AccountId | null } account,
+	*/
+	"revokeRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::revokeRole", [role, account], __options);
+	}
+
+	/**
+	 * getRoleAdmin
+	 *
+	 * @param { (number | string | BN) } role,
+	*/
+	"getRoleAdmin" (
+		role: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::getRoleAdmin", [role], __options);
 	}
 
 	/**
@@ -853,13 +853,13 @@ export default class Methods {
 	}
 
 	/**
-	 * renounceOwnership
+	 * owner
 	 *
 	*/
-	"renounceOwnership" (
+	"owner" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
 	}
 
 	/**
@@ -875,13 +875,13 @@ export default class Methods {
 	}
 
 	/**
-	 * owner
+	 * renounceOwnership
 	 *
 	*/
-	"owner" (
+	"renounceOwnership" (
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::owner", [], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
 	}
 
 }

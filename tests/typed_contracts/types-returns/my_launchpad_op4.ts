@@ -58,6 +58,7 @@ export interface Error {
 	invalidTime ? : null,
 	invalidPercentage ? : null,
 	invalidDuration ? : null,
+	invalidVestingUnit ? : null,
 	invalidTopupAmount ? : null,
 	launchpadNotExist ? : null,
 	invalidIsActiveInput ? : null,
@@ -300,6 +301,11 @@ export class ErrorBuilder {
 	static InvalidDuration(): Error {
 		return {
 			invalidDuration: null,
+		};
+	}
+	static InvalidVestingUnit(): Error {
+		return {
+			invalidVestingUnit: null,
 		};
 	}
 	static InvalidTopupAmount(): Error {
@@ -594,16 +600,19 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type PhaseInfo = {
-	isActive: boolean,
-	name: string,
-	startTime: number,
-	endTime: number,
-	immediateReleaseRate: number,
-	vestingDuration: number,
-	endVestingTime: number,
-	vestingUnit: number,
-	totalVestingUnits: number
+export type WhitelistSaleInfo = {
+	totalAmount: ReturnNumber,
+	totalPurchasedAmount: ReturnNumber,
+	totalClaimedAmount: ReturnNumber,
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
+export type BuyerInformation = {
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
 }
 
 export type PublicSaleInfo = {
@@ -616,6 +625,18 @@ export type PublicSaleInfo = {
 	isWithdrawn: boolean
 }
 
+export type PhaseInfo = {
+	isActive: boolean,
+	name: string,
+	startTime: number,
+	endTime: number,
+	immediateReleaseRate: number,
+	vestingDuration: number,
+	endVestingTime: number,
+	vestingUnit: number,
+	totalVestingUnits: number
+}
+
 export type WhitelistBuyerInfo = {
 	amount: ReturnNumber,
 	price: ReturnNumber,
@@ -623,20 +644,5 @@ export type WhitelistBuyerInfo = {
 	vestingAmount: ReturnNumber,
 	claimedAmount: ReturnNumber,
 	lastUpdatedTime: number
-}
-
-export type BuyerInformation = {
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
-}
-
-export type WhitelistSaleInfo = {
-	totalAmount: ReturnNumber,
-	totalPurchasedAmount: ReturnNumber,
-	totalClaimedAmount: ReturnNumber,
-	isBurned: boolean,
-	isWithdrawn: boolean
 }
 
