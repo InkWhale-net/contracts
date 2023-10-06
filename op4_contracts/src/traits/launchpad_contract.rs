@@ -269,3 +269,22 @@ pub trait LaunchpadContractTrait {
     #[ink(message)]
     fn withdraw(&mut self, value: Balance, receiver: AccountId) -> Result<(), Error>;
 }
+
+#[openbrush::trait_definition]
+pub trait BuyerInfoTrait {
+    fn purchased_amount(&self) -> Balance;
+    fn vesting_amount(&self) -> Balance;
+    fn claimed_amount(&self) -> Balance;
+    fn last_updated_time(&self) -> u64;
+
+    fn set_purchased_amount(&mut self, purchased_amount: Balance) -> Result<(), Error>;
+    fn set_vesting_amount(&mut self, vesting_amount: Balance) -> Result<(), Error>;
+    fn set_claimed_amount(&mut self, claimed_amount: Balance) -> Result<(), Error>;
+    fn set_last_updated_time(&mut self, last_updated_time: u64) -> Result<(), Error>;
+}
+
+#[openbrush::trait_definition]
+pub trait SaleInfoTrait {
+    fn total_claimed_amount(&self) -> Balance;
+    fn set_total_claimed_amount(&mut self, total_claimed_amount: Balance) -> Result<(), Error>; 
+}
