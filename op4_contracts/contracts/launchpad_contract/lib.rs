@@ -9,7 +9,7 @@ pub mod my_launchpad {
 
     use openbrush::{contracts::ownable::*, traits::Storage};
 
-    use inkwhale_project::impls::{launchpad_contract::*, upgradeable::*};
+    use inkwhale_project::impls::{launchpad_contract::*};
 
     use ink::{
         codegen::{EmitEvent, Env},
@@ -137,10 +137,6 @@ pub mod my_launchpad {
             );
         }
     }
-
-    impl UpgradeableTrait for MyLaunchpad {}
-    // impl AccessControl for MyLaunchpad {}
-    // impl AccessControlEnumerable for MyLaunchpad {}
 
     impl MyLaunchpad {
         #[ink(constructor)]
