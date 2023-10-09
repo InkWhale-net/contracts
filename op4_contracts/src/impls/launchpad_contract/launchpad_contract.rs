@@ -345,19 +345,19 @@ pub trait LaunchpadContractTrait:
                     }
                 }
 
-                if let Some(whitelist_sale_info) =
-                    self.data::<Data>().whitelist_sale_info.get(&phase_id)
-                {
-                    let whitelist_total_changed = whitelist_sale_info
-                        .total_amount
-                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                        .ok_or(Error::CheckedOperations)?;
-                    self.data::<Data>().available_token_amount = self
-                        .data::<Data>()
-                        .available_token_amount
-                        .checked_sub(whitelist_total_changed)
-                        .ok_or(Error::CheckedOperations)?;
-                }
+                // if let Some(whitelist_sale_info) =
+                //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+                // {
+                //     let whitelist_total_changed = whitelist_sale_info
+                //         .total_amount
+                //         .checked_sub(whitelist_sale_info.total_purchased_amount)
+                //         .ok_or(Error::CheckedOperations)?;
+                //     self.data::<Data>().available_token_amount = self
+                //         .data::<Data>()
+                //         .available_token_amount
+                //         .checked_sub(whitelist_total_changed)
+                //         .ok_or(Error::CheckedOperations)?;
+                // }
             } else {
                 // Update project_start_time and project_end_time
                 if self.data::<Data>().project_start_time == phase.start_time {
@@ -416,19 +416,19 @@ pub trait LaunchpadContractTrait:
                     }
                 }
 
-                if let Some(whitelist_sale_info) =
-                    self.data::<Data>().whitelist_sale_info.get(&phase_id)
-                {
-                    let whitelist_total_changed = whitelist_sale_info
-                        .total_amount
-                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                        .ok_or(Error::CheckedOperations)?;
-                    self.data::<Data>().available_token_amount = self
-                        .data::<Data>()
-                        .available_token_amount
-                        .checked_add(whitelist_total_changed)
-                        .ok_or(Error::CheckedOperations)?;
-                }
+                // if let Some(whitelist_sale_info) =
+                //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+                // {
+                //     let whitelist_total_changed = whitelist_sale_info
+                //         .total_amount
+                //         .checked_sub(whitelist_sale_info.total_purchased_amount)
+                //         .ok_or(Error::CheckedOperations)?;
+                //     self.data::<Data>().available_token_amount = self
+                //         .data::<Data>()
+                //         .available_token_amount
+                //         .checked_add(whitelist_total_changed)
+                //         .ok_or(Error::CheckedOperations)?;
+                // }
             }
 
             phase.is_active = is_active;
@@ -879,7 +879,7 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidWhitelistData);
             }
 
-            let mut total_amount: Balance = 0;
+            // let mut total_amount: Balance = 0;
 
             for i in 0..whitelist_count {
                 if self
@@ -891,14 +891,14 @@ pub trait LaunchpadContractTrait:
                     return Err(Error::WhitelistBuyerInfoExist);
                 }
 
-                self.data::<Data>().available_token_amount = self
-                    .data::<Data>()
-                    .available_token_amount
-                    .checked_sub(whitelist_amounts[i])
-                    .ok_or(Error::CheckedOperations)?;
-                total_amount = total_amount
-                    .checked_add(whitelist_amounts[i])
-                    .ok_or(Error::CheckedOperations)?;
+                // self.data::<Data>().available_token_amount = self
+                //     .data::<Data>()
+                //     .available_token_amount
+                //     .checked_sub(whitelist_amounts[i])
+                //     .ok_or(Error::CheckedOperations)?;
+                // total_amount = total_amount
+                //     .checked_add(whitelist_amounts[i])
+                //     .ok_or(Error::CheckedOperations)?;
 
                 let whitelist_buyer_info = WhitelistBuyerInfo {
                     amount: whitelist_amounts[i],
@@ -918,21 +918,22 @@ pub trait LaunchpadContractTrait:
             }
 
             // Add whitelist_sale_info
-            if let Some(mut whitelist_sale_info) =
-                self.data::<Data>().whitelist_sale_info.get(&phase_id)
-            {
-                whitelist_sale_info.total_amount = whitelist_sale_info
-                    .total_amount
-                    .checked_add(total_amount)
-                    .ok_or(Error::CheckedOperations)?;
+            // if let Some(mut whitelist_sale_info) =
+            //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+            // {
+            //     whitelist_sale_info.total_amount = whitelist_sale_info
+            //         .total_amount
+            //         .checked_add(total_amount)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                self.data::<Data>()
-                    .whitelist_sale_info
-                    .insert(&phase_id, &whitelist_sale_info);
-            } else {
+            //     self.data::<Data>()
+            //         .whitelist_sale_info
+            //         .insert(&phase_id, &whitelist_sale_info);
+            // } else {
+            if self.data::<Data>().whitelist_sale_info.get(&phase_id).is_none() {
                 // Add multi whitelists the first time
                 let whitelist_sale_info = WhitelistSaleInfo {
-                    total_amount,
+                    total_amount: 0,
                     total_purchased_amount: 0,
                     total_claimed_amount: 0,
                     is_burned: false,
@@ -976,8 +977,8 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidWhitelistData);
             }
 
-            let total_in = whitelist_amounts.iter().sum();
-            let mut total_out: Balance = 0;
+            // let total_in = whitelist_amounts.iter().sum();
+            // let mut total_out: Balance = 0;
 
             for i in 0..whitelist_count {
                 if let Some(mut whitelist_buyer_info) = self
@@ -991,9 +992,9 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // Get total out
-                    total_out = total_out
-                        .checked_add(whitelist_buyer_info.amount)
-                        .ok_or(Error::CheckedOperations)?;
+                    // total_out = total_out
+                    //     .checked_add(whitelist_buyer_info.amount)
+                    //     .ok_or(Error::CheckedOperations)?;
 
                     // Update new white list info
                     whitelist_buyer_info.amount = whitelist_amounts[i];
@@ -1008,30 +1009,30 @@ pub trait LaunchpadContractTrait:
             }
 
             // Update whitelist sale info total amount
-            if let Some(mut whitelist_sale_info) =
-                self.data::<Data>().whitelist_sale_info.get(&phase_id)
-            {
-                self.data::<Data>().available_token_amount = self
-                    .data::<Data>()
-                    .available_token_amount
-                    .checked_add(total_out)
-                    .ok_or(Error::CheckedOperations)?
-                    .checked_sub(total_in)
-                    .ok_or(Error::CheckedOperations)?;
+            // if let Some(mut whitelist_sale_info) =
+            //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+            // {
+            //     self.data::<Data>().available_token_amount = self
+            //         .data::<Data>()
+            //         .available_token_amount
+            //         .checked_add(total_out)
+            //         .ok_or(Error::CheckedOperations)?
+            //         .checked_sub(total_in)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                whitelist_sale_info.total_amount = whitelist_sale_info
-                    .total_amount
-                    .checked_add(total_in)
-                    .ok_or(Error::CheckedOperations)?
-                    .checked_sub(total_out)
-                    .ok_or(Error::CheckedOperations)?;
+            //     whitelist_sale_info.total_amount = whitelist_sale_info
+            //         .total_amount
+            //         .checked_add(total_in)
+            //         .ok_or(Error::CheckedOperations)?
+            //         .checked_sub(total_out)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                self.data::<Data>()
-                    .whitelist_sale_info
-                    .insert(&phase_id, &whitelist_sale_info);
-            } else {
-                return Err(Error::WhitelistSaleInfoNotExist);
-            }
+            //     self.data::<Data>()
+            //         .whitelist_sale_info
+            //         .insert(&phase_id, &whitelist_sale_info);
+            // } else {
+            //     return Err(Error::WhitelistSaleInfoNotExist);
+            // }
 
             Ok(())
         } else {
@@ -1430,19 +1431,18 @@ pub trait LaunchpadContractTrait:
                     .get(&(&phase_id, &caller))
                 {
                     // Check amount to buy
-                    if amount == 0
-                        || buy_info
-                            .purchased_amount
+                    if  amount == 0 || 
+                        amount > self.data::<Data>().available_token_amount || 
+                        buy_info.purchased_amount
                             .checked_add(amount)
-                            .ok_or(Error::CheckedOperations)?
-                            > buy_info.amount
+                            .ok_or(Error::CheckedOperations)? > buy_info.amount  
                     {
                         return Err(Error::InvalidBuyAmount);
                     }
-
+                                   
+                    // Price to buy amount of token
                     let decimal = Psp22Ref::token_decimals(&self.data::<Data>().token_address);
-
-                    // price to buy amount of token
+                    
                     let price = buy_info
                         .price
                         .checked_mul(amount)
@@ -1453,6 +1453,13 @@ pub trait LaunchpadContractTrait:
                     if price > Self::env().transferred_value() {
                         return Err(Error::InvalidTransferAmount);
                     }
+
+                    // Save available_token_amount
+                    self.data::<Data>().available_token_amount = self
+                    .data::<Data>()
+                    .available_token_amount
+                    .checked_sub(amount)
+                    .ok_or(Error::CheckedOperations)?;    
 
                     // tx fee
                     let tx_fee = price
@@ -1486,7 +1493,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::NotEnoughBalance);
                     }
                                
-                    // Save data
+                    // Save data           
                     buy_info.purchased_amount = buy_info
                         .purchased_amount
                         .checked_add(amount)
@@ -1504,14 +1511,21 @@ pub trait LaunchpadContractTrait:
                     if let Some(mut whitelist_sale_info) =
                         self.data::<Data>().whitelist_sale_info.get(&phase_id)
                     {
+                        whitelist_sale_info.total_amount = whitelist_sale_info
+                            .total_amount
+                            .checked_add(amount)
+                            .ok_or(Error::CheckedOperations)?;
+
                         whitelist_sale_info.total_purchased_amount = whitelist_sale_info
                             .total_purchased_amount
                             .checked_add(amount)
                             .ok_or(Error::CheckedOperations)?;
+
                         whitelist_sale_info.total_claimed_amount = whitelist_sale_info
                             .total_claimed_amount
                             .checked_add(claim)
                             .ok_or(Error::CheckedOperations)?;
+
                         self.data::<Data>()
                             .whitelist_sale_info
                             .insert(&phase_id, &whitelist_sale_info);

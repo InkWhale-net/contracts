@@ -600,12 +600,26 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type WhitelistSaleInfo = {
+export type PublicSaleInfo = {
+	isPublic: boolean,
 	totalAmount: ReturnNumber,
+	price: ReturnNumber,
 	totalPurchasedAmount: ReturnNumber,
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
 	isWithdrawn: boolean
+}
+
+export type PhaseInfo = {
+	isActive: boolean,
+	name: string,
+	startTime: number,
+	endTime: number,
+	immediateReleaseRate: number,
+	vestingDuration: number,
+	endVestingTime: number,
+	vestingUnit: number,
+	totalVestingUnits: number
 }
 
 export type BuyerInformation = {
@@ -615,10 +629,8 @@ export type BuyerInformation = {
 	lastUpdatedTime: number
 }
 
-export type PublicSaleInfo = {
-	isPublic: boolean,
+export type WhitelistSaleInfo = {
 	totalAmount: ReturnNumber,
-	price: ReturnNumber,
 	totalPurchasedAmount: ReturnNumber,
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
@@ -632,17 +644,5 @@ export type WhitelistBuyerInfo = {
 	vestingAmount: ReturnNumber,
 	claimedAmount: ReturnNumber,
 	lastUpdatedTime: number
-}
-
-export type PhaseInfo = {
-	isActive: boolean,
-	name: string,
-	startTime: number,
-	endTime: number,
-	immediateReleaseRate: number,
-	vestingDuration: number,
-	endVestingTime: number,
-	vestingUnit: number,
-	totalVestingUnits: number
 }
 
