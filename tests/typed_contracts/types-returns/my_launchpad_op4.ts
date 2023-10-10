@@ -58,6 +58,7 @@ export interface Error {
 	invalidTime ? : null,
 	invalidPercentage ? : null,
 	invalidDuration ? : null,
+	invalidVestingUnit ? : null,
 	invalidTopupAmount ? : null,
 	launchpadNotExist ? : null,
 	invalidIsActiveInput ? : null,
@@ -300,6 +301,11 @@ export class ErrorBuilder {
 	static InvalidDuration(): Error {
 		return {
 			invalidDuration: null,
+		};
+	}
+	static InvalidVestingUnit(): Error {
+		return {
+			invalidVestingUnit: null,
 		};
 	}
 	static InvalidTopupAmount(): Error {
@@ -594,18 +600,6 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type PhaseInfo = {
-	isActive: boolean,
-	name: string,
-	startTime: number,
-	endTime: number,
-	immediateReleaseRate: number,
-	vestingDuration: number,
-	endVestingTime: number,
-	vestingUnit: number,
-	totalVestingUnits: number
-}
-
 export type PublicSaleInfo = {
 	isPublic: boolean,
 	totalAmount: ReturnNumber,
@@ -616,13 +610,16 @@ export type PublicSaleInfo = {
 	isWithdrawn: boolean
 }
 
-export type WhitelistBuyerInfo = {
-	amount: ReturnNumber,
-	price: ReturnNumber,
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
+export type PhaseInfo = {
+	isActive: boolean,
+	name: string,
+	startTime: number,
+	endTime: number,
+	immediateReleaseRate: number,
+	vestingDuration: number,
+	endVestingTime: number,
+	vestingUnit: number,
+	totalVestingUnits: number
 }
 
 export type BuyerInformation = {
@@ -638,5 +635,14 @@ export type WhitelistSaleInfo = {
 	totalClaimedAmount: ReturnNumber,
 	isBurned: boolean,
 	isWithdrawn: boolean
+}
+
+export type WhitelistBuyerInfo = {
+	amount: ReturnNumber,
+	price: ReturnNumber,
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
 }
 

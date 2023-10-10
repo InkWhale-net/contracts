@@ -9,7 +9,7 @@ pub mod my_launchpad {
 
     use openbrush::{contracts::ownable::*, traits::Storage};
 
-    use inkwhale_project::impls::{launchpad_contract::*, upgradeable::*};
+    use inkwhale_project::impls::{launchpad_contract::*};
 
     use ink::{
         codegen::{EmitEvent, Env},
@@ -138,10 +138,6 @@ pub mod my_launchpad {
         }
     }
 
-    impl UpgradeableTrait for MyLaunchpad {}
-    // impl AccessControl for MyLaunchpad {}
-    // impl AccessControlEnumerable for MyLaunchpad {}
-
     impl MyLaunchpad {
         #[ink(constructor)]
         pub fn new(
@@ -226,8 +222,13 @@ pub mod my_launchpad {
                 return Err(Error::InvalidPercentage);
             }
 
-            if phase.vesting_unit == 0 {
+            if (phase.immediate_release_rate == 10000 && phase.vesting_duration != 0) || (phase.immediate_release_rate < 10000 && phase.vesting_duration == 0) {
                 return Err(Error::InvalidDuration);
+            }
+
+            // vesting unit = 0 only happens when immediate_release_rate = 10000 and vesting duration = 0; 
+            if phase.immediate_release_rate < 10000 && phase.vesting_unit == 0 {
+                return Err(Error::InvalidVestingUnit);
             }
 
             if self.data.project_start_time == 0 || phase.start_time < self.data.project_start_time {
@@ -242,9 +243,14 @@ pub mod my_launchpad {
                 .checked_add(phase.vesting_duration)
                 .ok_or(Error::CheckedOperations)?;
 
-            let mut total_vesting_units = phase.vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            let mut total_vesting_units = 0;
+            
+            if phase.vesting_unit > 0 {
+                total_vesting_units = phase.vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+            
             if total_vesting_units
                 .checked_mul(phase.vesting_unit)
                 .ok_or(Error::CheckedOperations)?

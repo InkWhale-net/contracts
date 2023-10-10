@@ -16,12 +16,6 @@ openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.
 [lib]
 name = "my_lp_pool"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-    # Used for ABI generation and for unit test.
-    "rlib"
-]
 
 [features]
 default = ["std"]

@@ -3,8 +3,8 @@ import { ApiPromise } from "@polkadot/api";
 
 import { BN } from '@polkadot/util';
 
-import ConstructorsInw from "./typed_contracts/constructors/psp22_standard_op4";
-import ContractInw from "./typed_contracts/contracts/psp22_standard_op4";
+import ConstructorsInw from "./typed_contracts/constructors/psp22_standard";
+import ContractInw from "./typed_contracts/contracts/psp22_standard";
 
 import ConstructorsTokenGenerator from "./typed_contracts/constructors/token_generator";
 import ContractTokenGenerator from "./typed_contracts/contracts/token_generator";
@@ -1132,26 +1132,11 @@ describe('Launchpad contract test', () => {
     })
 
     it('can update multi whitelists', async () => {
-        // case 1:  whitelistAmount < availableTokenAmount
-        console.log('===========Update multi whitelists - Case 1=============')
+        // case 1:  whitelistAmount > availableTokenAmount
+        console.log('===========Update multi whitelists - Case 2=============');
         let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
         let phaseId = 1;
         let accounts = [alice.address, bob.address]; // 2 account
-        let whitelistAmounts = ['20000000000000', '30000000000000']; // 20 30
-        let whitelistPrices = ['2000000000000', '3000000000000'];  // 2 3
-
-        await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
-
-        // Check whitelist info
-        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // alice
-        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmounts[0]));
-        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[0]));
-        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
-        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmounts[1]);
-        expect(whitelistBuyer.price.toString()).to.equal((whitelistPrices[1]));
-
-        // case 2:  whitelistAmount > availableTokenAmount => fail
-        console.log('===========Update multi whitelists - Case 2=============')
         let whitelistAmountsNew = [availableTokenAmount + 1, availableTokenAmount + 2];
         let whitelistPricesNew = ['5000000000000', '6000000000000'];
 
@@ -1160,6 +1145,21 @@ describe('Launchpad contract test', () => {
         } catch (error) {
 
         }
+
+        // Check whitelist info
+        let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // alice
+        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmountsNew[0]));
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPricesNew[0]));
+        whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
+        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmountsNew[1]);
+        expect(whitelistBuyer.price.toString()).to.equal((whitelistPricesNew[1]));
+
+        // case 2:  whitelistAmount < availableTokenAmount
+        console.log('===========Update multi whitelists - Case 1=============');     
+        let whitelistAmounts = ['20000000000000', '30000000000000']; // 20 30
+        let whitelistPrices = ['2000000000000', '3000000000000'];  // 2 3
+
+        await lpTx.updateMultiWhitelists(phaseId, accounts, whitelistAmounts, whitelistPrices);
 
         // Check whitelist info
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // alice

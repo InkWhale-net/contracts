@@ -345,19 +345,19 @@ pub trait LaunchpadContractTrait:
                     }
                 }
 
-                if let Some(whitelist_sale_info) =
-                    self.data::<Data>().whitelist_sale_info.get(&phase_id)
-                {
-                    let whitelist_total_changed = whitelist_sale_info
-                        .total_amount
-                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                        .ok_or(Error::CheckedOperations)?;
-                    self.data::<Data>().available_token_amount = self
-                        .data::<Data>()
-                        .available_token_amount
-                        .checked_sub(whitelist_total_changed)
-                        .ok_or(Error::CheckedOperations)?;
-                }
+                // if let Some(whitelist_sale_info) =
+                //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+                // {
+                //     let whitelist_total_changed = whitelist_sale_info
+                //         .total_amount
+                //         .checked_sub(whitelist_sale_info.total_purchased_amount)
+                //         .ok_or(Error::CheckedOperations)?;
+                //     self.data::<Data>().available_token_amount = self
+                //         .data::<Data>()
+                //         .available_token_amount
+                //         .checked_sub(whitelist_total_changed)
+                //         .ok_or(Error::CheckedOperations)?;
+                // }
             } else {
                 // Update project_start_time and project_end_time
                 if self.data::<Data>().project_start_time == phase.start_time {
@@ -416,19 +416,19 @@ pub trait LaunchpadContractTrait:
                     }
                 }
 
-                if let Some(whitelist_sale_info) =
-                    self.data::<Data>().whitelist_sale_info.get(&phase_id)
-                {
-                    let whitelist_total_changed = whitelist_sale_info
-                        .total_amount
-                        .checked_sub(whitelist_sale_info.total_purchased_amount)
-                        .ok_or(Error::CheckedOperations)?;
-                    self.data::<Data>().available_token_amount = self
-                        .data::<Data>()
-                        .available_token_amount
-                        .checked_add(whitelist_total_changed)
-                        .ok_or(Error::CheckedOperations)?;
-                }
+                // if let Some(whitelist_sale_info) =
+                //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+                // {
+                //     let whitelist_total_changed = whitelist_sale_info
+                //         .total_amount
+                //         .checked_sub(whitelist_sale_info.total_purchased_amount)
+                //         .ok_or(Error::CheckedOperations)?;
+                //     self.data::<Data>().available_token_amount = self
+                //         .data::<Data>()
+                //         .available_token_amount
+                //         .checked_add(whitelist_total_changed)
+                //         .ok_or(Error::CheckedOperations)?;
+                // }
             }
 
             phase.is_active = is_active;
@@ -558,16 +558,24 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
+            if (phase.immediate_release_rate == 10000 && vesting_duration != 0) || (phase.immediate_release_rate < 10000 && vesting_duration == 0) {
+                return Err(Error::InvalidDuration);
+            }
+
             phase.vesting_duration = vesting_duration;
+
             phase.end_vesting_time = phase
                 .end_time
                 .checked_add(phase.vesting_duration)
                 .ok_or(Error::CheckedOperations)?;
 
-            phase.total_vesting_units = phase
-                .vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            if phase.vesting_unit > 0 {
+                phase.total_vesting_units = phase
+                    .vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+
             if phase
                 .total_vesting_units
                 .checked_mul(phase.vesting_unit)
@@ -597,16 +605,19 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidTime);
             }
 
-            if vesting_unit == 0 {
-                return Err(Error::InvalidDuration);
+            if phase.immediate_release_rate < 10000 && vesting_unit == 0 {
+                return Err(Error::InvalidVestingUnit);
             }
 
             phase.vesting_unit = vesting_unit;
 
-            phase.total_vesting_units = phase
-                .vesting_duration
-                .checked_div(phase.vesting_unit)
-                .ok_or(Error::CheckedOperations)?;
+            if phase.vesting_unit > 0 {
+                phase.total_vesting_units = phase
+                    .vesting_duration
+                    .checked_div(phase.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+
             if phase
                 .total_vesting_units
                 .checked_mul(phase.vesting_unit)
@@ -868,7 +879,7 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidWhitelistData);
             }
 
-            let mut total_amount: Balance = 0;
+            // let mut total_amount: Balance = 0;
 
             for i in 0..whitelist_count {
                 if self
@@ -880,14 +891,14 @@ pub trait LaunchpadContractTrait:
                     return Err(Error::WhitelistBuyerInfoExist);
                 }
 
-                self.data::<Data>().available_token_amount = self
-                    .data::<Data>()
-                    .available_token_amount
-                    .checked_sub(whitelist_amounts[i])
-                    .ok_or(Error::CheckedOperations)?;
-                total_amount = total_amount
-                    .checked_add(whitelist_amounts[i])
-                    .ok_or(Error::CheckedOperations)?;
+                // self.data::<Data>().available_token_amount = self
+                //     .data::<Data>()
+                //     .available_token_amount
+                //     .checked_sub(whitelist_amounts[i])
+                //     .ok_or(Error::CheckedOperations)?;
+                // total_amount = total_amount
+                //     .checked_add(whitelist_amounts[i])
+                //     .ok_or(Error::CheckedOperations)?;
 
                 let whitelist_buyer_info = WhitelistBuyerInfo {
                     amount: whitelist_amounts[i],
@@ -907,21 +918,22 @@ pub trait LaunchpadContractTrait:
             }
 
             // Add whitelist_sale_info
-            if let Some(mut whitelist_sale_info) =
-                self.data::<Data>().whitelist_sale_info.get(&phase_id)
-            {
-                whitelist_sale_info.total_amount = whitelist_sale_info
-                    .total_amount
-                    .checked_add(total_amount)
-                    .ok_or(Error::CheckedOperations)?;
+            // if let Some(mut whitelist_sale_info) =
+            //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+            // {
+            //     whitelist_sale_info.total_amount = whitelist_sale_info
+            //         .total_amount
+            //         .checked_add(total_amount)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                self.data::<Data>()
-                    .whitelist_sale_info
-                    .insert(&phase_id, &whitelist_sale_info);
-            } else {
+            //     self.data::<Data>()
+            //         .whitelist_sale_info
+            //         .insert(&phase_id, &whitelist_sale_info);
+            // } else {
+            if self.data::<Data>().whitelist_sale_info.get(&phase_id).is_none() {
                 // Add multi whitelists the first time
                 let whitelist_sale_info = WhitelistSaleInfo {
-                    total_amount,
+                    total_amount: 0,
                     total_purchased_amount: 0,
                     total_claimed_amount: 0,
                     is_burned: false,
@@ -965,8 +977,8 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidWhitelistData);
             }
 
-            let total_in = whitelist_amounts.iter().sum();
-            let mut total_out: Balance = 0;
+            // let total_in = whitelist_amounts.iter().sum();
+            // let mut total_out: Balance = 0;
 
             for i in 0..whitelist_count {
                 if let Some(mut whitelist_buyer_info) = self
@@ -980,9 +992,9 @@ pub trait LaunchpadContractTrait:
                     }
 
                     // Get total out
-                    total_out = total_out
-                        .checked_add(whitelist_buyer_info.amount)
-                        .ok_or(Error::CheckedOperations)?;
+                    // total_out = total_out
+                    //     .checked_add(whitelist_buyer_info.amount)
+                    //     .ok_or(Error::CheckedOperations)?;
 
                     // Update new white list info
                     whitelist_buyer_info.amount = whitelist_amounts[i];
@@ -997,30 +1009,30 @@ pub trait LaunchpadContractTrait:
             }
 
             // Update whitelist sale info total amount
-            if let Some(mut whitelist_sale_info) =
-                self.data::<Data>().whitelist_sale_info.get(&phase_id)
-            {
-                self.data::<Data>().available_token_amount = self
-                    .data::<Data>()
-                    .available_token_amount
-                    .checked_add(total_out)
-                    .ok_or(Error::CheckedOperations)?
-                    .checked_sub(total_in)
-                    .ok_or(Error::CheckedOperations)?;
+            // if let Some(mut whitelist_sale_info) =
+            //     self.data::<Data>().whitelist_sale_info.get(&phase_id)
+            // {
+            //     self.data::<Data>().available_token_amount = self
+            //         .data::<Data>()
+            //         .available_token_amount
+            //         .checked_add(total_out)
+            //         .ok_or(Error::CheckedOperations)?
+            //         .checked_sub(total_in)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                whitelist_sale_info.total_amount = whitelist_sale_info
-                    .total_amount
-                    .checked_add(total_in)
-                    .ok_or(Error::CheckedOperations)?
-                    .checked_sub(total_out)
-                    .ok_or(Error::CheckedOperations)?;
+            //     whitelist_sale_info.total_amount = whitelist_sale_info
+            //         .total_amount
+            //         .checked_add(total_in)
+            //         .ok_or(Error::CheckedOperations)?
+            //         .checked_sub(total_out)
+            //         .ok_or(Error::CheckedOperations)?;
 
-                self.data::<Data>()
-                    .whitelist_sale_info
-                    .insert(&phase_id, &whitelist_sale_info);
-            } else {
-                return Err(Error::WhitelistSaleInfoNotExist);
-            }
+            //     self.data::<Data>()
+            //         .whitelist_sale_info
+            //         .insert(&phase_id, &whitelist_sale_info);
+            // } else {
+            //     return Err(Error::WhitelistSaleInfoNotExist);
+            // }
 
             Ok(())
         } else {
@@ -1133,12 +1145,12 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::CannotTransferTxFee);
                     };
 
-                    // Return immediately tokens within release rate
+                    // Calculate the immediate tokens returned to user within release rate
                     let claim = amount
                         .checked_mul(phase_info.immediate_release_rate as u128)
                         .ok_or(Error::CheckedOperations)?
                         .checked_div(10000)
-                        .ok_or(Error::CheckedOperations)?;
+                        .ok_or(Error::CheckedOperations)?;                    
 
                     // Check if contract has enough token to transfer
                     let balance = Psp22Ref::balance_of(
@@ -1149,25 +1161,9 @@ pub trait LaunchpadContractTrait:
                     if balance < claim {
                         return Err(Error::NotEnoughBalance);
                     }
-
-                    // Transfer token to caller
-                    let caller = Self::env().caller();
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );
-                    
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;                    
-
+                                      
                     // Save data
+                    let caller = Self::env().caller();
                     let buyer_data = self.data::<Data>().public_buyer.get(&(&phase_id, &caller));
 
                     if let Some(mut buy_info) = buyer_data {
@@ -1207,8 +1203,32 @@ pub trait LaunchpadContractTrait:
                         .ok_or(Error::CheckedOperations)?;
                     self.data::<Data>()
                         .public_sale_info
-                        .insert(&phase_id, &public_sale_info);
+                        .insert(&phase_id, &public_sale_info);                    
 
+                    // Transfer immediate tokens to caller                    
+                    let builder = Psp22Ref::transfer_builder(
+                        &self.data::<Data>().token_address,
+                        caller,
+                        claim,
+                        Vec::<u8>::new(),
+                    );
+                    
+                    match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => Err(Error::CannotTransfer),
+                    }?; 
+
+                    // Transfer surplus native tokens to caller
+                    let surplus_amount = Self::env().transferred_value().checked_sub(price).ok_or(Error::CheckedOperations)?;
+
+                    if surplus_amount > 0 && Self::env().transfer(caller, surplus_amount).is_err() {
+                        return Err(Error::CannotTransfer);
+                    }
+
+                    // Emit events
                     let token_address = self.data::<Data>().token_address;
                     self._emit_public_purchase_event(
                         Self::env().account_id(),
@@ -1237,21 +1257,8 @@ pub trait LaunchpadContractTrait:
     }
 
     // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
-    fn public_claim(&mut self, phase_id: u8) -> Result<(), Error> {
-        // if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
-        //                                         &self.data::<Data>().generator_contract,
-        //                                         Self::env().account_id()) {
-
-        //     if !is_active_launchpad {
-        //         return Err(Error::LaunchpadNotActive);
-        //     }
-
+    fn common_claim<B: BuyerInfoTrait, S: SaleInfoTrait>(&mut self, buy_info: &mut B, sale_info: &mut S, phase_id: u8) -> Result<Balance, Error> {
         if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-            // // Check if phase is active
-            // if !phase_info.is_active {
-            //     return Err(Error::PhaseNotActive);
-            // }
-
             // Check claim time
             let current_time = Self::env().block_timestamp();
 
@@ -1259,135 +1266,141 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::NotTimeToClaim);
             }
 
-            let caller = Self::env().caller();
-            let buyer_data = self.data::<Data>().public_buyer.get(&(&phase_id, &caller));
-
-            if let Some(mut buy_info) = buyer_data {
-                // Check if have unclaimed token
-                if buy_info.purchased_amount == buy_info.claimed_amount {
-                    return Err(Error::NoClaimAmount);
-                }
-
-                let mut claim = 0;
-
-                // If it is the last claim
-                if current_time >= phase_info.end_vesting_time {
-                    claim = buy_info
-                        .purchased_amount
-                        .checked_sub(buy_info.claimed_amount)
-                        .ok_or(Error::CheckedOperations)?;
-
-                    buy_info.last_updated_time = phase_info.end_vesting_time;
-                } else {
-                    // If it is the first time to claim in the vesting time, get the vesting_amount
-                    if buy_info.vesting_amount == 0 {
-                        buy_info.vesting_amount = buy_info
-                            .purchased_amount
-                            .checked_sub(buy_info.claimed_amount)
-                            .ok_or(Error::CheckedOperations)?;
-                        buy_info.last_updated_time = phase_info.end_time;
-                    }
-
-                    // If still have unclaimed token
-                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 {
-                        let units = (current_time
-                            .checked_sub(buy_info.last_updated_time)
-                            .ok_or(Error::CheckedOperations)?)
-                        .checked_div(phase_info.vesting_unit)
-                        .ok_or(Error::CheckedOperations)?;
-
-                        claim = buy_info
-                            .vesting_amount
-                            .checked_mul(units as u128)
-                            .ok_or(Error::CheckedOperations)?
-                            .checked_div(phase_info.total_vesting_units as u128)
-                            .ok_or(Error::CheckedOperations)?;
-
-                        buy_info.last_updated_time = buy_info
-                            .last_updated_time
-                            .checked_add(
-                                units
-                                    .checked_mul(phase_info.vesting_unit)
-                                    .ok_or(Error::CheckedOperations)?,
-                            )
-                            .ok_or(Error::CheckedOperations)?;
-                    }
-                }
-
-                if claim > 0 {
-                    // Check if contract has enough token to transfer
-                    let balance = Psp22Ref::balance_of(
-                        &self.data::<Data>().token_address,
-                        Self::env().account_id(),
-                    );
-
-                    if balance < claim {
-                        return Err(Error::NotEnoughBalance);
-                    }
-
-                    // Transfer token to caller
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );
-                    
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;
-
-                    // Save data
-                    buy_info.claimed_amount = buy_info
-                        .claimed_amount
-                        .checked_add(claim)
-                        .ok_or(Error::CheckedOperations)?;
-
-                    self.data::<Data>()
-                        .public_buyer
-                        .insert(&(&phase_id, &caller), &buy_info);
-
-                    if let Some(mut public_sale_info) =
-                        self.data::<Data>().public_sale_info.get(&phase_id)
-                    {
-                        public_sale_info.total_claimed_amount = public_sale_info
-                            .total_claimed_amount
-                            .checked_add(claim)
-                            .ok_or(Error::CheckedOperations)?;
-                        self.data::<Data>()
-                            .public_sale_info
-                            .insert(&phase_id, &public_sale_info);
-                    } else {
-                        return Err(Error::PublicSaleInfoNotExist);
-                    }
-
-                    let token_address = self.data::<Data>().token_address;
-                    self._emit_public_claim_event(
-                        Self::env().account_id(),
-                        token_address,
-                        caller,
-                        claim,
-                    );
-                } else {
-                    return Err(Error::NoClaimAmount);
-                }
-
-                Ok(())
-            } else {
-                Err(Error::NoTokenPurchased)
+            let caller = Self::env().caller();        
+          
+            // Check if have unclaimed token
+            if buy_info.purchased_amount() == buy_info.claimed_amount() {
+                return Err(Error::NoClaimAmount);
             }
+
+            let mut claim = 0;
+
+            // If it is the last claim
+            if current_time >= phase_info.end_vesting_time {
+                claim = buy_info
+                    .purchased_amount()
+                    .checked_sub(buy_info.claimed_amount())
+                    .ok_or(Error::CheckedOperations)?;
+
+                buy_info.set_last_updated_time(phase_info.end_vesting_time)?;
+            } else {
+                // If it is the first time to claim in the vesting time, get the vesting_amount
+                if buy_info.vesting_amount() == 0 {
+                    buy_info.set_vesting_amount(buy_info
+                        .purchased_amount()
+                        .checked_sub(buy_info.claimed_amount())
+                        .ok_or(Error::CheckedOperations)?)?;
+                    buy_info.set_last_updated_time(phase_info.end_time)?;
+                }
+
+                // If still have unclaimed token
+                if buy_info.vesting_amount() > 0 && phase_info.total_vesting_units > 0 && phase_info.vesting_unit > 0 {
+                    let units = (current_time
+                        .checked_sub(buy_info.last_updated_time())
+                        .ok_or(Error::CheckedOperations)?)
+                    .checked_div(phase_info.vesting_unit)
+                    .ok_or(Error::CheckedOperations)?;
+
+                    claim = buy_info
+                        .vesting_amount()
+                        .checked_mul(units as u128)
+                        .ok_or(Error::CheckedOperations)?
+                        .checked_div(phase_info.total_vesting_units as u128)
+                        .ok_or(Error::CheckedOperations)?;
+
+                    buy_info.set_last_updated_time(buy_info
+                        .last_updated_time()
+                        .checked_add(
+                            units
+                                .checked_mul(phase_info.vesting_unit)
+                                .ok_or(Error::CheckedOperations)?,
+                        )
+                        .ok_or(Error::CheckedOperations)?)?;
+                }
+            }
+
+            if claim > 0 {
+                // Check if contract has enough token to transfer
+                let balance = Psp22Ref::balance_of(
+                    &self.data::<Data>().token_address,
+                    Self::env().account_id(),
+                );
+
+                if balance < claim {
+                    return Err(Error::NotEnoughBalance);
+                }
+
+                // Transfer token to caller
+                let builder = Psp22Ref::transfer_builder(
+                    &self.data::<Data>().token_address,
+                    caller,
+                    claim,
+                    Vec::<u8>::new(),
+                );
+                
+                match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => Err(Error::CannotTransfer),
+                }?;
+
+                // Save data
+                buy_info.set_claimed_amount(buy_info
+                    .claimed_amount()
+                    .checked_add(claim)
+                    .ok_or(Error::CheckedOperations)?)?;
+
+                sale_info.set_total_claimed_amount(sale_info
+                    .total_claimed_amount()
+                    .checked_add(claim)
+                    .ok_or(Error::CheckedOperations)?)?;                
+            } else {
+                return Err(Error::NoClaimAmount);
+            }
+
+            Ok(claim)            
         } else {
             Err(Error::PhaseNotExist)
         }
-        // } else {
-        //     return Err(Error::ActiveLaunchpadStatusNotFound);
-        // }
     }
 
+    // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
+    fn public_claim(&mut self, phase_id: u8) -> Result<(), Error> {
+        let caller = Self::env().caller();
+
+        if let Some(mut buy_info) = self.data::<Data>().public_buyer.get(&(&phase_id, &caller)) {
+            if let Some(mut sale_info) = self.data::<Data>().public_sale_info.get(&phase_id) {
+                match self.common_claim(&mut buy_info, &mut sale_info, phase_id) {
+                    Ok(claim) => {                            
+                        if claim > 0 {
+                            // Save data
+                            self.data::<Data>().public_buyer.insert(&(&phase_id, &caller), &buy_info);
+                            self.data::<Data>().public_sale_info.insert(&phase_id, &sale_info);
+
+                            // Emit event
+                            let token_address = self.data::<Data>().token_address;
+                            self._emit_public_claim_event(
+                                Self::env().account_id(),
+                                token_address,
+                                caller,
+                                claim,
+                            );
+                        }
+
+                        Ok(())
+                    },
+                    Err(e) => Err(e),
+                }               
+            } else {
+                return Err(Error::PublicSaleInfoNotExist);
+            }
+        } else {
+            Err(Error::NoTokenPurchased)
+        }         
+    }
+   
     fn whitelist_purchase(&mut self, phase_id: u8, amount: Balance) -> Result<(), Error> {
         if let Some(is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
             &self.data::<Data>().generator_contract,
@@ -1418,19 +1431,18 @@ pub trait LaunchpadContractTrait:
                     .get(&(&phase_id, &caller))
                 {
                     // Check amount to buy
-                    if amount == 0
-                        || buy_info
-                            .purchased_amount
+                    if  amount == 0 || 
+                        amount > self.data::<Data>().available_token_amount || 
+                        buy_info.purchased_amount
                             .checked_add(amount)
-                            .ok_or(Error::CheckedOperations)?
-                            > buy_info.amount
+                            .ok_or(Error::CheckedOperations)? > buy_info.amount  
                     {
                         return Err(Error::InvalidBuyAmount);
                     }
-
+                                   
+                    // Price to buy amount of token
                     let decimal = Psp22Ref::token_decimals(&self.data::<Data>().token_address);
-
-                    // price to buy amount of token
+                    
                     let price = buy_info
                         .price
                         .checked_mul(amount)
@@ -1441,6 +1453,13 @@ pub trait LaunchpadContractTrait:
                     if price > Self::env().transferred_value() {
                         return Err(Error::InvalidTransferAmount);
                     }
+
+                    // Save available_token_amount
+                    self.data::<Data>().available_token_amount = self
+                    .data::<Data>()
+                    .available_token_amount
+                    .checked_sub(amount)
+                    .ok_or(Error::CheckedOperations)?;    
 
                     // tx fee
                     let tx_fee = price
@@ -1457,7 +1476,7 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::CannotTransferTxFee);
                     };
 
-                    // Return immediately tokens within release rate
+                    // Calculate the immediate tokens returned to user within release rate
                     let claim = amount
                         .checked_mul(phase_info.immediate_release_rate as u128)
                         .ok_or(Error::CheckedOperations)?
@@ -1473,24 +1492,8 @@ pub trait LaunchpadContractTrait:
                     if balance < claim {
                         return Err(Error::NotEnoughBalance);
                     }
-
-                    // Transfer token to caller
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );                    
-
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;                    
-
-                    // Save data
+                               
+                    // Save data           
                     buy_info.purchased_amount = buy_info
                         .purchased_amount
                         .checked_add(amount)
@@ -1508,14 +1511,21 @@ pub trait LaunchpadContractTrait:
                     if let Some(mut whitelist_sale_info) =
                         self.data::<Data>().whitelist_sale_info.get(&phase_id)
                     {
+                        whitelist_sale_info.total_amount = whitelist_sale_info
+                            .total_amount
+                            .checked_add(amount)
+                            .ok_or(Error::CheckedOperations)?;
+
                         whitelist_sale_info.total_purchased_amount = whitelist_sale_info
                             .total_purchased_amount
                             .checked_add(amount)
                             .ok_or(Error::CheckedOperations)?;
+
                         whitelist_sale_info.total_claimed_amount = whitelist_sale_info
                             .total_claimed_amount
                             .checked_add(claim)
                             .ok_or(Error::CheckedOperations)?;
+
                         self.data::<Data>()
                             .whitelist_sale_info
                             .insert(&phase_id, &whitelist_sale_info);
@@ -1523,6 +1533,30 @@ pub trait LaunchpadContractTrait:
                         return Err(Error::WhitelistSaleInfoNotExist);
                     }
 
+                    // Transfer immediate tokens to caller
+                    let builder = Psp22Ref::transfer_builder(
+                        &self.data::<Data>().token_address,
+                        caller,
+                        claim,
+                        Vec::<u8>::new(),
+                    );                    
+
+                    match builder.try_invoke() {
+                        Ok(Ok(Ok(_))) => Ok(()),
+                        Ok(Ok(Err(e))) => Err(e.into()),
+                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                        Err(ink::env::Error::NotCallable) => Ok(()),
+                        _ => Err(Error::CannotTransfer),
+                    }?;   
+
+                    // Transfer surplus native tokens to caller
+                    let surplus_amount = Self::env().transferred_value().checked_sub(price).ok_or(Error::CheckedOperations)?;
+
+                    if surplus_amount > 0 && Self::env().transfer(caller, surplus_amount).is_err() {
+                        return Err(Error::CannotTransfer);
+                    }
+
+                    // Emit events
                     let token_address = self.data::<Data>().token_address;
                     self._emit_whitelist_purchase_event(
                         Self::env().account_id(),
@@ -1552,158 +1586,38 @@ pub trait LaunchpadContractTrait:
 
     // Note: User can claim even launchpad or phase is not active because they bought tokens and need to collect
     fn whitelist_claim(&mut self, phase_id: u8) -> Result<(), Error> {
-        // if let Some (is_active_launchpad) = LaunchpadGeneratorRef::get_is_active_launchpad(
-        //                                         &self.data::<Data>().generator_contract,
-        //                                         Self::env().account_id()) {
+        let caller = Self::env().caller();
 
-        //     if !is_active_launchpad {
-        //         return Err(Error::LaunchpadNotActive);
-        //     }
+        if let Some(mut buy_info) = self.data::<Data>().whitelist_buyer.get(&(&phase_id, &caller)) {
+            if let Some(mut sale_info) = self.data::<Data>().whitelist_sale_info.get(&phase_id) {
+                match self.common_claim(&mut buy_info, &mut sale_info, phase_id) {
+                    Ok(claim) => {                            
+                        if claim > 0 {
+                            // Save data
+                            self.data::<Data>().whitelist_buyer.insert(&(&phase_id, &caller), &buy_info);
+                            self.data::<Data>().whitelist_sale_info.insert(&phase_id, &sale_info);
 
-        if let Some(phase_info) = self.data::<Data>().phase.get(&phase_id) {
-            // Check if phase is active
-            // if !phase_info.is_active {
-            //     return Err(Error::PhaseNotActive);
-            // }
+                            // Emit event
+                            let token_address = self.data::<Data>().token_address;
+                            self._emit_whitelist_claim_event(
+                                Self::env().account_id(),
+                                token_address,
+                                caller,
+                                claim,
+                            );
+                        }
 
-            // Check claim time
-            let current_time = Self::env().block_timestamp();
-
-            if phase_info.end_time >= current_time {
-                return Err(Error::NotTimeToClaim);
-            }
-
-            let caller = Self::env().caller();
-
-            if let Some(mut buy_info) = self
-                .data::<Data>()
-                .whitelist_buyer
-                .get(&(&phase_id, &caller))
-            {
-                // Check if have unclaimed token
-                if buy_info.purchased_amount == buy_info.claimed_amount {
-                    return Err(Error::NoClaimAmount);
-                }
-
-                let mut claim = 0;
-
-                // If it is the last claim
-                if current_time >= phase_info.end_vesting_time {
-                    claim = buy_info
-                        .purchased_amount
-                        .checked_sub(buy_info.claimed_amount)
-                        .ok_or(Error::CheckedOperations)?;
-
-                    buy_info.last_updated_time = phase_info.end_vesting_time;
-                } else {
-                    // If it is the first time to claim in the vesting time, get the vesting_amount
-                    if buy_info.vesting_amount == 0 {
-                        buy_info.vesting_amount = buy_info
-                            .purchased_amount
-                            .checked_sub(buy_info.claimed_amount)
-                            .ok_or(Error::CheckedOperations)?;
-                        buy_info.last_updated_time = phase_info.end_time;
-                    }
-
-                    // If still have unclaimed token
-                    if buy_info.vesting_amount > 0 && phase_info.total_vesting_units > 0 {
-                        let units = (current_time
-                            .checked_sub(buy_info.last_updated_time)
-                            .ok_or(Error::CheckedOperations)?)
-                        .checked_div(phase_info.vesting_unit)
-                        .ok_or(Error::CheckedOperations)?;
-
-                        claim = buy_info
-                            .vesting_amount
-                            .checked_mul(units as u128)
-                            .ok_or(Error::CheckedOperations)?
-                            .checked_div(phase_info.total_vesting_units as u128)
-                            .ok_or(Error::CheckedOperations)?;
-
-                        buy_info.last_updated_time = buy_info
-                            .last_updated_time
-                            .checked_add(
-                                units
-                                    .checked_mul(phase_info.vesting_unit)
-                                    .ok_or(Error::CheckedOperations)?,
-                            )
-                            .ok_or(Error::CheckedOperations)?;
-                    }
-                }
-
-                if claim > 0 {
-                    // Check if contract has enough token to transfer
-                    let balance = Psp22Ref::balance_of(
-                        &self.data::<Data>().token_address,
-                        Self::env().account_id(),
-                    );
-
-                    if balance < claim {
-                        return Err(Error::NotEnoughBalance);
-                    }
-
-                    // Transfer token to caller
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().token_address,
-                        caller,
-                        claim,
-                        Vec::<u8>::new(),
-                    );
-                    
-                    match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }?;
-
-                    // Save data
-                    buy_info.claimed_amount = buy_info
-                        .claimed_amount
-                        .checked_add(claim)
-                        .ok_or(Error::CheckedOperations)?;
-
-                    self.data::<Data>()
-                        .whitelist_buyer
-                        .insert(&(&phase_id, &caller), &buy_info);
-
-                    if let Some(mut whitelist_sale_info) =
-                        self.data::<Data>().whitelist_sale_info.get(&phase_id)
-                    {
-                        whitelist_sale_info.total_claimed_amount = whitelist_sale_info
-                            .total_claimed_amount
-                            .checked_add(claim)
-                            .ok_or(Error::CheckedOperations)?;
-                        self.data::<Data>()
-                            .whitelist_sale_info
-                            .insert(&phase_id, &whitelist_sale_info);
-                    } else {
-                        return Err(Error::WhitelistSaleInfoNotExist);
-                    }
-
-                    let token_address = self.data::<Data>().token_address;
-                    self._emit_whitelist_claim_event(
-                        Self::env().account_id(),
-                        token_address,
-                        caller,
-                        claim,
-                    );
-                } else {
-                    return Err(Error::NoClaimAmount);
-                }
-
-                Ok(())
+                        Ok(())
+                    },
+                    Err(e) => Err(e),
+                }               
             } else {
-                Err(Error::WhitelistPhaseAccountNotExist)
+                return Err(Error::WhitelistSaleInfoNotExist);
             }
         } else {
-            Err(Error::PhaseNotExist)
-        }
-        // } else {
-        //     return Err(Error::ActiveLaunchpadStatusNotFound);
-        // }
-    }
+            Err(Error::WhitelistPhaseAccountNotExist)
+        }         
+    }    
 
     // Burn all public and whitelisted unsold tokens in contract
     #[modifiers(only_owner)]
@@ -1888,6 +1802,104 @@ pub trait LaunchpadContractTrait:
         if Self::env().transfer(receiver, value).is_err() {
             return Err(Error::WithdrawFeeError);
         }
+        Ok(())
+    }
+}
+
+impl BuyerInfoTrait for BuyerInformation {
+    fn purchased_amount(&self) -> Balance {
+        self.purchased_amount
+    }
+
+    fn vesting_amount(&self) -> Balance {
+        self.vesting_amount
+    }
+
+    fn claimed_amount(&self) -> Balance {
+        self.claimed_amount
+    }
+
+    fn last_updated_time(&self) -> u64 {
+        self.last_updated_time
+    }
+
+    fn set_purchased_amount(&mut self, purchased_amount: Balance) -> Result<(), Error> {
+        self.purchased_amount = purchased_amount;
+        Ok(())
+    }
+
+    fn set_vesting_amount(&mut self, vesting_amount: Balance) -> Result<(), Error> {
+        self.vesting_amount = vesting_amount;
+        Ok(())
+    }
+
+    fn set_claimed_amount(&mut self, claimed_amount: Balance) -> Result<(), Error> {
+        self.claimed_amount = claimed_amount;
+        Ok(())
+    }
+
+    fn set_last_updated_time(&mut self, last_updated_time: u64) -> Result<(), Error> {
+        self.last_updated_time = last_updated_time;
+        Ok(())
+    }           
+}
+
+impl BuyerInfoTrait for WhitelistBuyerInfo {
+    fn purchased_amount(&self) -> Balance {
+        self.purchased_amount
+    }
+
+    fn vesting_amount(&self) -> Balance {
+        self.vesting_amount
+    }
+
+    fn claimed_amount(&self) -> Balance {
+        self.claimed_amount
+    }
+
+    fn last_updated_time(&self) -> u64 {
+        self.last_updated_time
+    }
+
+    fn set_purchased_amount(&mut self, purchased_amount: Balance) -> Result<(), Error> {
+        self.purchased_amount = purchased_amount;
+        Ok(())
+    }
+
+    fn set_vesting_amount(&mut self, vesting_amount: Balance) -> Result<(), Error> {
+        self.vesting_amount = vesting_amount;
+        Ok(())
+    }
+
+    fn set_claimed_amount(&mut self, claimed_amount: Balance) -> Result<(), Error> {
+        self.claimed_amount = claimed_amount;
+        Ok(())
+    }
+
+    fn set_last_updated_time(&mut self, last_updated_time: u64) -> Result<(), Error> {
+        self.last_updated_time = last_updated_time;
+        Ok(())
+    }           
+}
+
+impl SaleInfoTrait for PublicSaleInfo {
+    fn total_claimed_amount(&self) -> Balance {
+        self.total_claimed_amount
+    }
+
+    fn set_total_claimed_amount(&mut self, total_claimed_amount: Balance) -> Result<(), Error> {
+        self.total_claimed_amount = total_claimed_amount;
+        Ok(())
+    }
+}
+
+impl SaleInfoTrait for WhitelistSaleInfo {
+    fn total_claimed_amount(&self) -> Balance {
+        self.total_claimed_amount
+    }
+
+    fn set_total_claimed_amount(&mut self, total_claimed_amount: Balance) -> Result<(), Error> {
+        self.total_claimed_amount = total_claimed_amount;
         Ok(())
     }
 }
