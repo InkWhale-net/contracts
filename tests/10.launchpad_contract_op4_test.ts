@@ -179,7 +179,7 @@ describe('Launchpad contract test', () => {
 
         // Step B3: Alice approves total supply of token and create a launchpad
         console.log(`===========Step B3=============`);
-        let totalSupply = "700000000000000000"; // 700k
+        let totalSupply = "800000000000000000"; // 800k
         await tokenContract.withSigner(alice).tx.approve(lpgContractAddress, totalSupply);
 
         // Step B4: Alice creates launchpad for token LNPD
@@ -194,6 +194,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 500,
             vestingDuration: 1800000, 
             vestingUnit: 300000,
+            capAmount: "200000000000000000",
             isPublic: true,
             publicAmount: "100000000000000000",
             publicPrice: "500000000000"
@@ -206,6 +207,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1500,
             vestingDuration: 1800000, 
             vestingUnit: 300000,
+            capAmount: "500000000000000000",
             isPublic: true,
             publicAmount: "500000000000000000",
             publicPrice: "1000000000000"
@@ -253,7 +255,7 @@ describe('Launchpad contract test', () => {
 
     it('Can change launchpad total supply', async () => {
         let currentTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
-        // console.log({currentTotalSupply: currentTotalSupply.toString()});
+        console.log({currentTotalSupply: currentTotalSupply.toString()});
 
         // Case 1: newTotalSupply is 500k -> will fail because public sale uses 600k 
         console.log(`===========Change total supply - Case 1=============`);
@@ -265,21 +267,25 @@ describe('Launchpad contract test', () => {
         }
 
         let receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
-        // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
+        console.log({receivedTotalSupply: receivedTotalSupply.toString()});
         expect(receivedTotalSupply.toString()).to.equal(currentTotalSupply.toString());
 
         // Case 2: newTotalSupply is 650k < the current supply 700k, don't need to approve      
         console.log(`===========Change total supply - Case 2=============`);
         newTotalSupply = "650000000000000000";
-        await lpContract.tx.setTotalSupply(newTotalSupply);
+        try {
+            await lpContract.tx.setTotalSupply(newTotalSupply);
+        } catch (error: any) {
+
+        }
 
         receivedTotalSupply = (await lpQuery.getTotalSupply()).value.ok;
-        // console.log({receivedTotalSupply: receivedTotalSupply.toString()});
-        expect(receivedTotalSupply.toString()).to.equal(newTotalSupply);
+        console.log({receivedTotalSupply: receivedTotalSupply.toString()});
+        expect(receivedTotalSupply.toString()).to.equal(currentTotalSupply.toString());
 
-        // Case 3: newTotalSupply is 700k > the current supply 650k, need to approve token to lp
+        // Case 3: newTotalSupply is 800k > the current supply 650k, need to approve token to lp
         console.log(`===========Change total supply - Case 3=============`);
-        newTotalSupply = "700000000000000000";
+        newTotalSupply = "800000000000000000";
 
         await tokenContract.withSigner(alice).tx.approve(lpContractAddress, new BN(newTotalSupply).sub(new BN(receivedTotalSupply.toString())));
 
@@ -349,6 +355,7 @@ describe('Launchpad contract test', () => {
         console.log(`===========Change public total amount - Case 2=============`);
         publicAmount = "200000000000000000";
 
+        // await lpContract.tx.setCapAmount(phaseId, publicAmount);
         await lpContract.tx.setPublicTotalAmount(phaseId, publicAmount);
 
         let receivedPublicSaleTotalAmountHex = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
@@ -438,6 +445,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "200000000000000000",
             isPublic: false,
             publicAmount: "200000000000000000", // 200k - avail amount = 100k = public amount increasement from 100k to 200k
             publicPrice: "500000000000" // 0.5A 
@@ -458,10 +466,10 @@ describe('Launchpad contract test', () => {
 
         let currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
         let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
-        console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
 
-        console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
-        console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
+        // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
+        // console.log({startTimeP1: receivedPhaseInfo1.startTime, endTimeP1: receivedPhaseInfo1.endTime});
 
         // Case 2: Set back to origin
         console.log(`===========Set phase - Case 2=============`);        
@@ -475,11 +483,11 @@ describe('Launchpad contract test', () => {
         // console.log({receivedPublicInfo: receivedPublicInfo});
         expect(receivedPublicInfo.endTime).to.equal(phases[phaseId].endTime);
 
-        // receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
-        // receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
+        receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
+        receivedPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
 
-        // currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
-        // currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
+        currentProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
+        currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime});
 
         // console.log({startTime: receivedPhaseInfo0.startTime, endTime: receivedPhaseInfo0.endTime}); 
@@ -503,6 +511,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "150000000000000000",
             isPublic: true,
             publicAmount: "150000000000000000",
             publicPrice: "600000000000" // 0.6A
@@ -515,6 +524,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "550000000000000000",
             isPublic: true,
             publicAmount: "550000000000000000",
             publicPrice: "1200000000000" // 1.2A
@@ -537,7 +547,7 @@ describe('Launchpad contract test', () => {
         expect(receivedPhaseInfo1.endTime).to.equal(newPhases[1].endTime);
 
         availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({ availableTokenAmount: availableTokenAmount.toString() });
+        // console.log({ availableTokenAmount: availableTokenAmount.toString() });
         // Case 2: Set new data but total newPhasePublicAmount is > Alice balance -> Fail
         console.log(`===========Set multi phases - Case 2=============`);
         phaseId = [0, 1];
@@ -553,8 +563,9 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "260000000000000000",
             isPublic: true,
-            publicAmount: "160000000000000000",
+            publicAmount: "260000000000000000",
             publicPrice: "600000000000" // 0.6A
         };
 
@@ -565,6 +576,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "600000000000000000",
             isPublic: true,
             publicAmount: "600000000000000000",
             publicPrice: "1200000000000" // 1.2A
@@ -583,16 +595,16 @@ describe('Launchpad contract test', () => {
 
         let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
         let receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
+        console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
         expect(receivedPublicSaleTotalAmount0).to.equal(currentPhasePublicAmount[0]);
 
         let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
         let receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
-        // console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
+        console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
         expect(receivedPublicSaleTotalAmount1).to.equal(currentPhasePublicAmount[1]);
 
-        availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
-        console.log({ availableTokenAmount: availableTokenAmount.toString() });
+        // availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+        // console.log({ availableTokenAmount: availableTokenAmount.toString() });
         // Case 3: Phase 1 set not public Phase 2 inactive total newPhasePublicAmount is > Alice balance -> success
         console.log(`===========Set multi phases - Case 3=============`);
         phaseId = [0, 1];
@@ -606,6 +618,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "160000000000000000",
             isPublic: false,
             publicAmount: "160000000000000000",
             publicPrice: "600000000000" // 0.6A
@@ -618,6 +631,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1600,
             vestingDuration: 2400000, 
             vestingUnit: 600000,
+            capAmount: "600000000000000000",
             isPublic: true,
             publicAmount: "600000000000000000",
             publicPrice: "1200000000000" // 1.2A
@@ -670,6 +684,16 @@ describe('Launchpad contract test', () => {
         } catch (error) {
             console.log("error", error);
         }
+
+        receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(0)).value.ok;
+        receivedPublicSaleTotalAmount0 = (new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16)).toString(10);
+        console.log({receivedPublicSaleTotalAmount0: receivedPublicSaleTotalAmount0});
+        // expect(receivedPublicSaleTotalAmount0).to.equal(currentPhasePublicAmount[0]);
+
+        receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(1)).value.ok;
+        receivedPublicSaleTotalAmount1 = (new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16)).toString(10);
+        console.log({receivedPublicSaleTotalAmount1: receivedPublicSaleTotalAmount1});
+        // expect(receivedPublicSaleTotalAmount1).to.equal(currentPhasePublicAmount[1]);
 
         receivedPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
         // console.log({receivedPhaseInfo0: receivedPhaseInfo0});
@@ -888,10 +912,8 @@ describe('Launchpad contract test', () => {
         // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         let currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
 
-        let currentPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
-        let currentPublicSaleTotalAmount0 = Number(new BN(currentPublicSaleTotalAmountHex0.substring(2), 16));
-
-        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
+        let currentCapAmountHex0 = (await lpQuery.getCapAmount(phaseId)).value.ok;
+        let currentCapAmount0 = Number(new BN(currentCapAmountHex0.substring(2), 16));
 
         // let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
         let currentPhaseInfo1 = (await lpQuery.getPhase(1)).value.ok;
@@ -909,7 +931,9 @@ describe('Launchpad contract test', () => {
         expect(receivedPhaseInfo0.isActive).to.equal(newIsActive);
         expect(receivedProjectStartTime).to.equal(currentPhaseInfo1.startTime);
         expect(receivedProjectEndTime).to.equal(currentPhaseInfo1.endTime);
-        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount0);
+        console.log({receivedAvailableTokenAmount: receivedAvailableTokenAmount, currentAvailableTokenAmount: currentAvailableTokenAmount, currentCapAmount0: currentCapAmount0}); 
+
+        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentCapAmount0);
 
         // Case 2: Set phase 1 back to origin (true)
         console.log(`===========Set active - Case 2=============`);
@@ -924,8 +948,8 @@ describe('Launchpad contract test', () => {
 
         await lpContract.tx.setIsActive(phaseId, newIsActive);
 
-        let receivedPublicSaleTotalAmountHex0 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
-        let receivedPublicSaleTotalAmount0 = Number(new BN(receivedPublicSaleTotalAmountHex0.substring(2), 16));
+        let receivedCapAmountHex0 = (await lpQuery.getCapAmount(phaseId)).value.ok;
+        let receivedCapAmount0 = Number(new BN(receivedCapAmountHex0.substring(2), 16));
 
         receivedPhaseInfo0 = (await lpQuery.getPhase(phaseId)).value.ok;
         receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
@@ -937,7 +961,7 @@ describe('Launchpad contract test', () => {
         expect(receivedPhaseInfo0.isActive).to.equal(newIsActive);
         expect(receivedProjectStartTime).to.equal(receivedPhaseInfo0.startTime);
         expect(receivedProjectEndTime).to.equal(currentPhaseInfo1.endTime);
-        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedPublicSaleTotalAmount0);
+        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedCapAmount0);
 
         // Case 3: Set phase 2 inactive
         console.log(`===========Set active - Case 3=============`);
@@ -948,10 +972,10 @@ describe('Launchpad contract test', () => {
         // let currentProjectEndTime = (await lpQuery.getProjectEndTime()).value.ok;  
         currentAvailableTokenAmount = Number((await lpQuery.getAvailableTokenAmount()).value.ok);
 
-        let currentPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
-        let currentPublicSaleTotalAmount1 = Number(new BN(currentPublicSaleTotalAmountHex1.substring(2), 16));
+        let currentCapAmountHex1 = (await lpQuery.getCapAmount(phaseId)).value.ok;
+        let currentCapAmount1 = Number(new BN(currentCapAmountHex1.substring(2), 16));
 
-        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentPublicSaleTotalAmount0: currentPublicSaleTotalAmount0}); 
+        // console.log({currentProjectStartTime: currentProjectStartTime, currentProjectEndTime: currentProjectEndTime, currentAvailableTokenAmount: currentAvailableTokenAmount, currentCapAmount1: currentCapAmount1}); 
 
         // let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
         let currentPhaseInfo0 = (await lpQuery.getPhase(0)).value.ok;
@@ -969,7 +993,7 @@ describe('Launchpad contract test', () => {
         expect(receivedPhaseInfo1.isActive).to.equal(newIsActive);
         expect(receivedProjectStartTime).to.equal(currentPhaseInfo0.startTime);
         expect(receivedProjectEndTime).to.equal(currentPhaseInfo0.endTime);
-        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentPublicSaleTotalAmount1);
+        expect(receivedAvailableTokenAmount).to.equal(currentAvailableTokenAmount + currentCapAmount1);
 
         // Case 4: Set phase 2 back to origin (true)
         console.log(`===========Set active - Case 4=============`);
@@ -984,8 +1008,8 @@ describe('Launchpad contract test', () => {
 
         await lpContract.tx.setIsActive(phaseId, newIsActive);
 
-        let receivedPublicSaleTotalAmountHex1 = (await lpQuery.getPublicSaleTotalAmount(phaseId)).value.ok;
-        let receivedPublicSaleTotalAmount1 = Number(new BN(receivedPublicSaleTotalAmountHex1.substring(2), 16));
+        let receivedCapAmountHex1 = (await lpQuery.getCapAmount(phaseId)).value.ok;
+        let receivedCapAmount1 = Number(new BN(receivedCapAmountHex1.substring(2), 16));
 
         receivedPhaseInfo1 = (await lpQuery.getPhase(phaseId)).value.ok;
         receivedProjectStartTime = (await lpQuery.getProjectStartTime()).value.ok;
@@ -997,7 +1021,7 @@ describe('Launchpad contract test', () => {
         expect(receivedPhaseInfo1.isActive).to.equal(newIsActive);
         expect(receivedProjectStartTime).to.equal(currentPhaseInfo0.startTime);
         expect(receivedProjectEndTime).to.equal(receivedPhaseInfo1.endTime);
-        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedPublicSaleTotalAmount1);
+        expect(currentAvailableTokenAmount).to.equal(receivedAvailableTokenAmount + receivedCapAmount1);
     })
 
     it('Can set public sale price', async () => {
@@ -1061,6 +1085,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 500,
             vestingDuration: 50000, 
             vestingUnit: 20000,
+            capAmount: "150000000000000", // 150
             isPublic: true,
             publicAmount: "100000000000000", // 100
             publicPrice: "500000000000" // 0.5A
@@ -1073,6 +1098,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1500,
             vestingDuration: 50000, 
             vestingUnit: 20000,
+            capAmount: "550000000000000", // 550
             isPublic: true,
             publicAmount: "500000000000000", // 500
             publicPrice: "1000000000000" // 1A
@@ -1134,10 +1160,10 @@ describe('Launchpad contract test', () => {
     it('can update multi whitelists', async () => {
         // case 1:  whitelistAmount > availableTokenAmount
         console.log('===========Update multi whitelists - Case 2=============');
-        let availableTokenAmount = (await lpQuery.getAvailableTokenAmount()).value.ok;
+        let capAmount = (await lpQuery.getCapAmount()).value.ok;
         let phaseId = 1;
         let accounts = [alice.address, bob.address]; // 2 account
-        let whitelistAmountsNew = [availableTokenAmount + 1, availableTokenAmount + 2];
+        let whitelistAmountsNew = [capAmount + 1, capAmount + 2];
         let whitelistPricesNew = ['5000000000000', '6000000000000'];
 
         try {
@@ -1148,10 +1174,10 @@ describe('Launchpad contract test', () => {
 
         // Check whitelist info
         let whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, alice.address)).value.ok; // alice
-        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmountsNew[0]));
+        expect(whitelistBuyer.amount.toString()).to.equal((whitelistAmountsNew[0].toString()));
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPricesNew[0]));
         whitelistBuyer = (await lpQuery.getWhitelistBuyer(phaseId, bob.address)).value.ok; // bob
-        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmountsNew[1]);
+        expect(whitelistBuyer.amount.toString()).to.equal(whitelistAmountsNew[1].toString());
         expect(whitelistBuyer.price.toString()).to.equal((whitelistPricesNew[1]));
 
         // case 2:  whitelistAmount < availableTokenAmount
@@ -1509,6 +1535,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 500,
             vestingDuration: 20000, 
             vestingUnit: 10000,
+            capAmount: "200000000000000", // 200
             isPublic: true,
             publicAmount: "100000000000000", // 100
             publicPrice: "1000000000000" // 1A
@@ -1521,6 +1548,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 1500,
             vestingDuration: 20000, 
             vestingUnit: 10000,
+            capAmount: "300000000000000", // 300
             isPublic: true,
             publicAmount: "200000000000000", // 200
             publicPrice: "1000000000000" // 1A
@@ -1620,6 +1648,7 @@ describe('Launchpad contract test', () => {
             immediateReleaseRate: 500,
             vestingDuration: 20000, 
             vestingUnit: 10000,
+            capAmount: "200000000000000", // 200
             isPublic: true,
             publicAmount: "100000000000000", // 100
             publicPrice: "1000000000000" // 1A

@@ -79,7 +79,8 @@ export interface Error {
 	noPhaseActive ? : null,
 	invalidTotalSupply ? : null,
 	phaseNotPublic ? : null,
-	invalidSetPublic ? : null
+	invalidSetPublic ? : null,
+	invalidCapAmount ? : null
 }
 
 export class ErrorBuilder {
@@ -453,6 +454,11 @@ export class ErrorBuilder {
 			invalidSetPublic: null,
 		};
 	}
+	static InvalidCapAmount(): Error {
+		return {
+			invalidCapAmount: null,
+		};
+	}
 }
 
 export enum OwnableError {
@@ -597,6 +603,7 @@ export type PhaseInput = {
 	immediateReleaseRate: number,
 	vestingDuration: number,
 	vestingUnit: number,
+	capAmount: ReturnNumber,
 	isPublic: boolean,
 	publicAmount: ReturnNumber,
 	publicPrice: ReturnNumber

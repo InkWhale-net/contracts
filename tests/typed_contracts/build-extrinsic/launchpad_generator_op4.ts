@@ -39,6 +39,142 @@ export default class Methods {
 	}
 
 	/**
+	 * getInwContract
+	 *
+	*/
+	"getInwContract" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getInwContract", [], __options);
+	}
+
+	/**
+	 * getLaunchpadById
+	 *
+	 * @param { (number | string | BN) } id,
+	*/
+	"getLaunchpadById" (
+		id: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadById", [id], __options);
+	}
+
+	/**
+	 * getIsActiveLaunchpad
+	 *
+	 * @param { ArgumentTypes.AccountId } address,
+	*/
+	"getIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getIsActiveLaunchpad", [address], __options);
+	}
+
+	/**
+	 * getTxRate
+	 *
+	*/
+	"getTxRate" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getTxRate", [], __options);
+	}
+
+	/**
+	 * setLaunchpadHash
+	 *
+	 * @param { ArgumentTypes.Hash } launchpadHash,
+	*/
+	"setLaunchpadHash" (
+		launchpadHash: ArgumentTypes.Hash,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setLaunchpadHash", [launchpadHash], __options);
+	}
+
+	/**
+	 * setInwContract
+	 *
+	 * @param { ArgumentTypes.AccountId } inwContract,
+	*/
+	"setInwContract" (
+		inwContract: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setInwContract", [inwContract], __options);
+	}
+
+	/**
+	 * setTxRate
+	 *
+	 * @param { (number | string | BN) } txRate,
+	*/
+	"setTxRate" (
+		txRate: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setTxRate", [txRate], __options);
+	}
+
+	/**
+	 * setCreationFee
+	 *
+	 * @param { (string | number | BN) } creationFee,
+	*/
+	"setCreationFee" (
+		creationFee: (string | number | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setCreationFee", [creationFee], __options);
+	}
+
+	/**
+	 * setIsActiveLaunchpad
+	 *
+	 * @param { ArgumentTypes.AccountId } address,
+	 * @param { boolean } isActive,
+	*/
+	"setIsActiveLaunchpad" (
+		address: ArgumentTypes.AccountId,
+		isActive: boolean,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setIsActiveLaunchpad", [address, isActive], __options);
+	}
+
+	/**
+	 * getLaunchpadCount
+	 *
+	*/
+	"getLaunchpadCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadCount", [], __options);
+	}
+
+	/**
+	 * getLaunchpadHash
+	 *
+	*/
+	"getLaunchpadHash" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadHash", [], __options);
+	}
+
+	/**
+	 * getActiveLaunchpadCount
+	 *
+	*/
+	"getActiveLaunchpadCount" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getActiveLaunchpadCount", [], __options);
+	}
+
+	/**
 	 * getCreationFee
 	 *
 	*/
@@ -58,152 +194,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadByOwner", [ownerAddress], __options);
-	}
-
-	/**
-	 * getInwContract
-	 *
-	*/
-	"getInwContract" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getInwContract", [], __options);
-	}
-
-	/**
-	 * getTxRate
-	 *
-	*/
-	"getTxRate" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getTxRate", [], __options);
-	}
-
-	/**
-	 * getLaunchpadHash
-	 *
-	*/
-	"getLaunchpadHash" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadHash", [], __options);
-	}
-
-	/**
-	 * getLaunchpadById
-	 *
-	 * @param { (number | string | BN) } id,
-	*/
-	"getLaunchpadById" (
-		id: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadById", [id], __options);
-	}
-
-	/**
-	 * getLaunchpadCount
-	 *
-	*/
-	"getLaunchpadCount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getLaunchpadCount", [], __options);
-	}
-
-	/**
-	 * getActiveLaunchpadCount
-	 *
-	*/
-	"getActiveLaunchpadCount" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getActiveLaunchpadCount", [], __options);
-	}
-
-	/**
-	 * getIsActiveLaunchpad
-	 *
-	 * @param { ArgumentTypes.AccountId } address,
-	*/
-	"getIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::getIsActiveLaunchpad", [address], __options);
-	}
-
-	/**
-	 * setInwContract
-	 *
-	 * @param { ArgumentTypes.AccountId } inwContract,
-	*/
-	"setInwContract" (
-		inwContract: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setInwContract", [inwContract], __options);
-	}
-
-	/**
-	 * setCreationFee
-	 *
-	 * @param { (string | number | BN) } creationFee,
-	*/
-	"setCreationFee" (
-		creationFee: (string | number | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setCreationFee", [creationFee], __options);
-	}
-
-	/**
-	 * setTxRate
-	 *
-	 * @param { (number | string | BN) } txRate,
-	*/
-	"setTxRate" (
-		txRate: (number | string | BN),
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setTxRate", [txRate], __options);
-	}
-
-	/**
-	 * setLaunchpadHash
-	 *
-	 * @param { ArgumentTypes.Hash } launchpadHash,
-	*/
-	"setLaunchpadHash" (
-		launchpadHash: ArgumentTypes.Hash,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setLaunchpadHash", [launchpadHash], __options);
-	}
-
-	/**
-	 * setIsActiveLaunchpad
-	 *
-	 * @param { ArgumentTypes.AccountId } address,
-	 * @param { boolean } isActive,
-	*/
-	"setIsActiveLaunchpad" (
-		address: ArgumentTypes.AccountId,
-		isActive: boolean,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "launchpadGeneratorTrait::setIsActiveLaunchpad", [address, isActive], __options);
-	}
-
-	/**
-	 * getBalance
-	 *
-	*/
-	"getBalance" (
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::getBalance", [], __options);
 	}
 
 	/**
@@ -237,6 +227,16 @@ export default class Methods {
 	}
 
 	/**
+	 * getBalance
+	 *
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "adminTrait::getBalance", [], __options);
+	}
+
+	/**
 	 * setCode
 	 *
 	 * @param { Array<(number | string | BN)> } codeHash,
@@ -263,20 +263,6 @@ export default class Methods {
 	}
 
 	/**
-	 * grantRole
-	 *
-	 * @param { (number | string | BN) } role,
-	 * @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"grantRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::grantRole", [role, account], __options);
-	}
-
-	/**
 	 * hasRole
 	 *
 	 * @param { (number | string | BN) } role,
@@ -288,6 +274,32 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::hasRole", [role, address], __options);
+	}
+
+	/**
+	 * getRoleAdmin
+	 *
+	 * @param { (number | string | BN) } role,
+	*/
+	"getRoleAdmin" (
+		role: (number | string | BN),
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::getRoleAdmin", [role], __options);
+	}
+
+	/**
+	 * grantRole
+	 *
+	 * @param { (number | string | BN) } role,
+	 * @param { ArgumentTypes.AccountId | null } account,
+	*/
+	"grantRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options: GasLimit,
+	){
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::grantRole", [role, account], __options);
 	}
 
 	/**
@@ -305,15 +317,15 @@ export default class Methods {
 	}
 
 	/**
-	 * getRoleAdmin
+	 * getRoleMemberCount
 	 *
 	 * @param { (number | string | BN) } role,
 	*/
-	"getRoleAdmin" (
+	"getRoleMemberCount" (
 		role: (number | string | BN),
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControl::getRoleAdmin", [role], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControlEnumerable::getRoleMemberCount", [role], __options);
 	}
 
 	/**
@@ -331,15 +343,15 @@ export default class Methods {
 	}
 
 	/**
-	 * getRoleMemberCount
+	 * transferOwnership
 	 *
-	 * @param { (number | string | BN) } role,
+	 * @param { ArgumentTypes.AccountId | null } newOwner,
 	*/
-	"getRoleMemberCount" (
-		role: (number | string | BN),
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId | null,
 		__options: GasLimit,
 	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "accessControlEnumerable::getRoleMemberCount", [role], __options);
+		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
 	}
 
 	/**
@@ -360,18 +372,6 @@ export default class Methods {
 		__options: GasLimit,
 	){
 		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::renounceOwnership", [], __options);
-	}
-
-	/**
-	 * transferOwnership
-	 *
-	 * @param { ArgumentTypes.AccountId | null } newOwner,
-	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	){
-		return buildSubmittableExtrinsic( this.__apiPromise, this.__nativeContract, "ownable::transferOwnership", [newOwner], __options);
 	}
 
 }

@@ -9,6 +9,7 @@ export type PhaseInput = {
 	immediateReleaseRate: (number | string | BN),
 	vestingDuration: (number | string | BN),
 	vestingUnit: (number | string | BN),
+	capAmount: (string | number | BN),
 	isPublic: boolean,
 	publicAmount: (string | number | BN),
 	publicPrice: (string | number | BN)
@@ -88,7 +89,8 @@ export interface Error {
 	noPhaseActive ? : null,
 	invalidTotalSupply ? : null,
 	phaseNotPublic ? : null,
-	invalidSetPublic ? : null
+	invalidSetPublic ? : null,
+	invalidCapAmount ? : null
 }
 
 export class ErrorBuilder {
@@ -462,6 +464,11 @@ export class ErrorBuilder {
 			invalidSetPublic: null,
 		};
 	}
+	static InvalidCapAmount(): Error {
+		return {
+			invalidCapAmount: null,
+		};
+	}
 }
 
 export enum OwnableError {
@@ -599,6 +606,21 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
+export type WhitelistSaleInfo = {
+	totalAmount: (string | number | BN),
+	totalPurchasedAmount: (string | number | BN),
+	totalClaimedAmount: (string | number | BN),
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
+export type BuyerInformation = {
+	purchasedAmount: (string | number | BN),
+	vestingAmount: (string | number | BN),
+	claimedAmount: (string | number | BN),
+	lastUpdatedTime: (number | string | BN)
+}
+
 export type PublicSaleInfo = {
 	isPublic: boolean,
 	totalAmount: (string | number | BN),
@@ -618,22 +640,9 @@ export type PhaseInfo = {
 	vestingDuration: (number | string | BN),
 	endVestingTime: (number | string | BN),
 	vestingUnit: (number | string | BN),
-	totalVestingUnits: (number | string | BN)
-}
-
-export type BuyerInformation = {
-	purchasedAmount: (string | number | BN),
-	vestingAmount: (string | number | BN),
-	claimedAmount: (string | number | BN),
-	lastUpdatedTime: (number | string | BN)
-}
-
-export type WhitelistSaleInfo = {
-	totalAmount: (string | number | BN),
-	totalPurchasedAmount: (string | number | BN),
-	totalClaimedAmount: (string | number | BN),
-	isBurned: boolean,
-	isWithdrawn: boolean
+	totalVestingUnits: (number | string | BN),
+	capAmount: (string | number | BN),
+	availableAmount: (string | number | BN)
 }
 
 export type WhitelistBuyerInfo = {
