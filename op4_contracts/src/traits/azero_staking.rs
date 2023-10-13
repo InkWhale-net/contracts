@@ -9,10 +9,8 @@ use openbrush::{
     traits::{AccountId, Balance},
 };
 
-use ink::prelude::{vec::Vec};
-
 use crate::impls::azero_staking::data::{
-    StakeInformation, 
+    StakeInformation, OngoingExpiredWaitingList
 };
 
 use crate::traits::error::Error;
@@ -96,7 +94,7 @@ pub trait AzeroStakingTrait {
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
     
     #[ink(message)]
-    fn get_waiting_list_within_expiration_duration(&mut self, expiration_duration: u64) -> Result<Vec<u64>, Error>;
+    fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
     
     #[ink(message)]
     fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error>;
@@ -105,7 +103,10 @@ pub trait AzeroStakingTrait {
     fn claim(&mut self, request_index: u64) -> Result<(), Error>;
 
     #[ink(message)]
-    fn get_withdrawable_azero_to_stake_to_validator(&self) -> Result<Balance, Error>;
+    fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error>;
+
+    #[ink(message)]
+    fn get_payable_azero(&self) -> Result<Balance, Error>;
 
     #[ink(message)]
     fn get_withdrawable_inw(&self) -> Result<Balance, Error>;
@@ -114,7 +115,7 @@ pub trait AzeroStakingTrait {
     fn get_role_withdrawal_manager(&self) -> RoleType;
 
     #[ink(message)]
-    fn withdraw_azero_to_stake(&mut self, receiver: AccountId) -> Result<(), Error>;
+    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error>;
 
     #[ink(message)]
     fn withdraw_azero(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;

@@ -198,10 +198,10 @@ pub mod my_azero_staking {
         pub fn new(
             min_staking_amount: Balance,
             max_total_staking_amount: Balance,
-            apy: Balance,
+            apy: Balance, // scaled 10000
             max_waiting_time: u64,
             inw_contract: AccountId,
-            inw_multiplier: Balance,
+            inw_multiplier: Balance, // scaled 10000
             unstaking_fee: Balance // in inw to claim 
         ) -> Result<Self, Error> {
             let mut instance = Self::default();

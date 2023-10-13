@@ -130,12 +130,12 @@ pub trait AzeroStakingTrait:
             let time_length = current_time.checked_sub(stake_info.last_updated).ok_or(Error::CheckedOperations)?; // ms
             
             let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
-            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 10000 * 1000).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
             // Assuming azero and imw have the same decimal 12               
             let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
-            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
                          
             stake_info.last_updated = current_time;
@@ -215,30 +215,41 @@ pub trait AzeroStakingTrait:
         }
     }
 
-    fn get_waiting_list_within_expiration_duration(&mut self, expiration_duration: u64) -> Result<Vec<u64>, Error> {
+    fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
         let count = self.data::<Data>().withdrawal_waiting_list.count(1);
         
         let mut waiting_list = Vec::<u64>::new();
+        let mut total_azero: Balance = 0;
+        let mut total_inw: Balance = 0;
+
         let current_time = Self::env().block_timestamp();
-        
+
         for i in 0..count {
             if let Some(request_index) = self.data::<Data>().withdrawal_waiting_list.get_value(1, &i) {
                 if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
                     if withdrawal_request_info.request_time.checked_add(self.data::<Data>().max_waiting_time).ok_or(Error::CheckedOperations)?
                        <= current_time.checked_add(expiration_duration).ok_or(Error::CheckedOperations)? {
-                        
                         waiting_list.push(request_index);
+                        total_azero = total_azero.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
+                        total_inw = total_inw.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)?;
                     } 
                 }
             }
         }
 
-        Ok(waiting_list)
+        let ongoing_expired_waiting_list = OngoingExpiredWaitingList {
+            waiting_list: waiting_list,
+            total_azero: total_azero,
+            total_inw: total_inw
+        };
+
+        Ok(ongoing_expired_waiting_list)
     }
 
     #[modifiers(only_role(ADMINER))]
     fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error> {
-        if let Ok(mut waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
+        if let Ok(ongoing_expired_waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
+            let mut waiting_list = ongoing_expired_waiting_list.waiting_list; 
             let list_count = waiting_list.len();
             
             // Rearrange the waiting list 
@@ -467,10 +478,24 @@ pub trait AzeroStakingTrait:
         }
     }
 
-    fn get_withdrawable_azero_to_stake_to_validator(&self) -> Result<Balance, Error>  {
-        Self::env().balance().checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
+    fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error> {
+        if let Ok(ongoing_expired_waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
+            if Self::env().balance() > ongoing_expired_waiting_list.total_azero.checked_add(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)? {
+                Self::env().balance()
+                    .checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)?
+                    .checked_sub(ongoing_expired_waiting_list.total_azero).ok_or(Error::CheckedOperations)                   
+            } else {
+                Ok(0)
+            }
+        } else {
+            Err(Error::CannotGetWaitingList)
+        }
     }
 
+    fn get_payable_azero(&self) -> Result<Balance, Error>  {
+        Self::env().balance().checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
+    }
+    
     fn get_withdrawable_inw(&self) -> Result<Balance, Error>  {
         let inw_balance = Psp22Ref::balance_of(
             &self.data::<Data>().inw_contract,
@@ -484,8 +509,12 @@ pub trait AzeroStakingTrait:
     }
 
     #[modifiers(only_role(WITHDRAWAL_MANAGER))]
-    fn withdraw_azero_to_stake(&mut self, receiver: AccountId) -> Result<(), Error> {
-        if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator() {
+    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error> {
+        if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator(expiration_duration) {
+            if max_amount == 0 {
+                return Err(Error::InvalidWithdrawalAmount);
+            }
+
             if Self::env().transfer(receiver, max_amount).is_err() {
                 return Err(Error::WithdrawError);
             }
@@ -505,7 +534,7 @@ pub trait AzeroStakingTrait:
 
     #[modifiers(only_owner)]
     fn withdraw_azero(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
-        if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator() {
+        if let Ok(max_amount) = self.get_payable_azero() {
             if amount > max_amount {
                 return Err(Error::InvalidWithdrawalAmount);
             }
@@ -523,7 +552,7 @@ pub trait AzeroStakingTrait:
             Ok(())
         } else {
             Err(Error::CannotGetWithdrawableAmount)
-        }
+        } 
     }
 
     #[modifiers(only_owner)]

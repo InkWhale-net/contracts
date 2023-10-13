@@ -3,6 +3,8 @@ use openbrush::{
     traits::{AccountId, Balance},
 };
 
+use ink::prelude::{vec::Vec};
+
 #[cfg(feature = "std")]
 use ink::storage::traits::StorageLayout;
 
@@ -27,6 +29,14 @@ pub struct WithdrawalRequestInformation {
     pub inw_reward: Balance,
     pub request_time: u64,
     pub status: u8 // 0: waiting, 1: is claimable, 2: claimed
+}
+
+#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
+pub struct OngoingExpiredWaitingList {
+    pub waiting_list: Vec<u64>,
+    pub total_azero: Balance,
+    pub total_inw: Balance
 }
 
 #[derive(Debug)]
