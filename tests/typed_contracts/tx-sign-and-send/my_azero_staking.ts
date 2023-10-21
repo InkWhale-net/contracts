@@ -29,105 +29,13 @@ export default class Methods {
 	}
 
 	/**
-	* initialize
-	*
-	* @param { (string | number | BN) } minStakingAmount,
-	* @param { (string | number | BN) } maxTotalStakingAmount,
-	* @param { (string | number | BN) } apy,
-	* @param { (number | string | BN) } maxWaitingTime,
-	* @param { ArgumentTypes.AccountId } inwContract,
-	* @param { (string | number | BN) } inwMultiplier,
-	* @param { (string | number | BN) } unstakingFee,
-	*/
-	"initialize" (
-		minStakingAmount: (string | number | BN),
-		maxTotalStakingAmount: (string | number | BN),
-		apy: (string | number | BN),
-		maxWaitingTime: (number | string | BN),
-		inwContract: ArgumentTypes.AccountId,
-		inwMultiplier: (string | number | BN),
-		unstakingFee: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "initialize", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [minStakingAmount, maxTotalStakingAmount, apy, maxWaitingTime, inwContract, inwMultiplier, unstakingFee], __options);
-	}
-
-	/**
-	* getInwContract
+	* getUnstakingFee
 	*
 	*/
-	"getInwContract" (
+	"getUnstakingFee" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getInwContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* selectRequestsToPay
-	*
-	* @param { (number | string | BN) } expirationDuration,
-	*/
-	"selectRequestsToPay" (
-		expirationDuration: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::selectRequestsToPay", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [expirationDuration], __options);
-	}
-
-	/**
-	* setMaxTotalStakingAmount
-	*
-	* @param { (string | number | BN) } maxTotalStakingAmount,
-	*/
-	"setMaxTotalStakingAmount" (
-		maxTotalStakingAmount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setMaxTotalStakingAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [maxTotalStakingAmount], __options);
-	}
-
-	/**
-	* setInwMultiplier
-	*
-	* @param { (string | number | BN) } inwMultiplier,
-	*/
-	"setInwMultiplier" (
-		inwMultiplier: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setInwMultiplier", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [inwMultiplier], __options);
-	}
-
-	/**
-	* getTotalInwReservedForWithdrawals
-	*
-	*/
-	"getTotalInwReservedForWithdrawals" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalInwReservedForWithdrawals", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getMinStakingAmount
-	*
-	*/
-	"getMinStakingAmount" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMinStakingAmount", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getUnstakingFee", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
@@ -145,13 +53,39 @@ export default class Methods {
 	}
 
 	/**
-	* getWithdrawalRequestCount
+	* getWaitingWithdrawalCount
 	*
 	*/
-	"getWithdrawalRequestCount" (
+	"getWaitingWithdrawalCount" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestCount", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWaitingWithdrawalCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getWaitingWithdrawalIndex
+	*
+	* @param { (string | number | BN) } index,
+	*/
+	"getWaitingWithdrawalIndex" (
+		index: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWaitingWithdrawalIndex", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [index], __options);
+	}
+
+	/**
+	* getMaxTotalStakingAmount
+	*
+	*/
+	"getMaxTotalStakingAmount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMaxTotalStakingAmount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
@@ -173,17 +107,167 @@ export default class Methods {
 	}
 
 	/**
-	* getWithdrawableAzeroToStakeToValidator
+	* withdrawAzero
+	*
+	* @param { ArgumentTypes.AccountId } receiver,
+	* @param { (string | number | BN) } amount,
+	*/
+	"withdrawAzero" (
+		receiver: ArgumentTypes.AccountId,
+		amount: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawAzero", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [receiver, amount], __options);
+	}
+
+	/**
+	* getWithdrawalRequestIndexByUser
+	*
+	* @param { ArgumentTypes.AccountId } user,
+	* @param { (string | number | BN) } index,
+	*/
+	"getWithdrawalRequestIndexByUser" (
+		user: ArgumentTypes.AccountId,
+		index: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestIndexByUser", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [user, index], __options);
+	}
+
+	/**
+	* getTotalAzeroClaimed
+	*
+	*/
+	"getTotalAzeroClaimed" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalAzeroClaimed", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getWithdrawalRequestCountByUser
+	*
+	* @param { ArgumentTypes.AccountId } user,
+	*/
+	"getWithdrawalRequestCountByUser" (
+		user: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestCountByUser", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [user], __options);
+	}
+
+	/**
+	* getWithdrawalRequestListByUser
+	*
+	* @param { ArgumentTypes.AccountId } user,
+	*/
+	"getWithdrawalRequestListByUser" (
+		user: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestListByUser", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [user], __options);
+	}
+
+	/**
+	* getStakeInfo
+	*
+	* @param { ArgumentTypes.AccountId } staker,
+	*/
+	"getStakeInfo" (
+		staker: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getStakeInfo", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [staker], __options);
+	}
+
+	/**
+	* getWaitingListWithinExpirationDuration
 	*
 	* @param { (number | string | BN) } expirationDuration,
 	*/
-	"getWithdrawableAzeroToStakeToValidator" (
+	"getWaitingListWithinExpirationDuration" (
 		expirationDuration: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawableAzeroToStakeToValidator", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWaitingListWithinExpirationDuration", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [expirationDuration], __options);
+	}
+
+	/**
+	* getAzeroBalance
+	*
+	*/
+	"getAzeroBalance" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getAzeroBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getWithdrawalRequestCount
+	*
+	*/
+	"getWithdrawalRequestCount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestCount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* withdrawInw
+	*
+	* @param { ArgumentTypes.AccountId } receiver,
+	* @param { (string | number | BN) } amount,
+	*/
+	"withdrawInw" (
+		receiver: ArgumentTypes.AccountId,
+		amount: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawInw", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [receiver, amount], __options);
+	}
+
+	/**
+	* getInwMultiplier
+	*
+	*/
+	"getInwMultiplier" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getInwMultiplier", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getApy
+	*
+	*/
+	"getApy" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getApy", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
 	}
 
 	/**
@@ -199,37 +283,63 @@ export default class Methods {
 	}
 
 	/**
-	* getTotalAzeroReservedForWithdrawals
+	* getInwContract
 	*
 	*/
-	"getTotalAzeroReservedForWithdrawals" (
+	"getInwContract" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalAzeroReservedForWithdrawals", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getInwContract", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
 
 	/**
-	* getMaxWaitingTime
+	* withdrawRequest
 	*
+	* @param { (string | number | BN) } amount,
 	*/
-	"getMaxWaitingTime" (
+	"withdrawRequest" (
+		amount: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMaxWaitingTime", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawRequest", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [amount], __options);
+	}
+
+	/**
+	* getMinStakingAmount
+	*
+	*/
+	"getMinStakingAmount" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMinStakingAmount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
 
 	/**
-	* getUnstakingFee
+	* getStakerList
 	*
 	*/
-	"getUnstakingFee" (
+	"getStakerList" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getUnstakingFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getStakerList", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getWaitingWithdrawalList
+	*
+	*/
+	"getWaitingWithdrawalList" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWaitingWithdrawalList", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
@@ -247,41 +357,95 @@ export default class Methods {
 	}
 
 	/**
-	* getInwMultiplier
+	* getTotalInwForWaitingWithdrawals
 	*
 	*/
-	"getInwMultiplier" (
+	"getTotalInwForWaitingWithdrawals" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getInwMultiplier", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalInwForWaitingWithdrawals", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
 
 	/**
-	* getPayableAzero
+	* setMinStakingAmount
 	*
+	* @param { (string | number | BN) } minStakingAmount,
 	*/
-	"getPayableAzero" (
+	"setMinStakingAmount" (
+		minStakingAmount: (string | number | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getPayableAzero", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setMinStakingAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [minStakingAmount], __options);
+	}
+
+	/**
+	* getWithdrawalRequestIndexListByUser
+	*
+	* @param { ArgumentTypes.AccountId } user,
+	*/
+	"getWithdrawalRequestIndexListByUser" (
+		user: ArgumentTypes.AccountId,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestIndexListByUser", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [user], __options);
+	}
+
+	/**
+	* stake
+	*
+	* @param { (string | number | BN) } amount,
+	*/
+	"stake" (
+		amount: (string | number | BN),
+		__options ? : GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::stake", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [amount], __options);
+	}
+
+	/**
+	* getWithdrawalRequestList
+	*
+	*/
+	"getWithdrawalRequestList" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequestList", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [], __options);
 	}
 
 	/**
-	* setUnstakingFee
+	* getTotalInwReservedForWithdrawals
 	*
-	* @param { (string | number | BN) } unstakingFee,
 	*/
-	"setUnstakingFee" (
-		unstakingFee: (string | number | BN),
+	"getTotalInwReservedForWithdrawals" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setUnstakingFee", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalInwReservedForWithdrawals", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [unstakingFee], __options);
+		}, [], __options);
+	}
+
+	/**
+	* setMaxTotalStakingAmount
+	*
+	* @param { (string | number | BN) } maxTotalStakingAmount,
+	*/
+	"setMaxTotalStakingAmount" (
+		maxTotalStakingAmount: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setMaxTotalStakingAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [maxTotalStakingAmount], __options);
 	}
 
 	/**
@@ -313,28 +477,80 @@ export default class Methods {
 	}
 
 	/**
-	* withdrawAzero
+	* getWithdrawableAzeroToStakeToValidator
 	*
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @param { (string | number | BN) } amount,
+	* @param { (number | string | BN) } expirationDuration,
 	*/
-	"withdrawAzero" (
-		receiver: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
+	"getWithdrawableAzeroToStakeToValidator" (
+		expirationDuration: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawAzero", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawableAzeroToStakeToValidator", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [receiver, amount], __options);
+		}, [expirationDuration], __options);
+	}
+
+	/**
+	* setInwMultiplier
+	*
+	* @param { (string | number | BN) } inwMultiplier,
+	*/
+	"setInwMultiplier" (
+		inwMultiplier: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setInwMultiplier", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [inwMultiplier], __options);
+	}
+
+	/**
+	* getWithdrawalRequest
+	*
+	* @param { (string | number | BN) } index,
+	*/
+	"getWithdrawalRequest" (
+		index: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWithdrawalRequest", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [index], __options);
+	}
+
+	/**
+	* setUnstakingFee
+	*
+	* @param { (string | number | BN) } unstakingFee,
+	*/
+	"setUnstakingFee" (
+		unstakingFee: (string | number | BN),
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setUnstakingFee", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [unstakingFee], __options);
+	}
+
+	/**
+	* getTotalAzeroReservedForWithdrawals
+	*
+	*/
+	"getTotalAzeroReservedForWithdrawals" (
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalAzeroReservedForWithdrawals", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
 	}
 
 	/**
 	* claim
 	*
-	* @param { (number | string | BN) } requestIndex,
+	* @param { (string | number | BN) } requestIndex,
 	*/
 	"claim" (
-		requestIndex: (number | string | BN),
+		requestIndex: (string | number | BN),
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::claim", (events: EventRecord) => {
@@ -343,31 +559,27 @@ export default class Methods {
 	}
 
 	/**
-	* getWaitingListWithinExpirationDuration
+	* getPayableAzero
 	*
-	* @param { (number | string | BN) } expirationDuration,
 	*/
-	"getWaitingListWithinExpirationDuration" (
-		expirationDuration: (number | string | BN),
+	"getPayableAzero" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getWaitingListWithinExpirationDuration", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getPayableAzero", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [expirationDuration], __options);
+		}, [], __options);
 	}
 
 	/**
-	* stake
+	* getMaxWaitingTime
 	*
-	* @param { (string | number | BN) } amount,
 	*/
-	"stake" (
-		amount: (string | number | BN),
-		__options ? : GasLimitAndRequiredValue,
+	"getMaxWaitingTime" (
+		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::stake", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMaxWaitingTime", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [amount], __options);
+		}, [], __options);
 	}
 
 	/**
@@ -385,121 +597,17 @@ export default class Methods {
 	}
 
 	/**
-	* withdrawInw
+	* selectRequestsToPay
 	*
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @param { (string | number | BN) } amount,
+	* @param { (number | string | BN) } expirationDuration,
 	*/
-	"withdrawInw" (
-		receiver: ArgumentTypes.AccountId,
-		amount: (string | number | BN),
+	"selectRequestsToPay" (
+		expirationDuration: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawInw", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::selectRequestsToPay", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [receiver, amount], __options);
-	}
-
-	/**
-	* getRoleWithdrawalManager
-	*
-	*/
-	"getRoleWithdrawalManager" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getRoleWithdrawalManager", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getTotalAzeroClaimed
-	*
-	*/
-	"getTotalAzeroClaimed" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalAzeroClaimed", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getTotalInwForWaitingWithdrawals
-	*
-	*/
-	"getTotalInwForWaitingWithdrawals" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getTotalInwForWaitingWithdrawals", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getStakeInfo
-	*
-	* @param { ArgumentTypes.AccountId } staker,
-	*/
-	"getStakeInfo" (
-		staker: ArgumentTypes.AccountId,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getStakeInfo", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [staker], __options);
-	}
-
-	/**
-	* withdrawRequest
-	*
-	* @param { (string | number | BN) } amount,
-	*/
-	"withdrawRequest" (
-		amount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::withdrawRequest", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [amount], __options);
-	}
-
-	/**
-	* setMinStakingAmount
-	*
-	* @param { (string | number | BN) } minStakingAmount,
-	*/
-	"setMinStakingAmount" (
-		minStakingAmount: (string | number | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::setMinStakingAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [minStakingAmount], __options);
-	}
-
-	/**
-	* getMaxTotalStakingAmount
-	*
-	*/
-	"getMaxTotalStakingAmount" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getMaxTotalStakingAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getApy
-	*
-	*/
-	"getApy" (
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "azeroStakingTrait::getApy", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
+		}, [expirationDuration], __options);
 	}
 
 	/**
@@ -514,38 +622,6 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "upgradeableTrait::setCode", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [codeHash], __options);
-	}
-
-	/**
-	* renounceRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"renounceRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::renounceRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, account], __options);
-	}
-
-	/**
-	* revokeRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } account,
-	*/
-	"revokeRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, account], __options);
 	}
 
 	/**
@@ -581,6 +657,38 @@ export default class Methods {
 	}
 
 	/**
+	* revokeRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId | null } account,
+	*/
+	"revokeRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::revokeRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [role, account], __options);
+	}
+
+	/**
+	* renounceRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId | null } account,
+	*/
+	"renounceRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::renounceRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [role, account], __options);
+	}
+
+	/**
 	* getRoleAdmin
 	*
 	* @param { (number | string | BN) } role,
@@ -590,20 +698,6 @@ export default class Methods {
 		__options ? : GasLimit,
 	){
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::getRoleAdmin", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role], __options);
-	}
-
-	/**
-	* getRoleMemberCount
-	*
-	* @param { (number | string | BN) } role,
-	*/
-	"getRoleMemberCount" (
-		role: (number | string | BN),
-		__options ? : GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMemberCount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [role], __options);
 	}
@@ -625,15 +719,31 @@ export default class Methods {
 	}
 
 	/**
-	* owner
+	* getRoleMemberCount
 	*
+	* @param { (number | string | BN) } role,
 	*/
-	"owner" (
+	"getRoleMemberCount" (
+		role: (number | string | BN),
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControlEnumerable::getRoleMemberCount", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
+		}, [role], __options);
+	}
+
+	/**
+	* transferOwnership
+	*
+	* @param { ArgumentTypes.AccountId | null } newOwner,
+	*/
+	"transferOwnership" (
+		newOwner: ArgumentTypes.AccountId | null,
+		__options ? : GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [newOwner], __options);
 	}
 
 	/**
@@ -649,17 +759,15 @@ export default class Methods {
 	}
 
 	/**
-	* transferOwnership
+	* owner
 	*
-	* @param { ArgumentTypes.AccountId | null } newOwner,
 	*/
-	"transferOwnership" (
-		newOwner: ArgumentTypes.AccountId | null,
+	"owner" (
 		__options ? : GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::owner", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [newOwner], __options);
+		}, [], __options);
 	}
 
 }

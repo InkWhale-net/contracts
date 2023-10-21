@@ -22,6 +22,7 @@ pub struct StakeInformation {
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct WithdrawalRequestInformation {
+    pub request_index: u128,
     pub user: AccountId,
     pub amount: Balance,
     pub azero_reward: Balance,
@@ -34,7 +35,7 @@ pub struct WithdrawalRequestInformation {
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
 pub struct OngoingExpiredWaitingList {
-    pub waiting_list: Vec<u64>,
+    pub waiting_list: Vec<u128>,
     pub total_azero: Balance,
     pub total_inw: Balance
 }
@@ -52,11 +53,12 @@ pub struct Data {
     pub unstaking_fee: Balance, // By inw
 
     pub stake_info_by_staker: Mapping<AccountId, StakeInformation>,
+    pub staker_list: Vec<AccountId>,
     
-    pub withdrawal_request_count: u64,
-    pub withdrawal_request_list: Mapping<u64, WithdrawalRequestInformation>,
-    pub withdrawal_request_by_user: MultiMapping<AccountId, u64, ValueGuard<AccountId>>,
-    pub withdrawal_waiting_list: MultiMapping<u8, u64, ValueGuard<u8>>, // request with waiting status
+    pub withdrawal_request_count: u128,
+    pub withdrawal_request_list: Mapping<u128, WithdrawalRequestInformation>,
+    pub withdrawal_request_by_user: MultiMapping<AccountId, u128, ValueGuard<AccountId>>,
+    pub withdrawal_waiting_list: MultiMapping<u8, u128, ValueGuard<u8>>, // request with waiting status
 
     pub total_azero_claimed: Balance,
     pub total_inw_claimed: Balance,
@@ -79,6 +81,7 @@ impl Default for Data {
             unstaking_fee: Default::default(),
 
             stake_info_by_staker: Default::default(),
+            staker_list: Default::default(),
 
             withdrawal_request_count: Default::default(),
             withdrawal_request_list: Default::default(),

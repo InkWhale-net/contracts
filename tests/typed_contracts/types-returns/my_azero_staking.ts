@@ -672,10 +672,15 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
-export type OngoingExpiredWaitingList = {
-	waitingList: Array<number>,
+export type WithdrawalRequestInformation = {
+	requestIndex: ReturnNumber,
+	user: AccountId,
+	amount: ReturnNumber,
+	azeroReward: ReturnNumber,
 	totalAzero: ReturnNumber,
-	totalInw: ReturnNumber
+	inwReward: ReturnNumber,
+	requestTime: number,
+	status: number
 }
 
 export type StakeInformation = {
@@ -685,5 +690,11 @@ export type StakeInformation = {
 	unclaimedInwReward: ReturnNumber,
 	claimedInwReward: ReturnNumber,
 	lastUpdated: number
+}
+
+export type OngoingExpiredWaitingList = {
+	waitingList: Array<ReturnNumber>,
+	totalAzero: ReturnNumber,
+	totalInw: ReturnNumber
 }
 

@@ -8,7 +8,7 @@ export interface StakeEvent {
 }
 
 export interface WithrawalRequestEvent {
-	requestId: number;
+	requestId: ReturnNumber;
 	user: ReturnTypes.AccountId;
 	amount: ReturnNumber;
 	azeroReward: ReturnNumber;
@@ -17,7 +17,7 @@ export interface WithrawalRequestEvent {
 }
 
 export interface ClaimEvent {
-	requestId: number;
+	requestId: ReturnNumber;
 	user: ReturnTypes.AccountId;
 	azeroAmount: ReturnNumber;
 	inwAmount: ReturnNumber;

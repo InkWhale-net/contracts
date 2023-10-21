@@ -29,7 +29,7 @@ pub trait AzeroStakingTrait:
 
     fn _emit_withrawal_request_event(
         &self,
-        _request_id: u64,
+        _request_id: u128,
         _user: AccountId,        
         _amount: Balance,
         _azero_reward: Balance,
@@ -40,7 +40,7 @@ pub trait AzeroStakingTrait:
 
     fn _emit_claim_event(
         &self,
-        _request_id: u64,
+        _request_id: u128,
         _user: AccountId,  
         _azero_amount: Balance,
         _inw_amount: Balance,
@@ -74,6 +74,30 @@ pub trait AzeroStakingTrait:
     }
     
     // Main funcs
+
+    // Private func
+    fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error> {
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {            
+            let time_length = current_time.checked_sub(stake_info.last_updated).ok_or(Error::CheckedOperations)?; // ms
+            
+            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+            // Assuming azero and imw have the same decimal 12               
+            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
+                         
+            stake_info.last_updated = current_time;
+            
+            self.data::<Data>().stake_info_by_staker
+                .insert(&staker, &stake_info);            
+        } 
+
+        Ok(())
+    }
+
     fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
         if amount < self.data::<Data>().min_staking_amount {
             return Err(Error::BelowMinStakingMount);
@@ -86,7 +110,13 @@ pub trait AzeroStakingTrait:
         let staker = Self::env().caller();
         let current_time = Self::env().block_timestamp();
 
-        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
+        // Update the current unclaimed_amount
+        if self.update_unclaimed_rewards(staker, current_time).is_err() {
+            return Err(Error::CannotUpdateUnclaimedRewards);
+        }
+
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {              
+            // Calculate stake info
             stake_info.staking_amount = stake_info.staking_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
             
             if stake_info.staking_amount > self.data::<Data>().max_total_staking_amount {
@@ -113,6 +143,8 @@ pub trait AzeroStakingTrait:
 
             self.data::<Data>().stake_info_by_staker
                 .insert(&staker, &stake_info);
+
+            self.data::<Data>().staker_list.push(staker);
         }
 
         self._emit_stake_event(
@@ -122,49 +154,26 @@ pub trait AzeroStakingTrait:
         );
 
         Ok(())
-    }
-
-    // Private func
-    fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error> {
-        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {            
-            let time_length = current_time.checked_sub(stake_info.last_updated).ok_or(Error::CheckedOperations)?; // ms
-            
-            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
-            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-            stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
-
-            // Assuming azero and imw have the same decimal 12               
-            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
-            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-            stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
-                         
-            stake_info.last_updated = current_time;
-            
-            self.data::<Data>().stake_info_by_staker
-                .insert(&staker, &stake_info);
-
-            Ok(())
-        } else {
-            Err(Error::NoStakeInfoFound)
-        }
-    }
+    }    
 
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error> {
-        let staker = Self::env().caller();        
+        let staker = Self::env().caller();
+
+        // Update the current unclaimed_amount
+        let current_time = Self::env().block_timestamp();
+        if self.update_unclaimed_rewards(staker, current_time).is_err() {
+            return Err(Error::CannotUpdateUnclaimedRewards);
+        }        
 
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
             if amount > stake_info.staking_amount {
                 return Err(Error::InvalidUnstakedAmount);
             }
-
-            // Update the current unclaimed_amount
-            let current_time = Self::env().block_timestamp();
-            if self.update_unclaimed_rewards(staker, current_time).is_err() {
-                return Err(Error::CannotUpdateUnclaimedRewards);
-            }
-
+            
             // Add withdrawal request info
+            let withdrawal_request_count = self.data::<Data>().withdrawal_request_count;
             let withdrawal_request_info = WithdrawalRequestInformation{
+                request_index: withdrawal_request_count,
                 user: staker,
                 amount: amount,				
                 azero_reward: stake_info.unclaimed_azero_reward,
@@ -174,7 +183,6 @@ pub trait AzeroStakingTrait:
                 status: WITHDRAWAL_REQUEST_WAITING
             };
 
-            let withdrawal_request_count = self.data::<Data>().withdrawal_request_count;
             self.data::<Data>().withdrawal_request_list.insert(&withdrawal_request_count, &withdrawal_request_info);
             self.data::<Data>().withdrawal_request_by_user.insert(staker, &withdrawal_request_count);
             self.data::<Data>().withdrawal_waiting_list.insert(1, &withdrawal_request_count);
@@ -218,7 +226,7 @@ pub trait AzeroStakingTrait:
     fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
         let count = self.data::<Data>().withdrawal_waiting_list.count(1);
         
-        let mut waiting_list = Vec::<u64>::new();
+        let mut waiting_list = Vec::<u128>::new();
         let mut total_azero: Balance = 0;
         let mut total_inw: Balance = 0;
 
@@ -252,7 +260,7 @@ pub trait AzeroStakingTrait:
             let mut waiting_list = ongoing_expired_waiting_list.waiting_list; 
             let list_count = waiting_list.len();
             
-            // Rearrange the waiting list 
+            // Sort the waiting list 
             if list_count > 1 {
                 // Strategy 1: Pay for as many users as possible - Sort the waiting_list in ascending order of amount + azero_reward  
                 for i in 0..list_count.checked_sub(1).ok_or(Error::CheckedOperations)? { 
@@ -335,7 +343,7 @@ pub trait AzeroStakingTrait:
         }
     }
 
-    fn claim(&mut self, request_index: u64) -> Result<(), Error> {
+    fn claim(&mut self, request_index: u128) -> Result<(), Error> {
         let claimer = Self::env().caller();
 
         // Check if the request_index belongs to the caller 
@@ -492,6 +500,10 @@ pub trait AzeroStakingTrait:
         }
     }
 
+    fn get_azero_balance(&self) -> Balance {
+        Self::env().balance()
+    }
+
     fn get_payable_azero(&self) -> Result<Balance, Error>  {
         Self::env().balance().checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
     }
@@ -504,9 +516,9 @@ pub trait AzeroStakingTrait:
         inw_balance.checked_sub(self.data::<Data>().total_inw_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
     }
 
-    fn get_role_withdrawal_manager(&self) -> RoleType {
-        WITHDRAWAL_MANAGER
-    }
+    // fn get_role_withdrawal_manager(&self) -> RoleType {
+    //     WITHDRAWAL_MANAGER
+    // }
 
     #[modifiers(only_role(WITHDRAWAL_MANAGER))]
     fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error> {
@@ -618,14 +630,98 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().unstaking_fee
     }
 
-    fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation> {
-        self.data::<Data>().stake_info_by_staker.get(&staker)
+    fn get_stake_info(&mut self, staker: AccountId) -> Result<Option<StakeInformation>, Error> {
+        let current_time = Self::env().block_timestamp();
+
+        if self.data::<Data>().stake_info_by_staker.get(&staker).is_some() && self.update_unclaimed_rewards(staker, current_time).is_err() {
+            return Err(Error::CannotUpdateUnclaimedRewards);
+        }
+            
+        Ok(self.data::<Data>().stake_info_by_staker.get(&staker))  
     }
 
-    fn get_withdrawal_request_count(&self) -> u64 {
+    fn get_staker_list(&self) -> Vec<AccountId> {
+        self.data::<Data>().staker_list.clone()
+    }
+
+    fn get_withdrawal_request_count(&self) -> u128 {
         self.data::<Data>().withdrawal_request_count
     }
 
+    fn get_withdrawal_request_list(&self) -> Vec<WithdrawalRequestInformation> {
+        let count = self.data::<Data>().withdrawal_request_count;
+        let mut request_list = Vec::<WithdrawalRequestInformation>::new();
+
+        for i in 0..count {
+            if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&i) {
+                request_list.push(withdrawal_request_info);
+            }
+        } 
+
+        request_list
+    }
+
+    fn get_withdrawal_request(&self, index: u128) -> Option<WithdrawalRequestInformation> {
+        self.data::<Data>().withdrawal_request_list.get(&index)
+    }
+
+    fn get_withdrawal_request_count_by_user(&self, user: AccountId) -> u128 {
+        self.data::<Data>().withdrawal_request_by_user.count(user)
+    }
+
+    fn get_withdrawal_request_list_by_user(&self, user: AccountId) -> Vec<WithdrawalRequestInformation> {
+        let count = self.data::<Data>().withdrawal_request_by_user.count(user);
+        let mut request_list = Vec::<WithdrawalRequestInformation>::new();
+
+        for i in 0..count {
+            if let Some(request_index) = self.data::<Data>().withdrawal_request_by_user.get_value(user, &i) {
+                if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
+                    request_list.push(withdrawal_request_info);
+                }
+            }
+        } 
+
+        request_list
+    }
+
+    fn get_withdrawal_request_index_list_by_user(&self, user: AccountId) -> Vec<u128> {
+        let count = self.data::<Data>().withdrawal_request_by_user.count(user);
+        let mut request_index_list = Vec::<u128>::new();
+
+        for i in 0..count {
+            if let Some(request_index) = self.data::<Data>().withdrawal_request_by_user.get_value(user, &i) {
+                request_index_list.push(request_index);
+            }
+        } 
+
+        request_index_list
+    }
+
+    fn get_withdrawal_request_index_by_user(&self, user: AccountId, index: u128) -> Option<u128> {
+        self.data::<Data>().withdrawal_request_by_user.get_value(user, &index)
+    }
+
+    fn get_waiting_withdrawal_count(&self) -> u128 {
+        self.data::<Data>().withdrawal_waiting_list.count(1)
+    }
+
+    fn get_waiting_withdrawal_list(&self) -> Vec<u128> {
+        let count = self.data::<Data>().withdrawal_waiting_list.count(1);
+        let mut request_index_list = Vec::<u128>::new();
+
+        for i in 0..count {
+            if let Some(request_index) = self.data::<Data>().withdrawal_waiting_list.get_value(1, &i) {
+                request_index_list.push(request_index);
+            }
+        } 
+
+        request_index_list
+    }
+
+    fn get_waiting_withdrawal_index(&self, index: u128) -> Option<u128> {
+        self.data::<Data>().withdrawal_waiting_list.get_value(1, &index)
+    }
+   
     fn get_total_azero_claimed(&self) -> Balance {
         self.data::<Data>().total_azero_claimed
     }
@@ -677,6 +773,19 @@ pub trait AzeroStakingTrait:
             return Err(Error::InvalidApy);
         }
 
+        // Update the current unclaimed_amount for all stakers
+        let current_time = Self::env().block_timestamp();
+
+        let count = self.data::<Data>().staker_list.len();
+        for i in 0..count {
+            let staker = self.data::<Data>().staker_list[i];
+
+            if self.update_unclaimed_rewards(staker, current_time).is_err() {
+                return Err(Error::CannotUpdateUnclaimedRewards);
+            }
+        }
+
+        // Update apy
         self.data::<Data>().apy = apy;
         Ok(())
     }   
@@ -703,6 +812,19 @@ pub trait AzeroStakingTrait:
             return Err(Error::InvalidMultiplier);
         }
 
+        // Update the current unclaimed_amount for all stakers
+        let current_time = Self::env().block_timestamp();
+
+        let count = self.data::<Data>().staker_list.len();
+        for i in 0..count {
+            let staker = self.data::<Data>().staker_list[i];
+
+            if self.update_unclaimed_rewards(staker, current_time).is_err() {
+                return Err(Error::CannotUpdateUnclaimedRewards);
+            }
+        }
+
+        // Update inw_multiplier
         self.data::<Data>().inw_multiplier = inw_multiplier;
         Ok(())
     }   

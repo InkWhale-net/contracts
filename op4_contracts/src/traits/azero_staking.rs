@@ -1,3 +1,5 @@
+use ink::prelude::{vec::Vec};
+
 use openbrush::{
     contracts::{
         traits::psp22::{
@@ -10,7 +12,7 @@ use openbrush::{
 };
 
 use crate::impls::azero_staking::data::{
-    StakeInformation, OngoingExpiredWaitingList
+    StakeInformation, OngoingExpiredWaitingList, WithdrawalRequestInformation
 };
 
 use crate::traits::error::Error;
@@ -18,7 +20,7 @@ use crate::traits::error::Error;
 // ADMINER RoleType = 3739740293
 pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 
-// WITHDRAW_TO_STAKE RoleType = 
+// WITHDRAW_TO_STAKE RoleType = 3333445727
 pub const WITHDRAWAL_MANAGER: RoleType = ink::selector_id!("WITHDRAWAL_MANAGER");
 
 // Withdrawal request status
@@ -44,7 +46,7 @@ pub trait AzeroStakingTrait {
 
     fn _emit_withrawal_request_event(
         &self,
-        _request_id: u64,
+        _request_id: u128,
         _user: AccountId,        
         _amount: Balance,
         _azero_reward: Balance,
@@ -54,7 +56,7 @@ pub trait AzeroStakingTrait {
 
     fn _emit_claim_event(
         &self,
-        _request_id: u64,
+        _request_id: u128,
         _user: AccountId,  
         _azero_amount: Balance,
         _inw_amount: Balance,
@@ -86,10 +88,7 @@ pub trait AzeroStakingTrait {
     // Main funcs
     #[ink(message, payable)]
     fn stake(&mut self, amount: Balance) -> Result<(), Error>;
-
-    // #[ink(message)]
-    // fn update_unclaimed_rewards(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error>;
-    
+     
     #[ink(message)]
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
     
@@ -100,19 +99,19 @@ pub trait AzeroStakingTrait {
     fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error>;
     
     #[ink(message)]
-    fn claim(&mut self, request_index: u64) -> Result<(), Error>;
+    fn claim(&mut self, request_index: u128) -> Result<(), Error>;
 
     #[ink(message)]
     fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error>;
+
+    #[ink(message)]
+    fn get_azero_balance(&self) -> Balance;
 
     #[ink(message)]
     fn get_payable_azero(&self) -> Result<Balance, Error>;
 
     #[ink(message)]
     fn get_withdrawable_inw(&self) -> Result<Balance, Error>;
-
-    #[ink(message)]
-    fn get_role_withdrawal_manager(&self) -> RoleType;
 
     #[ink(message)]
     fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error>;
@@ -146,10 +145,40 @@ pub trait AzeroStakingTrait {
     fn get_unstaking_fee(&self) -> Balance;
 
     #[ink(message)]
-    fn get_stake_info(&self, staker: AccountId) -> Option<StakeInformation>;
+    fn get_stake_info(&mut self, staker: AccountId) -> Result<Option<StakeInformation>, Error>;
 
     #[ink(message)]
-    fn get_withdrawal_request_count(&self) -> u64;
+    fn get_staker_list(&self) -> Vec<AccountId>;
+
+    #[ink(message)]
+    fn get_withdrawal_request_count(&self) -> u128;
+
+    #[ink(message)]
+    fn get_withdrawal_request_list(&self) -> Vec<WithdrawalRequestInformation>;
+    
+    #[ink(message)]
+    fn get_withdrawal_request(&self, index: u128) -> Option<WithdrawalRequestInformation>;
+    
+    #[ink(message)]
+    fn get_withdrawal_request_count_by_user(&self, user: AccountId) -> u128;
+
+    #[ink(message)]
+    fn get_withdrawal_request_list_by_user(&self, user: AccountId) -> Vec<WithdrawalRequestInformation>;
+    
+    #[ink(message)]
+    fn get_withdrawal_request_index_list_by_user(&self, user: AccountId) -> Vec<u128>;
+    
+    #[ink(message)]
+    fn get_withdrawal_request_index_by_user(&self, user: AccountId, index: u128) -> Option<u128>;
+
+    #[ink(message)]
+    fn get_waiting_withdrawal_count(&self) -> u128;
+
+    #[ink(message)]
+    fn get_waiting_withdrawal_list(&self) -> Vec<u128>;
+
+    #[ink(message)]
+    fn get_waiting_withdrawal_index(&self, index: u128) -> Option<u128>;
 
     #[ink(message)]
     fn get_total_azero_claimed(&self) -> Balance;

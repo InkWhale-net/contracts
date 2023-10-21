@@ -6,7 +6,7 @@ pub use self::my_azero_staking::{MyAzeroStaking, MyAzeroStakingRef};
 #[openbrush::implementation(AccessControl, AccessControlEnumerable, Ownable)]
 #[openbrush::contract]
 pub mod my_azero_staking {
-    use openbrush::{contracts::ownable::*, modifiers, traits::Storage};
+    use openbrush::{contracts::ownable::*, traits::Storage};
 
     use inkwhale_project::impls::{
         azero_staking::*, 
@@ -40,7 +40,7 @@ pub mod my_azero_staking {
 
     #[ink(event)]
     pub struct WithrawalRequestEvent {
-        request_id: u64,
+        request_id: u128,
         user: AccountId,        
         amount: Balance,
         azero_reward: Balance,
@@ -50,7 +50,7 @@ pub mod my_azero_staking {
 
     #[ink(event)]
     pub struct ClaimEvent {
-        request_id: u64,
+        request_id: u128,
         user: AccountId,  
         azero_amount: Balance,
         inw_amount: Balance,
@@ -100,7 +100,7 @@ pub mod my_azero_staking {
 
         fn _emit_withrawal_request_event(
             &self,
-            _request_id: u64,
+            _request_id: u128,
             _user: AccountId,        
             _amount: Balance,
             _azero_reward: Balance,
@@ -122,7 +122,7 @@ pub mod my_azero_staking {
 
         fn _emit_claim_event(
             &self,
-            _request_id: u64,
+            _request_id: u128,
             _user: AccountId,  
             _azero_amount: Balance,
             _inw_amount: Balance,
@@ -227,9 +227,7 @@ pub mod my_azero_staking {
             }
         }
 
-        #[ink(message)]
-        #[modifiers(only_owner)]
-        pub fn initialize(
+        fn initialize(
             &mut self,
             min_staking_amount: Balance,
             max_total_staking_amount: Balance,
@@ -261,6 +259,10 @@ pub mod my_azero_staking {
 
             if inw_multiplier == 0 {
                 return Err(Error::InvalidMultiplier);
+            }
+
+            if unstaking_fee == 0 {
+                return Err(Error::InvalidUnstakingFee);
             }
 
             self.data.min_staking_amount = min_staking_amount;
