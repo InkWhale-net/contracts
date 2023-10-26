@@ -221,9 +221,29 @@ pub trait AzeroStakingTrait:
         } else {
             Err(Error::NoStakeInfoFound)
         }
+    }    
+
+    fn find_inserted_index(&self, waiting_list: &Vec::<u128>, value: Balance) -> Result<usize, Error> {
+        let mut low: usize = 0;
+        let mut high: usize = waiting_list.len();            
+
+        while low < high {
+            let mid: usize = (low.checked_add(high).ok_or(Error::CheckedOperations)?) >> 1;
+                        
+            if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&waiting_list[mid]) {
+                if withdrawal_request_info.total_azero < value {
+                    low = mid.checked_add(1).ok_or(Error::CheckedOperations)?;
+                } else {
+                    high = mid;
+                }
+            }                      
+        }
+
+        return Ok(low);
     }
 
-    fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
+    // The waiting_list is sorted in order of total_azero 
+    fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
         let count = self.data::<Data>().withdrawal_waiting_list.count(1);
         
         let mut waiting_list = Vec::<u128>::new();
@@ -237,9 +257,13 @@ pub trait AzeroStakingTrait:
                 if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
                     if withdrawal_request_info.request_time.checked_add(self.data::<Data>().max_waiting_time).ok_or(Error::CheckedOperations)?
                        <= current_time.checked_add(expiration_duration).ok_or(Error::CheckedOperations)? {
-                        waiting_list.push(request_index);
-                        total_azero = total_azero.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
-                        total_inw = total_inw.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)?;
+                        // Find while list index and insert the request index to waiting list
+                        if let Ok(wl_index) = self.find_inserted_index(&waiting_list, withdrawal_request_info.total_azero) {
+                            waiting_list.insert(wl_index, request_index);
+
+                            total_azero = total_azero.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
+                            total_inw = total_inw.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)?;
+                        }
                     } 
                 }
             }
@@ -256,32 +280,10 @@ pub trait AzeroStakingTrait:
 
     #[modifiers(only_role(ADMINER))]
     fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error> {
-        if let Ok(ongoing_expired_waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
-            let mut waiting_list = ongoing_expired_waiting_list.waiting_list; 
-            let list_count = waiting_list.len();
-            
-            // Sort the waiting list 
-            if list_count > 1 {
-                // Strategy 1: Pay for as many users as possible - Sort the waiting_list in ascending order of amount + azero_reward  
-                for i in 0..list_count.checked_sub(1).ok_or(Error::CheckedOperations)? { 
-                    for j in (i + 1)..list_count {
-                        let request_index_x = waiting_list[i]; 
-                        let request_index_y = waiting_list[j]; 
-
-                        if let Some(withdrawal_request_info_x) = self.data::<Data>().withdrawal_request_list.get(&request_index_x) {
-                            if let Some(withdrawal_request_info_y) = self.data::<Data>().withdrawal_request_list.get(&request_index_y) {
-                                if withdrawal_request_info_x.total_azero > withdrawal_request_info_y.total_azero {
-                                    // Swap 2 requests
-                                    waiting_list[i] = request_index_y;
-                                    waiting_list[j] = request_index_x;
-                                }
-                            }
-                        }           
-                    }
-                }
-                // Strategy 2: (Not recommended) Pay for the most value of withdrawals - Sort the waiting_list in descending order of amount + azero_reward
-            }
-            
+        if let Ok(ongoing_expired_waiting_list) = self.get_sorted_waiting_list_within_expiration_duration(expiration_duration) {
+            let waiting_list = ongoing_expired_waiting_list.waiting_list; 
+            let list_count = waiting_list.len();           
+                        
             // Mark requests as claimable if there are enough to pay
             let mut total_azero_claimable: Balance = 0;
             let mut total_inw_claimable: Balance = 0;
@@ -487,7 +489,7 @@ pub trait AzeroStakingTrait:
     }
 
     fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error> {
-        if let Ok(ongoing_expired_waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
+        if let Ok(ongoing_expired_waiting_list) = self.get_sorted_waiting_list_within_expiration_duration(expiration_duration) {
             if Self::env().balance() > ongoing_expired_waiting_list.total_azero.checked_add(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)? {
                 Self::env().balance()
                     .checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)?

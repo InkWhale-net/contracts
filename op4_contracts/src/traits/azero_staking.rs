@@ -93,7 +93,7 @@ pub trait AzeroStakingTrait {
     fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
     
     #[ink(message)]
-    fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
+    fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
     
     #[ink(message)]
     fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error>;
