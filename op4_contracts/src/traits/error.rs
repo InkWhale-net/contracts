@@ -80,7 +80,8 @@ pub enum Error {
     InvalidTotalSupply,
     PhaseNotPublic,
     InvalidSetPublic,
-    InvalidCapAmount
+    InvalidCapAmount,
+    InvalidWhitelistAmount
 }
 
 impl From<OwnableError> for Error {

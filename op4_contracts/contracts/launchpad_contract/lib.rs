@@ -291,7 +291,7 @@ pub mod my_launchpad {
                 vesting_unit: phase.vesting_unit,
                 total_vesting_units,
                 cap_amount: phase.cap_amount,
-                available_amount: available_amount
+                available_amount
             };
             self.data.phase.insert(&self.data.total_phase, &phase_info);
 

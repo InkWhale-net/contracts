@@ -948,6 +948,13 @@ pub trait LaunchpadContractTrait:
                 return Err(Error::InvalidWhitelistData);
             }
 
+            let over_amount_list: Vec<_> = whitelist_amounts.iter()
+                             .filter(|&amount| amount > &phase_info.cap_amount).collect();
+
+            if over_amount_list.len() > 0 {
+                return Err(Error::InvalidWhitelistAmount);
+            }
+            
             // let mut total_amount: Balance = 0;
 
             for i in 0..whitelist_count {
@@ -1044,6 +1051,13 @@ pub trait LaunchpadContractTrait:
                 || whitelist_count != whitelist_prices.len()
             {
                 return Err(Error::InvalidWhitelistData);
+            }
+
+            let over_amount_list: Vec<_> = whitelist_amounts.iter()
+                             .filter(|&amount| amount > &phase_info.cap_amount).collect();
+
+            if over_amount_list.len() > 0 {
+                return Err(Error::InvalidWhitelistAmount);
             }
 
             // let total_in = whitelist_amounts.iter().sum();
@@ -1761,6 +1775,8 @@ pub trait LaunchpadContractTrait:
             .checked_add(self.data::<Data>().available_token_amount)
             .ok_or(Error::CheckedOperations)?;
 
+        self.data::<Data>().available_token_amount = 0;
+
         // Burn the unsold token
         if total_burned > 0 && Psp22Ref::burn (
             &self.data::<Data>().token_address,
@@ -1848,6 +1864,8 @@ pub trait LaunchpadContractTrait:
         total_withdraw = total_withdraw
             .checked_add(self.data::<Data>().available_token_amount)
             .ok_or(Error::CheckedOperations)?;
+
+        self.data::<Data>().available_token_amount = 0;
 
         // Withdraw the unsold token
         if total_withdraw > 0 {
