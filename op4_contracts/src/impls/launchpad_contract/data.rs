@@ -18,6 +18,7 @@ pub struct PhaseInput {
     pub immediate_release_rate: u32, // scaled 10000
     pub vesting_duration: u64,
     pub vesting_unit: u64,
+    pub cap_amount: Balance,
     pub is_public: bool,
     pub public_amount: Balance,
     pub public_price: Balance
@@ -35,6 +36,8 @@ pub struct PhaseInfo {
     pub end_vesting_time: u64,
     pub vesting_unit: u64,
     pub total_vesting_units: u64,
+    pub cap_amount: Balance,
+    pub available_amount: Balance
 }
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]

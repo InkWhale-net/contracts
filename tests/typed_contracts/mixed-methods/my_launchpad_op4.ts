@@ -53,126 +53,16 @@ export default class Methods {
 	}
 
 	/**
-	* getWhitelistAccountCount
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getWhitelistAccountCount" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistAccountCount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getProjectInfoUri
-	*
-	* @returns { Result<string, ReturnTypes.LangError> }
-	*/
-	"getProjectInfoUri" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<string, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectInfoUri", [], __options, (result) => { return handleReturnType(result, getTypeDescription(21, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getWhitelistSaleTotalAmount
+	* getAvailableAmount
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
 	*/
-	"getWhitelistSaleTotalAmount" (
+	"getAvailableAmount" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* setGeneratorContract
-	*
-	* @param { ArgumentTypes.AccountId } generatorContract,
-	* @returns { void }
-	*/
-	"setGeneratorContract" (
-		generatorContract: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setGeneratorContract", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [generatorContract], __options);
-	}
-
-	/**
-	* getName
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<string | null, ReturnTypes.LangError> }
-	*/
-	"getName" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<string | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getName", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(24, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* setTokenAddress
-	*
-	* @param { ArgumentTypes.AccountId } tokenAddress,
-	* @returns { void }
-	*/
-	"setTokenAddress" (
-		tokenAddress: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTokenAddress", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [tokenAddress], __options);
-	}
-
-	/**
-	* getImmediateReleaseRate
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<number | null, ReturnTypes.LangError> }
-	*/
-	"getImmediateReleaseRate" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getImmediateReleaseRate", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(26, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* setPublicTotalAmount
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } totalAmount,
-	* @returns { void }
-	*/
-	"setPublicTotalAmount" (
-		phaseId: (number | string | BN),
-		totalAmount: (string | number | BN),
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicTotalAmount", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, totalAmount], __options);
-	}
-
-	/**
-	* getPublicSaleInfo
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<ReturnTypes.PublicSaleInfo | null, ReturnTypes.LangError> }
-	*/
-	"getPublicSaleInfo" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.PublicSaleInfo | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleInfo", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(28, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getAvailableAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -193,152 +83,87 @@ export default class Methods {
 	}
 
 	/**
-	* addMultiWhitelists
+	* getProjectInfoUri
 	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { Array<ArgumentTypes.AccountId> } accounts,
-	* @param { Array<(string | number | BN)> } whitelistAmounts,
-	* @param { Array<(string | number | BN)> } whitelistPrices,
-	* @returns { void }
+	* @returns { Result<string, ReturnTypes.LangError> }
 	*/
-	"addMultiWhitelists" (
-		phaseId: (number | string | BN),
-		accounts: Array<ArgumentTypes.AccountId>,
-		whitelistAmounts: Array<(string | number | BN)>,
-		whitelistPrices: Array<(string | number | BN)>,
+	"getProjectInfoUri" (
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::addMultiWhitelists", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
+	): Promise< QueryReturnType< Result<string, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectInfoUri", [], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getWhitelistAccount
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } accountIndex,
-	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
-	*/
-	"getWhitelistAccount" (
-		phaseId: (number | string | BN),
-		accountIndex: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistAccount", [phaseId, accountIndex], __options, (result) => { return handleReturnType(result, getTypeDescription(33, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getProjectStartTime
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getProjectStartTime" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectStartTime", [], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getVestingDuration
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<number | null, ReturnTypes.LangError> }
-	*/
-	"getVestingDuration" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getVestingDuration", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(35, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getTxRate
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getTxRate" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTxRate", [], __options, (result) => { return handleReturnType(result, getTypeDescription(37, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getPhase
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<ReturnTypes.PhaseInfo | null, ReturnTypes.LangError> }
-	*/
-	"getPhase" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.PhaseInfo | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPhase", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(38, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getVestingUnit
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<number | null, ReturnTypes.LangError> }
-	*/
-	"getVestingUnit" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getVestingUnit", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(35, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getWhitelistSaleTotalClaimedAmount
+	* getWhitelistSaleTotalPurchasedAmount
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
 	*/
-	"getWhitelistSaleTotalClaimedAmount" (
+	"getWhitelistSaleTotalPurchasedAmount" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* setTotalSupply
+	* getWhitelistSaleTotalAmount
 	*
-	* @param { (string | number | BN) } totalSupply,
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
+	*/
+	"getWhitelistSaleTotalAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setIsActive
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { boolean } isActive,
 	* @returns { void }
 	*/
-	"setTotalSupply" (
-		totalSupply: (string | number | BN),
+	"setIsActive" (
+		phaseId: (number | string | BN),
+		isActive: boolean,
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTotalSupply", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsActive", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [totalSupply], __options);
+		}, [phaseId, isActive], __options);
 	}
 
 	/**
-	* burnUnsoldTokens
+	* getPublicSaleTotalPurchasedAmount
 	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
+	*/
+	"getPublicSaleTotalPurchasedAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setPublicSalePrice
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } price,
 	* @returns { void }
 	*/
-	"burnUnsoldTokens" (
+	"setPublicSalePrice" (
+		phaseId: (number | string | BN),
+		price: (string | number | BN),
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::burnUnsoldTokens", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicSalePrice", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* getAvailableTokenAmount
-	*
-	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
-	*/
-	"getAvailableTokenAmount" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getAvailableTokenAmount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(41, DATA_TYPE_DESCRIPTIONS)); });
+		}, [phaseId, price], __options);
 	}
 
 	/**
@@ -361,207 +186,53 @@ export default class Methods {
 	}
 
 	/**
-	* getGeneratorContract
-	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
-	*/
-	"getGeneratorContract" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getGeneratorContract", [], __options, (result) => { return handleReturnType(result, getTypeDescription(42, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getProjectEndTime
+	* getProjectStartTime
 	*
 	* @returns { Result<number, ReturnTypes.LangError> }
 	*/
-	"getProjectEndTime" (
+	"getProjectStartTime" (
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectEndTime", [], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectStartTime", [], __options, (result) => { return handleReturnType(result, getTypeDescription(23, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getWhitelistSaleTotalPurchasedAmount
+	* getWhitelistSaleInfo
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
+	* @returns { Result<ReturnTypes.WhitelistSaleInfo | null, ReturnTypes.LangError> }
 	*/
-	"getWhitelistSaleTotalPurchasedAmount" (
+	"getWhitelistSaleInfo" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalPurchasedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
+	): Promise< QueryReturnType< Result<ReturnTypes.WhitelistSaleInfo | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleInfo", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(24, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getTotalPhase
-	*
-	* @returns { Result<number, ReturnTypes.LangError> }
-	*/
-	"getTotalPhase" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTotalPhase", [], __options, (result) => { return handleReturnType(result, getTypeDescription(43, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* setMultiPhases
-	*
-	* @param { Array<(number | string | BN)> } phaseId,
-	* @param { Array<boolean> } isActive,
-	* @param { Array<ArgumentTypes.PhaseInput> } phases,
-	* @returns { void }
-	*/
-	"setMultiPhases" (
-		phaseId: Array<(number | string | BN)>,
-		isActive: Array<boolean>,
-		phases: Array<ArgumentTypes.PhaseInput>,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setMultiPhases", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, isActive, phases], __options);
-	}
-
-	/**
-	* getBalance
-	*
-	* @returns { void }
-	*/
-	"getBalance" (
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getBalance", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [], __options);
-	}
-
-	/**
-	* whitelistPurchase
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } amount,
-	* @returns { void }
-	*/
-	"whitelistPurchase" (
-		phaseId: (number | string | BN),
-		amount: (string | number | BN),
-		__options: GasLimitAndRequiredValue,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistPurchase", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, amount], __options);
-	}
-
-	/**
-	* getPublicSalePrice
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
-	*/
-	"getPublicSalePrice" (
-		phaseId: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSalePrice", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getPublicBuyer
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { ArgumentTypes.AccountId } account,
-	* @returns { Result<ReturnTypes.BuyerInformation | null, ReturnTypes.LangError> }
-	*/
-	"getPublicBuyer" (
-		phaseId: (number | string | BN),
-		account: ArgumentTypes.AccountId,
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.BuyerInformation | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicBuyer", [phaseId, account], __options, (result) => { return handleReturnType(result, getTypeDescription(48, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* setImmediateReleaseRate
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } immediateReleaseRate,
-	* @returns { void }
-	*/
-	"setImmediateReleaseRate" (
-		phaseId: (number | string | BN),
-		immediateReleaseRate: (number | string | BN),
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setImmediateReleaseRate", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, immediateReleaseRate], __options);
-	}
-
-	/**
-	* updateMultiWhitelists
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { Array<ArgumentTypes.AccountId> } accounts,
-	* @param { Array<(string | number | BN)> } whitelistAmounts,
-	* @param { Array<(string | number | BN)> } whitelistPrices,
-	* @returns { void }
-	*/
-	"updateMultiWhitelists" (
-		phaseId: (number | string | BN),
-		accounts: Array<ArgumentTypes.AccountId>,
-		whitelistAmounts: Array<(string | number | BN)>,
-		whitelistPrices: Array<(string | number | BN)>,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::updateMultiWhitelists", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
-	}
-
-	/**
-	* setIsActive
-	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { boolean } isActive,
-	* @returns { void }
-	*/
-	"setIsActive" (
-		phaseId: (number | string | BN),
-		isActive: boolean,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsActive", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, isActive], __options);
-	}
-
-	/**
-	* getStartTime
+	* getVestingDuration
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<number | null, ReturnTypes.LangError> }
 	*/
-	"getStartTime" (
+	"getVestingDuration" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getStartTime", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(35, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getVestingDuration", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(27, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getEndTime
+	* getImmediateReleaseRate
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<number | null, ReturnTypes.LangError> }
 	*/
-	"getEndTime" (
+	"getImmediateReleaseRate" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getEndTime", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(35, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getImmediateReleaseRate", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(29, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -582,76 +253,193 @@ export default class Methods {
 	}
 
 	/**
-	* getPublicSaleTotalClaimedAmount
+	* burnUnsoldTokens
+	*
+	* @returns { void }
+	*/
+	"burnUnsoldTokens" (
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::burnUnsoldTokens", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getVestingUnit
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<number | null, ReturnTypes.LangError> }
+	*/
+	"getVestingUnit" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getVestingUnit", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(27, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getPublicSalePrice
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
 	*/
-	"getPublicSaleTotalClaimedAmount" (
+	"getPublicSalePrice" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSalePrice", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* setProjectInfoUri
-	*
-	* @param { string } projectInfoUri,
-	* @returns { void }
-	*/
-	"setProjectInfoUri" (
-		projectInfoUri: string,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setProjectInfoUri", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [projectInfoUri], __options);
-	}
-
-	/**
-	* setIsPublic
+	* setVestingUnit
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @param { boolean } isPublic,
+	* @param { (number | string | BN) } vestingUnit,
 	* @returns { void }
 	*/
-	"setIsPublic" (
+	"setVestingUnit" (
 		phaseId: (number | string | BN),
-		isPublic: boolean,
+		vestingUnit: (number | string | BN),
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsPublic", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingUnit", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, isPublic], __options);
+		}, [phaseId, vestingUnit], __options);
 	}
 
 	/**
-	* getWhitelistSaleInfo
+	* setTotalSupply
+	*
+	* @param { (string | number | BN) } totalSupply,
+	* @returns { void }
+	*/
+	"setTotalSupply" (
+		totalSupply: (string | number | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTotalSupply", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [totalSupply], __options);
+	}
+
+	/**
+	* publicClaim
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<ReturnTypes.WhitelistSaleInfo | null, ReturnTypes.LangError> }
+	* @returns { void }
 	*/
-	"getWhitelistSaleInfo" (
+	"publicClaim" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.WhitelistSaleInfo | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleInfo", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(51, DATA_TYPE_DESCRIPTIONS)); });
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicClaim", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
 	}
 
 	/**
-	* topup
+	* getAvailableTokenAmount
 	*
-	* @param { (string | number | BN) } amount,
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"getAvailableTokenAmount" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getAvailableTokenAmount", [], __options, (result) => { return handleReturnType(result, getTypeDescription(31, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getName
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<string | null, ReturnTypes.LangError> }
+	*/
+	"getName" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<string | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getName", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(32, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* withdraw
+	*
+	* @param { (string | number | BN) } value,
+	* @param { ArgumentTypes.AccountId } receiver,
 	* @returns { void }
 	*/
-	"topup" (
-		amount: (string | number | BN),
+	"withdraw" (
+		value: (string | number | BN),
+		receiver: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::topup", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::withdraw", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [amount], __options);
+		}, [value, receiver], __options);
+	}
+
+	/**
+	* getGeneratorContract
+	*
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
+	*/
+	"getGeneratorContract" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getGeneratorContract", [], __options, (result) => { return handleReturnType(result, getTypeDescription(34, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getPublicBuyer
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { ArgumentTypes.AccountId } account,
+	* @returns { Result<ReturnTypes.BuyerInformation | null, ReturnTypes.LangError> }
+	*/
+	"getPublicBuyer" (
+		phaseId: (number | string | BN),
+		account: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.BuyerInformation | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicBuyer", [phaseId, account], __options, (result) => { return handleReturnType(result, getTypeDescription(35, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getProjectEndTime
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getProjectEndTime" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getProjectEndTime", [], __options, (result) => { return handleReturnType(result, getTypeDescription(23, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getBalance
+	*
+	* @returns { void }
+	*/
+	"getBalance" (
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::getBalance", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [], __options);
+	}
+
+	/**
+	* getPublicSaleInfo
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnTypes.PublicSaleInfo | null, ReturnTypes.LangError> }
+	*/
+	"getPublicSaleInfo" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.PublicSaleInfo | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleInfo", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(40, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -674,46 +462,112 @@ export default class Methods {
 	}
 
 	/**
-	* publicClaim
+	* setMultiPhases
 	*
-	* @param { (number | string | BN) } phaseId,
+	* @param { Array<(number | string | BN)> } phaseId,
+	* @param { Array<boolean> } isActive,
+	* @param { Array<ArgumentTypes.PhaseInput> } phases,
 	* @returns { void }
 	*/
-	"publicClaim" (
-		phaseId: (number | string | BN),
+	"setMultiPhases" (
+		phaseId: Array<(number | string | BN)>,
+		isActive: Array<boolean>,
+		phases: Array<ArgumentTypes.PhaseInput>,
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::publicClaim", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setMultiPhases", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
+		}, [phaseId, isActive, phases], __options);
 	}
 
 	/**
-	* getPublicSaleTotalPurchasedAmount
+	* setTxRate
+	*
+	* @param { (number | string | BN) } txRate,
+	* @returns { void }
+	*/
+	"setTxRate" (
+		txRate: (number | string | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTxRate", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [txRate], __options);
+	}
+
+	/**
+	* setPublicTotalAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } totalAmount,
+	* @returns { void }
+	*/
+	"setPublicTotalAmount" (
+		phaseId: (number | string | BN),
+		totalAmount: (string | number | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicTotalAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, totalAmount], __options);
+	}
+
+	/**
+	* setGeneratorContract
+	*
+	* @param { ArgumentTypes.AccountId } generatorContract,
+	* @returns { void }
+	*/
+	"setGeneratorContract" (
+		generatorContract: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setGeneratorContract", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [generatorContract], __options);
+	}
+
+	/**
+	* setCapAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } capAmount,
+	* @returns { void }
+	*/
+	"setCapAmount" (
+		phaseId: (number | string | BN),
+		capAmount: (string | number | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setCapAmount", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, capAmount], __options);
+	}
+
+	/**
+	* getWhitelistSaleTotalClaimedAmount
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
 	*/
-	"getPublicSaleTotalPurchasedAmount" (
+	"getWhitelistSaleTotalClaimedAmount" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalPurchasedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistSaleTotalClaimedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* whitelistClaim
+	* getEndTime
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @returns { void }
+	* @returns { Result<number | null, ReturnTypes.LangError> }
 	*/
-	"whitelistClaim" (
+	"getEndTime" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistClaim", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId], __options);
+	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getEndTime", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(27, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -749,48 +603,246 @@ export default class Methods {
 	}
 
 	/**
-	* setTxRate
+	* getStartTime
 	*
-	* @param { (number | string | BN) } txRate,
-	* @returns { void }
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<number | null, ReturnTypes.LangError> }
 	*/
-	"setTxRate" (
-		txRate: (number | string | BN),
+	"getStartTime" (
+		phaseId: (number | string | BN),
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTxRate", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [txRate], __options);
+	): Promise< QueryReturnType< Result<number | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getStartTime", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(27, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getIsActive
+	* getTokenAddress
 	*
-	* @param { (number | string | BN) } phaseId,
-	* @returns { Result<boolean | null, ReturnTypes.LangError> }
+	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
 	*/
-	"getIsActive" (
-		phaseId: (number | string | BN),
+	"getTokenAddress" (
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<boolean | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getIsActive", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(54, DATA_TYPE_DESCRIPTIONS)); });
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTokenAddress", [], __options, (result) => { return handleReturnType(result, getTypeDescription(34, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* setVestingUnit
+	* topup
 	*
-	* @param { (number | string | BN) } phaseId,
-	* @param { (number | string | BN) } vestingUnit,
+	* @param { (string | number | BN) } amount,
 	* @returns { void }
 	*/
-	"setVestingUnit" (
-		phaseId: (number | string | BN),
-		vestingUnit: (number | string | BN),
+	"topup" (
+		amount: (string | number | BN),
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setVestingUnit", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::topup", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, vestingUnit], __options);
+		}, [amount], __options);
+	}
+
+	/**
+	* getCapAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
+	*/
+	"getCapAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getCapAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getPublicSaleTotalAmount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
+	*/
+	"getPublicSaleTotalAmount" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setIsPublic
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { boolean } isPublic,
+	* @returns { void }
+	*/
+	"setIsPublic" (
+		phaseId: (number | string | BN),
+		isPublic: boolean,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setIsPublic", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, isPublic], __options);
+	}
+
+	/**
+	* getTotalPhase
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getTotalPhase" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTotalPhase", [], __options, (result) => { return handleReturnType(result, getTypeDescription(45, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* whitelistPurchase
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (string | number | BN) } amount,
+	* @returns { void }
+	*/
+	"whitelistPurchase" (
+		phaseId: (number | string | BN),
+		amount: (string | number | BN),
+		__options: GasLimitAndRequiredValue,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistPurchase", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, amount], __options);
+	}
+
+	/**
+	* getPhase
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<ReturnTypes.PhaseInfo | null, ReturnTypes.LangError> }
+	*/
+	"getPhase" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.PhaseInfo | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPhase", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(46, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setTokenAddress
+	*
+	* @param { ArgumentTypes.AccountId } tokenAddress,
+	* @returns { void }
+	*/
+	"setTokenAddress" (
+		tokenAddress: ArgumentTypes.AccountId,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setTokenAddress", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [tokenAddress], __options);
+	}
+
+	/**
+	* getTotalSupply
+	*
+	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
+	*/
+	"getTotalSupply" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTotalSupply", [], __options, (result) => { return handleReturnType(result, getTypeDescription(31, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setImmediateReleaseRate
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (number | string | BN) } immediateReleaseRate,
+	* @returns { void }
+	*/
+	"setImmediateReleaseRate" (
+		phaseId: (number | string | BN),
+		immediateReleaseRate: (number | string | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setImmediateReleaseRate", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, immediateReleaseRate], __options);
+	}
+
+	/**
+	* getWhitelistAccount
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { (number | string | BN) } accountIndex,
+	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
+	*/
+	"getWhitelistAccount" (
+		phaseId: (number | string | BN),
+		accountIndex: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistAccount", [phaseId, accountIndex], __options, (result) => { return handleReturnType(result, getTypeDescription(49, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* whitelistClaim
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { void }
+	*/
+	"whitelistClaim" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::whitelistClaim", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId], __options);
+	}
+
+	/**
+	* addMultiWhitelists
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @param { Array<ArgumentTypes.AccountId> } accounts,
+	* @param { Array<(string | number | BN)> } whitelistAmounts,
+	* @param { Array<(string | number | BN)> } whitelistPrices,
+	* @returns { void }
+	*/
+	"addMultiWhitelists" (
+		phaseId: (number | string | BN),
+		accounts: Array<ArgumentTypes.AccountId>,
+		whitelistAmounts: Array<(string | number | BN)>,
+		whitelistPrices: Array<(string | number | BN)>,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::addMultiWhitelists", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
+	}
+
+	/**
+	* getTxRate
+	*
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getTxRate" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTxRate", [], __options, (result) => { return handleReturnType(result, getTypeDescription(53, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* setProjectInfoUri
+	*
+	* @param { string } projectInfoUri,
+	* @returns { void }
+	*/
+	"setProjectInfoUri" (
+		projectInfoUri: string,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setProjectInfoUri", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [projectInfoUri], __options);
 	}
 
 	/**
@@ -805,108 +857,67 @@ export default class Methods {
 		account: ArgumentTypes.AccountId,
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnTypes.WhitelistBuyerInfo | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistBuyer", [phaseId, account], __options, (result) => { return handleReturnType(result, getTypeDescription(56, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistBuyer", [phaseId, account], __options, (result) => { return handleReturnType(result, getTypeDescription(54, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* setPublicSalePrice
+	* updateMultiWhitelists
 	*
 	* @param { (number | string | BN) } phaseId,
-	* @param { (string | number | BN) } price,
+	* @param { Array<ArgumentTypes.AccountId> } accounts,
+	* @param { Array<(string | number | BN)> } whitelistAmounts,
+	* @param { Array<(string | number | BN)> } whitelistPrices,
 	* @returns { void }
 	*/
-	"setPublicSalePrice" (
+	"updateMultiWhitelists" (
 		phaseId: (number | string | BN),
-		price: (string | number | BN),
+		accounts: Array<ArgumentTypes.AccountId>,
+		whitelistAmounts: Array<(string | number | BN)>,
+		whitelistPrices: Array<(string | number | BN)>,
 		__options: GasLimit,
 	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::setPublicSalePrice", (events: EventRecord) => {
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::updateMultiWhitelists", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [phaseId, price], __options);
+		}, [phaseId, accounts, whitelistAmounts, whitelistPrices], __options);
 	}
 
 	/**
-	* withdraw
+	* getWhitelistAccountCount
 	*
-	* @param { (string | number | BN) } value,
-	* @param { ArgumentTypes.AccountId } receiver,
-	* @returns { void }
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<number, ReturnTypes.LangError> }
 	*/
-	"withdraw" (
-		value: (string | number | BN),
-		receiver: ArgumentTypes.AccountId,
+	"getWhitelistAccountCount" (
+		phaseId: (number | string | BN),
 		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "launchpadContractTrait::withdraw", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [value, receiver], __options);
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getWhitelistAccountCount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(23, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
-	* getPublicSaleTotalAmount
+	* getIsActive
+	*
+	* @param { (number | string | BN) } phaseId,
+	* @returns { Result<boolean | null, ReturnTypes.LangError> }
+	*/
+	"getIsActive" (
+		phaseId: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<boolean | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getIsActive", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(57, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* getPublicSaleTotalClaimedAmount
 	*
 	* @param { (number | string | BN) } phaseId,
 	* @returns { Result<ReturnNumber | null, ReturnTypes.LangError> }
 	*/
-	"getPublicSaleTotalAmount" (
+	"getPublicSaleTotalClaimedAmount" (
 		phaseId: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<ReturnNumber | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(22, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getTokenAddress
-	*
-	* @returns { Result<ReturnTypes.AccountId, ReturnTypes.LangError> }
-	*/
-	"getTokenAddress" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTokenAddress", [], __options, (result) => { return handleReturnType(result, getTypeDescription(42, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getTotalSupply
-	*
-	* @returns { Result<ReturnNumber, ReturnTypes.LangError> }
-	*/
-	"getTotalSupply" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnNumber, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getTotalSupply", [], __options, (result) => { return handleReturnType(result, getTypeDescription(41, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* hasRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } address,
-	* @returns { Result<boolean, ReturnTypes.LangError> }
-	*/
-	"hasRole" (
-		role: (number | string | BN),
-		address: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<boolean, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::hasRole", [role, address], __options, (result) => { return handleReturnType(result, getTypeDescription(59, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* grantRole
-	*
-	* @param { (number | string | BN) } role,
-	* @param { ArgumentTypes.AccountId | null } account,
-	* @returns { void }
-	*/
-	"grantRole" (
-		role: (number | string | BN),
-		account: ArgumentTypes.AccountId | null,
-		__options: GasLimit,
-	){
-		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::grantRole", (events: EventRecord) => {
-			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
-		}, [role, account], __options);
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "launchpadContractTrait::getPublicSaleTotalClaimedAmount", [phaseId], __options, (result) => { return handleReturnType(result, getTypeDescription(20, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -927,6 +938,51 @@ export default class Methods {
 	}
 
 	/**
+	* getRoleAdmin
+	*
+	* @param { (number | string | BN) } role,
+	* @returns { Result<number, ReturnTypes.LangError> }
+	*/
+	"getRoleAdmin" (
+		role: (number | string | BN),
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::getRoleAdmin", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(53, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
+	* grantRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId | null } account,
+	* @returns { void }
+	*/
+	"grantRole" (
+		role: (number | string | BN),
+		account: ArgumentTypes.AccountId | null,
+		__options: GasLimit,
+	){
+		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "accessControl::grantRole", (events: EventRecord) => {
+			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
+		}, [role, account], __options);
+	}
+
+	/**
+	* hasRole
+	*
+	* @param { (number | string | BN) } role,
+	* @param { ArgumentTypes.AccountId | null } address,
+	* @returns { Result<boolean, ReturnTypes.LangError> }
+	*/
+	"hasRole" (
+		role: (number | string | BN),
+		address: ArgumentTypes.AccountId | null,
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<boolean, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::hasRole", [role, address], __options, (result) => { return handleReturnType(result, getTypeDescription(61, DATA_TYPE_DESCRIPTIONS)); });
+	}
+
+	/**
 	* renounceRole
 	*
 	* @param { (number | string | BN) } role,
@@ -944,16 +1000,18 @@ export default class Methods {
 	}
 
 	/**
-	* getRoleAdmin
+	* getRoleMember
 	*
 	* @param { (number | string | BN) } role,
-	* @returns { Result<number, ReturnTypes.LangError> }
+	* @param { (number | string | BN) } index,
+	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
 	*/
-	"getRoleAdmin" (
+	"getRoleMember" (
 		role: (number | string | BN),
+		index: (number | string | BN),
 		__options: GasLimit,
-	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControl::getRoleAdmin", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(37, DATA_TYPE_DESCRIPTIONS)); });
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMember", [role, index], __options, (result) => { return handleReturnType(result, getTypeDescription(49, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -966,22 +1024,7 @@ export default class Methods {
 		role: (number | string | BN),
 		__options: GasLimit,
 	): Promise< QueryReturnType< Result<number, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMemberCount", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(37, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
-	* getRoleMember
-	*
-	* @param { (number | string | BN) } role,
-	* @param { (number | string | BN) } index,
-	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
-	*/
-	"getRoleMember" (
-		role: (number | string | BN),
-		index: (number | string | BN),
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMember", [role, index], __options, (result) => { return handleReturnType(result, getTypeDescription(33, DATA_TYPE_DESCRIPTIONS)); });
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "accessControlEnumerable::getRoleMemberCount", [role], __options, (result) => { return handleReturnType(result, getTypeDescription(53, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 	/**
@@ -998,17 +1041,6 @@ export default class Methods {
 	}
 
 	/**
-	* owner
-	*
-	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
-	*/
-	"owner" (
-		__options: GasLimit,
-	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
-		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options, (result) => { return handleReturnType(result, getTypeDescription(33, DATA_TYPE_DESCRIPTIONS)); });
-	}
-
-	/**
 	* transferOwnership
 	*
 	* @param { ArgumentTypes.AccountId | null } newOwner,
@@ -1021,6 +1053,17 @@ export default class Methods {
 		return txSignAndSend( this.__apiPromise, this.__nativeContract, this.__keyringPair, "ownable::transferOwnership", (events: EventRecord) => {
 			return decodeEvents(events, this.__nativeContract, EVENT_DATA_TYPE_DESCRIPTIONS);
 		}, [newOwner], __options);
+	}
+
+	/**
+	* owner
+	*
+	* @returns { Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> }
+	*/
+	"owner" (
+		__options: GasLimit,
+	): Promise< QueryReturnType< Result<ReturnTypes.AccountId | null, ReturnTypes.LangError> > >{
+		return queryOkJSON( this.__apiPromise, this.__nativeContract, this.__callerAddress, "ownable::owner", [], __options, (result) => { return handleReturnType(result, getTypeDescription(49, DATA_TYPE_DESCRIPTIONS)); });
 	}
 
 }

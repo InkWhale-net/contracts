@@ -10,6 +10,7 @@ export type PhaseInput = {
 	immediateReleaseRate: number,
 	vestingDuration: number,
 	vestingUnit: number,
+	capAmount: ReturnNumber,
 	isPublic: boolean,
 	publicAmount: ReturnNumber,
 	publicPrice: ReturnNumber
@@ -89,7 +90,8 @@ export interface Error {
 	noPhaseActive ? : null,
 	invalidTotalSupply ? : null,
 	phaseNotPublic ? : null,
-	invalidSetPublic ? : null
+	invalidSetPublic ? : null,
+	invalidCapAmount ? : null
 }
 
 export class ErrorBuilder {
@@ -463,6 +465,11 @@ export class ErrorBuilder {
 			invalidSetPublic: null,
 		};
 	}
+	static InvalidCapAmount(): Error {
+		return {
+			invalidCapAmount: null,
+		};
+	}
 }
 
 export enum OwnableError {
@@ -600,6 +607,21 @@ export enum LangError {
 	couldNotReadInput = 'CouldNotReadInput'
 }
 
+export type WhitelistSaleInfo = {
+	totalAmount: ReturnNumber,
+	totalPurchasedAmount: ReturnNumber,
+	totalClaimedAmount: ReturnNumber,
+	isBurned: boolean,
+	isWithdrawn: boolean
+}
+
+export type BuyerInformation = {
+	purchasedAmount: ReturnNumber,
+	vestingAmount: ReturnNumber,
+	claimedAmount: ReturnNumber,
+	lastUpdatedTime: number
+}
+
 export type PublicSaleInfo = {
 	isPublic: boolean,
 	totalAmount: ReturnNumber,
@@ -619,22 +641,9 @@ export type PhaseInfo = {
 	vestingDuration: number,
 	endVestingTime: number,
 	vestingUnit: number,
-	totalVestingUnits: number
-}
-
-export type BuyerInformation = {
-	purchasedAmount: ReturnNumber,
-	vestingAmount: ReturnNumber,
-	claimedAmount: ReturnNumber,
-	lastUpdatedTime: number
-}
-
-export type WhitelistSaleInfo = {
-	totalAmount: ReturnNumber,
-	totalPurchasedAmount: ReturnNumber,
-	totalClaimedAmount: ReturnNumber,
-	isBurned: boolean,
-	isWithdrawn: boolean
+	totalVestingUnits: number,
+	capAmount: ReturnNumber,
+	availableAmount: ReturnNumber
 }
 
 export type WhitelistBuyerInfo = {

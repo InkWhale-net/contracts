@@ -261,6 +261,25 @@ pub mod my_launchpad {
                     .ok_or(Error::CheckedOperations)?;
             }
 
+            // Check cap_amount
+            if phase.public_amount > phase.cap_amount {
+                return Err(Error::InvalidCapAmount);
+            }
+
+            self.data.available_token_amount = self
+                    .data
+                    .available_token_amount
+                    .checked_sub(phase.cap_amount)
+                    .ok_or(Error::CheckedOperations)?;
+            
+            let mut available_amount = phase.cap_amount;
+            // Check if has public sale
+            if phase.is_public {
+                available_amount = available_amount
+                    .checked_sub(phase.public_amount)
+                    .ok_or(Error::CheckedOperations)?;
+            }
+
             let phase_info = PhaseInfo {
                 is_active: true,
                 name: phase.name,
@@ -271,6 +290,8 @@ pub mod my_launchpad {
                 end_vesting_time,
                 vesting_unit: phase.vesting_unit,
                 total_vesting_units,
+                cap_amount: phase.cap_amount,
+                available_amount
             };
             self.data.phase.insert(&self.data.total_phase, &phase_info);
 
@@ -285,16 +306,7 @@ pub mod my_launchpad {
             };
             self.data
                 .public_sale_info
-                .insert(&self.data.total_phase, &public_sale);
-
-            // Check if has public sale
-            if phase.is_public {
-                self.data.available_token_amount = self
-                    .data
-                    .available_token_amount
-                    .checked_sub(phase.public_amount)
-                    .ok_or(Error::CheckedOperations)?;
-            }
+                .insert(&self.data.total_phase, &public_sale);            
 
             self.data.total_phase = self
                 .data

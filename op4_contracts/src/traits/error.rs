@@ -94,6 +94,8 @@ pub enum Error {
     CannotGetWithdrawableAmount,
     InvalidWithdrawalAmount,
     CannotUpdateUnclaimedRewards
+    InvalidCapAmount,
+    InvalidWhitelistAmount
 }
 
 impl From<OwnableError> for Error {

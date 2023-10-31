@@ -79,6 +79,12 @@ pub trait LaunchpadContractTrait {
     #[ink(message)]
     fn get_vesting_unit(&self, phase_id: u8) -> Option<u64>;
 
+    #[ink(message)]
+    fn get_cap_amount(&self, phase_id: u8) -> Option<Balance>;
+
+    #[ink(message)]
+    fn get_available_amount(&self, phase_id: u8) -> Option<Balance>;
+
     /// Public sale
 
     #[ink(message)]
@@ -165,6 +171,9 @@ pub trait LaunchpadContractTrait {
 
     #[ink(message)]
     fn set_vesting_unit(&mut self, phase_id: u8, vesting_unit: u64) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_cap_amount(&mut self, phase_id: u8, cap_amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]
     fn set_is_public(&mut self, phase_id: u8, is_public: bool) -> Result<(), Error>;
