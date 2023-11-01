@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x06d6dd4f6b01e44621a6617497ae2181eeb4695ade28529beae0adcaddef50bf",
+    "hash": "0x235c49ad77d40cf03dc61423164e2b2b733a1863d99eea0972a6f9fc1f155efc",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.68.0",
     "build_info": {
@@ -456,7 +456,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_azero_balance",
+        "label": "AzeroStakingTrait::get_waiting_withdrawal_list",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -466,7 +466,50 @@
           ],
           "type": 18
         },
-        "selector": "0xe8b1ab1a"
+        "selector": "0x8c3b79ff"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_total_inw_claimed",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xe179dab6"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_multiplier",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetInwMultiplierInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::set_inw_multiplier",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x1cf13874"
       },
       {
         "args": [
@@ -496,37 +539,10 @@
         "selector": "0xc8ff4075"
       },
       {
-        "args": [
-          {
-            "label": "user",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawalRequestCountByUserInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_count_by_user",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x7b6d001a"
-      },
-      {
         "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_total_inw_claimed",
+        "label": "AzeroStakingTrait::get_waiting_withdrawal_count",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -534,105 +550,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
-        "selector": "0xe179dab6"
-      },
-      {
-        "args": [
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "WithdrawInwInput1"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "WithdrawInwInput2"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::withdraw_inw",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x243ecbfd"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_total_stakers",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xc0481a7d"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_list",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 19
-        },
-        "selector": "0x17511a77"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0xba86540d"
+        "selector": "0xf60e78d9"
       },
       {
         "args": [
@@ -641,7 +561,7 @@
             "type": {
               "displayName": [
                 "azerostakingtrait_external",
-                "WithdrawRequestInput1"
+                "StakeInput1"
               ],
               "type": 3
             }
@@ -649,9 +569,9 @@
         ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::withdraw_request",
+        "label": "AzeroStakingTrait::stake",
         "mutates": true,
-        "payable": false,
+        "payable": true,
         "returnType": {
           "displayName": [
             "ink",
@@ -659,71 +579,7 @@
           ],
           "type": 8
         },
-        "selector": "0x61753ad8"
-      },
-      {
-        "args": [
-          {
-            "label": "user",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawalRequestIndexListByUserInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_index_list_by_user",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 22
-        },
-        "selector": "0x28e00c0c"
-      },
-      {
-        "args": [
-          {
-            "label": "user",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawalRequestIndexByUserInput1"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "index",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawalRequestIndexByUserInput2"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_index_by_user",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 24
-        },
-        "selector": "0x86196557"
+        "selector": "0x1946a0e0"
       },
       {
         "args": [],
@@ -737,26 +593,15 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0x3462eeef"
       },
       {
-        "args": [
-          {
-            "label": "expiration_duration",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetSortedWaitingListWithinExpirationDurationInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
+        "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_sorted_waiting_list_within_expiration_duration",
+        "label": "AzeroStakingTrait::get_total_inw_for_waiting_withdrawals",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -764,9 +609,100 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 20
         },
-        "selector": "0x2c0ff8e3"
+        "selector": "0x4fa92bed"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_unstaking_fee",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x84352494"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0x851d72b9"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_inw_multiplier",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xa721cd60"
+      },
+      {
+        "args": [
+          {
+            "label": "max_total_staking_amount",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetMaxTotalStakingAmountInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::set_max_total_staking_amount",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x16be4ee3"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawal_request_count",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x26bd140c"
       },
       {
         "args": [
@@ -809,7 +745,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_count",
+        "label": "AzeroStakingTrait::get_staker_list",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -817,36 +753,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 22
         },
-        "selector": "0x26bd140c"
-      },
-      {
-        "args": [
-          {
-            "label": "expiration_duration",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawableAzeroToStakeToValidatorInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawable_azero_to_stake_to_validator",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0x998a18ee"
+        "selector": "0x94151ab4"
       },
       {
         "args": [
@@ -871,9 +780,374 @@
             "ink",
             "MessageResult"
           ],
-          "type": 24
+          "type": 23
         },
         "selector": "0x21994b34"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_total_azero_staked",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xa2efe52b"
+      },
+      {
+        "args": [
+          {
+            "label": "index",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetWithdrawalRequestInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawal_request",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0x99b05303"
+      },
+      {
+        "args": [
+          {
+            "label": "expiration_duration",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetWithdrawableAzeroToStakeToValidatorInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawable_azero_to_stake_to_validator",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x998a18ee"
+      },
+      {
+        "args": [
+          {
+            "label": "apy",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetApyInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::set_apy",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0xa477acfc"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_min_staking_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x91d337b9"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawable_inw",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x1787edcb"
+      },
+      {
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetWithdrawalRequestListByUserInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawal_request_list_by_user",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 30
+        },
+        "selector": "0xcbce5802"
+      },
+      {
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetWithdrawalRequestIndexListByUserInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawal_request_index_list_by_user",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x28e00c0c"
+      },
+      {
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetWithdrawalRequestCountByUserInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_withdrawal_request_count_by_user",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x7b6d001a"
+      },
+      {
+        "args": [
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "WithdrawInwInput1"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "WithdrawInwInput2"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::withdraw_inw",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x243ecbfd"
+      },
+      {
+        "args": [
+          {
+            "label": "request_index",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "ClaimInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::claim",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x0c93dc7f"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_max_total_staking_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xcf52de55"
+      },
+      {
+        "args": [
+          {
+            "label": "staker",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetStakeInfoInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_stake_info",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0x3b01b496"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_total_stakers",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xc0481a7d"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_total_azero_for_waiting_withdrawals",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x8919cece"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_total_inw_reserved_for_withdrawals",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x630ec101"
       },
       {
         "args": [
@@ -903,42 +1177,102 @@
         "selector": "0x4f9a052b"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "label": "max_waiting_time",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetMaxWaitingTimeInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawable_inw",
-        "mutates": false,
+        "label": "AzeroStakingTrait::set_max_waiting_time",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 8
         },
-        "selector": "0x1787edcb"
+        "selector": "0xd414c1a1"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "label": "inw_contract",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetInwContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_staker_list",
-        "mutates": false,
+        "label": "AzeroStakingTrait::set_inw_contract",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 31
+          "type": 8
         },
-        "selector": "0x94151ab4"
+        "selector": "0xba86540d"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "label": "unstaking_fee",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "SetUnstakingFeeInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_payable_azero",
+        "label": "AzeroStakingTrait::set_unstaking_fee",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 8
+        },
+        "selector": "0x25c30ffb"
+      },
+      {
+        "args": [
+          {
+            "label": "expiration_duration",
+            "type": {
+              "displayName": [
+                "azerostakingtrait_external",
+                "GetSortedWaitingListWithinExpirationDurationInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AzeroStakingTrait::get_sorted_waiting_list_within_expiration_duration",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -946,9 +1280,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 36
         },
-        "selector": "0x2463ece1"
+        "selector": "0x2c0ff8e3"
       },
       {
         "args": [
@@ -991,7 +1325,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_max_total_staking_amount",
+        "label": "AzeroStakingTrait::get_payable_azero",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -999,15 +1333,15 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 28
         },
-        "selector": "0xcf52de55"
+        "selector": "0x2463ece1"
       },
       {
         "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_total_azero_staked",
+        "label": "AzeroStakingTrait::get_withdrawal_request_list",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1015,72 +1349,28 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 30
         },
-        "selector": "0xa2efe52b"
+        "selector": "0x17511a77"
       },
       {
         "args": [
           {
-            "label": "inw_multiplier",
+            "label": "user",
             "type": {
               "displayName": [
                 "azerostakingtrait_external",
-                "SetInwMultiplierInput1"
+                "GetWithdrawalRequestIndexByUserInput1"
               ],
-              "type": 3
+              "type": 0
             }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_inw_multiplier",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x1cf13874"
-      },
-      {
-        "args": [
-          {
-            "label": "request_index",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "ClaimInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::claim",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x0c93dc7f"
-      },
-      {
-        "args": [
+          },
           {
             "label": "index",
             "type": {
               "displayName": [
                 "azerostakingtrait_external",
-                "GetWithdrawalRequestInput1"
+                "GetWithdrawalRequestIndexByUserInput2"
               ],
               "type": 3
             }
@@ -1088,7 +1378,7 @@
         ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request",
+        "label": "AzeroStakingTrait::get_withdrawal_request_index_by_user",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1096,9 +1386,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 32
+          "type": 23
         },
-        "selector": "0x99b05303"
+        "selector": "0x86196557"
       },
       {
         "args": [],
@@ -1112,256 +1402,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0xc85ced38"
-      },
-      {
-        "args": [
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "StakeInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::stake",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x1946a0e0"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_min_staking_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x91d337b9"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_waiting_withdrawal_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xf60e78d9"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_total_inw_for_waiting_withdrawals",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x4fa92bed"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_inw_contract",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 34
-        },
-        "selector": "0x851d72b9"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_total_inw_reserved_for_withdrawals",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x630ec101"
-      },
-      {
-        "args": [
-          {
-            "label": "max_waiting_time",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "SetMaxWaitingTimeInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_max_waiting_time",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0xd414c1a1"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_unstaking_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x84352494"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_total_azero_for_waiting_withdrawals",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x8919cece"
-      },
-      {
-        "args": [
-          {
-            "label": "max_total_staking_amount",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "SetMaxTotalStakingAmountInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_max_total_staking_amount",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x16be4ee3"
-      },
-      {
-        "args": [
-          {
-            "label": "apy",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "SetApyInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_apy",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0xa477acfc"
-      },
-      {
-        "args": [
-          {
-            "label": "unstaking_fee",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "SetUnstakingFeeInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::set_unstaking_fee",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 8
-        },
-        "selector": "0x25c30ffb"
       },
       {
         "args": [],
@@ -1375,41 +1418,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 35
+          "type": 39
         },
         "selector": "0x69d7fcb9"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_inw_multiplier",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xa721cd60"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AzeroStakingTrait::get_waiting_withdrawal_list",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 22
-        },
-        "selector": "0x8c3b79ff"
       },
       {
         "args": [],
@@ -1423,26 +1434,26 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0x9c50c036"
       },
       {
         "args": [
           {
-            "label": "staker",
+            "label": "amount",
             "type": {
               "displayName": [
                 "azerostakingtrait_external",
-                "GetStakeInfoInput1"
+                "WithdrawRequestInput1"
               ],
-              "type": 0
+              "type": 3
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_stake_info",
+        "label": "AzeroStakingTrait::withdraw_request",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1450,26 +1461,15 @@
             "ink",
             "MessageResult"
           ],
-          "type": 36
+          "type": 8
         },
-        "selector": "0x3b01b496"
+        "selector": "0x61753ad8"
       },
       {
-        "args": [
-          {
-            "label": "user",
-            "type": {
-              "displayName": [
-                "azerostakingtrait_external",
-                "GetWithdrawalRequestListByUserInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
+        "args": [],
         "default": false,
         "docs": [],
-        "label": "AzeroStakingTrait::get_withdrawal_request_list_by_user",
+        "label": "AzeroStakingTrait::get_azero_balance",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1477,9 +1477,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 19
+          "type": 20
         },
-        "selector": "0xcbce5802"
+        "selector": "0xe8b1ab1a"
       },
       {
         "args": [
@@ -1517,25 +1517,15 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "HasRoleInput1"
+                "GetRoleAdminInput1"
               ],
               "type": 6
-            }
-          },
-          {
-            "label": "address",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "HasRoleInput2"
-              ],
-              "type": 40
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AccessControl::has_role",
+        "label": "AccessControl::get_role_admin",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1543,9 +1533,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 41
+          "type": 40
         },
-        "selector": "0xc1d9ac18"
+        "selector": "0x83da3bb2"
       },
       {
         "args": [
@@ -1566,7 +1556,7 @@
                 "accesscontrol_external",
                 "RenounceRoleInput2"
               ],
-              "type": 40
+              "type": 41
             }
           }
         ],
@@ -1580,46 +1570,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 43
+          "type": 42
         },
         "selector": "0xeaf1248a"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "RevokeRoleInput1"
-              ],
-              "type": 6
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "RevokeRoleInput2"
-              ],
-              "type": 40
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AccessControl::revoke_role",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 43
-        },
-        "selector": "0x6e4f0991"
       },
       {
         "args": [
@@ -1640,7 +1593,7 @@
                 "accesscontrol_external",
                 "GrantRoleInput2"
               ],
-              "type": 40
+              "type": 41
             }
           }
         ],
@@ -1654,7 +1607,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 43
+          "type": 42
         },
         "selector": "0x4ac062fd"
       },
@@ -1665,15 +1618,62 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "GetRoleAdminInput1"
+                "RevokeRoleInput1"
               ],
               "type": 6
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "RevokeRoleInput2"
+              ],
+              "type": 41
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AccessControl::get_role_admin",
+        "label": "AccessControl::revoke_role",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 42
+        },
+        "selector": "0x6e4f0991"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "HasRoleInput1"
+              ],
+              "type": 6
+            }
+          },
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "HasRoleInput2"
+              ],
+              "type": 41
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AccessControl::has_role",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1681,9 +1681,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 45
+          "type": 44
         },
-        "selector": "0x83da3bb2"
+        "selector": "0xc1d9ac18"
       },
       {
         "args": [
@@ -1745,25 +1745,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 45
+          "type": 40
         },
         "selector": "0xf1b1a9d7"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 46
-        },
-        "selector": "0x4fa43c8c"
       },
       {
         "args": [],
@@ -1782,6 +1766,22 @@
         "selector": "0x5e228753"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 46
+        },
+        "selector": "0x4fa43c8c"
+      },
+      {
         "args": [
           {
             "label": "new_owner",
@@ -1790,7 +1790,7 @@
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 40
+              "type": 41
             }
           }
         ],
@@ -3127,6 +3127,58 @@
               {
                 "fields": [
                   {
+                    "type": 19
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 19
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 3
+          }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
                     "type": 3
                   }
                 ],
@@ -3161,7 +3213,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 21,
       "type": {
         "def": {
           "variant": {
@@ -3169,7 +3221,7 @@
               {
                 "fields": [
                   {
-                    "type": 20
+                    "type": 0
                   }
                 ],
                 "index": 0,
@@ -3190,7 +3242,7 @@
         "params": [
           {
             "name": "T",
-            "type": 20
+            "type": 0
           },
           {
             "name": "E",
@@ -3203,17 +3255,199 @@
       }
     },
     {
-      "id": 20,
+      "id": 22,
       "type": {
         "def": {
-          "sequence": {
-            "type": 21
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
           }
-        }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
       }
     },
     {
-      "id": 21,
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 24
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 24
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 26
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 27
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 27
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 27,
       "type": {
         "def": {
           "composite": {
@@ -3271,7 +3505,7 @@
       }
     },
     {
-      "id": 22,
+      "id": 28,
       "type": {
         "def": {
           "variant": {
@@ -3279,7 +3513,7 @@
               {
                 "fields": [
                   {
-                    "type": 23
+                    "type": 29
                   }
                 ],
                 "index": 0,
@@ -3300,7 +3534,7 @@
         "params": [
           {
             "name": "T",
-            "type": 23
+            "type": 29
           },
           {
             "name": "E",
@@ -3313,142 +3547,15 @@
       }
     },
     {
-      "id": 23,
-      "type": {
-        "def": {
-          "sequence": {
-            "type": 3
-          }
-        }
-      }
-    },
-    {
-      "id": 24,
+      "id": 29,
       "type": {
         "def": {
           "variant": {
             "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 25
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 25
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 25,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
               {
                 "fields": [
                   {
                     "type": 3
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 3
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 26,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 27
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 27
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 27,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 28
                   }
                 ],
                 "index": 0,
@@ -3469,86 +3576,11 @@
         "params": [
           {
             "name": "T",
-            "type": 28
+            "type": 3
           },
           {
             "name": "E",
             "type": 10
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 28,
-      "type": {
-        "def": {
-          "composite": {
-            "fields": [
-              {
-                "name": "waiting_list",
-                "type": 23,
-                "typeName": "Vec<u128>"
-              },
-              {
-                "name": "total_azero",
-                "type": 3,
-                "typeName": "Balance"
-              },
-              {
-                "name": "total_inw",
-                "type": 3,
-                "typeName": "Balance"
-              }
-            ]
-          }
-        },
-        "path": [
-          "inkwhale_project",
-          "impls",
-          "azero_staking",
-          "data",
-          "OngoingExpiredWaitingList"
-        ]
-      }
-    },
-    {
-      "id": 29,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 30
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 30
-          },
-          {
-            "name": "E",
-            "type": 17
           }
         ],
         "path": [
@@ -3565,49 +3597,7 @@
               {
                 "fields": [
                   {
-                    "type": 3
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 10
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 3
-          },
-          {
-            "name": "E",
-            "type": 10
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 31,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 5
+                    "type": 31
                   }
                 ],
                 "index": 0,
@@ -3628,7 +3618,7 @@
         "params": [
           {
             "name": "T",
-            "type": 5
+            "type": 31
           },
           {
             "name": "E",
@@ -3638,6 +3628,16 @@
         "path": [
           "Result"
         ]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 27
+          }
+        }
       }
     },
     {
@@ -3689,13 +3689,55 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 34
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 10
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 34
+          },
+          {
+            "name": "E",
+            "type": 10
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 34,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "index": 0,
                 "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 21
+                    "type": 35
                   }
                 ],
                 "index": 1,
@@ -3707,7 +3749,7 @@
         "params": [
           {
             "name": "T",
-            "type": 21
+            "type": 35
           }
         ],
         "path": [
@@ -3716,86 +3758,50 @@
       }
     },
     {
-      "id": 34,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 0
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 0
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
       "id": 35,
       "type": {
         "def": {
-          "variant": {
-            "variants": [
+          "composite": {
+            "fields": [
               {
-                "fields": [
-                  {
-                    "type": 4
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
+                "name": "staking_amount",
+                "type": 3,
+                "typeName": "Balance"
               },
               {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
+                "name": "unclaimed_azero_reward",
+                "type": 3,
+                "typeName": "Balance"
+              },
+              {
+                "name": "claimed_azero_reward",
+                "type": 3,
+                "typeName": "Balance"
+              },
+              {
+                "name": "unclaimed_inw_reward",
+                "type": 3,
+                "typeName": "Balance"
+              },
+              {
+                "name": "claimed_inw_reward",
+                "type": 3,
+                "typeName": "Balance"
+              },
+              {
+                "name": "last_updated",
+                "type": 4,
+                "typeName": "u64"
               }
             ]
           }
         },
-        "params": [
-          {
-            "name": "T",
-            "type": 4
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
         "path": [
-          "Result"
+          "inkwhale_project",
+          "impls",
+          "azero_staking",
+          "data",
+          "StakeInformation"
         ]
       }
     },
@@ -3887,70 +3893,22 @@
       "id": 38,
       "type": {
         "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 39
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 39
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 39,
-      "type": {
-        "def": {
           "composite": {
             "fields": [
               {
-                "name": "staking_amount",
+                "name": "waiting_list",
+                "type": 19,
+                "typeName": "Vec<u128>"
+              },
+              {
+                "name": "total_azero",
                 "type": 3,
                 "typeName": "Balance"
               },
               {
-                "name": "unclaimed_azero_reward",
+                "name": "total_inw",
                 "type": 3,
                 "typeName": "Balance"
-              },
-              {
-                "name": "claimed_azero_reward",
-                "type": 3,
-                "typeName": "Balance"
-              },
-              {
-                "name": "unclaimed_inw_reward",
-                "type": 3,
-                "typeName": "Balance"
-              },
-              {
-                "name": "claimed_inw_reward",
-                "type": 3,
-                "typeName": "Balance"
-              },
-              {
-                "name": "last_updated",
-                "type": 4,
-                "typeName": "u64"
               }
             ]
           }
@@ -3960,179 +3918,54 @@
           "impls",
           "azero_staking",
           "data",
-          "StakeInformation"
+          "OngoingExpiredWaitingList"
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
         ]
       }
     },
     {
       "id": 40,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "None"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 0
-                  }
-                ],
-                "index": 1,
-                "name": "Some"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 0
-          }
-        ],
-        "path": [
-          "Option"
-        ]
-      }
-    },
-    {
-      "id": 41,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 42
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 42
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 42,
-      "type": {
-        "def": {
-          "primitive": "bool"
-        }
-      }
-    },
-    {
-      "id": 43,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 44
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 17
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 44
-          },
-          {
-            "name": "E",
-            "type": 17
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 44,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 7
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 7
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 45,
       "type": {
         "def": {
           "variant": {
@@ -4174,7 +4007,40 @@
       }
     },
     {
-      "id": 46,
+      "id": 41,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          }
+        ],
+        "path": [
+          "Option"
+        ]
+      }
+    },
+    {
+      "id": 42,
       "type": {
         "def": {
           "variant": {
@@ -4182,7 +4048,7 @@
               {
                 "fields": [
                   {
-                    "type": 40
+                    "type": 43
                   }
                 ],
                 "index": 0,
@@ -4203,7 +4069,141 @@
         "params": [
           {
             "name": "T",
-            "type": 40
+            "type": 43
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 43,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 13
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 44,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 45
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 45
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 45,
+      "type": {
+        "def": {
+          "primitive": "bool"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 41
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 41
           },
           {
             "name": "E",

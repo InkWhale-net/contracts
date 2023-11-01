@@ -122,9 +122,6 @@ pub trait AzeroStakingTrait:
             if stake_info.staking_amount > self.data::<Data>().max_total_staking_amount {
                 return Err(Error::ExceedMaxTotalStakingMount);
             }
-
-            self.data::<Data>().total_azero_staked = self.data::<Data>().total_azero_staked
-                                                    .checked_add(amount).ok_or(Error::CheckedOperations)?;
             
             stake_info.last_updated = current_time;
             self.data::<Data>().stake_info_by_staker
@@ -150,6 +147,9 @@ pub trait AzeroStakingTrait:
             self.data::<Data>().staker_list.push(staker);
         }
 
+        self.data::<Data>().total_azero_staked = self.data::<Data>().total_azero_staked
+                                                    .checked_add(amount).ok_or(Error::CheckedOperations)?;
+            
         self._emit_stake_event(
             staker,
             amount,
