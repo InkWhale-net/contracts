@@ -93,7 +93,7 @@ pub enum Error {
     CannotGetWaitingList,
     CannotGetWithdrawableAmount,
     InvalidWithdrawalAmount,
-    CannotUpdateUnclaimedRewards
+    CannotUpdateUnclaimedRewards,
     InvalidCapAmount,
     InvalidWhitelistAmount
 }

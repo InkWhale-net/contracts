@@ -151,6 +151,9 @@ pub trait AzeroStakingTrait {
     fn get_staker_list(&self) -> Vec<AccountId>;
 
     #[ink(message)]
+    fn get_total_stakers(&self) -> u128;
+    
+    #[ink(message)]
     fn get_withdrawal_request_count(&self) -> u128;
 
     #[ink(message)]
@@ -179,6 +182,9 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn get_waiting_withdrawal_index(&self, index: u128) -> Option<u128>;
+
+    #[ink(message)]
+    fn get_total_azero_staked(&self) -> Balance;
 
     #[ink(message)]
     fn get_total_azero_claimed(&self) -> Balance;

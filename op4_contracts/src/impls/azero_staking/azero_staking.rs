@@ -122,6 +122,9 @@ pub trait AzeroStakingTrait:
             if stake_info.staking_amount > self.data::<Data>().max_total_staking_amount {
                 return Err(Error::ExceedMaxTotalStakingMount);
             }
+
+            self.data::<Data>().total_azero_staked = self.data::<Data>().total_azero_staked
+                                                    .checked_add(amount).ok_or(Error::CheckedOperations)?;
             
             stake_info.last_updated = current_time;
             self.data::<Data>().stake_info_by_staker
@@ -380,6 +383,10 @@ pub trait AzeroStakingTrait:
                 }                
 
                 // Update total info
+                self.data::<Data>().total_azero_staked = 
+                    self.data::<Data>().total_azero_staked
+                    .checked_sub(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;
+           
                 self.data::<Data>().total_azero_for_waiting_withdrawals = 
                     self.data::<Data>().total_azero_for_waiting_withdrawals
                     .checked_sub(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
@@ -646,6 +653,10 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().staker_list.clone()
     }
 
+    fn get_total_stakers(&self) -> u128 {
+        self.data::<Data>().staker_list.len() as u128
+    }
+
     fn get_withdrawal_request_count(&self) -> u128 {
         self.data::<Data>().withdrawal_request_count
     }
@@ -724,6 +735,10 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().withdrawal_waiting_list.get_value(1, &index)
     }
    
+    fn get_total_azero_staked(&self) -> Balance {
+        self.data::<Data>().total_azero_staked
+    }
+
     fn get_total_azero_claimed(&self) -> Balance {
         self.data::<Data>().total_azero_claimed
     }

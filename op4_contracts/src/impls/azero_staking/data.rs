@@ -60,6 +60,7 @@ pub struct Data {
     pub withdrawal_request_by_user: MultiMapping<AccountId, u128, ValueGuard<AccountId>>,
     pub withdrawal_waiting_list: MultiMapping<u8, u128, ValueGuard<u8>>, // request with waiting status
 
+    pub total_azero_staked: Balance,
     pub total_azero_claimed: Balance,
     pub total_inw_claimed: Balance,
     pub total_azero_for_waiting_withdrawals: Balance,
@@ -88,6 +89,7 @@ impl Default for Data {
             withdrawal_request_by_user: Default::default(),
             withdrawal_waiting_list: Default::default(),
 
+            total_azero_staked: Default::default(),
             total_azero_claimed: Default::default(),
             total_inw_claimed: Default::default(),
             total_azero_for_waiting_withdrawals: Default::default(),
