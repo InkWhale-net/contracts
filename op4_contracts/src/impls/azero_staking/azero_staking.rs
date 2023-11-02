@@ -8,7 +8,7 @@ use ink::prelude::{vec::Vec};
 use openbrush::{
     contracts::{access_control::*, ownable::*},
     modifiers,
-    traits::{AccountId, Balance, Storage},
+    traits::{AccountId, Balance, Storage, Timestamp},
 };
 
 pub trait AzeroStakingTrait: 
@@ -761,6 +761,10 @@ pub trait AzeroStakingTrait:
 
     fn get_total_inw_reserved_for_withdrawals(&self) -> Balance {
         self.data::<Data>().total_inw_reserved_for_withdrawals
+    }
+
+    fn get_block_timestamp(&self) -> Timestamp {
+        Self::env().block_timestamp()
     }
 
     // Setters

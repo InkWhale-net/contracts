@@ -8,7 +8,7 @@ use openbrush::{
         },
         access_control::*,
     },
-    traits::{AccountId, Balance},
+    traits::{AccountId, Balance, Timestamp},
 };
 
 use crate::impls::azero_staking::data::{
@@ -203,6 +203,9 @@ pub trait AzeroStakingTrait {
     
     #[ink(message)]
     fn get_total_inw_reserved_for_withdrawals(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_block_timestamp(&self) -> Timestamp;
 
     // Setters
     #[ink(message)]
