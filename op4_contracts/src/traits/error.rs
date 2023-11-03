@@ -81,7 +81,10 @@ pub enum Error {
     PhaseNotPublic,
     InvalidSetPublic,
     InvalidCapAmount,
-    InvalidWhitelistAmount
+    InvalidWhitelistAmount,
+    CapExceeded,
+    CannotCollectInwV1,
+    CannotMintInwV2
 }
 
 impl From<OwnableError> for Error {

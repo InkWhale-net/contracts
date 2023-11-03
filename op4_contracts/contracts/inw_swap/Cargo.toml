@@ -1,5 +1,5 @@
 [package]
-name = "psp22_standard"
+name = "inw_swap"
 version = "1.0.0"
 authors = ["InkWhale <admin@artzero.io>"]
 edition = "2021"
@@ -10,11 +10,11 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-openbrush = { tag = "4.0.0-beta.1", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["psp22", "ownable"] }
+openbrush = { tag = "4.0.0", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["psp22", "ownable"] }
 inkwhale_project = { path = "../..", default-features = false }
 
 [lib]
-name = "psp22_standard"
+name = "inw_swap"
 path = "lib.rs"
 
 [features]
