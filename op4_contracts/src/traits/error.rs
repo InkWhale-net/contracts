@@ -95,7 +95,10 @@ pub enum Error {
     InvalidWithdrawalAmount,
     CannotUpdateUnclaimedRewards,
     InvalidCapAmount,
-    InvalidWhitelistAmount
+    InvalidWhitelistAmount,
+    CapExceeded,
+    CannotCollectInwV1,
+    CannotMintInwV2
 }
 
 impl From<OwnableError> for Error {

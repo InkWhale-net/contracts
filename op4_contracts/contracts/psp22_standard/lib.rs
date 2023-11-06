@@ -1,19 +1,19 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
-pub use self::psp22_standard::{Psp22Nft, Psp22NftRef};
 
 #[openbrush::implementation(
     PSP22,
     PSP22Capped,
     PSP22Metadata,
-    PSP22Mintable,
-    Ownable
+    PSP22Mintable,    
+    Ownable,
+    AccessControl
 )]
 #[openbrush::contract]
 pub mod psp22_standard {
     use ink::{
         codegen::{EmitEvent, Env},
         prelude::string::String,
-        reflect::ContractEventBase,
+        reflect::ContractEventBase
     };
     use inkwhale_project::impls::admin::*;
     use openbrush::{
@@ -26,24 +26,11 @@ pub mod psp22_standard {
         traits::{DefaultEnv, Storage},
     };
 
-    #[ink(event)]
-    pub struct Transfer {
-        #[ink(topic)]
-        from: Option<AccountId>,
-        #[ink(topic)]
-        to: Option<AccountId>,
-        value: Balance,
-    }
-
-    #[ink(event)]
-    pub struct Approval {
-        #[ink(topic)]
-        owner: AccountId,
-        #[ink(topic)]
-        spender: AccountId,
-        value: Balance,
-    }
-
+    use inkwhale_project::impls::{upgradeable::*};
+    
+    // MINER RoleType = 604563195
+    pub const MINER: RoleType = ink::selector_id!("MINER");
+    
     #[derive(Default, Storage)]
     #[ink(storage)]
     pub struct Psp22Nft {
@@ -54,23 +41,40 @@ pub mod psp22_standard {
         #[storage_field]
         ownable: ownable::Data,
         #[storage_field]
-        cap: capped::Data
+        cap: capped::Data,
+        #[storage_field]
+        access: access_control::Data
+    }
+
+    #[ink(event)]
+    pub struct Transfer {
+        #[ink(topic)]
+        from: Option<AccountId>,
+        #[ink(topic)]
+        to: Option<AccountId>,
+        value: Balance,
+    }
+    
+    #[ink(event)]
+    pub struct Approval {
+        #[ink(topic)]
+        owner: AccountId,
+        #[ink(topic)]
+        spender: AccountId,
+        value: Balance,
     }
 
     pub type Event = <Psp22Nft as ContractEventBase>::Type;
 
-    // impl PSP22 for Psp22Nft {}
-    // impl PSP22Metadata for Psp22Nft {}
-    // impl PSP22Capped for Psp22Nft {}
-    // impl Ownable for Psp22Nft {}
+    impl UpgradeableTrait for Psp22Nft {}
     impl AdminTrait for Psp22Nft {}
 
     #[overrider(psp22::Internal)]
     fn _emit_transfer_event(
         &self,
-        _from: Option<AccountId>,
-        _to: Option<AccountId>,
-        _amount: Balance,
+        from: Option<AccountId>,
+        to: Option<AccountId>,
+        amount: Balance,
     ) {
         Psp22Nft::emit_event(
             self.env(),
@@ -83,7 +87,7 @@ pub mod psp22_standard {
     }
 
     #[overrider(psp22::Internal)]
-    fn _emit_approval_event(&self, _owner: AccountId, _spender: AccountId, _amount: Balance) {
+    fn _emit_approval_event(&self, owner: AccountId, spender: AccountId, amount: Balance) {
         Psp22Nft::emit_event(
             self.env(),
             Event::Approval(Approval {
@@ -97,9 +101,9 @@ pub mod psp22_standard {
     #[overrider(psp22::Internal)]
     fn _before_token_transfer(
         &mut self,
-        _from: Option<&AccountId>,
+        from: Option<&AccountId>,
         _to: Option<&AccountId>,
-        _amount: &Balance,
+        amount: &Balance,
     ) -> Result<(), PSP22Error> {
         if from.is_none() && self._is_cap_exceeded(amount) {
             return Err(PSP22Error::Custom(String::from("Cap exceeded")));
@@ -120,19 +124,22 @@ pub mod psp22_standard {
     }
 
     #[default_impl(PSP22Mintable)]
-    #[modifiers(only_owner)]
+    #[modifiers(only_role(MINER))]
     fn mint() {}
 
     impl Psp22Nft {
         #[ink(constructor)]
         pub fn new(cap: Balance, name: String, symbol: String, decimal: u8) -> Self {
             let mut instance = Self::default();
+            
             let caller = <Self as DefaultEnv>::env().caller();
             ownable::Internal::_init_with_owner(&mut instance, caller);
+            access_control::Internal::_init_with_admin(&mut instance, Some(caller));
+            
             assert!(instance._init_cap(cap).is_ok());
             instance.metadata.name.set(&Some(name));
             instance.metadata.symbol.set(&Some(symbol));
-            instance.metadata.decimals.set(&decimal);
+            instance.metadata.decimals.set(&decimal);            
             instance
         }
 
