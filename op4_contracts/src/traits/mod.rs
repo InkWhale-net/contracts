@@ -6,3 +6,4 @@ pub mod launchpad_generator;
 pub mod generic_pool_contract;
 pub mod generic_pool_generator;
 pub mod azero_staking;
+pub mod inw_swap;
