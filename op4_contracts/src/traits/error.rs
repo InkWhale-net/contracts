@@ -1,7 +1,7 @@
 use ink::prelude::string::String;
 use openbrush::contracts::{ownable::*, access_control::*};
 
-use openbrush::contracts::traits::{psp22::PSP22Error, psp34::PSP34Error};
+use openbrush::contracts::traits::{psp22::PSP22Error, psp34::PSP34Error, pausable::PausableError};
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -11,6 +11,7 @@ pub enum Error {
     AccessControlError(AccessControlError),
     PSP22Error(PSP22Error),
     PSP34Error(PSP34Error),
+    PausableError(PausableError),
     NotEnoughBalance,
     WithdrawFeeError,
     NotCallable,
@@ -96,6 +97,12 @@ impl From<OwnableError> for Error {
 impl From<AccessControlError> for Error {
     fn from(access: AccessControlError) -> Self {
         Error::AccessControlError(access)
+    }
+}
+
+impl From<PausableError> for Error {
+    fn from(access: PausableError) -> Self {
+        Error::PausableError(access)
     }
 }
 
