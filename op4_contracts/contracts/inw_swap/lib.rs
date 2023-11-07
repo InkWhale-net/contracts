@@ -4,7 +4,8 @@ pub use self::inw_swap::{InwSwap, InwSwapRef};
 #[openbrush::implementation(
     Ownable, 
     PSP22, 
-    PSP22Capped
+    PSP22Capped,
+    Pausable
 )]
 #[openbrush::contract]
 pub mod inw_swap {
@@ -35,6 +36,8 @@ pub mod inw_swap {
         ownable: ownable::Data,
         #[storage_field]
         cap: capped::Data,
+        #[storage_field]
+        pause: pausable::Data,
     }
 
     #[ink(event)]
@@ -76,6 +79,48 @@ pub mod inw_swap {
 
         pub fn emit_event<EE: EmitEvent<Self>>(emitter: EE, event: Event) {
             emitter.emit_event(event);
+        }
+
+        #[ink(message)]
+        pub fn pause(&mut self) -> Result<(), PausableError> {                        
+            if let Some(owner) = Ownable::owner(self) {
+                let caller = self.env().caller();
+                if caller == owner {
+                    pausable::Internal::_pause(self)
+                } else {
+                    Err(PausableError::NotPaused)
+                }
+            } else {
+                Err(PausableError::NotPaused)
+            }
+        }
+
+        #[ink(message)]
+        pub fn unpause(&mut self) -> Result<(), PausableError> {
+            if let Some(owner) = Ownable::owner(self) {
+                let caller = self.env().caller();
+                if caller == owner {
+                    pausable::Internal::_unpause(self)
+                } else {
+                    Err(PausableError::Paused)
+                }
+            } else {
+                Err(PausableError::Paused)
+            }              
+        }
+
+        #[ink(message)]
+        pub fn change_state(&mut self) -> Result<(), PausableError> {
+            if let Some(owner) = Ownable::owner(self) {
+                let caller = self.env().caller();
+                if caller == owner {
+                    pausable::Internal::_switch_pause(self)
+                } else {
+                    Err(PausableError::Paused)
+                }
+            } else {
+                Err(PausableError::Paused)
+            }          
         }
     }
 }

@@ -6,7 +6,7 @@ pub use crate::{
 use ink::prelude::vec::Vec;
 
 use openbrush::{
-    contracts::{ownable::*, psp22::*},
+    contracts::{ownable::*, psp22::*, pausable::*},
     modifiers,
     traits::{AccountId, Balance, Storage},
 };
@@ -16,12 +16,14 @@ pub trait InwSwapTrait:
     + Storage<ownable::Data>  
     + Storage<psp22::Data>
     + Storage<openbrush::contracts::psp22::extensions::capped::Data>
+    + Storage<pausable::Data>
 {
     // Event func
     fn _emit_swap_event(&self, _user: AccountId, _amount: Balance) {
     }
 
     // Funcs
+    #[modifiers(when_not_paused)]
     fn swap(&mut self, amount: Balance) -> Result<(), Error> {
         let caller = Self::env().caller();
 
