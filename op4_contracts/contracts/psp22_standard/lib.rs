@@ -28,8 +28,8 @@ pub mod psp22_standard {
 
     use inkwhale_project::impls::{upgradeable::*};
     
-    // MINER RoleType = 604563195
-    pub const MINER: RoleType = ink::selector_id!("MINER");
+    // MINTER RoleType = 4254773782
+    pub const MINTER: RoleType = ink::selector_id!("MINTER");
     
     #[derive(Default, Storage)]
     #[ink(storage)]
@@ -124,7 +124,7 @@ pub mod psp22_standard {
     }
 
     #[default_impl(PSP22Mintable)]
-    #[modifiers(only_role(MINER))]
+    #[modifiers(only_role(MINTER))]
     fn mint() {}
 
     impl Psp22Nft {
