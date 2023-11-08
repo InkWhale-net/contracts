@@ -67,6 +67,8 @@ pub struct Data {
     pub total_inw_for_waiting_withdrawals: Balance,
     pub total_azero_reserved_for_withdrawals: Balance,
     pub total_inw_reserved_for_withdrawals: Balance,
+
+    pub is_withdrawable: bool,
 }
 
 impl Default for Data {
@@ -96,6 +98,8 @@ impl Default for Data {
             total_inw_for_waiting_withdrawals: Default::default(),
             total_azero_reserved_for_withdrawals: Default::default(),
             total_inw_reserved_for_withdrawals: Default::default(),
+        
+            is_withdrawable: Default::default(),
         }
     }
 }

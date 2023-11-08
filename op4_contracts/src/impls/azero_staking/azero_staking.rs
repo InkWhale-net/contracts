@@ -159,7 +159,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }    
 
-    fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error> {
+    fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error> {
         let staker = Self::env().caller();
 
         // Update the current unclaimed_amount
@@ -225,6 +225,39 @@ pub trait AzeroStakingTrait:
             Err(Error::NoStakeInfoFound)
         }
     }    
+
+    // The unsorted expired waiting_list
+    fn get_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
+        let count = self.data::<Data>().withdrawal_waiting_list.count(1);
+        
+        let mut waiting_list = Vec::<u128>::new();
+        let mut total_azero: Balance = 0;
+        let mut total_inw: Balance = 0;
+
+        let current_time = Self::env().block_timestamp();
+
+        for i in 0..count {
+            if let Some(request_index) = self.data::<Data>().withdrawal_waiting_list.get_value(1, &i) {
+                if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
+                    if withdrawal_request_info.request_time.checked_add(self.data::<Data>().max_waiting_time).ok_or(Error::CheckedOperations)?
+                       <= current_time.checked_add(expiration_duration).ok_or(Error::CheckedOperations)? {
+                        waiting_list.push(request_index);
+
+                        total_azero = total_azero.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
+                        total_inw = total_inw.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)?;
+                    } 
+                }
+            }
+        }
+
+        let ongoing_expired_waiting_list = OngoingExpiredWaitingList {
+            waiting_list: waiting_list,
+            total_azero: total_azero,
+            total_inw: total_inw
+        };
+
+        Ok(ongoing_expired_waiting_list)
+    }
 
     fn find_inserted_index(&self, waiting_list: &Vec::<u128>, value: Balance) -> Result<usize, Error> {
         let mut low: usize = 0;
@@ -476,6 +509,11 @@ pub trait AzeroStakingTrait:
                     if result.is_err() {
                         return Err(Error::CannotTransfer);
                     }
+
+                    // Burn fee
+                    if Psp22Ref::burn(&self.data::<Data>().inw_contract, Self::env().account_id(), inw_in).is_err() {
+                        return Err(Error::CannotBurn);
+                    } 
                 }
 
                 self._emit_claim_event(
@@ -496,7 +534,8 @@ pub trait AzeroStakingTrait:
     }
 
     fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error> {
-        if let Ok(ongoing_expired_waiting_list) = self.get_sorted_waiting_list_within_expiration_duration(expiration_duration) {
+        // Use the unsorted waiting list because it is logN time faster than sorting it 
+        if let Ok(ongoing_expired_waiting_list) = self.get_waiting_list_within_expiration_duration(expiration_duration) {
             if Self::env().balance() > ongoing_expired_waiting_list.total_azero.checked_add(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)? {
                 Self::env().balance()
                     .checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)?
@@ -529,84 +568,100 @@ pub trait AzeroStakingTrait:
     //     WITHDRAWAL_MANAGER
     // }
 
+    // fn get_role_updating_manager(&self) -> RoleType {
+    //     UPDATING_MANAGER
+    // }
+
     #[modifiers(only_role(WITHDRAWAL_MANAGER))]
     fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error> {
-        if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator(expiration_duration) {
-            if max_amount == 0 {
-                return Err(Error::InvalidWithdrawalAmount);
+        if self.data::<Data>().is_withdrawable {
+            if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator(expiration_duration) {
+                if max_amount == 0 {
+                    return Err(Error::InvalidWithdrawalAmount);
+                }
+
+                if Self::env().transfer(receiver, max_amount).is_err() {
+                    return Err(Error::WithdrawError);
+                }
+
+                self._emit_withdraw_azero_to_stake_event(
+                    Self::env().caller(),
+                    receiver,
+                    max_amount,
+                    Self::env().block_timestamp() 
+                );
+
+                Ok(())
+            } else {
+                Err(Error::CannotGetWithdrawableAmount)
             }
-
-            if Self::env().transfer(receiver, max_amount).is_err() {
-                return Err(Error::WithdrawError);
-            }
-
-            self._emit_withdraw_azero_to_stake_event(
-                Self::env().caller(),
-                receiver,
-                max_amount,
-                Self::env().block_timestamp() 
-            );
-
-            Ok(())
         } else {
-            Err(Error::CannotGetWithdrawableAmount)
+            Err(Error::IsNotWithdrawable)
         }
     }
 
     #[modifiers(only_owner)]
     fn withdraw_azero(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
-        if let Ok(max_amount) = self.get_payable_azero() {
-            if amount > max_amount {
-                return Err(Error::InvalidWithdrawalAmount);
-            }
+        if self.data::<Data>().is_withdrawable {
+            if let Ok(max_amount) = self.get_payable_azero() {
+                if amount > max_amount {
+                    return Err(Error::InvalidWithdrawalAmount);
+                }
 
-            if Self::env().transfer(receiver, amount).is_err() {
-                return Err(Error::WithdrawError);
-            }
+                if Self::env().transfer(receiver, amount).is_err() {
+                    return Err(Error::WithdrawError);
+                }
 
-            self._emit_withdraw_azero_event(
-                receiver,
-                amount,
-                Self::env().block_timestamp()                
-            );            
+                self._emit_withdraw_azero_event(
+                    receiver,
+                    amount,
+                    Self::env().block_timestamp()                
+                );            
 
-            Ok(())
+                Ok(())
+            } else {
+                Err(Error::CannotGetWithdrawableAmount)
+            } 
         } else {
-            Err(Error::CannotGetWithdrawableAmount)
-        } 
+            Err(Error::IsNotWithdrawable)
+        }
     }
 
     #[modifiers(only_owner)]
     fn withdraw_inw(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
-        if let Ok(max_amount) = self.get_withdrawable_inw() {
-            if amount > max_amount {
-                return Err(Error::InvalidWithdrawalAmount);
+        if self.data::<Data>().is_withdrawable {
+            if let Ok(max_amount) = self.get_withdrawable_inw() {
+                if amount > max_amount {
+                    return Err(Error::InvalidWithdrawalAmount);
+                }
+
+                let builder =
+                    Psp22Ref::transfer_builder(
+                        &self.data::<Data>().inw_contract, 
+                        receiver, 
+                        amount, 
+                        Vec::<u8>::new());
+                    
+                let result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => Err(Error::CannotTransfer),
+                };
+
+                self._emit_withdraw_inw_event(
+                    receiver,
+                    amount,
+                    Self::env().block_timestamp()                
+                );
+
+                return result;
+            } else {
+                Err(Error::CannotGetWithdrawableAmount)
             }
-
-            let builder =
-                Psp22Ref::transfer_builder(
-                    &self.data::<Data>().inw_contract, 
-                    receiver, 
-                    amount, 
-                    Vec::<u8>::new());
-                
-            let result = match builder.try_invoke() {
-                Ok(Ok(Ok(_))) => Ok(()),
-                Ok(Ok(Err(e))) => Err(e.into()),
-                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                Err(ink::env::Error::NotCallable) => Ok(()),
-                _ => Err(Error::CannotTransfer),
-            };
-
-            self._emit_withdraw_inw_event(
-                receiver,
-                amount,
-                Self::env().block_timestamp()                
-            );
-
-            return result;
         } else {
-            Err(Error::CannotGetWithdrawableAmount)
+            Err(Error::IsNotWithdrawable)
         }
     }
 
@@ -763,6 +818,10 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().total_inw_reserved_for_withdrawals
     }
 
+    fn get_is_withdrawable(&self) -> bool {
+        self.data::<Data>().is_withdrawable
+    }
+
     fn get_block_timestamp(&self) -> Timestamp {
         Self::env().block_timestamp()
     }
@@ -859,4 +918,47 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().unstaking_fee = unstaking_fee;
         Ok(())
     }    
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn set_total_azero_reserved_for_withdrawals(&mut self, total_azero_reserved_for_withdrawals: Balance) -> Result<(), Error> {
+        self.data::<Data>().total_azero_reserved_for_withdrawals = total_azero_reserved_for_withdrawals;
+        Ok(())
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn set_total_inw_reserved_for_withdrawals(&mut self, total_inw_reserved_for_withdrawals: Balance) -> Result<(), Error> {
+        self.data::<Data>().total_inw_reserved_for_withdrawals = total_inw_reserved_for_withdrawals;
+        Ok(())
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn set_withdrawal_request_info_status(&mut self, request_index: u128, status: u8) -> Result<(), Error> {
+        if status > WITHDRAWAL_REQUEST_CLAIMED {
+            return Err(Error::InvalidWithdrawalRequestStatus);
+        }
+
+        if let Some(mut withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
+            withdrawal_request_info.status = status;  
+            self.data::<Data>().withdrawal_request_list.insert(&request_index, &withdrawal_request_info);
+            Ok(())
+        } else {
+            return Err(Error::NoWithdrawalRequestInfo); 
+        }        
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn remove_request_index_in_withdrawal_waiting_list(&mut self, request_index: u128) -> Result<(), Error> {
+        if self.data::<Data>().withdrawal_waiting_list.contains_value(1, &request_index) {
+            self.data::<Data>().withdrawal_waiting_list.remove_value(1, &request_index);  
+            Ok(())
+        } else {
+            return Err(Error::InvalidWaitingRequestIndex); 
+        }
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn set_is_withdrawable(&mut self, is_withdrawable: bool) -> Result<(), Error> {
+        self.data::<Data>().is_withdrawable = is_withdrawable;
+        Ok(())
+    }
 }

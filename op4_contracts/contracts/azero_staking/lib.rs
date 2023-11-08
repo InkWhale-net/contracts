@@ -212,6 +212,7 @@ pub mod my_azero_staking {
             access_control::Internal::_init_with_admin(&mut instance, Some(caller));
             AccessControl::grant_role(&mut instance, ADMINER, Some(caller)).expect("Should grant ADMINER role");
             AccessControl::grant_role(&mut instance, WITHDRAWAL_MANAGER, Some(caller)).expect("Should grant WITHDRAW_TO_STAKE role");
+            AccessControl::grant_role(&mut instance, UPDATING_MANAGER, Some(caller)).expect("Should grant UPDATING_MANAGER role");
         
             match instance.initialize(
                 min_staking_amount,
@@ -282,6 +283,8 @@ pub mod my_azero_staking {
             self.data.total_inw_for_waiting_withdrawals = 0;
             self.data.total_azero_reserved_for_withdrawals = 0;
             self.data.total_inw_reserved_for_withdrawals = 0;
+
+            self.data.is_withdrawable = true;
 
             Ok(())          
         }

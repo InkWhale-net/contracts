@@ -23,6 +23,9 @@ pub const ADMINER: RoleType = ink::selector_id!("ADMINER");
 // WITHDRAW_TO_STAKE RoleType = 3333445727
 pub const WITHDRAWAL_MANAGER: RoleType = ink::selector_id!("WITHDRAWAL_MANAGER");
 
+// UPDATING MANAGER RoleType = 3403046946
+pub const UPDATING_MANAGER: RoleType = ink::selector_id!("UPDATING_MANAGER");
+
 // Withdrawal request status
 pub const WITHDRAWAL_REQUEST_WAITING: u8 = 0;
 pub const WITHDRAWAL_REQUEST_CLAIMABLE: u8 = 1;
@@ -90,7 +93,7 @@ pub trait AzeroStakingTrait {
     fn stake(&mut self, amount: Balance) -> Result<(), Error>;
      
     #[ink(message)]
-    fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error>;
+    fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error>;
     
     #[ink(message)]
     fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
@@ -205,6 +208,9 @@ pub trait AzeroStakingTrait {
     fn get_total_inw_reserved_for_withdrawals(&self) -> Balance;
 
     #[ink(message)]
+    fn get_is_withdrawable(&self) -> bool;
+
+    #[ink(message)]
     fn get_block_timestamp(&self) -> Timestamp;
 
     // Setters
@@ -228,4 +234,19 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn set_unstaking_fee(&mut self, unstaking_fee: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_total_azero_reserved_for_withdrawals(&mut self, total_azero_reserved_for_withdrawals: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_total_inw_reserved_for_withdrawals(&mut self, total_inw_reserved_for_withdrawals: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_withdrawal_request_info_status(&mut self, request_index: u128, status: u8) -> Result<(), Error>;
+    
+    #[ink(message)]
+    fn remove_request_index_in_withdrawal_waiting_list(&mut self, request_index: u128) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_is_withdrawable(&mut self, is_withdrawable: bool) -> Result<(), Error>;
 }
