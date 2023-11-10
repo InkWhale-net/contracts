@@ -159,7 +159,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }    
 
-    fn withdraw_request(&mut self, amount: Balance) -> Result<(), Error> {
+    fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error> {
         let staker = Self::env().caller();
 
         // Update the current unclaimed_amount
