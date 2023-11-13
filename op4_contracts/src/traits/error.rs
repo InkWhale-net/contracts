@@ -99,7 +99,9 @@ pub enum Error {
     InvalidWhitelistAmount,
     CapExceeded,
     CannotCollectInwV1,
-    CannotMintInwV2
+    CannotCollectInwV2,
+    CannotMintInwV2,
+    CannotTransferInwV1
 }
 
 impl From<OwnableError> for Error {
