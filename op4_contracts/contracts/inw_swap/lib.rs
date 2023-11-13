@@ -47,6 +47,13 @@ pub mod inw_swap {
         value: Balance,
     }
 
+    #[ink(event)]
+    pub struct SwapV2ToV1 {
+        #[ink(topic)]
+        user: AccountId,
+        value: Balance,
+    }
+
     pub type Event = <InwSwap as ContractEventBase>::Type;
 
     impl UpgradeableTrait for InwSwap {}
@@ -56,6 +63,16 @@ pub mod inw_swap {
             InwSwap::emit_event(
                 self.env(),
                 Event::Swap(Swap {
+                    user: _user,
+                    value: _amount,
+                }),
+            );
+        }
+
+        fn _emit_swap_v2_to_v1_event(&self, _user: AccountId, _amount: Balance) {
+            InwSwap::emit_event(
+                self.env(),
+                Event::SwapV2ToV1(SwapV2ToV1 {
                     user: _user,
                     value: _amount,
                 }),
