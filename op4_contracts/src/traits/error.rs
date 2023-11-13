@@ -99,10 +99,12 @@ pub enum Error {
     InvalidWhitelistAmount,
     CapExceeded,
     CannotCollectInwV1,
-    CannotMintInwV2,
     InvalidWithdrawalRequestStatus,
     InvalidWaitingRequestIndex,
     IsNotWithdrawable
+    CannotCollectInwV2,
+    CannotMintInwV2,
+    CannotTransferInwV1
 }
 
 impl From<OwnableError> for Error {

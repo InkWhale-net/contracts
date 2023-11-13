@@ -28,6 +28,9 @@ pub trait InwSwapTrait {
     fn swap(&mut self, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]
+    fn swap_inw_v2_to_v1(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
     fn burn_inw_v1(&mut self, amount: Balance) -> Result<(), Error>;
     
     // Getters
