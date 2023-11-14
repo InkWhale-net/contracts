@@ -101,7 +101,7 @@ pub enum Error {
     CannotCollectInwV1,
     InvalidWithdrawalRequestStatus,
     InvalidWaitingRequestIndex,
-    IsNotWithdrawable
+    IsNotWithdrawable,
     CannotCollectInwV2,
     CannotMintInwV2,
     CannotTransferInwV1

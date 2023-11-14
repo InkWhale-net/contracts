@@ -12,7 +12,9 @@ use openbrush::{
 };
 
 use crate::impls::azero_staking::data::{
-    StakeInformation, OngoingExpiredWaitingList, WithdrawalRequestInformation
+    StakeInformation, 
+    // OngoingExpiredWaitingList, 
+    WithdrawalRequestInformation
 };
 
 use crate::traits::error::Error;
@@ -95,11 +97,11 @@ pub trait AzeroStakingTrait {
     #[ink(message)]
     fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error>;
     
-    #[ink(message)]
-    fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
+    // #[ink(message)]
+    // fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error>;
     
-    #[ink(message)]
-    fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error>;
+    // #[ink(message)]
+    // fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error>;
     
     #[ink(message)]
     fn claim(&mut self, request_index: u128) -> Result<(), Error>;
