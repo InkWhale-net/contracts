@@ -104,7 +104,15 @@ pub enum Error {
     IsNotWithdrawable,
     CannotCollectInwV2,
     CannotMintInwV2,
-    CannotTransferInwV1
+    CannotTransferInwV1,
+    InvalidIsLockedInput
+}
+
+#[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub enum LockError {
+    NotLocked,
+    Locked
 }
 
 impl From<OwnableError> for Error {
@@ -134,5 +142,14 @@ impl From<PSP22Error> for Error {
 impl From<PSP34Error> for Error {
     fn from(error: PSP34Error) -> Self {
         Error::PSP34Error(error)
+    }
+}
+
+impl From<LockError> for Error {
+    fn from(locked: LockError) -> Self {
+        match locked {
+            LockError::Locked => Error::Custom(String::from("O::Locked")),
+            LockError::NotLocked => Error::Custom(String::from("O::NotLocked")),
+        }
     }
 }

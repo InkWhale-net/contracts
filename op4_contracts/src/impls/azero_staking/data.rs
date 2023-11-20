@@ -69,6 +69,7 @@ pub struct Data {
     pub total_inw_reserved_for_withdrawals: Balance,
 
     pub is_withdrawable: bool,
+    pub is_locked: bool,
 }
 
 impl Default for Data {
@@ -100,6 +101,7 @@ impl Default for Data {
             total_inw_reserved_for_withdrawals: Default::default(),
         
             is_withdrawable: Default::default(),
+            is_locked: Default::default(),
         }
     }
 }

@@ -213,6 +213,9 @@ pub trait AzeroStakingTrait {
     fn get_is_withdrawable(&self) -> bool;
 
     #[ink(message)]
+    fn get_is_locked(&self) -> bool;
+
+    #[ink(message)]
     fn get_block_timestamp(&self) -> Timestamp;
 
     // Setters
@@ -221,6 +224,12 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn set_max_total_staking_amount(&mut self, max_total_staking_amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_is_locked(&mut self, is_locked: bool) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn update_unclaimed_rewards_when_locked(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error>; 
 
     #[ink(message)]
     fn set_apy(&mut self, apy: Balance) -> Result<(), Error>;

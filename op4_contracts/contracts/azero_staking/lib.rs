@@ -285,6 +285,7 @@ pub mod my_azero_staking {
             self.data.total_inw_reserved_for_withdrawals = 0;
 
             self.data.is_withdrawable = true;
+            self.data.is_locked = false;
 
             Ok(())          
         }

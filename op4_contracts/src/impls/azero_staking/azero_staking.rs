@@ -1,15 +1,44 @@
 pub use crate::{
     impls::azero_staking::{data, data::Data, data::*},
-    traits::{error::Error, azero_staking::*},
+    traits::{error::Error, error::LockError, azero_staking::*},
 };
 
 use ink::prelude::{vec::Vec};
 
 use openbrush::{
     contracts::{access_control::*, ownable::*},
+    modifier_definition,
     modifiers,
     traits::{AccountId, Balance, Storage, Timestamp},
 };
+
+/// Throws if is_locked is false
+#[modifier_definition]
+pub fn only_locked<T, F, R, E>(instance: &mut T, body: F) -> Result<R, E>
+where
+    T: Storage<Data>,
+    F: FnOnce(&mut T) -> Result<R, E>,
+    E: From<LockError>,
+{
+    if instance.data().is_locked == false {
+        return Err(From::from(LockError::NotLocked))
+    }
+    body(instance)
+}
+
+/// Throws if is_locked is true
+#[modifier_definition]
+pub fn only_not_locked<T, F, R, E>(instance: &mut T, body: F) -> Result<R, E>
+where
+    T: Storage<Data>,
+    F: FnOnce(&mut T) -> Result<R, E>,
+    E: From<LockError>,
+{
+    if instance.data().is_locked == true {
+        return Err(From::from(LockError::Locked))
+    }
+    body(instance)
+}
 
 pub trait AzeroStakingTrait: 
     access_control::Internal
@@ -98,6 +127,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }
 
+    #[modifiers(only_not_locked)]
     fn stake(&mut self, amount: Balance) -> Result<(), Error>  {
         if amount < self.data::<Data>().min_staking_amount {
             return Err(Error::BelowMinStakingMount);
@@ -159,6 +189,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }    
 
+    #[modifiers(only_not_locked)]
     fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error> {
         let staker = Self::env().caller();
 
@@ -694,6 +725,7 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().unstaking_fee
     }
 
+    #[modifiers(only_not_locked)]
     fn get_stake_info(&mut self, staker: AccountId) -> Result<Option<StakeInformation>, Error> {
         let current_time = Self::env().block_timestamp();
 
@@ -822,6 +854,10 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().is_withdrawable
     }
 
+    fn get_is_locked(&self) -> bool {
+        self.data::<Data>().is_locked
+    }
+
     fn get_block_timestamp(&self) -> Timestamp {
         Self::env().block_timestamp()
     }
@@ -847,25 +883,31 @@ pub trait AzeroStakingTrait:
         Ok(())
     }   
 
-    #[modifiers(only_role(ADMINER))]
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    fn set_is_locked(&mut self, is_locked: bool) -> Result<(), Error> {
+        if is_locked == self.data::<Data>().is_locked {
+            return Err(Error::InvalidIsLockedInput)
+        }
+        self.data::<Data>().is_locked = is_locked;
+        Ok(())
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_locked)]   
+    fn update_unclaimed_rewards_when_locked(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error> {
+        if self.update_unclaimed_rewards(staker, current_time).is_err() {
+            return Err(Error::CannotUpdateUnclaimedRewards);
+        }
+        Ok(())
+    }
+
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_locked)]    
     fn set_apy(&mut self, apy: Balance) -> Result<(), Error> {
         if apy == 0 {
             return Err(Error::InvalidApy);
         }
 
-        // Update the current unclaimed_amount for all stakers
-        let current_time = Self::env().block_timestamp();
-
-        let count = self.data::<Data>().staker_list.len();
-        for i in 0..count {
-            let staker = self.data::<Data>().staker_list[i];
-
-            if self.update_unclaimed_rewards(staker, current_time).is_err() {
-                return Err(Error::CannotUpdateUnclaimedRewards);
-            }
-        }
-
-        // Update apy
         self.data::<Data>().apy = apy;
         Ok(())
     }   
@@ -886,25 +928,13 @@ pub trait AzeroStakingTrait:
         Ok(())
     }   
 
-    #[modifiers(only_role(ADMINER))]
+    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_locked)]
     fn set_inw_multiplier(&mut self, inw_multiplier: Balance) -> Result<(), Error> {
         if inw_multiplier == 0 {
             return Err(Error::InvalidMultiplier);
         }
 
-        // Update the current unclaimed_amount for all stakers
-        let current_time = Self::env().block_timestamp();
-
-        let count = self.data::<Data>().staker_list.len();
-        for i in 0..count {
-            let staker = self.data::<Data>().staker_list[i];
-
-            if self.update_unclaimed_rewards(staker, current_time).is_err() {
-                return Err(Error::CannotUpdateUnclaimedRewards);
-            }
-        }
-
-        // Update inw_multiplier
         self.data::<Data>().inw_multiplier = inw_multiplier;
         Ok(())
     }   
