@@ -290,128 +290,6 @@ pub trait AzeroStakingTrait:
         Ok(ongoing_expired_waiting_list)
     }
 
-    // fn find_inserted_index(&self, waiting_list: &Vec::<u128>, value: Balance) -> Result<usize, Error> {
-    //     let mut low: usize = 0;
-    //     let mut high: usize = waiting_list.len();            
-
-    //     while low < high {
-    //         let mid: usize = (low.checked_add(high).ok_or(Error::CheckedOperations)?) >> 1;
-                        
-    //         if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&waiting_list[mid]) {
-    //             if withdrawal_request_info.total_azero < value {
-    //                 low = mid.checked_add(1).ok_or(Error::CheckedOperations)?;
-    //             } else {
-    //                 high = mid;
-    //             }
-    //         }                      
-    //     }
-
-    //     return Ok(low);
-    // }
-
-    // // The waiting_list is sorted in order of total_azero 
-    // fn get_sorted_waiting_list_within_expiration_duration(&self, expiration_duration: u64) -> Result<OngoingExpiredWaitingList, Error> {
-    //     let count = self.data::<Data>().withdrawal_waiting_list.count(1);
-        
-    //     let mut waiting_list = Vec::<u128>::new();
-    //     let mut total_azero: Balance = 0;
-    //     let mut total_inw: Balance = 0;
-
-    //     let current_time = Self::env().block_timestamp();
-
-    //     for i in 0..count {
-    //         if let Some(request_index) = self.data::<Data>().withdrawal_waiting_list.get_value(1, &i) {
-    //             if let Some(withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
-    //                 if withdrawal_request_info.request_time.checked_add(self.data::<Data>().max_waiting_time).ok_or(Error::CheckedOperations)?
-    //                    <= current_time.checked_add(expiration_duration).ok_or(Error::CheckedOperations)? {
-    //                     // Find while list index and insert the request index to waiting list
-    //                     if let Ok(wl_index) = self.find_inserted_index(&waiting_list, withdrawal_request_info.total_azero) {
-    //                         waiting_list.insert(wl_index, request_index);
-
-    //                         total_azero = total_azero.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)?;
-    //                         total_inw = total_inw.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)?;
-    //                     }
-    //                 } 
-    //             }
-    //         }
-    //     }
-
-    //     let ongoing_expired_waiting_list = OngoingExpiredWaitingList {
-    //         waiting_list: waiting_list,
-    //         total_azero: total_azero,
-    //         total_inw: total_inw
-    //     };
-
-    //     Ok(ongoing_expired_waiting_list)
-    // }
-
-    // #[modifiers(only_role(ADMINER))]
-    // fn select_requests_to_pay(&mut self, expiration_duration: u64) -> Result<(), Error> {
-    //     if let Ok(ongoing_expired_waiting_list) = self.get_sorted_waiting_list_within_expiration_duration(expiration_duration) {
-    //         let waiting_list = ongoing_expired_waiting_list.waiting_list; 
-    //         let list_count = waiting_list.len();           
-                        
-    //         // Mark requests as claimable if there are enough to pay
-    //         let mut total_azero_claimable: Balance = 0;
-    //         let mut total_inw_claimable: Balance = 0;
-    //         // let mut is_payable = true; 
-            
-    //         let total_payable_azero_amount = Self::env().balance().checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)?;
-            
-    //         let inw_balance = Psp22Ref::balance_of(
-    //             &self.data::<Data>().inw_contract,
-    //             Self::env().account_id(),
-    //         );
-    //         let total_payable_inw_amount = inw_balance.checked_sub(self.data::<Data>().total_inw_reserved_for_withdrawals).ok_or(Error::CheckedOperations)?;
-
-    //         for i in 0..list_count {
-    //             let request_index = waiting_list[i]; 
-
-    //             if let Some(mut withdrawal_request_info) = self.data::<Data>().withdrawal_request_list.get(&request_index) {
-    //                 // Check again if it is really the waiting status
-    //                 if withdrawal_request_info.status == WITHDRAWAL_REQUEST_WAITING {
-    //                     if total_azero_claimable.checked_add(withdrawal_request_info.total_azero).ok_or(Error::CheckedOperations)? <= total_payable_azero_amount {
-    //                         if total_inw_claimable.checked_add(withdrawal_request_info.inw_reward).ok_or(Error::CheckedOperations)? <= total_payable_inw_amount {
-    //                             // Add claimable amount for this selection
-    //                             total_azero_claimable = total_azero_claimable
-    //                                                     .checked_add(withdrawal_request_info.total_azero)
-    //                                                     .ok_or(Error::CheckedOperations)?;
-
-    //                             total_inw_claimable = total_inw_claimable
-    //                                                     .checked_add(withdrawal_request_info.inw_reward)
-    //                                                     .ok_or(Error::CheckedOperations)?;
-
-    //                             // Add reserves for withdrawals
-    //                             self.data::<Data>().total_azero_reserved_for_withdrawals = 
-    //                                                     self.data::<Data>().total_azero_reserved_for_withdrawals
-    //                                                     .checked_add(withdrawal_request_info.total_azero)
-    //                                                     .ok_or(Error::CheckedOperations)?;
-
-    //                             self.data::<Data>().total_inw_reserved_for_withdrawals = 
-    //                                                     self.data::<Data>().total_inw_reserved_for_withdrawals
-    //                                                     .checked_add(withdrawal_request_info.inw_reward)
-    //                                                     .ok_or(Error::CheckedOperations)?;
-
-    //                             // Update withdrawal request info
-    //                             withdrawal_request_info.status = WITHDRAWAL_REQUEST_CLAIMABLE;
-    //                             self.data::<Data>().withdrawal_request_list.insert(&request_index, &withdrawal_request_info);
-
-    //                             // Remove request_index in waiting list
-    //                             self.data::<Data>().withdrawal_waiting_list.remove_value(1, &request_index);                              
-    //                         }    
-    //                     } else {    
-    //                         break;
-    //                     }
-    //                 }
-    //             }         
-    //         }
-
-    //         Ok(())
-    //     } else {
-    //         Err(Error::CannotGetWaitingList)
-    //     }
-    // }
-
     fn claim(&mut self, request_index: u128) -> Result<(), Error> {
         let claimer = Self::env().caller();
 
@@ -594,14 +472,6 @@ pub trait AzeroStakingTrait:
         );
         inw_balance.checked_sub(self.data::<Data>().total_inw_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
     }
-
-    // fn get_role_withdrawal_manager(&self) -> RoleType {
-    //     WITHDRAWAL_MANAGER
-    // }
-
-    // fn get_role_updating_manager(&self) -> RoleType {
-    //     UPDATING_MANAGER
-    // }
 
     #[modifiers(only_role(WITHDRAWAL_MANAGER))]
     fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error> {
@@ -883,7 +753,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }   
 
-    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_role(ADMINER))]
     fn set_is_locked(&mut self, is_locked: bool) -> Result<(), Error> {
         if is_locked == self.data::<Data>().is_locked {
             return Err(Error::InvalidIsLockedInput)
@@ -892,7 +762,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }
 
-    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_role(ADMINER))]
     #[modifiers(only_locked)]   
     fn update_unclaimed_rewards_when_locked(&mut self, staker: AccountId, current_time: u64) -> Result<(), Error> {
         if self.update_unclaimed_rewards(staker, current_time).is_err() {
@@ -901,7 +771,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }
 
-    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_role(ADMINER))]
     #[modifiers(only_locked)]    
     fn set_apy(&mut self, apy: Balance) -> Result<(), Error> {
         if apy == 0 {
@@ -928,7 +798,7 @@ pub trait AzeroStakingTrait:
         Ok(())
     }   
 
-    #[modifiers(only_role(UPDATING_MANAGER))]
+    #[modifiers(only_role(ADMINER))]
     #[modifiers(only_locked)]
     fn set_inw_multiplier(&mut self, inw_multiplier: Balance) -> Result<(), Error> {
         if inw_multiplier == 0 {
