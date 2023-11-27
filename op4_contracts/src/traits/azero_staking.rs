@@ -33,6 +33,9 @@ pub const WITHDRAWAL_REQUEST_WAITING: u8 = 0;
 pub const WITHDRAWAL_REQUEST_CLAIMABLE: u8 = 1;
 pub const WITHDRAWAL_REQUEST_CLAIMED: u8 = 2;
 
+// One day to ms
+pub const ONE_DAY: u64 = 86400000;
+
 #[openbrush::wrapper]
 pub type Psp22Ref = dyn PSP22 + PSP22Burnable + PSP22Metadata;
 
@@ -54,8 +57,6 @@ pub trait AzeroStakingTrait {
         _request_id: u128,
         _user: AccountId,        
         _amount: Balance,
-        _azero_reward: Balance,
-        _inw_reward: Balance, 
         _time: u64
     );
 
@@ -64,26 +65,45 @@ pub trait AzeroStakingTrait {
         _request_id: u128,
         _user: AccountId,  
         _azero_amount: Balance,
-        _inw_amount: Balance,
         _time: u64  
     );
 
     fn _emit_withdraw_azero_to_stake_event(
         &self,
-        _caller: AccountId, 
         _receiver: AccountId,
         _amount: Balance, 
         _time: u64 
     );
 
-    fn _emit_withdraw_azero_event(
+    fn _emit_withdraw_azero_from_stake_account_event(
         &self,
         _receiver: AccountId,
         _amount: Balance, 
         _time: u64 
     );
 
-    fn _emit_withdraw_inw_event(
+    fn _emit_withdraw_azero_from_interest_account_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    );
+
+    fn _emit_withdraw_azero_not_in_accounts_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    );
+
+    fn _emit_withdraw_inw_from_interest_account_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance,
+        _time: u64 
+    );
+
+    fn _emit_withdraw_inw_not_in_accounts_event(
         &self,
         _receiver: AccountId,
         _amount: Balance,
@@ -107,19 +127,43 @@ pub trait AzeroStakingTrait {
     fn get_azero_balance(&self) -> Balance;
 
     #[ink(message)]
-    fn get_payable_azero(&self) -> Result<Balance, Error>;
+    fn get_azero_stake_account(&self) -> Balance;
 
     #[ink(message)]
-    fn get_withdrawable_inw(&self) -> Result<Balance, Error>;
+    fn get_azero_interest_account(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_inw_interest_account(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_payable_azero(&self) -> Result<Balance, Error>;
 
     #[ink(message)]
     fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error>;
 
     #[ink(message)]
-    fn withdraw_azero(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+    fn withdraw_azero_from_stake_account(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn withdraw_azero_from_interest_account(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;  
+
+    #[ink(message)]
+    fn withdraw_azero_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+        
+    #[ink(message)] 
+    fn withdraw_inw_from_interest_account(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)] 
-    fn withdraw_inw(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+    fn withdraw_inw_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+        
+    #[ink(message)]
+    fn topup_azero_stake_account(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn topup_azero_interest_account(&mut self, amount: Balance) -> Result<(), Error>;
+
+    // #[ink(message)]
+    // fn topup_inw_interest_account(&mut self, amount: Balance) -> Result<(), Error>;
 
     // Getters
     #[ink(message)]
@@ -195,14 +239,8 @@ pub trait AzeroStakingTrait {
     fn get_total_azero_for_waiting_withdrawals(&self) -> Balance;
 
     #[ink(message)]
-    fn get_total_inw_for_waiting_withdrawals(&self) -> Balance;
-
-    #[ink(message)]
     fn get_total_azero_reserved_for_withdrawals(&self) -> Balance;
-    
-    #[ink(message)]
-    fn get_total_inw_reserved_for_withdrawals(&self) -> Balance;
-
+        
     #[ink(message)]
     fn get_is_withdrawable(&self) -> bool;
 
@@ -211,6 +249,12 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn get_block_timestamp(&self) -> Timestamp;
+
+    #[ink(message)]
+    fn get_rewards_claim_waiting_duration(&self) -> u64;
+
+    #[ink(message)]
+    fn get_interest_distribution_contract(&self) -> AccountId;
 
     // Setters
     #[ink(message)]
@@ -244,14 +288,17 @@ pub trait AzeroStakingTrait {
     fn set_total_azero_reserved_for_withdrawals(&mut self, total_azero_reserved_for_withdrawals: Balance) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_total_inw_reserved_for_withdrawals(&mut self, total_inw_reserved_for_withdrawals: Balance) -> Result<(), Error>;
-
-    #[ink(message)]
     fn set_withdrawal_request_info_status(&mut self, request_index: u128, status: u8) -> Result<(), Error>;
     
     #[ink(message)]
     fn remove_request_index_in_withdrawal_waiting_list(&mut self, request_index: u128) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_is_withdrawable(&mut self, is_withdrawable: bool) -> Result<(), Error>;
+    fn set_is_withdrawable(&mut self, is_withdrawable: bool) -> Result<(), Error>;   
+
+    #[ink(message)]
+    fn set_rewards_claim_waiting_duration(&mut self, rewards_claim_waiting_duration: u64) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn set_interest_distribution_contract(&mut self, interest_distribution_contract: AccountId) -> Result<(), Error>;
 }

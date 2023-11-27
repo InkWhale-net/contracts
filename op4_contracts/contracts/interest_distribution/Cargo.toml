@@ -1,0 +1,38 @@
+[package]
+name = "my_interest_distribution"
+version = "1.0.0"
+authors = ["InkWhale <admin@artzero.io>"]
+edition = "2021"
+
+[dependencies]
+ink = { version = "4.3.0", default-features = false }
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+
+# These dependencies
+inkwhale_project = { path = "../..", default-features = false }
+openbrush = {  tag = "4.0.0", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["psp22", "ownable", "access_control"] }
+
+[lib]
+name = "my_interest_distribution"
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info",
+    "scale-info/std",
+
+    # These dependencies
+    "inkwhale_project/std",
+    "openbrush/std",
+]
+ink-as-dependency = []
+
+[profile.dev]
+codegen-units = 16
+
+[profile.release]
+overflow-checks = false

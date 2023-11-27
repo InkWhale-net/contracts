@@ -95,6 +95,7 @@ pub enum Error {
     CannotGetWithdrawableAmount,
     InvalidWithdrawalAmount,
     CannotUpdateUnclaimedRewards,
+    CannotUpdateLastUnclaimedRewards,
     InvalidCapAmount,
     InvalidWhitelistAmount,
     CapExceeded,
@@ -105,7 +106,15 @@ pub enum Error {
     CannotCollectInwV2,
     CannotMintInwV2,
     CannotTransferInwV1,
-    InvalidIsLockedInput
+    InvalidIsLockedInput,
+    InvalidTimeToClaimRewards,
+    NotEnoughAzeroReward,
+    NotEnoughInwReward,
+    RequestToClaimRewardsFirst,
+    InvalidTotalRate,
+    InvalidInterestAccountRate,
+    NoAzeroToDistribute,
+    CannotTopupAzeroInterestAccount
 }
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]

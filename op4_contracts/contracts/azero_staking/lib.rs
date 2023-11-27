@@ -43,8 +43,6 @@ pub mod my_azero_staking {
         request_id: u128,
         user: AccountId,        
         amount: Balance,
-        azero_reward: Balance,
-        inw_reward: Balance, 
         time: u64
     }
 
@@ -53,27 +51,46 @@ pub mod my_azero_staking {
         request_id: u128,
         user: AccountId,  
         azero_amount: Balance,
-        inw_amount: Balance,
         time: u64  
     }
 
     #[ink(event)]
     pub struct WithdrawAzeroToStakeEvent {
-        caller: AccountId, 
         receiver: AccountId,
         amount: Balance, 
         time: u64 
     }
 
     #[ink(event)]
-    pub struct WithdrawAzeroEvent {
+    pub struct WithdrawAzeroFromStakeAccountEvent {
         receiver: AccountId,
         amount: Balance, 
         time: u64      
     }
 
     #[ink(event)]
-    pub struct WithdrawInwEvent {
+    pub struct WithdrawAzeroFromInterestAccountEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
+
+    #[ink(event)]
+    pub struct WithdrawAzeroNotInAccountsEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
+
+    #[ink(event)]
+    pub struct WithdrawInwFromInterestAccountEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
+
+    #[ink(event)]
+    pub struct WithdrawInwNotInAccountsEvent {
         receiver: AccountId,
         amount: Balance, 
         time: u64      
@@ -103,8 +120,6 @@ pub mod my_azero_staking {
             _request_id: u128,
             _user: AccountId,        
             _amount: Balance,
-            _azero_reward: Balance,
-            _inw_reward: Balance, 
             _time: u64
         ) {
             MyAzeroStaking::emit_event(
@@ -113,8 +128,6 @@ pub mod my_azero_staking {
                     request_id: _request_id,
                     user: _user,        
                     amount: _amount,
-                    azero_reward: _azero_reward,
-                    inw_reward: _inw_reward, 
                     time: _time
                 }),
             );
@@ -124,8 +137,7 @@ pub mod my_azero_staking {
             &self,
             _request_id: u128,
             _user: AccountId,  
-            _azero_amount: Balance,
-            _inw_amount: Balance,
+            _azero_amount: Balance,           
             _time: u64  
         ) { 
             MyAzeroStaking::emit_event(
@@ -133,8 +145,7 @@ pub mod my_azero_staking {
                 Event::ClaimEvent(ClaimEvent {
                     request_id: _request_id,
                     user: _user,  
-                    azero_amount: _azero_amount,
-                    inw_amount: _inw_amount,
+                    azero_amount: _azero_amount,          
                     time: _time  
                 }),
             );
@@ -142,7 +153,6 @@ pub mod my_azero_staking {
 
         fn _emit_withdraw_azero_to_stake_event(
             &self,
-            _caller: AccountId, 
             _receiver: AccountId,
             _amount: Balance, 
             _time: u64 
@@ -150,7 +160,6 @@ pub mod my_azero_staking {
             MyAzeroStaking::emit_event(
                 self.env(),
                 Event::WithdrawAzeroToStakeEvent(WithdrawAzeroToStakeEvent {
-                    caller: _caller, 
                     receiver: _receiver,
                     amount: _amount, 
                     time: _time 
@@ -158,7 +167,23 @@ pub mod my_azero_staking {
             );       
         }
 
-        fn _emit_withdraw_azero_event(
+        fn _emit_withdraw_azero_from_stake_account_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {     
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawAzeroFromStakeAccountEvent(WithdrawAzeroFromStakeAccountEvent { 
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );       
+        }
+
+        fn _emit_withdraw_azero_from_interest_account_event(
             &self,
             _receiver: AccountId,
             _amount: Balance, 
@@ -166,7 +191,7 @@ pub mod my_azero_staking {
         ) {    
             MyAzeroStaking::emit_event(
                 self.env(),
-                Event::WithdrawAzeroEvent(WithdrawAzeroEvent {
+                Event::WithdrawAzeroFromInterestAccountEvent(WithdrawAzeroFromInterestAccountEvent {
                     receiver: _receiver,
                     amount: _amount, 
                     time: _time 
@@ -174,7 +199,23 @@ pub mod my_azero_staking {
             );         
         }
 
-        fn _emit_withdraw_inw_event(
+        fn _emit_withdraw_azero_not_in_accounts_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {    
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawAzeroNotInAccountsEvent(WithdrawAzeroNotInAccountsEvent {
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );         
+        }
+
+        fn _emit_withdraw_inw_from_interest_account_event(
             &self,
             _receiver: AccountId,
             _amount: Balance, 
@@ -182,7 +223,23 @@ pub mod my_azero_staking {
         ) {  
             MyAzeroStaking::emit_event(
                 self.env(),
-                Event::WithdrawInwEvent(WithdrawInwEvent {
+                Event::WithdrawInwFromInterestAccountEvent(WithdrawInwFromInterestAccountEvent {
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );   
+        }
+
+        fn _emit_withdraw_inw_not_in_accounts_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {  
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawInwNotInAccountsEvent(WithdrawInwNotInAccountsEvent {
                     receiver: _receiver,
                     amount: _amount, 
                     time: _time 
@@ -277,12 +334,18 @@ pub mod my_azero_staking {
 
             self.data.withdrawal_request_count = 0;
 
+            self.data.total_azero_staked = 0;
             self.data.total_azero_claimed = 0;
             self.data.total_inw_claimed = 0;
             self.data.total_azero_for_waiting_withdrawals = 0;
-            self.data.total_inw_for_waiting_withdrawals = 0;
             self.data.total_azero_reserved_for_withdrawals = 0;
-            self.data.total_inw_reserved_for_withdrawals = 0;
+
+            self.data.azero_stake_account = 0;
+            self.data.azero_interest_account = 0;
+            self.data.inw_interest_account = 0;
+
+            self.data.last_azero_interest_topup = 0;
+            self.data.rewards_claim_waiting_duration = ONE_DAY;
 
             self.data.is_withdrawable = true;
             self.data.is_locked = false;
