@@ -28,6 +28,7 @@ pub mod my_interest_distribution {
 
     impl UpgradeableTrait for MyInterestDistribution {}
     impl AdminTrait for MyInterestDistribution {}
+    impl InterestDistributionTrait for MyInterestDistribution {}
 
     impl MyInterestDistribution {
         #[ink(constructor)]

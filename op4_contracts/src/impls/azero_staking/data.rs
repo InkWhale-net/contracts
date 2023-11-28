@@ -43,6 +43,13 @@ pub struct OngoingExpiredWaitingList {
     pub total_azero: Balance,
 }
 
+#[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(StorageLayout, scale_info::TypeInfo))]
+pub struct UnclaimedRewardAtLastTopup {
+    pub azero_reward: Balance,
+    pub inw_reward: Balance,
+}
+
 #[derive(Debug)]
 #[openbrush::storage_item]
 pub struct Data {

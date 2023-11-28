@@ -114,7 +114,8 @@ pub enum Error {
     InvalidTotalRate,
     InvalidInterestAccountRate,
     NoAzeroToDistribute,
-    CannotTopupAzeroInterestAccount
+    CannotTopupAzeroInterestAccount,
+    NoNewAzeroTopup
 }
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]

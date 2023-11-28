@@ -5,7 +5,7 @@ pub use crate::{
 
 use ink::prelude::vec::Vec;
 use openbrush::{
-    contracts::{ownable::*, psp22::*},
+    contracts::{ownable::*},
     modifiers,
     traits::{AccountId, Balance, Storage},
 };
@@ -13,7 +13,6 @@ use openbrush::{
 pub trait InterestDistributionTrait:
       Storage<Data>
     + Storage<ownable::Data>  
-    + Storage<psp22::Data>
 {
     // #[modifiers(only_role(ADMINER))]
     fn distribute_azero(&mut self) -> Result<(), Error> {

@@ -14,7 +14,8 @@ use openbrush::{
 use crate::impls::azero_staking::data::{
     StakeInformation, 
     // OngoingExpiredWaitingList, 
-    WithdrawalRequestInformation
+    WithdrawalRequestInformation,
+    UnclaimedRewardAtLastTopup
 };
 
 use crate::traits::error::Error;
@@ -119,6 +120,12 @@ pub trait AzeroStakingTrait {
        
     #[ink(message)]
     fn claim(&mut self, request_index: u128) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn claim_rewards(&mut self) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn get_unclaimed_reward_at_last_topup(&self) -> Result<UnclaimedRewardAtLastTopup, Error>;
 
     #[ink(message)]
     fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error>;

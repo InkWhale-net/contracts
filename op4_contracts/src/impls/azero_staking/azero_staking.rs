@@ -539,6 +539,38 @@ pub trait AzeroStakingTrait:
         }                  
     }
 
+    fn get_unclaimed_reward_at_last_topup(&self) -> Result<UnclaimedRewardAtLastTopup, Error> {
+        let claimer = Self::env().caller();
+        
+        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
+            // Can only check if there is a new topup for azero interest compared with the last rewards claimed
+            if stake_info.last_rewards_claimed >= self.data::<Data>().last_azero_interest_topup {
+                return Err(Error::NoNewAzeroTopup);
+            }
+
+            // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
+            let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperations)?; // ms
+            
+            let unclaimed_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            let unclaimed_azero_reward_at_last_topup = stake_info.last_unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+            // Assuming azero and imw have the same decimal 12               
+            let unclaimed_inw_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
+
+            let unclaimed_reward_at_last_topup = UnclaimedRewardAtLastTopup {
+                azero_reward: unclaimed_azero_reward_at_last_topup,
+                inw_reward: unclaimed_inw_reward_at_last_topup
+            };
+
+            Ok(unclaimed_reward_at_last_topup)
+        } else {
+            return Err(Error::NoStakeInfoFound);
+        }
+    }
+
     // Not count for the one reserved and going to expire  
     fn get_withdrawable_azero_to_stake_to_validator(&self, expiration_duration: u64) -> Result<Balance, Error> {
         // Use the unsorted waiting list because it is logN time faster than sorting it 
