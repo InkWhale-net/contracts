@@ -115,7 +115,16 @@ pub enum Error {
     InvalidInterestAccountRate,
     NoAzeroToDistribute,
     CannotTopupAzeroInterestAccount,
-    NoNewAzeroTopup
+    NoNewAzeroTopup,
+    NotInterestDistributionContract,
+    NotAzeroStakingContract,
+    CannotTransferToInterestAccount,
+    CannotTransferToMasterAccount,
+    CheckedOperationsTimeLength,
+    CheckedOperationsAzeroInterestAccount,
+    CheckedOperationsInwInterestAccount,
+    CheckedOperationsUnclaimedAzeroReward,
+    CheckedOperationsUnclaimedInwReward
 }
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]

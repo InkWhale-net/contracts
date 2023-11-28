@@ -134,15 +134,6 @@ pub trait AzeroStakingTrait {
     fn get_azero_balance(&self) -> Balance;
 
     #[ink(message)]
-    fn get_azero_stake_account(&self) -> Balance;
-
-    #[ink(message)]
-    fn get_azero_interest_account(&self) -> Balance;
-
-    #[ink(message)]
-    fn get_inw_interest_account(&self) -> Balance;
-
-    #[ink(message)]
     fn get_payable_azero(&self) -> Result<Balance, Error>;
 
     #[ink(message)]
@@ -163,7 +154,7 @@ pub trait AzeroStakingTrait {
     #[ink(message)] 
     fn withdraw_inw_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
         
-    #[ink(message)]
+    #[ink(message, payable)]
     fn topup_azero_stake_account(&mut self, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]
@@ -247,7 +238,22 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn get_total_azero_reserved_for_withdrawals(&self) -> Balance;
-        
+
+    #[ink(message)]
+    fn get_azero_stake_account(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_azero_interest_account(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_inw_interest_account(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_last_azero_interest_topup(&self) -> u64;
+
+    #[ink(message)]
+    fn get_rewards_claim_waiting_duration(&self) -> u64;
+
     #[ink(message)]
     fn get_is_withdrawable(&self) -> bool;
 
@@ -255,14 +261,11 @@ pub trait AzeroStakingTrait {
     fn get_is_locked(&self) -> bool;
 
     #[ink(message)]
-    fn get_block_timestamp(&self) -> Timestamp;
-
-    #[ink(message)]
-    fn get_rewards_claim_waiting_duration(&self) -> u64;
-
-    #[ink(message)]
     fn get_interest_distribution_contract(&self) -> AccountId;
 
+    #[ink(message)]
+    fn get_block_timestamp(&self) -> Timestamp;   
+    
     // Setters
     #[ink(message)]
     fn set_min_staking_amount(&mut self, min_staking_amount: Balance) -> Result<(), Error>;   

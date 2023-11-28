@@ -5,18 +5,21 @@ pub use crate::{
 
 use ink::prelude::vec::Vec;
 use openbrush::{
-    contracts::{ownable::*},
+    contracts::{access_control::*, ownable::*},
     modifiers,
     traits::{AccountId, Balance, Storage},
 };
 
 pub trait InterestDistributionTrait:
-      Storage<Data>
+    access_control::Internal
+    + access_control::MembersManager
+    + Storage<access_control::Data>
+    + Storage<Data>
     + Storage<ownable::Data>  
 {
-    // #[modifiers(only_role(ADMINER))]
+    #[modifiers(only_role(ADMINER))]
     fn distribute_azero(&mut self) -> Result<(), Error> {
-        let total = Self::env().balance();
+        let total = Self::env().balance().checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?;
         if total > 0 {
             let interest_account_amount = total.checked_mul(self.data::<Data>().interest_account_rate.into()).ok_or(Error::CheckedOperations)?
                                             .checked_div(self.data::<Data>().total_rate.into()).ok_or(Error::CheckedOperations)?;
@@ -26,19 +29,20 @@ pub trait InterestDistributionTrait:
             // Transfer to azero staking and update azero interest account 
             if interest_account_amount > 0 {                
                 if Self::env().transfer(self.data::<Data>().azero_staking_contract, interest_account_amount).is_err() {
-                    return Err(Error::CannotTransfer);
+                    return Err(Error::CannotTransferToInterestAccount);
                 }
 
                 // Update azero interest account 
-                if AzeroStakingRef::topup_azero_interest_account(&self.data::<Data>().azero_staking_contract, interest_account_amount).is_err() {
-                    return Err(Error::CannotTopupAzeroInterestAccount);
+                let result = AzeroStakingRef::topup_azero_interest_account(&self.data::<Data>().azero_staking_contract, interest_account_amount);
+                if result.is_err() {                    
+                    return result;
                 }
             }
 
             // Transfer to master account
             if master_account_amount > 0 {
                 if Self::env().transfer(self.data::<Data>().master_account, master_account_amount).is_err() {
-                    return Err(Error::CannotTransfer);
+                    return Err(Error::CannotTransferToMasterAccount);
                 }
             }
 
@@ -48,7 +52,12 @@ pub trait InterestDistributionTrait:
         }
     }
 
+    // From azero staking, need to check caller first
     fn distribute_inw_reward(&mut self, amount: Balance) -> Result<(), Error> {
+        if Self::env().caller() != self.data::<Data>().azero_staking_contract {
+            return Err(Error::NotAzeroStakingContract);
+        }
+
         let balance = Psp22Ref::balance_of(
             &self.data::<Data>().inw_contract,
             Self::env().account_id(),
@@ -96,6 +105,14 @@ pub trait InterestDistributionTrait:
 
     fn get_interest_account_rate(&self) -> u64 {
         self.data::<Data>().interest_account_rate
+    }
+
+    fn get_azero_balance(&self) -> Balance {
+        Self::env().balance()
+    }
+
+    fn get_azero_minimum_balance(&self) -> Balance {
+        Self::env().minimum_balance()
     }
 
     // Setters

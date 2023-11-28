@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xa438c23e650ecf91024c63681be2521154f759d6b3c584666c4d10236bae9a7b",
+    "hash": "0x1d2807c3e15ba588fe23fe832f0abe3957fe564d1e0f8a12c697cf26bdb4a914",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.68.0",
     "build_info": {
@@ -96,7 +96,7 @@
         "displayName": [
           "Balance"
         ],
-        "type": 19
+        "type": 17
       },
       "blockNumber": {
         "displayName": [
@@ -108,13 +108,13 @@
         "displayName": [
           "ChainExtension"
         ],
-        "type": 32
+        "type": 33
       },
       "hash": {
         "displayName": [
           "Hash"
         ],
-        "type": 31
+        "type": 32
       },
       "maxEventTopics": 4,
       "timestamp": {
@@ -163,24 +163,6 @@
         "selector": "0x9e32fab2"
       },
       {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Get Azero balance"
-        ],
-        "label": "AdminTrait::get_balance",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 17
-        },
-        "selector": "0xc4360570"
-      },
-      {
         "args": [
           {
             "label": "psp22_contract_address",
@@ -199,7 +181,7 @@
                 "admintrait_external",
                 "TranferPsp22Input2"
               ],
-              "type": 19
+              "type": 17
             }
           },
           {
@@ -238,7 +220,7 @@
                 "admintrait_external",
                 "WithdrawFeeInput1"
               ],
-              "type": 19
+              "type": 17
             }
           },
           {
@@ -267,6 +249,78 @@
           "type": 6
         },
         "selector": "0x07573e99"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Get Azero balance"
+        ],
+        "label": "AdminTrait::get_balance",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0xc4360570"
+      },
+      {
+        "args": [
+          {
+            "label": "azero_staking_contract",
+            "type": {
+              "displayName": [
+                "interestdistributiontrait_external",
+                "SetAzeroStakingContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::set_azero_staking_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 6
+        },
+        "selector": "0x77b08da0"
+      },
+      {
+        "args": [
+          {
+            "label": "interest_account_rate",
+            "type": {
+              "displayName": [
+                "interestdistributiontrait_external",
+                "SetInterestAccountRateInput1"
+              ],
+              "type": 3
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::set_interest_account_rate",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 6
+        },
+        "selector": "0x30e95acf"
       },
       {
         "args": [
@@ -298,19 +352,19 @@
       {
         "args": [
           {
-            "label": "interest_account_rate",
+            "label": "amount",
             "type": {
               "displayName": [
                 "interestdistributiontrait_external",
-                "SetInterestAccountRateInput1"
+                "DistributeInwRewardInput1"
               ],
-              "type": 3
+              "type": 17
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "InterestDistributionTrait::set_interest_account_rate",
+        "label": "InterestDistributionTrait::distribute_inw_reward",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -320,13 +374,13 @@
           ],
           "type": 6
         },
-        "selector": "0x30e95acf"
+        "selector": "0x9a354382"
       },
       {
         "args": [],
         "default": false,
         "docs": [],
-        "label": "InterestDistributionTrait::get_azero_staking_contract",
+        "label": "InterestDistributionTrait::get_interest_account_rate",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -336,7 +390,23 @@
           ],
           "type": 20
         },
-        "selector": "0x5819cac9"
+        "selector": "0xbaaa0723"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::get_azero_balance",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0x07a81ca2"
       },
       {
         "args": [],
@@ -350,9 +420,116 @@
             "ink",
             "MessageResult"
           ],
-          "type": 20
+          "type": 22
         },
         "selector": "0x91a1c2eb"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_contract",
+            "type": {
+              "displayName": [
+                "interestdistributiontrait_external",
+                "SetInwContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::set_inw_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 6
+        },
+        "selector": "0xc2c9c903"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::get_inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x63f699f9"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::distribute_azero",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 6
+        },
+        "selector": "0x2707bb36"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::get_azero_staking_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x5819cac9"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::get_total_rate",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x55ef99cc"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InterestDistributionTrait::get_azero_minimum_balance",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0xd1faf01d"
       },
       {
         "args": [
@@ -384,174 +561,19 @@
       {
         "args": [
           {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "interestdistributiontrait_external",
-                "DistributeInwRewardInput1"
-              ],
-              "type": 19
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::distribute_inw_reward",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 6
-        },
-        "selector": "0x9a354382"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::distribute_azero",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 6
-        },
-        "selector": "0x2707bb36"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::get_total_rate",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0x55ef99cc"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::get_interest_account_rate",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0xbaaa0723"
-      },
-      {
-        "args": [
-          {
-            "label": "azero_staking_contract",
-            "type": {
-              "displayName": [
-                "interestdistributiontrait_external",
-                "SetAzeroStakingContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::set_azero_staking_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 6
-        },
-        "selector": "0x77b08da0"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::get_inw_contract",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 20
-        },
-        "selector": "0x63f699f9"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "interestdistributiontrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InterestDistributionTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 6
-        },
-        "selector": "0xc2c9c903"
-      },
-      {
-        "args": [
-          {
             "label": "role",
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "HasRoleInput1"
+                "GetRoleAdminInput1"
               ],
               "type": 4
-            }
-          },
-          {
-            "label": "address",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "HasRoleInput2"
-              ],
-              "type": 22
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AccessControl::has_role",
+        "label": "AccessControl::get_role_admin",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -561,7 +583,7 @@
           ],
           "type": 23
         },
-        "selector": "0xc1d9ac18"
+        "selector": "0x83da3bb2"
       },
       {
         "args": [
@@ -582,7 +604,7 @@
                 "accesscontrol_external",
                 "RevokeRoleInput2"
               ],
-              "type": 22
+              "type": 24
             }
           }
         ],
@@ -607,35 +629,35 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "RenounceRoleInput1"
+                "HasRoleInput1"
               ],
               "type": 4
             }
           },
           {
-            "label": "account",
+            "label": "address",
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "RenounceRoleInput2"
+                "HasRoleInput2"
               ],
-              "type": 22
+              "type": 24
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AccessControl::renounce_role",
-        "mutates": true,
+        "label": "AccessControl::has_role",
+        "mutates": false,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 25
+          "type": 27
         },
-        "selector": "0xeaf1248a"
+        "selector": "0xc1d9ac18"
       },
       {
         "args": [
@@ -656,7 +678,7 @@
                 "accesscontrol_external",
                 "GrantRoleInput2"
               ],
-              "type": 22
+              "type": 24
             }
           }
         ],
@@ -681,52 +703,35 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "GetRoleAdminInput1"
+                "RenounceRoleInput1"
               ],
               "type": 4
             }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AccessControl::get_role_admin",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 27
-        },
-        "selector": "0x83da3bb2"
-      },
-      {
-        "args": [
+          },
           {
-            "label": "role",
+            "label": "account",
             "type": {
               "displayName": [
-                "accesscontrolenumerable_external",
-                "GetRoleMemberCountInput1"
+                "accesscontrol_external",
+                "RenounceRoleInput2"
               ],
-              "type": 4
+              "type": 24
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "AccessControlEnumerable::get_role_member_count",
-        "mutates": false,
+        "label": "AccessControl::renounce_role",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 25
         },
-        "selector": "0xf1b1a9d7"
+        "selector": "0xeaf1248a"
       },
       {
         "args": [
@@ -761,25 +766,36 @@
             "ink",
             "MessageResult"
           ],
-          "type": 28
+          "type": 29
         },
         "selector": "0x163469e0"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrolenumerable_external",
+                "GetRoleMemberCountInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
         "default": false,
         "docs": [],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
+        "label": "AccessControlEnumerable::get_role_member_count",
+        "mutates": false,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 23
         },
-        "selector": "0x5e228753"
+        "selector": "0xf1b1a9d7"
       },
       {
         "args": [],
@@ -793,9 +809,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 28
+          "type": 29
         },
         "selector": "0x4fa43c8c"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 30
+        },
+        "selector": "0x5e228753"
       },
       {
         "args": [
@@ -806,7 +838,7 @@
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 22
+              "type": 24
             }
           }
         ],
@@ -820,7 +852,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 30
         },
         "selector": "0x11f43efd"
       }
@@ -1662,6 +1694,22 @@
               {
                 "index": 109,
                 "name": "NoNewAzeroTopup"
+              },
+              {
+                "index": 110,
+                "name": "NotInterestDistributionContract"
+              },
+              {
+                "index": 111,
+                "name": "NotAzeroStakingContract"
+              },
+              {
+                "index": 112,
+                "name": "CannotTransferToInterestAccount"
+              },
+              {
+                "index": 113,
+                "name": "CannotTransferToMasterAccount"
               }
             ]
           }
@@ -1949,42 +1997,8 @@
       "id": 17,
       "type": {
         "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 18
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 18
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
+          "primitive": "u128"
+        }
       }
     },
     {
@@ -2005,7 +2019,7 @@
               {
                 "fields": [
                   {
-                    "type": 8
+                    "type": 16
                   }
                 ],
                 "index": 1,
@@ -2021,7 +2035,7 @@
           },
           {
             "name": "E",
-            "type": 8
+            "type": 16
           }
         ],
         "path": [
@@ -2033,20 +2047,12 @@
       "id": 19,
       "type": {
         "def": {
-          "primitive": "u128"
-        }
-      }
-    },
-    {
-      "id": 20,
-      "type": {
-        "def": {
           "variant": {
             "variants": [
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 17
                   }
                 ],
                 "index": 0,
@@ -2055,7 +2061,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 8
                   }
                 ],
                 "index": 1,
@@ -2067,11 +2073,11 @@
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 17
           },
           {
             "name": "E",
-            "type": 16
+            "type": 8
           }
         ],
         "path": [
@@ -2080,7 +2086,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 20,
       "type": {
         "def": {
           "variant": {
@@ -2122,7 +2128,133 @@
       }
     },
     {
+      "id": 21,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 17
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
       "id": 22,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 24,
       "type": {
         "def": {
           "variant": {
@@ -2152,56 +2284,6 @@
         "path": [
           "Option"
         ]
-      }
-    },
-    {
-      "id": 23,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 24
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 24
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 24,
-      "type": {
-        "def": {
-          "primitive": "bool"
-        }
       }
     },
     {
@@ -2297,7 +2379,7 @@
               {
                 "fields": [
                   {
-                    "type": 4
+                    "type": 28
                   }
                 ],
                 "index": 0,
@@ -2318,7 +2400,7 @@
         "params": [
           {
             "name": "T",
-            "type": 4
+            "type": 28
           },
           {
             "name": "E",
@@ -2334,42 +2416,8 @@
       "id": 28,
       "type": {
         "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 22
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 22
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
+          "primitive": "bool"
+        }
       }
     },
     {
@@ -2381,7 +2429,7 @@
               {
                 "fields": [
                   {
-                    "type": 30
+                    "type": 24
                   }
                 ],
                 "index": 0,
@@ -2402,7 +2450,7 @@
         "params": [
           {
             "name": "T",
-            "type": 30
+            "type": 24
           },
           {
             "name": "E",
@@ -2416,6 +2464,48 @@
     },
     {
       "id": 30,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 31
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 31
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 31,
       "type": {
         "def": {
           "variant": {
@@ -2457,7 +2547,7 @@
       }
     },
     {
-      "id": 31,
+      "id": 32,
       "type": {
         "def": {
           "composite": {
@@ -2477,7 +2567,7 @@
       }
     },
     {
-      "id": 32,
+      "id": 33,
       "type": {
         "def": {
           "variant": {}

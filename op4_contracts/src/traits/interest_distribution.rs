@@ -49,6 +49,12 @@ pub trait InterestDistributionTrait {
     #[ink(message)]
     fn get_interest_account_rate(&self) -> u64;
 
+    #[ink(message)]
+    fn get_azero_balance(&self) -> Balance;
+
+    #[ink(message)]
+    fn get_azero_minimum_balance(&self) -> Balance;
+
     // Setters
     #[ink(message)]
     fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;

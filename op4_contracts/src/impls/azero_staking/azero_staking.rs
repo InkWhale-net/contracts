@@ -431,7 +431,7 @@ pub trait AzeroStakingTrait:
             }
 
             // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
-            let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperations)?; // ms
+            let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperationsTimeLength)?; // ms
             
             let unclaimed_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
             let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
@@ -501,18 +501,18 @@ pub trait AzeroStakingTrait:
                     if result.is_ok() {
                         // Update accounts
                         self.data::<Data>().azero_interest_account = self.data::<Data>().azero_interest_account
-                                                                        .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperations)?; 
+                                                                        .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsAzeroInterestAccount)?; 
                         self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account
-                                                                        .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?; 
+                                                                        .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsInwInterestAccount)?; 
 
                         // Update stake info
                         // Note: Don't update last_updated because it > the time claims rewards (azero interest topup time)
                         stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward
-                                                                .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperations)?;
+                                                                .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedAzeroReward)?;
                         stake_info.claimed_azero_reward = stake_info.claimed_azero_reward
                                                                 .checked_add(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
                         stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward
-                                                                .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;
+                                                                .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedInwReward)?;
                         stake_info.claimed_inw_reward = stake_info.claimed_inw_reward
                                                                 .checked_add(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
                         
@@ -589,20 +589,8 @@ pub trait AzeroStakingTrait:
 
     fn get_azero_balance(&self) -> Balance {
         Self::env().balance()
-    }
-
-    fn get_azero_stake_account(&self) -> Balance {
-        self.data::<Data>().azero_stake_account
-    }
-
-    fn get_azero_interest_account(&self) -> Balance {
-        self.data::<Data>().azero_interest_account
-    }
-
-    fn get_inw_interest_account(&self) -> Balance {
-        self.data::<Data>().inw_interest_account
-    }
-
+    }    
+   
     // Payable for withdrawal request
     fn get_payable_azero(&self) -> Result<Balance, Error>  {
         self.data::<Data>().azero_stake_account.checked_sub(self.data::<Data>().total_azero_reserved_for_withdrawals).ok_or(Error::CheckedOperations)
@@ -694,6 +682,7 @@ pub trait AzeroStakingTrait:
     #[modifiers(only_owner)]
     fn withdraw_azero_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
         let withdrawable_amount = Self::env().balance()
+                                    .checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?
                                     .checked_sub(self.data::<Data>().azero_stake_account).ok_or(Error::CheckedOperations)?
                                     .checked_sub(self.data::<Data>().azero_interest_account).ok_or(Error::CheckedOperations)?;
         
@@ -793,43 +782,26 @@ pub trait AzeroStakingTrait:
         Ok(())
     }  
 
-    // From distribution contract, need role here (need script to call)
+    // From distribution contract, need to check caller first
     fn topup_azero_interest_account(&mut self, amount: Balance) -> Result<(), Error>  {
-        // if amount > Self::env().transferred_value() {
-        //     return Err(Error::InvalidTransferAmount)
-        // }
+        if Self::env().caller() != self.data::<Data>().interest_distribution_contract {
+            return Err(Error::NotInterestDistributionContract);
+        }
 
         self.data::<Data>().azero_interest_account = self.data::<Data>().azero_interest_account
                                                     .checked_add(amount).ok_or(Error::CheckedOperations)?;
         
         let current_time = Self::env().block_timestamp();
-        self.data::<Data>().last_azero_interest_topup = current_time;
-        
-        // Update all staker info (no good solution)
-        // let count = staker_list.len();
-        // for i in 0..count {
-        //     let staker = staker_list[i];
-
-        //     if self.update_unclaimed_rewards(staker, current_time).is_err() {
-        //         return Err(Error::CannotUpdateUnclaimedRewards);
-        //     }
-
-        //     if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {              
-        //         stake_info.unclaimed_azero_reward_at_last_topup = stake_info.unclaimed_azero_reward;
-        //         stake_info.unclaimed_inw_reward_at_last_topup = stake_info.unclaimed_inw_reward;
-                
-        //         self.data::<Data>().stake_info_by_staker
-        //         .insert(&staker, &stake_info);
-        //     }            
-        // }         
-        
+        self.data::<Data>().last_azero_interest_topup = current_time;       
+                     
         Ok(())
     }  
 
     // Call from azero staking contract to get inw from distribution contract
     fn topup_inw_interest_account(&mut self, amount: Balance) -> Result<(), Error>  {
-        if InterestDistributionRef::distribute_inw_reward(&self.data::<Data>().interest_distribution_contract, amount).is_err() {
-            return Err(Error::CannotTransfer);
+        let result = InterestDistributionRef::distribute_inw_reward(&self.data::<Data>().interest_distribution_contract, amount);
+        if result.is_err() {
+            return result;
         }
 
         self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account
@@ -1018,6 +990,26 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().total_azero_reserved_for_withdrawals
     }
 
+    fn get_azero_stake_account(&self) -> Balance {
+        self.data::<Data>().azero_stake_account
+    }
+
+    fn get_azero_interest_account(&self) -> Balance {
+        self.data::<Data>().azero_interest_account
+    }
+
+    fn get_inw_interest_account(&self) -> Balance {
+        self.data::<Data>().inw_interest_account
+    }
+
+    fn get_last_azero_interest_topup(&self) -> u64 {
+        self.data::<Data>().last_azero_interest_topup
+    }
+
+    fn get_rewards_claim_waiting_duration(&self) -> u64 {
+        self.data::<Data>().rewards_claim_waiting_duration
+    }
+
     fn get_is_withdrawable(&self) -> bool {
         self.data::<Data>().is_withdrawable
     }
@@ -1026,18 +1018,14 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().is_locked
     }
 
-    fn get_block_timestamp(&self) -> Timestamp {
-        Self::env().block_timestamp()
-    }
-
-    fn get_rewards_claim_waiting_duration(&self) -> u64 {
-        self.data::<Data>().rewards_claim_waiting_duration
-    }
-
     fn get_interest_distribution_contract(&self) -> AccountId {
         self.data::<Data>().interest_distribution_contract
     }
 
+    fn get_block_timestamp(&self) -> Timestamp {
+        Self::env().block_timestamp()
+    } 
+    
     // Setters
     #[modifiers(only_role(ADMINER))]
     fn set_min_staking_amount(&mut self, min_staking_amount: Balance) -> Result<(), Error> {
