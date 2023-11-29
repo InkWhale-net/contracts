@@ -69,6 +69,14 @@ pub trait AzeroStakingTrait {
         _time: u64  
     );
 
+    fn _emit_claim_rewards_event(
+        &self,
+        _user: AccountId,  
+        _azero_amount: Balance,
+        _inw_amount: Balance,
+        _time: u64  
+    );
+
     fn _emit_withdraw_azero_to_stake_event(
         &self,
         _receiver: AccountId,
@@ -96,6 +104,14 @@ pub trait AzeroStakingTrait {
         _amount: Balance, 
         _time: u64 
     );
+
+    fn _emit_withdraw_azero_emergency_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    ) {        
+    }
 
     fn _emit_withdraw_inw_from_interest_account_event(
         &self,
@@ -147,7 +163,10 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn withdraw_azero_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
-        
+
+    #[ink(message)]
+    fn withdraw_azero_emergency(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
+
     #[ink(message)] 
     fn withdraw_inw_from_interest_account(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
 

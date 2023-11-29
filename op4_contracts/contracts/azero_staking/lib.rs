@@ -55,6 +55,14 @@ pub mod my_azero_staking {
     }
 
     #[ink(event)]
+    pub struct ClaimRewardsEvent {
+        user: AccountId,  
+        azero_amount: Balance,
+        inw_amount: Balance,
+        time: u64  
+    }
+
+    #[ink(event)]
     pub struct WithdrawAzeroToStakeEvent {
         receiver: AccountId,
         amount: Balance, 
@@ -77,6 +85,13 @@ pub mod my_azero_staking {
 
     #[ink(event)]
     pub struct WithdrawAzeroNotInAccountsEvent {
+        receiver: AccountId,
+        amount: Balance, 
+        time: u64      
+    }
+
+    #[ink(event)]
+    pub struct WithdrawAzeroEmergencyEvent {
         receiver: AccountId,
         amount: Balance, 
         time: u64      
@@ -151,6 +166,24 @@ pub mod my_azero_staking {
             );
         }
 
+        fn _emit_claim_rewards_event(
+            &self,
+            _user: AccountId,  
+            _azero_amount: Balance,
+            _inw_amount: Balance,
+            _time: u64   
+        ) { 
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::ClaimRewardsEvent(ClaimRewardsEvent {
+                    user: _user,  
+                    azero_amount: _azero_amount,    
+                    inw_amount: _inw_amount,      
+                    time: _time  
+                }),
+            );
+        }
+
         fn _emit_withdraw_azero_to_stake_event(
             &self,
             _receiver: AccountId,
@@ -208,6 +241,22 @@ pub mod my_azero_staking {
             MyAzeroStaking::emit_event(
                 self.env(),
                 Event::WithdrawAzeroNotInAccountsEvent(WithdrawAzeroNotInAccountsEvent {
+                    receiver: _receiver,
+                    amount: _amount, 
+                    time: _time 
+                }),
+            );         
+        }
+
+        fn _emit_withdraw_azero_emergency_event(
+            &self,
+            _receiver: AccountId,
+            _amount: Balance, 
+            _time: u64 
+        ) {    
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::WithdrawAzeroEmergencyEvent(WithdrawAzeroEmergencyEvent {
                     receiver: _receiver,
                     amount: _amount, 
                     time: _time 

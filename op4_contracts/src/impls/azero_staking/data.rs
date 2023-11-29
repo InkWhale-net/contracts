@@ -18,12 +18,11 @@ pub struct StakeInformation {
     pub claimed_inw_reward: Balance,
     pub last_updated: u64, // The latest update info, includes the view action 
     
-    pub last_staking_amount: Balance,
     pub last_unclaimed_azero_reward: Balance,
     pub last_unclaimed_inw_reward: Balance,
     pub last_anchored: u64, // Not include view action, only for stake/unstake azero/claim rewards  
 
-    pub last_rewards_claimed: u64 // Last time to claim rewards, normally it is the last azero interest topup time
+    pub last_rewards_claimed: u64 // Last time to claim rewards
 }
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]

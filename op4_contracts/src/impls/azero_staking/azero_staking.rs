@@ -73,6 +73,15 @@ pub trait AzeroStakingTrait:
     ) {            
     }
 
+    fn _emit_claim_rewards_event(
+        &self,
+        _user: AccountId,  
+        _azero_amount: Balance,
+        _inw_amount: Balance,
+        _time: u64  
+    ) { 
+    }
+
     fn _emit_withdraw_azero_to_stake_event(
         &self, 
         _receiver: AccountId,
@@ -98,6 +107,14 @@ pub trait AzeroStakingTrait:
     }
 
     fn _emit_withdraw_azero_not_in_accounts_event(
+        &self,
+        _receiver: AccountId,
+        _amount: Balance, 
+        _time: u64 
+    ) {        
+    }
+
+    fn _emit_withdraw_azero_emergency_event(
         &self,
         _receiver: AccountId,
         _amount: Balance, 
@@ -149,7 +166,6 @@ pub trait AzeroStakingTrait:
     // Private func
     fn update_last_unclaimed_rewards(&mut self, staker: AccountId) -> Result<(), Error> {
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) { 
-            stake_info.last_staking_amount = stake_info.staking_amount;
             stake_info.last_unclaimed_azero_reward = stake_info.unclaimed_azero_reward;
             stake_info.last_unclaimed_inw_reward = stake_info.unclaimed_inw_reward;
             stake_info.last_anchored = stake_info.last_updated;
@@ -179,10 +195,20 @@ pub trait AzeroStakingTrait:
             return Err(Error::CannotUpdateUnclaimedRewards);
         }
 
-        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {              
+        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {               
+            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+                let result = self.claim_rewards();
+                
+                if result.is_err() {
+                    return result;
+                }
+            }
+        }
+
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {   
             // Calculate stake info
             stake_info.staking_amount = stake_info.staking_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
-            
+        
             if stake_info.staking_amount > self.data::<Data>().max_total_staking_amount {
                 return Err(Error::ExceedMaxTotalStakingMount);
             }
@@ -212,7 +238,6 @@ pub trait AzeroStakingTrait:
                 claimed_inw_reward: 0,						
                 last_updated: current_time,
 
-                last_staking_amount: amount,
                 last_unclaimed_azero_reward: 0,
                 last_unclaimed_inw_reward: 0,
                 last_anchored: current_time,
@@ -252,15 +277,27 @@ pub trait AzeroStakingTrait:
             return Err(Error::CannotUpdateUnclaimedRewards);
         }        
 
-        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
+        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
             if amount > stake_info.staking_amount {
                 return Err(Error::InvalidUnstakedAmount);
             }
 
             if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+                let result = self.claim_rewards();
+                
+                if result.is_err() {
+                    return result;
+                }
+            }
+        } else {
+            return Err(Error::NoStakeInfoFound);
+        }
+
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
+            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::RequestToClaimRewardsFirst);
             }
-            
+
             // Add withdrawal request info
             let withdrawal_request_count = self.data::<Data>().withdrawal_request_count;
             let withdrawal_request_info = WithdrawalRequestInformation{
@@ -355,7 +392,30 @@ pub trait AzeroStakingTrait:
 
                 if allowance < fees || balance < fees {
                     return Err(Error::InvalidBalanceAndAllowance);
-                }           
+                }
+
+                // Collect INW as transaction Fees 
+                let builder = Psp22Ref::transfer_from_builder(
+                    &self.data::<Data>().inw_contract,
+                    claimer,
+                    Self::env().account_id(),
+                    fees,
+                    Vec::<u8>::new(),
+                );                
+
+                let result = match builder.try_invoke() {
+                    Ok(Ok(Ok(_))) => Ok(()),
+                    Ok(Ok(Err(e))) => Err(e.into()),
+                    Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                    Err(ink::env::Error::NotCallable) => Ok(()),
+                    _ => {
+                        Err(Error::CannotTransfer)
+                    }
+                };
+
+                if result.is_err() {
+                    return result;
+                }              
 
                 // Update azero stake account
                 self.data::<Data>().azero_stake_account = 
@@ -433,12 +493,12 @@ pub trait AzeroStakingTrait:
             // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
             let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperationsTimeLength)?; // ms
             
-            let unclaimed_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
             let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             let unclaimed_azero_reward_at_last_topup = stake_info.last_unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
             // Assuming azero and imw have the same decimal 12               
-            let unclaimed_inw_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
                       
@@ -506,7 +566,6 @@ pub trait AzeroStakingTrait:
                                                                         .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsInwInterestAccount)?; 
 
                         // Update stake info
-                        // Note: Don't update last_updated because it > the time claims rewards (azero interest topup time)
                         stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward
                                                                 .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedAzeroReward)?;
                         stake_info.claimed_azero_reward = stake_info.claimed_azero_reward
@@ -516,15 +575,21 @@ pub trait AzeroStakingTrait:
                         stake_info.claimed_inw_reward = stake_info.claimed_inw_reward
                                                                 .checked_add(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
                         
-                        // Note: don't update last_staking_amount because it is unchanged til azero interest topup time
-                        stake_info.last_unclaimed_azero_reward = stake_info.unclaimed_azero_reward;
-                        stake_info.last_unclaimed_inw_reward = stake_info.unclaimed_inw_reward;
-                        stake_info.last_anchored = self.data::<Data>().last_azero_interest_topup;
-
-                        stake_info.last_rewards_claimed = self.data::<Data>().last_azero_interest_topup;
+                        stake_info.last_rewards_claimed = stake_info.last_updated;
 
                         self.data::<Data>().stake_info_by_staker
-                            .insert(&claimer, &stake_info);                        
+                            .insert(&claimer, &stake_info);
+
+                        if self.update_last_unclaimed_rewards(claimer).is_err() {
+                            return Err(Error::CannotUpdateUnclaimedRewards);
+                        }       
+
+                        self._emit_claim_rewards_event(
+                            claimer,
+                            unclaimed_azero_reward_at_last_topup,
+                            unclaimed_inw_reward_at_last_topup,
+                            Self::env().block_timestamp() 
+                        );                     
 
                         Ok(())
                     } else { 
@@ -551,12 +616,12 @@ pub trait AzeroStakingTrait:
             // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
             let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperations)?; // ms
             
-            let unclaimed_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
             let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             let unclaimed_azero_reward_at_last_topup = stake_info.last_unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
             // Assuming azero and imw have the same decimal 12               
-            let unclaimed_inw_reward_365 = stake_info.last_staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
 
@@ -695,6 +760,29 @@ pub trait AzeroStakingTrait:
         }
 
         self._emit_withdraw_azero_not_in_accounts_event(
+            receiver,
+            amount,
+            Self::env().block_timestamp()                
+        );            
+
+        Ok(())              
+    }
+
+    // Azero from contract but not in accounts (azero_stake_account and azero_interest_account)
+    #[modifiers(only_owner)]
+    fn withdraw_azero_emergency(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
+        let withdrawable_amount = Self::env().balance()
+                                    .checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?;
+                                    
+        if amount > withdrawable_amount || amount == 0 {
+            return Err(Error::InvalidWithdrawalAmount);
+        }
+
+        if Self::env().transfer(receiver, amount).is_err() {
+            return Err(Error::WithdrawError);
+        }
+
+        self._emit_withdraw_azero_emergency_event(
             receiver,
             amount,
             Self::env().block_timestamp()                
