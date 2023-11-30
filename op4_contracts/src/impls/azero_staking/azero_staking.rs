@@ -747,7 +747,6 @@ pub trait AzeroStakingTrait:
     #[modifiers(only_owner)]
     fn withdraw_azero_not_in_accounts(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
         let withdrawable_amount = Self::env().balance()
-                                    .checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?
                                     .checked_sub(self.data::<Data>().azero_stake_account).ok_or(Error::CheckedOperations)?
                                     .checked_sub(self.data::<Data>().azero_interest_account).ok_or(Error::CheckedOperations)?;
         
@@ -771,8 +770,7 @@ pub trait AzeroStakingTrait:
     // Azero from contract but not in accounts (azero_stake_account and azero_interest_account)
     #[modifiers(only_owner)]
     fn withdraw_azero_emergency(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error> {
-        let withdrawable_amount = Self::env().balance()
-                                    .checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?;
+        let withdrawable_amount = Self::env().balance();
                                     
         if amount > withdrawable_amount || amount == 0 {
             return Err(Error::InvalidWithdrawalAmount);

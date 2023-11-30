@@ -19,7 +19,8 @@ pub trait InterestDistributionTrait:
 {
     #[modifiers(only_role(ADMINER))]
     fn distribute_azero(&mut self) -> Result<(), Error> {
-        let total = Self::env().balance().checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?;
+        let total = Self::env().balance();
+                    // .checked_sub(Self::env().minimum_balance()).ok_or(Error::CheckedOperations)?;
         if total > 0 {
             let interest_account_amount = total.checked_mul(self.data::<Data>().interest_account_rate.into()).ok_or(Error::CheckedOperations)?
                                             .checked_div(self.data::<Data>().total_rate.into()).ok_or(Error::CheckedOperations)?;
