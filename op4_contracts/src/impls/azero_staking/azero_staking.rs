@@ -206,6 +206,10 @@ pub trait AzeroStakingTrait:
         }
 
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {   
+            if stake_info.staking_amount == 0 && !self.data::<Data>().staker_list.contains(&staker) {  
+                self.data::<Data>().staker_list.push(staker);
+            }
+
             // Calculate stake info
             stake_info.staking_amount = stake_info.staking_amount.checked_add(amount).ok_or(Error::CheckedOperations)?;
         
@@ -442,6 +446,26 @@ pub trait AzeroStakingTrait:
                 // Update withdrawal_request_info                  
                 withdrawal_request_info.status = WITHDRAWAL_REQUEST_CLAIMED; 
                 self.data::<Data>().withdrawal_request_list.insert(&request_index, &withdrawal_request_info);
+                
+                let mut claimed_count = 1;
+                if let Some(mut count) = self.data::<Data>().total_withdrawal_request_claimed.get(&claimer) {
+                    count = count.checked_add(1).ok_or(Error::CheckedOperations)?;
+                    self.data::<Data>().total_withdrawal_request_claimed.insert(&claimer, &count);
+                    claimed_count = count;
+                } else {
+                    self.data::<Data>().total_withdrawal_request_claimed.insert(&claimer, &1);
+                }
+                
+                // Check if can remove claimer from staker list
+                if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
+                    if stake_info.staking_amount == 0 {
+                        if claimed_count == self.data::<Data>().withdrawal_request_by_user.count(claimer) {
+                            if let Some(pos) = self.data::<Data>().staker_list.iter().position(|x| *x == claimer) {
+                                self.data::<Data>().staker_list.remove(pos);
+                            }                            
+                        }                        
+                    }
+                }
 
                 // Transfer unstaked azero
                 if Self::env().transfer(claimer, withdrawal_request_info.amount).is_err() {
