@@ -87,8 +87,10 @@ pub enum Error {
     BelowMinStakingMount,
     ExceedMaxTotalStakingMount,
     WithdrawalRequestIsNotClaimable,
+    WithdrawalRequestIsNotCancellable,
     WithdrawError,
     RequestNotForClaimer,
+    RequestNotForCaller,
     NoWithdrawalRequestInfo,
     NoStakeInfoFound,
     CannotGetWaitingList,
@@ -124,7 +126,8 @@ pub enum Error {
     CheckedOperationsAzeroInterestAccount,
     CheckedOperationsInwInterestAccount,
     CheckedOperationsUnclaimedAzeroReward,
-    CheckedOperationsUnclaimedInwReward
+    CheckedOperationsUnclaimedInwReward,
+    IsSelectingRequestsToPay
 }
 
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]

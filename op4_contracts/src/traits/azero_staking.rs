@@ -33,6 +33,7 @@ pub const UPDATING_MANAGER: RoleType = ink::selector_id!("UPDATING_MANAGER");
 pub const WITHDRAWAL_REQUEST_WAITING: u8 = 0;
 pub const WITHDRAWAL_REQUEST_CLAIMABLE: u8 = 1;
 pub const WITHDRAWAL_REQUEST_CLAIMED: u8 = 2;
+pub const WITHDRAWAL_REQUEST_CANCELLED: u8 = 3;
 
 // One day to ms
 pub const ONE_DAY: u64 = 86400000;
@@ -54,6 +55,14 @@ pub trait AzeroStakingTrait {
     );
 
     fn _emit_withrawal_request_event(
+        &self,
+        _request_id: u128,
+        _user: AccountId,        
+        _amount: Balance,
+        _time: u64
+    );
+
+    fn _emit_cancel_event(
         &self,
         _request_id: u128,
         _user: AccountId,        
@@ -133,6 +142,9 @@ pub trait AzeroStakingTrait {
      
     #[ink(message)]
     fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error>;
+
+    #[ink(message)]
+    fn cancel(&mut self, request_index: u128) -> Result<(), Error>;
        
     #[ink(message)]
     fn claim(&mut self, request_index: u128) -> Result<(), Error>;
@@ -241,6 +253,12 @@ pub trait AzeroStakingTrait {
     fn get_waiting_withdrawal_list(&self) -> Vec<u128>;
 
     #[ink(message)]
+    fn get_total_withdrawal_request_claimed(&self, claimer: AccountId) -> Option<u128>;
+
+    #[ink(message)]
+    fn get_total_withdrawal_request_cancelled(&self, user: AccountId) -> Option<u128>;
+    
+    #[ink(message)]
     fn get_waiting_withdrawal_index(&self, index: u128) -> Option<u128>;
 
     #[ink(message)]
@@ -259,6 +277,9 @@ pub trait AzeroStakingTrait {
     fn get_total_azero_reserved_for_withdrawals(&self) -> Balance;
 
     #[ink(message)]
+    fn get_total_azero_withdrawn_to_stake(&self) -> Balance;
+
+    #[ink(message)]
     fn get_azero_stake_account(&self) -> Balance;
 
     #[ink(message)]
@@ -274,7 +295,7 @@ pub trait AzeroStakingTrait {
     fn get_rewards_claim_waiting_duration(&self) -> u64;
 
     #[ink(message)]
-    fn get_is_withdrawable(&self) -> bool;
+    fn get_is_selecting_requests_to_pay(&self) -> bool;
 
     #[ink(message)]
     fn get_is_locked(&self) -> bool;
@@ -323,7 +344,7 @@ pub trait AzeroStakingTrait {
     fn remove_request_index_in_withdrawal_waiting_list(&mut self, request_index: u128) -> Result<(), Error>;
 
     #[ink(message)]
-    fn set_is_withdrawable(&mut self, is_withdrawable: bool) -> Result<(), Error>;   
+    fn set_is_selecting_requests_to_pay(&mut self, is_selecting_requests_to_pay: bool) -> Result<(), Error>;   
 
     #[ink(message)]
     fn set_rewards_claim_waiting_duration(&mut self, rewards_claim_waiting_duration: u64) -> Result<(), Error>;

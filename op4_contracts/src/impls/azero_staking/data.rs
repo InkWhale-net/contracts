@@ -68,13 +68,15 @@ pub struct Data {
     pub withdrawal_request_list: Mapping<u128, WithdrawalRequestInformation>,
     pub withdrawal_request_by_user: MultiMapping<AccountId, u128, ValueGuard<AccountId>>,
     pub withdrawal_waiting_list: MultiMapping<u8, u128, ValueGuard<u8>>, // request with waiting status
-    pub total_withdrawal_request_claimed: Mapping<AccountId, u128>, 
+    pub total_withdrawal_request_claimed: Mapping<AccountId, u128>,
+    pub total_withdrawal_request_cancelled: Mapping<AccountId, u128>, 
 
     pub total_azero_staked: Balance,
     pub total_azero_claimed: Balance,
     pub total_inw_claimed: Balance,
     pub total_azero_for_waiting_withdrawals: Balance,
     pub total_azero_reserved_for_withdrawals: Balance,
+    pub total_azero_withdrawn_to_stake: Balance,
 
     pub azero_stake_account: Balance, // Total amount of azero for staking/unstaking activites 
     pub azero_interest_account: Balance, // Total amount of azero to pay for interest  
@@ -83,7 +85,7 @@ pub struct Data {
     pub last_azero_interest_topup: u64, // Timestamp
     pub rewards_claim_waiting_duration: u64, 
 
-    pub is_withdrawable: bool,
+    pub is_selecting_requests_to_pay: bool,
     pub is_locked: bool,
 
     pub interest_distribution_contract: AccountId
@@ -109,12 +111,14 @@ impl Default for Data {
             withdrawal_request_by_user: Default::default(),
             withdrawal_waiting_list: Default::default(),
             total_withdrawal_request_claimed: Default::default(),
+            total_withdrawal_request_cancelled: Default::default(),
 
             total_azero_staked: Default::default(),
             total_azero_claimed: Default::default(),
             total_inw_claimed: Default::default(),
             total_azero_for_waiting_withdrawals: Default::default(),
             total_azero_reserved_for_withdrawals: Default::default(),
+            total_azero_withdrawn_to_stake: Default::default(),
 
             azero_stake_account: Default::default(),
             azero_interest_account: Default::default(),
@@ -123,7 +127,7 @@ impl Default for Data {
             last_azero_interest_topup: Default::default(),
             rewards_claim_waiting_duration: Default::default(), 
          
-            is_withdrawable: Default::default(),
+            is_selecting_requests_to_pay: Default::default(),
             is_locked: Default::default(),
 
             interest_distribution_contract: [0u8; 32].into()

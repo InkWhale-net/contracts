@@ -39,7 +39,15 @@ pub mod my_azero_staking {
     }
 
     #[ink(event)]
-    pub struct WithrawalRequestEvent {
+    pub struct WithdrawalRequestEvent {
+        request_id: u128,
+        user: AccountId,        
+        amount: Balance,
+        time: u64
+    }
+
+    #[ink(event)]
+    pub struct CancelEvent {
         request_id: u128,
         user: AccountId,        
         amount: Balance,
@@ -139,7 +147,25 @@ pub mod my_azero_staking {
         ) {
             MyAzeroStaking::emit_event(
                 self.env(),
-                Event::WithrawalRequestEvent(WithrawalRequestEvent {
+                Event::WithdrawalRequestEvent(WithdrawalRequestEvent {
+                    request_id: _request_id,
+                    user: _user,        
+                    amount: _amount,
+                    time: _time
+                }),
+            );
+        }
+
+        fn _emit_cancel_event(
+            &self,
+            _request_id: u128,
+            _user: AccountId,        
+            _amount: Balance,
+            _time: u64
+        ) {
+            MyAzeroStaking::emit_event(
+                self.env(),
+                Event::CancelEvent(CancelEvent {
                     request_id: _request_id,
                     user: _user,        
                     amount: _amount,
@@ -388,6 +414,7 @@ pub mod my_azero_staking {
             self.data.total_inw_claimed = 0;
             self.data.total_azero_for_waiting_withdrawals = 0;
             self.data.total_azero_reserved_for_withdrawals = 0;
+            self.data.total_azero_withdrawn_to_stake = 0;
 
             self.data.azero_stake_account = 0;
             self.data.azero_interest_account = 0;
@@ -396,7 +423,7 @@ pub mod my_azero_staking {
             self.data.last_azero_interest_topup = 0;
             self.data.rewards_claim_waiting_duration = ONE_DAY;
 
-            self.data.is_withdrawable = true;
+            self.data.is_selecting_requests_to_pay = false;
             self.data.is_locked = false;
 
             Ok(())          
