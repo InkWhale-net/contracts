@@ -5,7 +5,6 @@ use openbrush::{
 #[derive(Debug)]
 #[openbrush::storage_item]
 pub struct Data {
-    pub inw_contract: AccountId,
     pub azero_staking_contract: AccountId,
     pub master_account: AccountId,
     pub total_rate: u64, // 1100 ~ 11%
@@ -15,7 +14,6 @@ pub struct Data {
 impl Default for Data {
     fn default() -> Self {
         Self {
-            inw_contract: [0u8; 32].into(),
             azero_staking_contract: [0u8; 32].into(),
             master_account: [0u8; 32].into(),
             total_rate: Default::default(),  

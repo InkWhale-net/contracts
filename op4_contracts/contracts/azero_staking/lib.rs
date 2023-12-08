@@ -420,8 +420,7 @@ pub mod my_azero_staking {
             self.data.azero_interest_account = 0;
             self.data.inw_interest_account = 0;
 
-            self.data.last_azero_interest_topup = 0;
-            self.data.rewards_claim_waiting_duration = ONE_DAY;
+            self.data.last_azero_interest_topup = 0;            
 
             self.data.is_selecting_requests_to_pay = false;
             self.data.is_locked = false;

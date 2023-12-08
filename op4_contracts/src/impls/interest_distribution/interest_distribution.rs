@@ -3,7 +3,6 @@ pub use crate::{
     traits::{error::Error, interest_distribution::*, azero_staking::AzeroStakingRef},
 };
 
-use ink::prelude::vec::Vec;
 use openbrush::{
     contracts::{access_control::*, ownable::*},
     modifiers,
@@ -53,45 +52,7 @@ pub trait InterestDistributionTrait:
         }
     }
 
-    // From azero staking, need to check caller first
-    fn distribute_inw_reward(&mut self, amount: Balance) -> Result<(), Error> {
-        if Self::env().caller() != self.data::<Data>().azero_staking_contract {
-            return Err(Error::NotAzeroStakingContract);
-        }
-
-        let balance = Psp22Ref::balance_of(
-            &self.data::<Data>().inw_contract,
-            Self::env().account_id(),
-        );
-
-        if balance < amount {
-            return Err(Error::NotEnoughBalance);
-        }
-
-        // Transfer immediate tokens to caller 
-        let caller = Self::env().caller();
-
-        let builder = Psp22Ref::transfer_builder(
-            &self.data::<Data>().inw_contract,
-            caller,
-            amount,
-            Vec::<u8>::new(),
-        );
-        
-        match builder.try_invoke() {
-            Ok(Ok(Ok(_))) => Ok(()),
-            Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
-            _ => Err(Error::CannotTransfer),
-        }  
-    }
-
     // Getters
-    fn get_inw_contract(&self) -> AccountId {
-        self.data::<Data>().inw_contract
-    }
-
     fn get_azero_staking_contract(&self) -> AccountId {
         self.data::<Data>().azero_staking_contract
     }
@@ -112,17 +73,7 @@ pub trait InterestDistributionTrait:
         Self::env().balance()
     }
 
-    fn get_azero_minimum_balance(&self) -> Balance {
-        Self::env().minimum_balance()
-    }
-
     // Setters
-    #[modifiers(only_owner)]
-    fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error> {
-        self.data::<Data>().inw_contract = inw_contract;
-        Ok(())
-    }
-
     #[modifiers(only_owner)]
     fn set_azero_staking_contract(&mut self, azero_staking_contract: AccountId) -> Result<(), Error> {
         self.data::<Data>().azero_staking_contract = azero_staking_contract;

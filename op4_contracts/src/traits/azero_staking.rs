@@ -165,7 +165,7 @@ pub trait AzeroStakingTrait {
     fn get_payable_azero(&self) -> Result<Balance, Error>;
 
     #[ink(message)]
-    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error>;
+    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId, amount: Balance) -> Result<(), Error>;
 
     #[ink(message)]
     fn withdraw_azero_from_stake_account(&mut self, receiver: AccountId, amount: Balance) -> Result<(), Error>;
@@ -191,8 +191,8 @@ pub trait AzeroStakingTrait {
     #[ink(message)]
     fn topup_azero_interest_account(&mut self, amount: Balance) -> Result<(), Error>;
 
-    // #[ink(message)]
-    // fn topup_inw_interest_account(&mut self, amount: Balance) -> Result<(), Error>;
+    #[ink(message)]
+    fn topup_inw_interest_account(&mut self, amount: Balance) -> Result<(), Error>;
 
     // Getters
     #[ink(message)]
@@ -292,9 +292,6 @@ pub trait AzeroStakingTrait {
     fn get_last_azero_interest_topup(&self) -> u64;
 
     #[ink(message)]
-    fn get_rewards_claim_waiting_duration(&self) -> u64;
-
-    #[ink(message)]
     fn get_is_selecting_requests_to_pay(&self) -> bool;
 
     #[ink(message)]
@@ -345,9 +342,6 @@ pub trait AzeroStakingTrait {
 
     #[ink(message)]
     fn set_is_selecting_requests_to_pay(&mut self, is_selecting_requests_to_pay: bool) -> Result<(), Error>;   
-
-    #[ink(message)]
-    fn set_rewards_claim_waiting_duration(&mut self, rewards_claim_waiting_duration: u64) -> Result<(), Error>;
 
     #[ink(message)]
     fn set_interest_distribution_contract(&mut self, interest_distribution_contract: AccountId) -> Result<(), Error>;

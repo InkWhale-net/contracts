@@ -30,13 +30,7 @@ pub trait InterestDistributionTrait {
     #[ink(message)]
     fn distribute_azero(&mut self) -> Result<(), Error>;
     
-    #[ink(message)]
-    fn distribute_inw_reward(&mut self, amount: Balance) -> Result<(), Error>;
-
     // Getters
-    #[ink(message)]
-    fn get_inw_contract(&self) -> AccountId;
-
     #[ink(message)]
     fn get_azero_staking_contract(&self) -> AccountId;
 
@@ -52,13 +46,7 @@ pub trait InterestDistributionTrait {
     #[ink(message)]
     fn get_azero_balance(&self) -> Balance;
 
-    #[ink(message)]
-    fn get_azero_minimum_balance(&self) -> Balance;
-
     // Setters
-    #[ink(message)]
-    fn set_inw_contract(&mut self, inw_contract: AccountId) -> Result<(), Error>;
-
     #[ink(message)]
     fn set_azero_staking_contract(&mut self, azero_staking_contract: AccountId) -> Result<(), Error>;
 

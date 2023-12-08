@@ -588,11 +588,6 @@ pub trait AzeroStakingTrait:
         }     
 
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
-            // Wait min time between 2 consecutive claims 
-            if stake_info.last_rewards_claimed != 0 && stake_info.last_rewards_claimed.checked_add(self.data::<Data>().rewards_claim_waiting_duration).ok_or(Error::CheckedOperations)? > current_time {
-                return Err(Error::InvalidTimeToClaimRewards);
-            }
-
             // Wait until there is a new topups for azero interest 
             if stake_info.last_rewards_claimed >= self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::InvalidTimeToClaimRewards);
@@ -617,96 +612,77 @@ pub trait AzeroStakingTrait:
 
             // Check if enough inw to pay
             if self.data::<Data>().inw_interest_account < unclaimed_inw_reward_at_last_topup {
-                let insufficient_inw_amount = unclaimed_inw_reward_at_last_topup
-                                                .checked_sub(self.data::<Data>().inw_interest_account).ok_or(Error::CheckedOperations)?; 
-
-                // Get inw balance in the interest distribution contract
-                let interest_distribution_contract = self.data::<Data>().interest_distribution_contract;
-                let inw_balance = Psp22Ref::balance_of(
-                    &self.data::<Data>().inw_contract,
-                    interest_distribution_contract
-                );
- 
-                // Check if interest distribution has enough inw to transfer 
-                if inw_balance < insufficient_inw_amount {
-                    return Err(Error::NotEnoughInwReward);
-                }
-
-                // topup inw from distribution contract
-                if self.topup_inw_interest_account(insufficient_inw_amount).is_err() {
-                    return Err(Error::CannotTransfer);
-                } else {
-                    // Transfer azero to staker                    
-                    if Self::env().transfer(claimer, unclaimed_azero_reward_at_last_topup).is_err() {
-                        return Err(Error::WithdrawError);
-                    }
-
-                    // Transfer inw to staker   
-                    let balance = Psp22Ref::balance_of(
-                        &self.data::<Data>().inw_contract,
-                        Self::env().account_id(),
-                    );
-            
-                    if balance < unclaimed_inw_reward_at_last_topup {
-                        return Err(Error::NotEnoughBalance);
-                    }
-
-                    let builder = Psp22Ref::transfer_builder(
-                        &self.data::<Data>().inw_contract,
-                        claimer,
-                        unclaimed_inw_reward_at_last_topup,
-                        Vec::<u8>::new(),
-                    );
-                    
-                    let result = match builder.try_invoke() {
-                        Ok(Ok(Ok(_))) => Ok(()),
-                        Ok(Ok(Err(e))) => Err(e.into()),
-                        Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-                        Err(ink::env::Error::NotCallable) => Ok(()),
-                        _ => Err(Error::CannotTransfer),
-                    }; 
-
-                    if result.is_ok() {
-                        // Update accounts
-                        self.data::<Data>().azero_interest_account = self.data::<Data>().azero_interest_account
-                                                                        .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsAzeroInterestAccount)?; 
-                        self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account
-                                                                        .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsInwInterestAccount)?; 
-
-                        // Update stake info
-                        stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward
-                                                                .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedAzeroReward)?;
-                        stake_info.claimed_azero_reward = stake_info.claimed_azero_reward
-                                                                .checked_add(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
-                        stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward
-                                                                .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedInwReward)?;
-                        stake_info.claimed_inw_reward = stake_info.claimed_inw_reward
-                                                                .checked_add(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
-                        
-                        stake_info.last_rewards_claimed = stake_info.last_updated;
-
-                        self.data::<Data>().stake_info_by_staker
-                            .insert(&claimer, &stake_info);
-
-                        if self.update_last_unclaimed_rewards(claimer).is_err() {
-                            return Err(Error::CannotUpdateUnclaimedRewards);
-                        }       
-
-                        self._emit_claim_rewards_event(
-                            claimer,
-                            unclaimed_azero_reward_at_last_topup,
-                            unclaimed_inw_reward_at_last_topup,
-                            Self::env().block_timestamp() 
-                        );                     
-
-                        Ok(())
-                    } else { 
-                        result
-                    }
-                }
-            } else {
                 return Err(Error::NotEnoughInwReward);
             }
+            
+            // Transfer azero to staker                    
+            if Self::env().transfer(claimer, unclaimed_azero_reward_at_last_topup).is_err() {
+                return Err(Error::WithdrawError);
+            }
+
+            // Transfer inw to staker   
+            let balance = Psp22Ref::balance_of(
+                &self.data::<Data>().inw_contract,
+                Self::env().account_id(),
+            );
+    
+            if balance < unclaimed_inw_reward_at_last_topup {
+                return Err(Error::NotEnoughBalance);
+            }
+
+            let builder = Psp22Ref::transfer_builder(
+                &self.data::<Data>().inw_contract,
+                claimer,
+                unclaimed_inw_reward_at_last_topup,
+                Vec::<u8>::new(),
+            );
+            
+            let result = match builder.try_invoke() {
+                Ok(Ok(Ok(_))) => Ok(()),
+                Ok(Ok(Err(e))) => Err(e.into()),
+                Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+                Err(ink::env::Error::NotCallable) => Ok(()),
+                _ => Err(Error::CannotTransfer),
+            }; 
+
+            if result.is_ok() {
+                // Update accounts
+                self.data::<Data>().azero_interest_account = self.data::<Data>().azero_interest_account
+                                                                .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsAzeroInterestAccount)?; 
+                self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account
+                                                                .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsInwInterestAccount)?; 
+
+                // Update stake info
+                stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward
+                                                        .checked_sub(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedAzeroReward)?;
+                stake_info.claimed_azero_reward = stake_info.claimed_azero_reward
+                                                        .checked_add(unclaimed_azero_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
+                stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward
+                                                        .checked_sub(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperationsUnclaimedInwReward)?;
+                stake_info.claimed_inw_reward = stake_info.claimed_inw_reward
+                                                        .checked_add(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
+                
+                stake_info.last_rewards_claimed = stake_info.last_updated;
+
+                self.data::<Data>().stake_info_by_staker
+                    .insert(&claimer, &stake_info);
+
+                if self.update_last_unclaimed_rewards(claimer).is_err() {
+                    return Err(Error::CannotUpdateUnclaimedRewards);
+                }       
+
+                self._emit_claim_rewards_event(
+                    claimer,
+                    unclaimed_azero_reward_at_last_topup,
+                    unclaimed_inw_reward_at_last_topup,
+                    Self::env().block_timestamp() 
+                );                     
+
+                Ok(())
+            } else { 
+                result
+            }
+                       
         } else {
             return Err(Error::NoStakeInfoFound);
         }                  
@@ -801,23 +777,23 @@ pub trait AzeroStakingTrait:
     
     // From stake account
     #[modifiers(only_role(WITHDRAWAL_MANAGER))]
-    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId) -> Result<(), Error> {
+    fn withdraw_azero_to_stake(&mut self, expiration_duration: u64, receiver: AccountId, amount: Balance) -> Result<(), Error> {
         if !self.data::<Data>().is_selecting_requests_to_pay {
             if let Ok(max_amount) = self.get_withdrawable_azero_to_stake_to_validator(expiration_duration) {
-                if max_amount == 0 {
+                if amount > max_amount || amount == 0 {
                     return Err(Error::InvalidWithdrawalAmount);
                 }
 
-                self.data::<Data>().azero_stake_account = self.data::<Data>().azero_stake_account.checked_sub(max_amount).ok_or(Error::CheckedOperations)?;
-                self.data::<Data>().total_azero_withdrawn_to_stake = self.data::<Data>().total_azero_withdrawn_to_stake.checked_add(max_amount).ok_or(Error::CheckedOperations)?;
+                self.data::<Data>().azero_stake_account = self.data::<Data>().azero_stake_account.checked_sub(amount).ok_or(Error::CheckedOperations)?;
+                self.data::<Data>().total_azero_withdrawn_to_stake = self.data::<Data>().total_azero_withdrawn_to_stake.checked_add(amount).ok_or(Error::CheckedOperations)?;
                    
-                if Self::env().transfer(receiver, max_amount).is_err() {
+                if Self::env().transfer(receiver, amount).is_err() {
                     return Err(Error::WithdrawError);
                 }
 
                 self._emit_withdraw_azero_to_stake_event(
                     receiver,
-                    max_amount,
+                    amount,
                     Self::env().block_timestamp() 
                 );
 
@@ -1022,17 +998,38 @@ pub trait AzeroStakingTrait:
         Ok(())
     }  
 
-    // Call from azero staking contract to get inw from distribution contract
+    // From external source
     fn topup_inw_interest_account(&mut self, amount: Balance) -> Result<(), Error>  {
-        let result = InterestDistributionRef::distribute_inw_reward(&self.data::<Data>().interest_distribution_contract, amount);
-        if result.is_err() {
-            return result;
+        let caller = Self::env().caller();
+
+        // Check INW balance and allowance
+        let allowance =
+            Psp22Ref::allowance(&self.data::<Data>().inw_contract, caller, Self::env().account_id());
+
+        let balance = Psp22Ref::balance_of(&self.data::<Data>().inw_contract, caller);
+
+        if allowance < amount || balance < amount {
+            return Err(Error::InvalidBalanceAndAllowance);
         }
 
-        self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account
-                                                     .checked_add(amount).ok_or(Error::CheckedOperations)?;
+        self.data::<Data>().inw_interest_account = self.data::<Data>().inw_interest_account.checked_add(amount).ok_or(Error::CheckedOperations)?;
     
-        Ok(())             
+        // Collect INW 
+        let builder = Psp22Ref::transfer_from_builder(
+            &self.data::<Data>().inw_contract,
+            caller,
+            Self::env().account_id(),
+            amount,
+            Vec::<u8>::new(),
+        );            
+
+        match builder.try_invoke() {
+            Ok(Ok(Ok(_))) => Ok(()),
+            Ok(Ok(Err(e))) => Err(e.into()),
+            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
+            Err(ink::env::Error::NotCallable) => Ok(()),
+            _ => Err(Error::CannotTransfer),
+        }     
     }  
 
     // Getters
@@ -1208,11 +1205,7 @@ pub trait AzeroStakingTrait:
     fn get_last_azero_interest_topup(&self) -> u64 {
         self.data::<Data>().last_azero_interest_topup
     }
-
-    fn get_rewards_claim_waiting_duration(&self) -> u64 {
-        self.data::<Data>().rewards_claim_waiting_duration
-    }
-
+   
     fn get_is_selecting_requests_to_pay(&self) -> bool {
         self.data::<Data>().is_selecting_requests_to_pay
     }
@@ -1357,12 +1350,6 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().is_selecting_requests_to_pay = is_selecting_requests_to_pay;
         Ok(())
     }
-
-    #[modifiers(only_role(ADMINER))]
-    fn set_rewards_claim_waiting_duration(&mut self, rewards_claim_waiting_duration: u64) -> Result<(), Error> {
-        self.data::<Data>().rewards_claim_waiting_duration = rewards_claim_waiting_duration;
-        Ok(())
-    }   
 
     #[modifiers(only_role(ADMINER))]
     fn set_interest_distribution_contract(&mut self, interest_distribution_contract: AccountId) -> Result<(), Error> {

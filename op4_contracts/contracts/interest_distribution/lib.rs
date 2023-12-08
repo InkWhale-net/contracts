@@ -33,7 +33,6 @@ pub mod my_interest_distribution {
     impl MyInterestDistribution {
         #[ink(constructor)]
         pub fn new(
-            inw_contract: AccountId,
             azero_staking_contract: AccountId,
             master_account: AccountId,
             total_rate: u64,
@@ -47,7 +46,6 @@ pub mod my_interest_distribution {
             access_control::Internal::_init_with_admin(&mut instance, Some(caller));
             AccessControl::grant_role(&mut instance, ADMINER, Some(caller)).expect("Should grant ADMINER role");
            
-            instance.data.inw_contract = inw_contract;
             instance.data.azero_staking_contract = azero_staking_contract;
             instance.data.master_account = master_account;
 

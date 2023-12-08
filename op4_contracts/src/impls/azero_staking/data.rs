@@ -83,7 +83,6 @@ pub struct Data {
     pub inw_interest_account: Balance, // Total amount of inw to pay for interest
     
     pub last_azero_interest_topup: u64, // Timestamp
-    pub rewards_claim_waiting_duration: u64, 
 
     pub is_selecting_requests_to_pay: bool,
     pub is_locked: bool,
@@ -125,7 +124,6 @@ impl Default for Data {
             inw_interest_account: Default::default(),
 
             last_azero_interest_topup: Default::default(),
-            rewards_claim_waiting_duration: Default::default(), 
          
             is_selecting_requests_to_pay: Default::default(),
             is_locked: Default::default(),
