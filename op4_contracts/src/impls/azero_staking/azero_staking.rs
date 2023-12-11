@@ -206,7 +206,7 @@ pub trait AzeroStakingTrait:
 
         if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {               
             if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
-                let result = self.claim_rewards();
+                let result = self.common_claim_rewards(staker);
                 
                 if result.is_err() {
                     return result;
@@ -296,7 +296,7 @@ pub trait AzeroStakingTrait:
             }
 
             if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
-                let result = self.claim_rewards();
+                let result = self.common_claim_rewards(staker);
                 
                 if result.is_err() {
                     return result;
@@ -379,7 +379,7 @@ pub trait AzeroStakingTrait:
                     // Claim reward before cancellation
                     if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&caller) {               
                         if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
-                            let result = self.claim_rewards();
+                            let result = self.common_claim_rewards(caller);
                             
                             if result.is_err() {
                                 return result;
@@ -577,9 +577,7 @@ pub trait AzeroStakingTrait:
         }
     }
 
-    #[modifiers(only_not_locked)]
-    fn claim_rewards(&mut self) -> Result<(), Error> {
-        let claimer = Self::env().caller();
+    fn common_claim_rewards(&mut self, claimer: AccountId) -> Result<(), Error> {        
         let current_time = Self::env().block_timestamp();
 
         // Update the current unclaimed_amount
@@ -686,6 +684,12 @@ pub trait AzeroStakingTrait:
         } else {
             return Err(Error::NoStakeInfoFound);
         }                  
+    }
+
+    #[modifiers(only_not_locked)]
+    fn claim_rewards(&mut self) -> Result<(), Error> {
+        let claimer = Self::env().caller();
+        self.common_claim_rewards(claimer)
     }
 
     fn get_unclaimed_reward_at_last_topup(&self) -> Result<UnclaimedRewardAtLastTopup, Error> {
@@ -1258,6 +1262,16 @@ pub trait AzeroStakingTrait:
         if self.update_unclaimed_rewards(staker, current_time).is_err() {
             return Err(Error::CannotUpdateUnclaimedRewards);
         }
+
+        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {               
+            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+                let result = self.common_claim_rewards(staker);
+                
+                if result.is_err() {
+                    return result;
+                }
+            }
+        }        
         
         if self.update_last_unclaimed_rewards(staker).is_err() {
             return Err(Error::CannotUpdateUnclaimedRewards);
