@@ -592,6 +592,7 @@ pub trait AzeroStakingTrait:
             }
 
             // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
+            // if (self.data::<Data>().last_azero_interest_topup > stake_info.last_anchored) {
             let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperationsTimeLength)?; // ms
             
             let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
@@ -602,7 +603,7 @@ pub trait AzeroStakingTrait:
             let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
             let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
-                      
+                    
             // Check if azero_interest_account enough azero to pay
             if self.data::<Data>().azero_interest_account < unclaimed_azero_reward_at_last_topup {
                 return Err(Error::NotEnoughAzeroReward);
@@ -680,7 +681,7 @@ pub trait AzeroStakingTrait:
             } else { 
                 result
             }
-                       
+            // }                       
         } else {
             return Err(Error::NoStakeInfoFound);
         }                  
@@ -702,23 +703,27 @@ pub trait AzeroStakingTrait:
             }
 
             // Calculate unclaimed_azero_reward_at_last_topup and unclaimed_inw_reward_at_last_topup (at last topup time)
-            let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperationsTimeLength)?; // ms
-            
-            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
-            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-            let unclaimed_azero_reward_at_last_topup = stake_info.last_unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+            if self.data::<Data>().last_azero_interest_topup > stake_info.last_anchored {
+                let time_length = self.data::<Data>().last_azero_interest_topup.checked_sub(stake_info.last_anchored).ok_or(Error::CheckedOperationsTimeLength)?; // ms
+                
+                let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+                let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+                let unclaimed_azero_reward_at_last_topup = stake_info.last_unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
 
-            // Assuming azero and imw have the same decimal 12               
-            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
-            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
-            let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
+                // Assuming azero and imw have the same decimal 12               
+                let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+                let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+                let unclaimed_inw_reward_at_last_topup = stake_info.last_unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
 
-            let unclaimed_reward_at_last_topup = UnclaimedRewardAtLastTopup {
-                azero_reward: unclaimed_azero_reward_at_last_topup,
-                inw_reward: unclaimed_inw_reward_at_last_topup
-            };
+                let unclaimed_reward_at_last_topup = UnclaimedRewardAtLastTopup {
+                    azero_reward: unclaimed_azero_reward_at_last_topup,
+                    inw_reward: unclaimed_inw_reward_at_last_topup
+                };
 
-            Ok(unclaimed_reward_at_last_topup)
+                Ok(unclaimed_reward_at_last_topup)
+            } else {
+                return Err(Error::CheckedOperationsTimeLength);
+            }
         } else {
             return Err(Error::NoStakeInfoFound);
         }
@@ -1065,15 +1070,26 @@ pub trait AzeroStakingTrait:
         self.data::<Data>().unstaking_fee
     }
 
-    #[modifiers(only_not_locked)]
+    // View stake info only, not update data to storage
     fn get_stake_info(&mut self, staker: AccountId) -> Result<Option<StakeInformation>, Error> {
-        let current_time = Self::env().block_timestamp();
-
-        if self.data::<Data>().stake_info_by_staker.get(&staker).is_some() && self.update_unclaimed_rewards(staker, current_time).is_err() {
-            return Err(Error::CannotUpdateUnclaimedRewards);
-        }
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
+            let current_time = Self::env().block_timestamp();
+            let time_length = current_time.checked_sub(stake_info.last_updated).ok_or(Error::CheckedOperations)?; // ms
             
-        Ok(self.data::<Data>().stake_info_by_staker.get(&staker))  
+            let unclaimed_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().apy).ok_or(Error::CheckedOperations)?;
+            let unclaimed_reward = unclaimed_reward_365.checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            stake_info.unclaimed_azero_reward = stake_info.unclaimed_azero_reward.checked_add(unclaimed_reward).ok_or(Error::CheckedOperations)?;
+
+            // Assuming azero and imw have the same decimal 12               
+            let unclaimed_inw_reward_365 = stake_info.staking_amount.checked_mul(time_length as u128).ok_or(Error::CheckedOperations)?.checked_mul(self.data::<Data>().inw_multiplier).ok_or(Error::CheckedOperations)?;
+            let unclaimed_inw_reward = unclaimed_inw_reward_365.checked_div(24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            stake_info.unclaimed_inw_reward = stake_info.unclaimed_inw_reward.checked_add(unclaimed_inw_reward).ok_or(Error::CheckedOperations)?;
+                         
+            stake_info.last_updated = current_time;
+            Ok(Some(stake_info))
+        } else {
+            return Err(Error::NoStakeInfoFound);
+        }
     }
 
     fn get_staker_list(&self) -> Vec<AccountId> {
