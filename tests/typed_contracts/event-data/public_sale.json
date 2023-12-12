@@ -1,3 +1,0 @@
-{
-"PublicPurchaseEvent": {"name":"PublicPurchaseEvent","body":{"buyer":{"name":"AccountId","body":"string | number[]","isResult":false,"isPrimitive":true,"isConvertable":false},"amount":{"name":"ReturnNumber","isResult":false,"isPrimitive":false,"isConvertable":true}},"isResult":false,"isPrimitive":false,"isConvertable":false},"PublicClaimEvent": {"name":"PublicClaimEvent","body":{"buyer":{"name":"AccountId","body":"string | number[]","isResult":false,"isPrimitive":true,"isConvertable":false},"amount":{"name":"ReturnNumber","isResult":false,"isPrimitive":false,"isConvertable":true}},"isResult":false,"isPrimitive":false,"isConvertable":false}
-}
