@@ -205,7 +205,7 @@ pub trait AzeroStakingTrait:
         }
 
         if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {               
-            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                 let result = self.common_claim_rewards(staker);
                 
                 if result.is_err() {
@@ -227,7 +227,7 @@ pub trait AzeroStakingTrait:
             }
 
             // Claim rewards before staking
-            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::RequestToClaimRewardsFirst);
             }
             
@@ -255,7 +255,7 @@ pub trait AzeroStakingTrait:
                 last_unclaimed_inw_reward: 0,
                 last_anchored: current_time,
 
-                last_rewards_claimed: 0
+                last_rewards_claimed: current_time
             };
 
             self.data::<Data>().stake_info_by_staker
@@ -295,7 +295,7 @@ pub trait AzeroStakingTrait:
                 return Err(Error::InvalidUnstakedAmount);
             }
 
-            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                 let result = self.common_claim_rewards(staker);
                 
                 if result.is_err() {
@@ -307,7 +307,7 @@ pub trait AzeroStakingTrait:
         }
 
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
-            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::RequestToClaimRewardsFirst);
             }
 
@@ -378,7 +378,7 @@ pub trait AzeroStakingTrait:
                     
                     // Claim reward before cancellation
                     if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&caller) {               
-                        if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+                        if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                             let result = self.common_claim_rewards(caller);
                             
                             if result.is_err() {
@@ -391,7 +391,7 @@ pub trait AzeroStakingTrait:
             
                     // Process cancellation
                     if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&caller) {
-                        if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+                        if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                             return Err(Error::RequestToClaimRewardsFirst);
                         }
 
@@ -587,7 +587,7 @@ pub trait AzeroStakingTrait:
 
         if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
             // Wait until there is a new topups for azero interest 
-            if stake_info.last_rewards_claimed >= self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored >= self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::InvalidTimeToClaimRewards);
             }
 
@@ -661,6 +661,7 @@ pub trait AzeroStakingTrait:
                 stake_info.claimed_inw_reward = stake_info.claimed_inw_reward
                                                         .checked_add(unclaimed_inw_reward_at_last_topup).ok_or(Error::CheckedOperations)?;                                    
                 
+                stake_info.last_anchored = stake_info.last_updated;
                 stake_info.last_rewards_claimed = stake_info.last_updated;
 
                 self.data::<Data>().stake_info_by_staker
@@ -698,7 +699,7 @@ pub trait AzeroStakingTrait:
         
         if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
             // Can only check if there is a new topup for azero interest compared with the last rewards claimed
-            if stake_info.last_rewards_claimed >= self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored >= self.data::<Data>().last_azero_interest_topup {
                 return Err(Error::NoNewAzeroTopup);
             }
 
@@ -1280,7 +1281,7 @@ pub trait AzeroStakingTrait:
         }
 
         if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {               
-            if stake_info.last_rewards_claimed < self.data::<Data>().last_azero_interest_topup {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
                 let result = self.common_claim_rewards(staker);
                 
                 if result.is_err() {
@@ -1289,9 +1290,15 @@ pub trait AzeroStakingTrait:
             }
         }        
         
-        if self.update_last_unclaimed_rewards(staker).is_err() {
-            return Err(Error::CannotUpdateUnclaimedRewards);
-        }   
+        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
+            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
+                return Err(Error::RequestToClaimRewardsFirst);
+            }
+
+            if self.update_last_unclaimed_rewards(staker).is_err() {
+                return Err(Error::CannotUpdateUnclaimedRewards);
+            }   
+        }
 
         Ok(())
     }
