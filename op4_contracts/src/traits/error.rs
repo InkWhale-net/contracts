@@ -108,7 +108,6 @@ pub enum Error {
     CannotCollectInwV2,
     CannotMintInwV2,
     CannotTransferInwV1,
-    InvalidIsLockedInput,
     InvalidTimeToClaimRewards,
     NotEnoughAzeroReward,
     NotEnoughInwReward,

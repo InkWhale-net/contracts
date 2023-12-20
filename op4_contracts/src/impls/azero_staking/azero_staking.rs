@@ -1266,9 +1266,6 @@ pub trait AzeroStakingTrait:
 
     #[modifiers(only_role(ADMINER))]
     fn set_is_locked(&mut self, is_locked: bool) -> Result<(), Error> {
-        if is_locked == self.data::<Data>().is_locked {
-            return Err(Error::InvalidIsLockedInput)
-        }
         self.data::<Data>().is_locked = is_locked;
         Ok(())
     }
