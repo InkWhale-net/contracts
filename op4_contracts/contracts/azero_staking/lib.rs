@@ -9,6 +9,7 @@ pub mod my_azero_staking {
     use openbrush::{contracts::ownable::*, traits::Storage};
 
     use inkwhale_project::impls::{
+        admin::*,
         azero_staking::*, 
         upgradeable::*
     };
@@ -323,6 +324,7 @@ pub mod my_azero_staking {
         }
     }
 
+    impl AdminTrait for MyAzeroStaking {}
     impl UpgradeableTrait for MyAzeroStaking {}
 
     impl MyAzeroStaking {
