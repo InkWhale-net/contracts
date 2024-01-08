@@ -22,7 +22,9 @@ pub struct StakeInformation {
     pub last_unclaimed_inw_reward: Balance,
     pub last_anchored: u64, // Not include view action, only for stake/unstake azero/claim rewards  
 
-    pub last_rewards_claimed: u64 // Last time to claim rewards
+    pub last_rewards_claimed: u64, // Last time to claim rewards
+
+    pub withdrawal_request_amount: Balance
 }
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, scale::Encode, scale::Decode)]

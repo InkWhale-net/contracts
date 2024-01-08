@@ -255,7 +255,9 @@ pub trait AzeroStakingTrait:
                 last_unclaimed_inw_reward: 0,
                 last_anchored: current_time,
 
-                last_rewards_claimed: current_time
+                last_rewards_claimed: current_time,
+                
+                withdrawal_request_amount: 0
             };
 
             self.data::<Data>().stake_info_by_staker
@@ -284,32 +286,20 @@ pub trait AzeroStakingTrait:
     fn withdrawal_request(&mut self, amount: Balance) -> Result<(), Error> {
         let staker = Self::env().caller();
 
-        // Update the current unclaimed_amount
         let current_time = Self::env().block_timestamp();
-        if self.update_unclaimed_rewards(staker, current_time).is_err() {
-            return Err(Error::CannotUpdateUnclaimedRewards);
-        }        
-
-        if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {    
-            if amount > stake_info.staking_amount {
+        
+        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
+            stake_info.withdrawal_request_amount = stake_info.withdrawal_request_amount
+                                                    .checked_add(amount).ok_or(Error::CheckedOperations)?;          
+            
+            // Check if withdrawal request amount exceeds staking_amount
+            if stake_info.withdrawal_request_amount > stake_info.staking_amount || amount == 0 {
                 return Err(Error::InvalidUnstakedAmount);
             }
 
-            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
-                let result = self.common_claim_rewards(staker);
-                
-                if result.is_err() {
-                    return result;
-                }
-            }
-        } else {
-            return Err(Error::NoStakeInfoFound);
-        }
-
-        if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&staker) {
-            if stake_info.last_anchored < self.data::<Data>().last_azero_interest_topup {
-                return Err(Error::RequestToClaimRewardsFirst);
-            }
+            // Update withdrawal request amount
+            self.data::<Data>().stake_info_by_staker
+                .insert(&staker, &stake_info);       
 
             // Add withdrawal request info
             let withdrawal_request_count = self.data::<Data>().withdrawal_request_count;
@@ -326,23 +316,12 @@ pub trait AzeroStakingTrait:
             self.data::<Data>().withdrawal_waiting_list.insert(1, &withdrawal_request_count);
 
             self.data::<Data>().withdrawal_request_count = self.data::<Data>().withdrawal_request_count.checked_add(1).ok_or(Error::CheckedOperations)?;
-
+       
             // Update total for waiting withdrawals
             self.data::<Data>().total_azero_for_waiting_withdrawals = 
                 self.data::<Data>().total_azero_for_waiting_withdrawals
-                .checked_add(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;
-             
-            // Update stake info - last_updated is updated in update_unclaimed_rewards
-            stake_info.staking_amount = stake_info.staking_amount
-                                        .checked_sub(amount).ok_or(Error::CheckedOperations)?;
-   
-            self.data::<Data>().stake_info_by_staker
-                .insert(&staker, &stake_info);
-
-            if self.update_last_unclaimed_rewards(staker).is_err() {
-                return Err(Error::CannotUpdateUnclaimedRewards);
-            }               
-
+                .checked_add(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;            
+                           
             self._emit_withrawal_request_event(
                 withdrawal_request_count,
                 withdrawal_request_info.user,
@@ -396,12 +375,12 @@ pub trait AzeroStakingTrait:
                         }
 
                         // 2 prioritized actions: save new status as cancelled and remove the request id if is in the waiting list 
-                        // Save previous status and set new status as cancelled
+                        // Action 1: Save previous status and set new status as cancelled
                         let status = withdrawal_request_info.status;
                         withdrawal_request_info.status = WITHDRAWAL_REQUEST_CANCELLED;
                         self.data::<Data>().withdrawal_request_list.insert(&request_index, &withdrawal_request_info);
 
-                        // Remove the request id if is in the waiting list 
+                        // Action 2: Remove the request id if is in the waiting list 
                         if self.data::<Data>().withdrawal_waiting_list.contains_value(1, &request_index) {
                             self.data::<Data>().withdrawal_waiting_list.remove_value(1, &request_index);  
                         }
@@ -411,10 +390,10 @@ pub trait AzeroStakingTrait:
                             self.data::<Data>().total_azero_for_waiting_withdrawals
                             .checked_sub(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;
                         
-                        // Update stake amount
-                        stake_info.staking_amount = stake_info.staking_amount
-                                                    .checked_add(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;
-
+                        // Update withdrawal request amount
+                        stake_info.withdrawal_request_amount = stake_info.withdrawal_request_amount
+                                                                .checked_sub(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;          
+                    
                         self.data::<Data>().stake_info_by_staker
                             .insert(&caller, &stake_info);
 
@@ -540,8 +519,10 @@ pub trait AzeroStakingTrait:
                 if let Some(count) = self.data::<Data>().total_withdrawal_request_cancelled.get(&claimer) {
                     cancelled_count = count;                  
                 } 
-                // Check if can remove claimer from staker list
-                if let Some(stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
+                
+                // Check if can remove claimer from staker list and update withdrawal request amount
+                if let Some(mut stake_info) = self.data::<Data>().stake_info_by_staker.get(&claimer) {   
+                    // Check if can remove claimer from staker list
                     if stake_info.staking_amount == 0 {
                         if claimed_count.checked_add(cancelled_count).ok_or(Error::CheckedOperations)? == self.data::<Data>().withdrawal_request_by_user.count(claimer) {
                             if let Some(pos) = self.data::<Data>().staker_list.iter().position(|x| *x == claimer) {
@@ -549,6 +530,17 @@ pub trait AzeroStakingTrait:
                             }                            
                         }                        
                     }
+
+                    // Update staking amount
+                    stake_info.staking_amount = stake_info.staking_amount
+                                                .checked_sub(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;
+
+                    // Update withdrawal request amount
+                    stake_info.withdrawal_request_amount = stake_info.withdrawal_request_amount
+                                                            .checked_sub(withdrawal_request_info.amount).ok_or(Error::CheckedOperations)?;          
+                    
+                    self.data::<Data>().stake_info_by_staker
+                        .insert(&claimer, &stake_info);                       
                 }
 
                 // Transfer unstaked azero
