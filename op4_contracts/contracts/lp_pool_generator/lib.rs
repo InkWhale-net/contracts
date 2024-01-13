@@ -16,7 +16,7 @@ pub mod lp_pool_generator {
         modifiers,
         traits::Storage,
     };
-
+    use primitive_types::U256;
     use inkwhale_project::impls::{admin::*, generic_pool_generator::*, upgradeable::*};
     use inkwhale_project::traits::generic_pool_contract::GenericPoolContractRef;
     use inkwhale_project::traits::generic_pool_generator::Psp22Ref;
@@ -102,19 +102,19 @@ pub mod lp_pool_generator {
             let decimal_reward_contract =
                 Psp22Ref::token_decimals(&psp22_contract_address);
             let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
-
+            let max_staking_amount_tmp = U256::from(max_staking_amount);
             // Check token balance and allowance
-            let min_reward_amount = max_staking_amount
-                .checked_mul(duration as u128)
+            let min_reward_amount = max_staking_amount_tmp
+                .checked_mul((duration as u128).into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_mul(multiplier)
+                .checked_mul(multiplier.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(24 * 60 * 60 * 1000 * 1000000)
-                .ok_or(Error::CheckedOperations)?;
+                .checked_div((86400_u128 * 1000_u128 * 1000000_u128).into())
+                .ok_or(Error::CheckedOperations)?.as_u128();
 
             let token_allowance =
                 Psp22Ref::allowance(&psp22_contract_address, caller, self.env().account_id());

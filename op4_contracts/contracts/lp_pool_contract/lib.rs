@@ -14,7 +14,7 @@ pub mod my_lp_pool {
 
     use inkwhale_project::impls::{admin::*, generic_pool_contract::*, upgradeable::*};
     use inkwhale_project::traits::generic_pool_contract::Psp22Ref;
-
+    use primitive_types::U256;
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct MyLPPool {
@@ -148,19 +148,19 @@ pub mod my_lp_pool {
 
             let decimal_reward_contract = Psp22Ref::token_decimals(&psp22_contract_address);
             let calculated_decimal_reward_contract = 10u128.pow(decimal_reward_contract.into());
-
+            let max_staking_amount_tmp = U256::from(max_staking_amount);
             // Check token balance and allowance
-            let min_reward_amount = max_staking_amount
-                .checked_mul(duration as u128)
+            let min_reward_amount = max_staking_amount_tmp
+                .checked_mul((duration as u128).into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_div(calculated_decimal_staking_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_mul(multiplier)
+                .checked_mul(multiplier.into())
                 .ok_or(Error::CheckedOperations)?
                 .checked_mul(calculated_decimal_reward_contract.into())
                 .ok_or(Error::CheckedOperations)?
-                .checked_div(24 * 60 * 60 * 1000 * 1000000)
-                .ok_or(Error::CheckedOperations)?;
+                .checked_div((86400_u128 * 1000_u128 * 1000000_u128).into())
+                .ok_or(Error::CheckedOperations)?.as_u128();
 
             // Add data
             self.data.staking_contract_address = lp_contract_address;

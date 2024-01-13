@@ -12,7 +12,7 @@ pub mod launchpad_generator {
         modifiers,
         traits::Storage,
     };
-
+    
     // use inkwhale_project::traits::launchpad_contract::LaunchpadContractRef;
     use inkwhale_project::traits::launchpad_generator::Psp22Ref;
 
