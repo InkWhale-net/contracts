@@ -15,6 +15,7 @@ pub mod my_nft_pool {
         vec::Vec,
     };
     use ink::env::CallFlags;
+    use primitive_types::U256;
 
     use openbrush::{
         contracts::{
@@ -137,9 +138,15 @@ pub mod my_nft_pool {
                 return Err(Error::InvalidTime);
             }
 
-            let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_mul(multiplier).ok_or(Error::CheckedOperations)?
-                                    .checked_div(24 * 60 * 60 * 1000).ok_or(Error::CheckedOperations)?;
+            let max_staking_amount_tmp = U256::from(max_staking_amount);
+            // Check token balance and allowance
+            let min_reward_amount = max_staking_amount_tmp
+                .checked_mul((duration as u128).into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_mul(multiplier.into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_div((86400_u128 * 1000_u128).into())
+                .ok_or(Error::CheckedOperations)?.as_u128();
 
             // Add data
             self.data.staking_contract_address = psp34_contract_address;

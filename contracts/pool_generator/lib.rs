@@ -10,6 +10,7 @@ pub mod pool_generator {
     };
     use ink::env::CallFlags;
     use ink::ToAccountId;
+    use primitive_types::U256;
 
     use openbrush::{
         contracts::{
@@ -114,10 +115,15 @@ pub mod pool_generator {
                 return Err(Error::InvalidBalanceAndAllowance);
             }
 
+            let max_staking_amount_tmp = U256::from(max_staking_amount);
             // Check token balance and allowance
-            let min_reward_amount = max_staking_amount.checked_mul(duration as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_mul(apy as u128).ok_or(Error::CheckedOperations)?
-                                    .checked_div(365 * 24 * 60 * 60 * 1000 * 10000).ok_or(Error::CheckedOperations)?;
+            let min_reward_amount = max_staking_amount_tmp
+                .checked_mul((duration as u128).into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_mul((apy as u128).into())
+                .ok_or(Error::CheckedOperations)?
+                .checked_div((365_u128 * 86400_u128 * 1000_u128 * 10000_u128).into())
+                .ok_or(Error::CheckedOperations)?.as_u128();
 
             let token_allowance = Psp22Ref::allowance(
                 &psp22_contract_address,
