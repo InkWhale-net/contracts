@@ -1,11 +1,11 @@
 {
   "source": {
-    "hash": "0xa9f485cf4c4ffce6a021a1873ef66ff5e24e99357c44ed870fc1096b17b37478",
-    "language": "ink! 4.1.0",
+    "hash": "0x3a112b5649dc2930d159375a872a19988875ed0a2ae2678e3d80d8249ef33372",
+    "language": "ink! 4.0.1",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
       "build_mode": "Release",
-      "cargo_contract_version": "2.0.2",
+      "cargo_contract_version": "2.1.0",
       "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
@@ -164,7 +164,7 @@
               "displayName": [
                 "Id"
               ],
-              "type": 17
+              "type": 19
             }
           }
         ],
@@ -214,7 +214,7 @@
               "displayName": [
                 "Id"
               ],
-              "type": 17
+              "type": 19
             }
           }
         ],
@@ -277,7 +277,7 @@
         "ink",
         "LangError"
       ],
-      "type": 16
+      "type": 18
     },
     "messages": [
       {
@@ -376,7 +376,7 @@
               "displayName": [
                 "Id"
               ],
-              "type": 17
+              "type": 19
             }
           }
         ],
@@ -401,7 +401,7 @@
               "displayName": [
                 "Id"
               ],
-              "type": 17
+              "type": 19
             }
           }
         ],
@@ -444,26 +444,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0x82c1595f"
-      },
-      {
-        "args": [],
-        "docs": [
-          " Returns the address of the current owner."
-        ],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x4fa43c8c"
       },
       {
         "args": [],
@@ -488,7 +471,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 19
+          "type": 21
         },
         "selector": "0x5e228753"
       },
@@ -525,145 +508,16 @@
             "ink",
             "MessageResult"
           ],
-          "type": 19
+          "type": 21
         },
         "selector": "0x11f43efd"
       },
       {
         "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::reward_pool",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0xfc6c3a08"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::inw_contract",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xf96ce121"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::start_time",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 22
-        },
-        "selector": "0xc48cf63e"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::psp22_contract_address",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0x0da3be06"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::max_staking_amount",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0x11fd5b2b"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::total_staked",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0x6d230adf"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::unstake_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0xc74b547f"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "genericpoolcontracttrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
+        "docs": [
+          " Returns the address of the current owner."
         ],
-        "docs": [],
-        "label": "GenericPoolContractTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 10
-        },
-        "selector": "0xb89c001e"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::total_unclaimed_reward",
+        "label": "Ownable::owner",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -671,9 +525,24 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 20
         },
-        "selector": "0x16231caf"
+        "selector": "0x4fa43c8c"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::duration",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0xec96d641"
       },
       {
         "args": [
@@ -697,9 +566,24 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 24
         },
         "selector": "0x7d91f5c8"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0xf96ce121"
       },
       {
         "args": [],
@@ -712,14 +596,14 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 27
         },
         "selector": "0xfb1ecf6a"
       },
       {
         "args": [],
         "docs": [],
-        "label": "GenericPoolContractTrait::min_reward_amount",
+        "label": "GenericPoolContractTrait::unstake_fee",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -727,9 +611,24 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 27
         },
-        "selector": "0x57057db9"
+        "selector": "0xc74b547f"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::max_staking_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x11fd5b2b"
       },
       {
         "args": [],
@@ -742,7 +641,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0xb22a7a83"
       },
@@ -757,24 +656,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 28
         },
         "selector": "0x7663de4d"
-      },
-      {
-        "args": [],
-        "docs": [],
-        "label": "GenericPoolContractTrait::duration",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 22
-        },
-        "selector": "0xec96d641"
       },
       {
         "args": [
@@ -829,20 +713,9 @@
         "selector": "0x7be928b9"
       },
       {
-        "args": [
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "nftstakinglisttrait_external",
-                "GetTotalStakedByAccountInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
+        "args": [],
         "docs": [],
-        "label": "NftStakingListTrait::get_total_staked_by_account",
+        "label": "GenericPoolContractTrait::total_unclaimed_reward",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -850,9 +723,110 @@
             "ink",
             "MessageResult"
           ],
-          "type": 22
+          "type": 27
         },
-        "selector": "0x2a30e9be"
+        "selector": "0x16231caf"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::min_reward_amount",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x57057db9"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::start_time",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0xc48cf63e"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_contract",
+            "type": {
+              "displayName": [
+                "genericpoolcontracttrait_external",
+                "SetInwContractInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "GenericPoolContractTrait::set_inw_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xb89c001e"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::reward_pool",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0xfc6c3a08"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::total_staked",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x6d230adf"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "GenericPoolContractTrait::psp22_contract_address",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x0da3be06"
       },
       {
         "args": [
@@ -886,9 +860,35 @@
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 29
         },
         "selector": "0x0e238861"
+      },
+      {
+        "args": [
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "nftstakinglisttrait_external",
+                "GetTotalStakedByAccountInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "docs": [],
+        "label": "NftStakingListTrait::get_total_staked_by_account",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0x2a30e9be"
       },
       {
         "args": [
@@ -1481,7 +1481,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -1497,7 +1497,7 @@
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -1577,263 +1577,303 @@
                 "fields": [
                   {
                     "type": 15,
-                    "typeName": "PSP22Error"
+                    "typeName": "AccessControlError"
                   }
                 ],
                 "index": 2,
+                "name": "AccessControlError"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 16,
+                    "typeName": "PSP22Error"
+                  }
+                ],
+                "index": 3,
                 "name": "PSP22Error"
               },
               {
-                "index": 3,
-                "name": "NotEnoughBalance"
-              },
-              {
+                "fields": [
+                  {
+                    "type": 17,
+                    "typeName": "PSP34Error"
+                  }
+                ],
                 "index": 4,
-                "name": "WithdrawFeeError"
+                "name": "PSP34Error"
               },
               {
                 "index": 5,
-                "name": "NotCallable"
+                "name": "NotEnoughBalance"
               },
               {
                 "index": 6,
-                "name": "CannotTransfer"
+                "name": "WithdrawFeeError"
               },
               {
                 "index": 7,
-                "name": "CannotBurn"
+                "name": "NotCallable"
               },
               {
                 "index": 8,
-                "name": "CheckedOperations"
+                "name": "CannotTransfer"
               },
               {
                 "index": 9,
-                "name": "InvalidBalanceAndAllowance"
+                "name": "CannotBurn"
               },
               {
                 "index": 10,
-                "name": "AlreadyInit"
+                "name": "CheckedOperations"
               },
               {
                 "index": 11,
-                "name": "InvalidBuyAmount"
+                "name": "InvalidBalanceAndAllowance"
               },
               {
                 "index": 12,
-                "name": "InvalidTransferAmount"
+                "name": "AlreadyInit"
               },
               {
                 "index": 13,
-                "name": "CannotCreatePool"
+                "name": "InvalidBuyAmount"
               },
               {
                 "index": 14,
-                "name": "NotTimeToStake"
+                "name": "InvalidTransferAmount"
               },
               {
                 "index": 15,
-                "name": "NoStakerFound"
+                "name": "CannotCreatePool"
               },
               {
                 "index": 16,
-                "name": "InvalidUnstakedAmount"
+                "name": "NotTimeToStake"
               },
               {
                 "index": 17,
-                "name": "NotEnoughReward"
+                "name": "NoStakerFound"
               },
               {
                 "index": 18,
-                "name": "NotTokenOwner"
+                "name": "InvalidUnstakedAmount"
               },
               {
                 "index": 19,
-                "name": "AllowanceNotSet"
+                "name": "NotEnoughReward"
               },
               {
                 "index": 20,
-                "name": "TokenNotFound"
+                "name": "NotTokenOwner"
               },
               {
                 "index": 21,
-                "name": "UserNotStake"
+                "name": "AllowanceNotSet"
               },
               {
                 "index": 22,
-                "name": "NoTokenOwner"
+                "name": "TokenNotFound"
               },
               {
                 "index": 23,
-                "name": "ExceedTotalStakingAmount"
+                "name": "UserNotStake"
               },
               {
                 "index": 24,
-                "name": "NoClaimAmount"
+                "name": "NoTokenOwner"
               },
               {
                 "index": 25,
-                "name": "NotTimeToWithdraw"
+                "name": "ExceedTotalStakingAmount"
               },
               {
                 "index": 26,
-                "name": "NotEnoughRewardToWithdraw"
+                "name": "NoClaimAmount"
               },
               {
                 "index": 27,
-                "name": "NotTopupEnoughReward"
+                "name": "NotTimeToWithdraw"
               },
               {
                 "index": 28,
-                "name": "NoAmount"
+                "name": "NotEnoughRewardToWithdraw"
               },
               {
                 "index": 29,
-                "name": "InvalidTokenBalanceAndAllowance"
+                "name": "NotTopupEnoughReward"
               },
               {
                 "index": 30,
-                "name": "CannotApprove"
+                "name": "NoAmount"
               },
               {
                 "index": 31,
-                "name": "CannotTopupRewardPool"
+                "name": "InvalidTokenBalanceAndAllowance"
               },
               {
                 "index": 32,
-                "name": "NotTimeToPurchase"
+                "name": "CannotApprove"
               },
               {
                 "index": 33,
-                "name": "NotTimeToClaim"
+                "name": "CannotTopupRewardPool"
               },
               {
                 "index": 34,
-                "name": "NotTimeToBurn"
+                "name": "NotTimeToPurchase"
               },
               {
                 "index": 35,
-                "name": "NoTokenPurchased"
+                "name": "NotTimeToClaim"
               },
               {
                 "index": 36,
-                "name": "AlreadyBurnt"
+                "name": "NotTimeToBurn"
               },
               {
                 "index": 37,
-                "name": "InvalidTime"
+                "name": "NoTokenPurchased"
               },
               {
                 "index": 38,
-                "name": "InvalidPercentage"
+                "name": "AlreadyBurnt"
               },
               {
                 "index": 39,
-                "name": "InvalidDuration"
+                "name": "InvalidTime"
               },
               {
                 "index": 40,
-                "name": "InvalidTopupAmount"
+                "name": "InvalidPercentage"
               },
               {
                 "index": 41,
-                "name": "LaunchpadNotExist"
+                "name": "InvalidDuration"
               },
               {
                 "index": 42,
-                "name": "InvalidIsActiveInput"
+                "name": "InvalidTopupAmount"
               },
               {
                 "index": 43,
-                "name": "InvalidCreationFee"
+                "name": "LaunchpadNotExist"
               },
               {
                 "index": 44,
-                "name": "InvalidPhaseData"
+                "name": "InvalidIsActiveInput"
               },
               {
                 "index": 45,
-                "name": "CannotTopupToken"
+                "name": "InvalidCreationFee"
               },
               {
                 "index": 46,
-                "name": "InvalidStartTimeAndEndTime"
+                "name": "InvalidTxRate"
               },
               {
                 "index": 47,
-                "name": "InvalidPhaseCount"
+                "name": "InvalidPhaseData"
               },
               {
                 "index": 48,
-                "name": "InvalidMaxStakingAmount"
+                "name": "CannotTopupToken"
               },
               {
                 "index": 49,
-                "name": "InvalidApy"
+                "name": "InvalidStartTimeAndEndTime"
               },
               {
                 "index": 50,
-                "name": "InvalidMultiplier"
+                "name": "InvalidPhaseCount"
               },
               {
                 "index": 51,
-                "name": "InvalidWhitelistData"
+                "name": "InvalidMaxStakingAmount"
               },
               {
                 "index": 52,
-                "name": "PhaseNotExist"
+                "name": "InvalidApy"
               },
               {
                 "index": 53,
-                "name": "PhaseNotActive"
+                "name": "InvalidMultiplier"
               },
               {
                 "index": 54,
-                "name": "WhitelistBuyerInfoNotExist"
+                "name": "InvalidWhitelistData"
               },
               {
                 "index": 55,
-                "name": "WhitelistBuyerInfoExist"
+                "name": "PhaseNotExist"
               },
               {
                 "index": 56,
-                "name": "WhitelistBuyerPurchased"
+                "name": "PhaseNotActive"
               },
               {
                 "index": 57,
-                "name": "WhitelistSaleInfoNotExist"
+                "name": "WhitelistBuyerInfoNotExist"
               },
               {
                 "index": 58,
-                "name": "WhitelistPhaseAccountNotExist"
+                "name": "WhitelistBuyerInfoExist"
               },
               {
                 "index": 59,
-                "name": "InvalidPhaseForPublicSale"
+                "name": "WhitelistBuyerPurchased"
               },
               {
                 "index": 60,
-                "name": "InvalidPhaseForWhitelistSale"
+                "name": "WhitelistSaleInfoNotExist"
               },
               {
                 "index": 61,
-                "name": "InvalidSetActive"
+                "name": "WhitelistPhaseAccountNotExist"
               },
               {
                 "index": 62,
-                "name": "InvalidTotalAmount"
+                "name": "PublicSaleInfoNotExist"
               },
               {
                 "index": 63,
-                "name": "CannotTransferTxFee"
+                "name": "InvalidSetActive"
               },
               {
                 "index": 64,
-                "name": "ActiveLaunchpadStatusNotFound"
+                "name": "InvalidTotalAmount"
               },
               {
                 "index": 65,
+                "name": "CannotTransferTxFee"
+              },
+              {
+                "index": 66,
+                "name": "ActiveLaunchpadStatusNotFound"
+              },
+              {
+                "index": 67,
                 "name": "LaunchpadNotActive"
+              },
+              {
+                "index": 68,
+                "name": "InvalidCaller"
+              },
+              {
+                "index": 69,
+                "name": "NoPhaseActive"
+              },
+              {
+                "index": 70,
+                "name": "InvalidTotalSupply"
+              },
+              {
+                "index": 71,
+                "name": "PhaseNotPublic"
+              },
+              {
+                "index": 72,
+                "name": "InvalidSetPublic"
               }
             ]
           }
@@ -1887,6 +1927,36 @@
           "variant": {
             "variants": [
               {
+                "index": 0,
+                "name": "InvalidCaller"
+              },
+              {
+                "index": 1,
+                "name": "MissingRole"
+              },
+              {
+                "index": 2,
+                "name": "RoleRedundant"
+              }
+            ]
+          }
+        },
+        "path": [
+          "openbrush_contracts",
+          "traits",
+          "errors",
+          "access_control",
+          "AccessControlError"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "fields": [
                   {
                     "type": 9,
@@ -1935,7 +2005,61 @@
       }
     },
     {
-      "id": 16,
+      "id": 17,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 9,
+                    "typeName": "String"
+                  }
+                ],
+                "index": 0,
+                "name": "Custom"
+              },
+              {
+                "index": 1,
+                "name": "SelfApprove"
+              },
+              {
+                "index": 2,
+                "name": "NotApproved"
+              },
+              {
+                "index": 3,
+                "name": "TokenExists"
+              },
+              {
+                "index": 4,
+                "name": "TokenNotExists"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9,
+                    "typeName": "String"
+                  }
+                ],
+                "index": 5,
+                "name": "SafeTransferCheckFailed"
+              }
+            ]
+          }
+        },
+        "path": [
+          "openbrush_contracts",
+          "traits",
+          "errors",
+          "psp34",
+          "PSP34Error"
+        ]
+      }
+    },
+    {
+      "id": 18,
       "type": {
         "def": {
           "variant": {
@@ -1954,7 +2078,7 @@
       }
     },
     {
-      "id": 17,
+      "id": 19,
       "type": {
         "def": {
           "variant": {
@@ -2031,7 +2155,7 @@
       }
     },
     {
-      "id": 18,
+      "id": 20,
       "type": {
         "def": {
           "variant": {
@@ -2048,7 +2172,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2064,7 +2188,7 @@
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -2073,7 +2197,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 21,
       "type": {
         "def": {
           "variant": {
@@ -2081,7 +2205,7 @@
               {
                 "fields": [
                   {
-                    "type": 20
+                    "type": 22
                   }
                 ],
                 "index": 0,
@@ -2090,7 +2214,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2102,11 +2226,11 @@
         "params": [
           {
             "name": "T",
-            "type": 20
+            "type": 22
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -2115,7 +2239,7 @@
       }
     },
     {
-      "id": 20,
+      "id": 22,
       "type": {
         "def": {
           "variant": {
@@ -2157,49 +2281,7 @@
       }
     },
     {
-      "id": 21,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 4
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 4
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 22,
+      "id": 23,
       "type": {
         "def": {
           "variant": {
@@ -2216,7 +2298,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2232,49 +2314,7 @@
           },
           {
             "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 23,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 24
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 24
-          },
-          {
-            "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -2289,13 +2329,55 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 25
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 25
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "index": 0,
                 "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 26
                   }
                 ],
                 "index": 1,
@@ -2307,7 +2389,7 @@
         "params": [
           {
             "name": "T",
-            "type": 25
+            "type": 26
           }
         ],
         "path": [
@@ -2316,7 +2398,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 26,
       "type": {
         "def": {
           "composite": {
@@ -2354,7 +2436,49 @@
       }
     },
     {
-      "id": 26,
+      "id": 27,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 28,
       "type": {
         "def": {
           "variant": {
@@ -2371,7 +2495,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2387,7 +2511,7 @@
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -2396,7 +2520,7 @@
       }
     },
     {
-      "id": 27,
+      "id": 29,
       "type": {
         "def": {
           "variant": {
@@ -2404,7 +2528,7 @@
               {
                 "fields": [
                   {
-                    "type": 28
+                    "type": 30
                   }
                 ],
                 "index": 0,
@@ -2413,7 +2537,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2425,11 +2549,11 @@
         "params": [
           {
             "name": "T",
-            "type": 28
+            "type": 30
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -2438,7 +2562,7 @@
       }
     },
     {
-      "id": 28,
+      "id": 30,
       "type": {
         "def": {
           "variant": {
@@ -2450,7 +2574,7 @@
               {
                 "fields": [
                   {
-                    "type": 17
+                    "type": 19
                   }
                 ],
                 "index": 1,
@@ -2462,7 +2586,7 @@
         "params": [
           {
             "name": "T",
-            "type": 17
+            "type": 19
           }
         ],
         "path": [
