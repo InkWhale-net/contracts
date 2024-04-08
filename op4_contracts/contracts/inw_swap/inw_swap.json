@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0xf686245f1371f3d09b8e97cd88a28aef0ec714bf2ca4ac7e5ef26c26bfd2e767",
+    "hash": "0xa644601c7f7472aa5abdfd32cec8627cc51de1f00057c77f03e8a18f00c48bcf",
     "language": "ink! 4.3.0",
-    "compiler": "rustc 1.68.0",
+    "compiler": "rustc 1.78.0-nightly",
     "build_info": {
-      "build_mode": "Release",
+      "build_mode": "Debug",
       "cargo_contract_version": "3.2.0",
-      "rust_toolchain": "stable-x86_64-unknown-linux-gnu",
+      "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
         "optimization_passes": "Z"
@@ -347,6 +347,76 @@
         "selector": "0xd9aad284"
       },
       {
+        "args": [
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "inwswaptrait_external",
+                "BurnInwV1Input1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "InwSwapTrait::burn_inw_v1",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 11
+        },
+        "selector": "0xa7c2e930"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "InwSwapTrait::get_inw_contract_v2",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0x0543f709"
+      },
+      {
+        "args": [
+          {
+            "label": "inw_contract_v2",
+            "type": {
+              "displayName": [
+                "inwswaptrait_external",
+                "SetInwContractV2Input1"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "InwSwapTrait::set_inw_contract_v2",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 11
+        },
+        "selector": "0x73271d53"
+      },
+      {
         "args": [],
         "default": false,
         "docs": [],
@@ -390,20 +460,31 @@
         "selector": "0xae765606"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "inwswaptrait_external",
+                "SwapInwV2ToV1Input1"
+              ],
+              "type": 0
+            }
+          }
+        ],
         "default": false,
         "docs": [],
-        "label": "InwSwapTrait::get_inw_contract_v2",
-        "mutates": false,
+        "label": "InwSwapTrait::swap_inw_v2_to_v1",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 11
         },
-        "selector": "0x0543f709"
+        "selector": "0xa97e9c94"
       },
       {
         "args": [
@@ -433,103 +514,6 @@
         "selector": "0x44df600b"
       },
       {
-        "args": [
-          {
-            "label": "inw_contract_v2",
-            "type": {
-              "displayName": [
-                "inwswaptrait_external",
-                "SetInwContractV2Input1"
-              ],
-              "type": 1
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InwSwapTrait::set_inw_contract_v2",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 11
-        },
-        "selector": "0x73271d53"
-      },
-      {
-        "args": [
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "inwswaptrait_external",
-                "BurnInwV1Input1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InwSwapTrait::burn_inw_v1",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 11
-        },
-        "selector": "0xa7c2e930"
-      },
-      {
-        "args": [
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "inwswaptrait_external",
-                "SwapInwV2ToV1Input1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "InwSwapTrait::swap_inw_v2_to_v1",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 11
-        },
-        "selector": "0xa97e9c94"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 24
-        },
-        "selector": "0x5e228753"
-      },
-      {
         "args": [],
         "default": false,
         "docs": [],
@@ -541,7 +525,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 26
+          "type": 24
         },
         "selector": "0x4fa43c8c"
       },
@@ -554,7 +538,7 @@
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 27
+              "type": 25
             }
           }
         ],
@@ -568,9 +552,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 24
+          "type": 26
         },
         "selector": "0x11f43efd"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0x5e228753"
       },
       {
         "args": [],
@@ -587,6 +587,43 @@
           "type": 28
         },
         "selector": "0x162df8c2"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "AllowanceInput1"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "label": "spender",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "AllowanceInput2"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "PSP22::allowance",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x4d47d921"
       },
       {
         "args": [
@@ -624,6 +661,80 @@
           "type": 29
         },
         "selector": "0xfecb57d5"
+      },
+      {
+        "args": [
+          {
+            "label": "to",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput1"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput2"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "data",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "TransferInput3"
+              ],
+              "type": 31
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "PSP22::transfer",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0xdb20f9f5"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "psp22_external",
+                "BalanceOfInput1"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "PSP22::balance_of",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x6568382f"
       },
       {
         "args": [
@@ -681,117 +792,6 @@
           "type": 29
         },
         "selector": "0x54b3c76e"
-      },
-      {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "BalanceOfInput1"
-              ],
-              "type": 1
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "PSP22::balance_of",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 28
-        },
-        "selector": "0x6568382f"
-      },
-      {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "AllowanceInput1"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "label": "spender",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "AllowanceInput2"
-              ],
-              "type": 1
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "PSP22::allowance",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 28
-        },
-        "selector": "0x4d47d921"
-      },
-      {
-        "args": [
-          {
-            "label": "to",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput1"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput2"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "data",
-            "type": {
-              "displayName": [
-                "psp22_external",
-                "TransferInput3"
-              ],
-              "type": 31
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "PSP22::transfer",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0xdb20f9f5"
       },
       {
         "args": [
@@ -2157,22 +2157,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 15
+                    "type": 1
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -2180,15 +2175,11 @@
         "params": [
           {
             "name": "T",
-            "type": 6
-          },
-          {
-            "name": "E",
-            "type": 15
+            "type": 1
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -2241,17 +2232,22 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
                 "index": 0,
-                "name": "None"
+                "name": "Ok"
               },
               {
                 "fields": [
                   {
-                    "type": 1
+                    "type": 15
                   }
                 ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -2259,11 +2255,15 @@
         "params": [
           {
             "name": "T",
-            "type": 1
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 15
           }
         ],
         "path": [
-          "Option"
+          "Result"
         ]
       }
     },

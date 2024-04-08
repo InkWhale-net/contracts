@@ -38,7 +38,9 @@ pub trait InwSwapTrait:
         );
 
         let balance_v1 = Psp22Ref::balance_of(&self.data::<Data>().inw_contract_v1, caller);
-
+        if amount == 0 {
+            return Err(Error::NoAmount);
+        }
         if allowance_v1 < amount || balance_v1 < amount {
             return Err(Error::InvalidBalanceAndAllowance);
         }
@@ -93,7 +95,9 @@ pub trait InwSwapTrait:
         );
 
         let balance_v2 = Psp22Ref::balance_of(&self.data::<Data>().inw_contract_v2, caller);
-
+        if amount == 0 {
+            return Err(Error::NoAmount);
+        }
         if allowance_v2 < amount || balance_v2 < amount {
             return Err(Error::InvalidBalanceAndAllowance);
         }
