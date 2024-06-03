@@ -65,8 +65,6 @@ pub trait InwSwapTrait:
         let result = match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
             _ => Err(Error::CannotTransfer),
         };
 
@@ -114,8 +112,6 @@ pub trait InwSwapTrait:
         let result = match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
             _ => Err(Error::CannotTransfer),
         };
 
@@ -134,8 +130,6 @@ pub trait InwSwapTrait:
         let transfer_result = match builder.try_invoke() {
             Ok(Ok(Ok(_))) => Ok(()),
             Ok(Ok(Err(e))) => Err(e.into()),
-            Ok(Err(ink::LangError::CouldNotReadInput)) => Ok(()),
-            Err(ink::env::Error::NotCallable) => Ok(()),
             _ => Err(Error::CannotTransfer),
         }; 
 
