@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0x738a9bd1dbe2e78cfdc6e8ad26ce2fc1b1ea52cb465417fc226d3ddd69e868c9",
+    "hash": "0xd724cf55be131a5065f1519c864e1c401646a7ea87f1492d92ac480779623873",
     "language": "ink! 4.3.0",
-    "compiler": "rustc 1.68.0",
+    "compiler": "rustc 1.77.0-nightly",
     "build_info": {
-      "build_mode": "Release",
+      "build_mode": "Debug",
       "cargo_contract_version": "3.2.0",
-      "rust_toolchain": "stable-x86_64-unknown-linux-gnu",
+      "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
         "optimization_passes": "Z"
@@ -108,7 +108,7 @@
         "displayName": [
           "ChainExtension"
         ],
-        "type": 39
+        "type": 40
       },
       "hash": {
         "displayName": [
@@ -130,7 +130,7 @@
         "ink",
         "LangError"
       ],
-      "type": 19
+      "type": 20
     },
     "messages": [
       {
@@ -168,7 +168,7 @@
               "displayName": [
                 "Vec"
               ],
-              "type": 20
+              "type": 21
             }
           }
         ],
@@ -190,34 +190,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_inw_contract",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 22
-        },
-        "selector": "0x356faef0"
-      },
-      {
-        "args": [
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "GetLaunchpadByIdInput1"
-              ],
-              "type": 6
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_by_id",
+        "label": "LaunchpadGeneratorTrait::get_active_launchpad_count",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -227,67 +200,24 @@
           ],
           "type": 23
         },
-        "selector": "0x165393dc"
+        "selector": "0xbc14706d"
       },
       {
         "args": [
           {
-            "label": "address",
+            "label": "creation_fee",
             "type": {
               "displayName": [
                 "launchpadgeneratortrait_external",
-                "GetIsActiveLaunchpadInput1"
+                "SetCreationFeeInput1"
               ],
-              "type": 0
+              "type": 4
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_is_active_launchpad",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 25
-        },
-        "selector": "0xe638edfe"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_tx_rate",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 27
-        },
-        "selector": "0x151595a1"
-      },
-      {
-        "args": [
-          {
-            "label": "launchpad_hash",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "SetLaunchpadHashInput1"
-              ],
-              "type": 3
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::set_launchpad_hash",
+        "label": "LaunchpadGeneratorTrait::set_creation_fee",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -297,34 +227,7 @@
           ],
           "type": 10
         },
-        "selector": "0x7fe531cc"
-      },
-      {
-        "args": [
-          {
-            "label": "inw_contract",
-            "type": {
-              "displayName": [
-                "launchpadgeneratortrait_external",
-                "SetInwContractInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::set_inw_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 10
-        },
-        "selector": "0x159c7a23"
+        "selector": "0xe96fc0d1"
       },
       {
         "args": [
@@ -354,21 +257,53 @@
         "selector": "0xdd198c6e"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_launchpad_hash",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 24
+        },
+        "selector": "0xbf42ec1e"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_inw_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0x356faef0"
+      },
+      {
         "args": [
           {
-            "label": "creation_fee",
+            "label": "inw_contract",
             "type": {
               "displayName": [
                 "launchpadgeneratortrait_external",
-                "SetCreationFeeInput1"
+                "SetInwContractInput1"
               ],
-              "type": 4
+              "type": 0
             }
           }
         ],
         "default": false,
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::set_creation_fee",
+        "label": "LaunchpadGeneratorTrait::set_inw_contract",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -378,7 +313,7 @@
           ],
           "type": 10
         },
-        "selector": "0xe96fc0d1"
+        "selector": "0x159c7a23"
       },
       {
         "args": [
@@ -421,7 +356,7 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_count",
+        "label": "LaunchpadGeneratorTrait::get_tx_rate",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -429,57 +364,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 28
+          "type": 26
         },
-        "selector": "0xf0cb2510"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_launchpad_hash",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0xbf42ec1e"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_active_launchpad_count",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 28
-        },
-        "selector": "0xbc14706d"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LaunchpadGeneratorTrait::get_creation_fee",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0xd6f68769"
+        "selector": "0x151595a1"
       },
       {
         "args": [
@@ -504,48 +391,42 @@
             "ink",
             "MessageResult"
           ],
-          "type": 31
+          "type": 27
         },
         "selector": "0xd06c43d4"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_creation_fee",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0xd6f68769"
+      },
+      {
         "args": [
           {
-            "label": "psp22_contract_address",
+            "label": "launchpad_hash",
             "type": {
               "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input1"
+                "launchpadgeneratortrait_external",
+                "SetLaunchpadHashInput1"
               ],
-              "type": 0
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input2"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "label": "receiver",
-            "type": {
-              "displayName": [
-                "admintrait_external",
-                "TranferPsp22Input3"
-              ],
-              "type": 0
+              "type": 3
             }
           }
         ],
         "default": false,
-        "docs": [
-          " This function allow contract owner withdraw PSP22 to an account in case there is any token sent to contract by mistake"
-        ],
-        "label": "AdminTrait::tranfer_psp22",
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::set_launchpad_hash",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -555,7 +436,77 @@
           ],
           "type": 10
         },
-        "selector": "0xd9aad284"
+        "selector": "0x7fe531cc"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_launchpad_count",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0xf0cb2510"
+      },
+      {
+        "args": [
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "launchpadgeneratortrait_external",
+                "GetLaunchpadByIdInput1"
+              ],
+              "type": 6
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_launchpad_by_id",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x165393dc"
+      },
+      {
+        "args": [
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "launchpadgeneratortrait_external",
+                "GetIsActiveLaunchpadInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "LaunchpadGeneratorTrait::get_is_active_launchpad",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 31
+        },
+        "selector": "0xe638edfe"
       },
       {
         "args": [
@@ -610,9 +561,58 @@
             "ink",
             "MessageResult"
           ],
-          "type": 32
+          "type": 33
         },
         "selector": "0xc4360570"
+      },
+      {
+        "args": [
+          {
+            "label": "psp22_contract_address",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input1"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input2"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "receiver",
+            "type": {
+              "displayName": [
+                "admintrait_external",
+                "TranferPsp22Input3"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " This function allow contract owner withdraw PSP22 to an account in case there is any token sent to contract by mistake"
+        ],
+        "label": "AdminTrait::tranfer_psp22",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xd9aad284"
       },
       {
         "args": [
@@ -650,80 +650,6 @@
             "type": {
               "displayName": [
                 "accesscontrol_external",
-                "RevokeRoleInput1"
-              ],
-              "type": 5
-            }
-          },
-          {
-            "label": "account",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "RevokeRoleInput2"
-              ],
-              "type": 24
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AccessControl::revoke_role",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 34
-        },
-        "selector": "0x6e4f0991"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "HasRoleInput1"
-              ],
-              "type": 5
-            }
-          },
-          {
-            "label": "address",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
-                "HasRoleInput2"
-              ],
-              "type": 24
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AccessControl::has_role",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 36
-        },
-        "selector": "0xc1d9ac18"
-      },
-      {
-        "args": [
-          {
-            "label": "role",
-            "type": {
-              "displayName": [
-                "accesscontrol_external",
                 "GetRoleAdminInput1"
               ],
               "type": 5
@@ -740,7 +666,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 26
         },
         "selector": "0x83da3bb2"
       },
@@ -763,7 +689,7 @@
                 "accesscontrol_external",
                 "GrantRoleInput2"
               ],
-              "type": 24
+              "type": 30
             }
           }
         ],
@@ -777,9 +703,83 @@
             "ink",
             "MessageResult"
           ],
-          "type": 34
+          "type": 35
         },
         "selector": "0x4ac062fd"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "HasRoleInput1"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "address",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "HasRoleInput2"
+              ],
+              "type": 30
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AccessControl::has_role",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 37
+        },
+        "selector": "0xc1d9ac18"
+      },
+      {
+        "args": [
+          {
+            "label": "role",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "RevokeRoleInput1"
+              ],
+              "type": 5
+            }
+          },
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "accesscontrol_external",
+                "RevokeRoleInput2"
+              ],
+              "type": 30
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AccessControl::revoke_role",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 35
+        },
+        "selector": "0x6e4f0991"
       },
       {
         "args": [
@@ -800,7 +800,7 @@
                 "accesscontrol_external",
                 "RenounceRoleInput2"
               ],
-              "type": 24
+              "type": 30
             }
           }
         ],
@@ -814,7 +814,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 34
+          "type": 35
         },
         "selector": "0xeaf1248a"
       },
@@ -841,7 +841,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 26
         },
         "selector": "0xf1b1a9d7"
       },
@@ -878,7 +878,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 29
         },
         "selector": "0x163469e0"
       },
@@ -891,7 +891,7 @@
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 24
+              "type": 30
             }
           }
         ],
@@ -905,25 +905,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 37
+          "type": 38
         },
         "selector": "0x11f43efd"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0x4fa43c8c"
       },
       {
         "args": [],
@@ -937,9 +921,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 37
+          "type": 38
         },
         "selector": "0x5e228753"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x4fa43c8c"
       }
     ]
   },
@@ -1358,7 +1358,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -1374,7 +1374,7 @@
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -1481,284 +1481,318 @@
                 "name": "PSP34Error"
               },
               {
+                "fields": [
+                  {
+                    "type": 19,
+                    "typeName": "PausableError"
+                  }
+                ],
                 "index": 5,
-                "name": "NotEnoughBalance"
+                "name": "PausableError"
               },
               {
                 "index": 6,
-                "name": "WithdrawFeeError"
+                "name": "NotEnoughBalance"
               },
               {
                 "index": 7,
-                "name": "NotCallable"
+                "name": "WithdrawFeeError"
               },
               {
                 "index": 8,
-                "name": "CannotTransfer"
+                "name": "NotCallable"
               },
               {
                 "index": 9,
-                "name": "CannotBurn"
+                "name": "CannotTransfer"
               },
               {
                 "index": 10,
-                "name": "CheckedOperations"
+                "name": "CannotBurn"
               },
               {
                 "index": 11,
-                "name": "InvalidBalanceAndAllowance"
+                "name": "CheckedOperations"
               },
               {
                 "index": 12,
-                "name": "AlreadyInit"
+                "name": "InvalidBalanceAndAllowance"
               },
               {
                 "index": 13,
-                "name": "InvalidBuyAmount"
+                "name": "AlreadyInit"
               },
               {
                 "index": 14,
-                "name": "InvalidTransferAmount"
+                "name": "InvalidBuyAmount"
               },
               {
                 "index": 15,
-                "name": "CannotCreatePool"
+                "name": "InvalidTransferAmount"
               },
               {
                 "index": 16,
-                "name": "NotTimeToStake"
+                "name": "CannotCreatePool"
               },
               {
                 "index": 17,
-                "name": "NoStakerFound"
+                "name": "NotTimeToStake"
               },
               {
                 "index": 18,
-                "name": "InvalidUnstakedAmount"
+                "name": "NoStakerFound"
               },
               {
                 "index": 19,
-                "name": "NotEnoughReward"
+                "name": "InvalidUnstakedAmount"
               },
               {
                 "index": 20,
-                "name": "NotTokenOwner"
+                "name": "NotEnoughReward"
               },
               {
                 "index": 21,
-                "name": "AllowanceNotSet"
+                "name": "NotTokenOwner"
               },
               {
                 "index": 22,
-                "name": "TokenNotFound"
+                "name": "AllowanceNotSet"
               },
               {
                 "index": 23,
-                "name": "UserNotStake"
+                "name": "TokenNotFound"
               },
               {
                 "index": 24,
-                "name": "NoTokenOwner"
+                "name": "UserNotStake"
               },
               {
                 "index": 25,
-                "name": "ExceedTotalStakingAmount"
+                "name": "NoTokenOwner"
               },
               {
                 "index": 26,
-                "name": "NoClaimAmount"
+                "name": "ExceedTotalStakingAmount"
               },
               {
                 "index": 27,
-                "name": "NotTimeToWithdraw"
+                "name": "NoClaimAmount"
               },
               {
                 "index": 28,
-                "name": "NotEnoughRewardToWithdraw"
+                "name": "NotTimeToWithdraw"
               },
               {
                 "index": 29,
-                "name": "NotTopupEnoughReward"
+                "name": "NotEnoughRewardToWithdraw"
               },
               {
                 "index": 30,
-                "name": "NoAmount"
+                "name": "NotTopupEnoughReward"
               },
               {
                 "index": 31,
-                "name": "InvalidTokenBalanceAndAllowance"
+                "name": "NoAmount"
               },
               {
                 "index": 32,
-                "name": "CannotApprove"
+                "name": "InvalidTokenBalanceAndAllowance"
               },
               {
                 "index": 33,
-                "name": "CannotTopupRewardPool"
+                "name": "CannotApprove"
               },
               {
                 "index": 34,
-                "name": "NotTimeToPurchase"
+                "name": "CannotTopupRewardPool"
               },
               {
                 "index": 35,
-                "name": "NotTimeToClaim"
+                "name": "NotTimeToPurchase"
               },
               {
                 "index": 36,
-                "name": "NotTimeToBurn"
+                "name": "NotTimeToClaim"
               },
               {
                 "index": 37,
-                "name": "NoTokenPurchased"
+                "name": "NotTimeToBurn"
               },
               {
                 "index": 38,
-                "name": "AlreadyBurnt"
+                "name": "NoTokenPurchased"
               },
               {
                 "index": 39,
-                "name": "InvalidTime"
+                "name": "AlreadyBurnt"
               },
               {
                 "index": 40,
-                "name": "InvalidPercentage"
+                "name": "InvalidTime"
               },
               {
                 "index": 41,
-                "name": "InvalidDuration"
+                "name": "InvalidPercentage"
               },
               {
                 "index": 42,
-                "name": "InvalidVestingUnit"
+                "name": "InvalidDuration"
               },
               {
                 "index": 43,
-                "name": "InvalidTopupAmount"
+                "name": "InvalidVestingUnit"
               },
               {
                 "index": 44,
-                "name": "LaunchpadNotExist"
+                "name": "InvalidTopupAmount"
               },
               {
                 "index": 45,
-                "name": "InvalidIsActiveInput"
+                "name": "LaunchpadNotExist"
               },
               {
                 "index": 46,
-                "name": "InvalidCreationFee"
+                "name": "InvalidIsActiveInput"
               },
               {
                 "index": 47,
-                "name": "InvalidTxRate"
+                "name": "InvalidCreationFee"
               },
               {
                 "index": 48,
-                "name": "InvalidPhaseData"
+                "name": "InvalidTxRate"
               },
               {
                 "index": 49,
-                "name": "CannotTopupToken"
+                "name": "InvalidPhaseData"
               },
               {
                 "index": 50,
-                "name": "InvalidStartTimeAndEndTime"
+                "name": "CannotTopupToken"
               },
               {
                 "index": 51,
-                "name": "InvalidPhaseCount"
+                "name": "InvalidStartTimeAndEndTime"
               },
               {
                 "index": 52,
-                "name": "InvalidMaxStakingAmount"
+                "name": "InvalidPhaseCount"
               },
               {
                 "index": 53,
-                "name": "InvalidApy"
+                "name": "InvalidMaxStakingAmount"
               },
               {
                 "index": 54,
-                "name": "InvalidMultiplier"
+                "name": "InvalidApy"
               },
               {
                 "index": 55,
-                "name": "InvalidWhitelistData"
+                "name": "InvalidMultiplier"
               },
               {
                 "index": 56,
-                "name": "PhaseNotExist"
+                "name": "InvalidWhitelistData"
               },
               {
                 "index": 57,
-                "name": "PhaseNotActive"
+                "name": "PhaseNotExist"
               },
               {
                 "index": 58,
-                "name": "WhitelistBuyerInfoNotExist"
+                "name": "PhaseNotActive"
               },
               {
                 "index": 59,
-                "name": "WhitelistBuyerInfoExist"
+                "name": "WhitelistBuyerInfoNotExist"
               },
               {
                 "index": 60,
-                "name": "WhitelistBuyerPurchased"
+                "name": "WhitelistBuyerInfoExist"
               },
               {
                 "index": 61,
-                "name": "WhitelistSaleInfoNotExist"
+                "name": "WhitelistBuyerPurchased"
               },
               {
                 "index": 62,
-                "name": "WhitelistPhaseAccountNotExist"
+                "name": "WhitelistSaleInfoNotExist"
               },
               {
                 "index": 63,
-                "name": "PublicSaleInfoNotExist"
+                "name": "WhitelistPhaseAccountNotExist"
               },
               {
                 "index": 64,
-                "name": "InvalidSetActive"
+                "name": "PublicSaleInfoNotExist"
               },
               {
                 "index": 65,
-                "name": "InvalidTotalAmount"
+                "name": "InvalidSetActive"
               },
               {
                 "index": 66,
-                "name": "CannotTransferTxFee"
+                "name": "InvalidTotalAmount"
               },
               {
                 "index": 67,
-                "name": "ActiveLaunchpadStatusNotFound"
+                "name": "CannotTransferTxFee"
               },
               {
                 "index": 68,
-                "name": "LaunchpadNotActive"
+                "name": "ActiveLaunchpadStatusNotFound"
               },
               {
                 "index": 69,
-                "name": "InvalidCaller"
+                "name": "LaunchpadNotActive"
               },
               {
                 "index": 70,
-                "name": "NoPhaseActive"
+                "name": "InvalidCaller"
               },
               {
                 "index": 71,
-                "name": "InvalidTotalSupply"
+                "name": "NoPhaseActive"
               },
               {
                 "index": 72,
-                "name": "PhaseNotPublic"
+                "name": "InvalidTotalSupply"
               },
               {
                 "index": 73,
-                "name": "InvalidSetPublic"
+                "name": "PhaseNotPublic"
               },
               {
                 "index": 74,
+                "name": "InvalidSetPublic"
+              },
+              {
+                "index": 75,
                 "name": "InvalidCapAmount"
+              },
+              {
+                "index": 76,
+                "name": "InvalidWhitelistAmount"
+              },
+              {
+                "index": 77,
+                "name": "CapExceeded"
+              },
+              {
+                "index": 78,
+                "name": "CannotCollectInwV1"
+              },
+              {
+                "index": 79,
+                "name": "CannotCollectInwV2"
+              },
+              {
+                "index": 80,
+                "name": "CannotMintInwV2"
+              },
+              {
+                "index": 81,
+                "name": "CannotTransferInwV1"
               }
             ]
           }
@@ -2004,6 +2038,32 @@
           "variant": {
             "variants": [
               {
+                "index": 0,
+                "name": "Paused"
+              },
+              {
+                "index": 1,
+                "name": "NotPaused"
+              }
+            ]
+          }
+        },
+        "path": [
+          "openbrush_contracts",
+          "traits",
+          "errors",
+          "pausable",
+          "PausableError"
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "index": 1,
                 "name": "CouldNotReadInput"
               }
@@ -2017,17 +2077,17 @@
       }
     },
     {
-      "id": 20,
+      "id": 21,
       "type": {
         "def": {
           "sequence": {
-            "type": 21
+            "type": 22
           }
         }
       }
     },
     {
-      "id": 21,
+      "id": 22,
       "type": {
         "def": {
           "composite": {
@@ -2095,7 +2155,91 @@
       }
     },
     {
-      "id": 22,
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 25,
       "type": {
         "def": {
           "variant": {
@@ -2112,7 +2256,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2128,7 +2272,7 @@
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2137,7 +2281,7 @@
       }
     },
     {
-      "id": 23,
+      "id": 26,
       "type": {
         "def": {
           "variant": {
@@ -2145,7 +2289,7 @@
               {
                 "fields": [
                   {
-                    "type": 24
+                    "type": 5
                   }
                 ],
                 "index": 0,
@@ -2154,7 +2298,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2166,11 +2310,11 @@
         "params": [
           {
             "name": "T",
-            "type": 24
+            "type": 5
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2179,7 +2323,133 @@
       }
     },
     {
-      "id": 24,
+      "id": 27,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 30
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 30
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 30,
       "type": {
         "def": {
           "variant": {
@@ -2212,7 +2482,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 31,
       "type": {
         "def": {
           "variant": {
@@ -2220,7 +2490,7 @@
               {
                 "fields": [
                   {
-                    "type": 26
+                    "type": 32
                   }
                 ],
                 "index": 0,
@@ -2229,7 +2499,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2241,11 +2511,11 @@
         "params": [
           {
             "name": "T",
-            "type": 26
+            "type": 32
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2254,7 +2524,7 @@
       }
     },
     {
-      "id": 26,
+      "id": 32,
       "type": {
         "def": {
           "variant": {
@@ -2287,259 +2557,49 @@
       }
     },
     {
-      "id": 27,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 5
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 5
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 28,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 6
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 29,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 3
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 3
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 30,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 4
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 4
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 31,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 7
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 7
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 32,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 33
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 33
-          },
-          {
-            "name": "E",
-            "type": 19
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
       "id": 33,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 34
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 34
+          },
+          {
+            "name": "E",
+            "type": 20
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 34,
       "type": {
         "def": {
           "variant": {
@@ -2581,7 +2641,7 @@
       }
     },
     {
-      "id": 34,
+      "id": 35,
       "type": {
         "def": {
           "variant": {
@@ -2589,7 +2649,7 @@
               {
                 "fields": [
                   {
-                    "type": 35
+                    "type": 36
                   }
                 ],
                 "index": 0,
@@ -2598,7 +2658,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2610,11 +2670,11 @@
         "params": [
           {
             "name": "T",
-            "type": 35
+            "type": 36
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2623,7 +2683,7 @@
       }
     },
     {
-      "id": 35,
+      "id": 36,
       "type": {
         "def": {
           "variant": {
@@ -2665,7 +2725,7 @@
       }
     },
     {
-      "id": 36,
+      "id": 37,
       "type": {
         "def": {
           "variant": {
@@ -2682,7 +2742,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2698,7 +2758,7 @@
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2707,7 +2767,7 @@
       }
     },
     {
-      "id": 37,
+      "id": 38,
       "type": {
         "def": {
           "variant": {
@@ -2715,7 +2775,7 @@
               {
                 "fields": [
                   {
-                    "type": 38
+                    "type": 39
                   }
                 ],
                 "index": 0,
@@ -2724,7 +2784,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 1,
@@ -2736,11 +2796,11 @@
         "params": [
           {
             "name": "T",
-            "type": 38
+            "type": 39
           },
           {
             "name": "E",
-            "type": 19
+            "type": 20
           }
         ],
         "path": [
@@ -2749,7 +2809,7 @@
       }
     },
     {
-      "id": 38,
+      "id": 39,
       "type": {
         "def": {
           "variant": {
@@ -2791,7 +2851,7 @@
       }
     },
     {
-      "id": 39,
+      "id": 40,
       "type": {
         "def": {
           "variant": {}
