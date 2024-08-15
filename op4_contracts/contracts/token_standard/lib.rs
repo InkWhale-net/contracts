@@ -1,27 +1,17 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 pub use self::token_standard::{TokenStandard, TokenStandardRef};
 
-#[openbrush::implementation(
-    PSP22,
-    PSP22Capped,
-    PSP22Metadata,
-    PSP22Mintable,
-    Ownable
-)]
+#[openbrush::implementation(PSP22, PSP22Capped, PSP22Metadata, Ownable)]
 #[openbrush::contract]
 pub mod token_standard {
-    use inkwhale_project::impls::admin::*;
     use ink::{
         codegen::{EmitEvent, Env},
         reflect::ContractEventBase,
     };
+    use inkwhale_project::impls::admin::*;
     use openbrush::{
         contracts::ownable::*,
-        contracts::psp22::extensions::{
-            burnable::*,
-            capped::*,
-            metadata::*,
-        },
+        contracts::psp22::extensions::{mintable::*, burnable::*, capped::*, metadata::*},
         traits::{DefaultEnv, Storage, String},
     };
 
@@ -59,12 +49,7 @@ pub mod token_standard {
     pub type Event = <TokenStandard as ContractEventBase>::Type;
 
     #[overrider(psp22::Internal)]
-    fn _emit_transfer_event(
-        &self,
-        _from: Option<AccountId>,
-        _to: Option<AccountId>,
-        _amount: Balance,
-    ) {
+    fn _emit_transfer_event(&self, _from: Option<AccountId>, _to: Option<AccountId>, _amount: Balance) {
         TokenStandard::emit_event(
             self.env(),
             Event::Transfer(Transfer {
@@ -118,17 +103,12 @@ pub mod token_standard {
         }
     }
 
-    // impl PSP22Mintable for TokenStandard {
-    //     #[ink(message)]
-    //     fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-    //         let caller = Self::env().caller();
-    //         if caller == self.owner() {
-    //             self._mint_to(account, amount)
-    //         } else {
-    //             Err(PSP22Error::Custom(String::from("Your are not owner")))
-    //         }
-    //     }
-    // }
+    impl PSP22Mintable for TokenStandard {
+        #[ink(message)]
+        fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            return Err(PSP22Error::Custom(String::from("This function not available")));
+        }
+    }
 
     impl TokenStandard {
         #[ink(constructor)]
